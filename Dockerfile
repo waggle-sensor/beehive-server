@@ -5,13 +5,12 @@ RUN apt-get update ; apt-get install -y git \
 
 # does not really work: RUN cd / ; git clone https://github.com/waggle-sensor/waggle.git
 
-#ADD ./server /waggle/server
-#ADD ./devtools/protocol_common /waggle/devtools/protocol_common
+ADD . /beehive-server/
 
-RUN cd / && \
-  git clone https://github.com/waggle-sensor/waggle.git && \
-  cd /waggle && ls -1a | grep -v "^[.]*$" | grep -v server | grep -v devtools | xargs rm -rf && \
-  cd /waggle/devtools && ls -1a | grep -v "^[.]*$" | grep -v protocol_common | xargs rm -rf
+#RUN cd / && \
+#  git clone https://github.com/waggle-sensor/waggle.git && \
+#  cd /waggle && ls -1a | grep -v "^[.]*$" | grep -v server | grep -v devtools | xargs rm -rf && \
+#  cd /waggle/devtools && ls -1a | grep -v "^[.]*$" | grep -v protocol_common | xargs rm -rf
 
 # python modules
 RUN cd /waggle/server/packages_o/ && \
