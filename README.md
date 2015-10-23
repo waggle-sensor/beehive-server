@@ -40,4 +40,3 @@ Inside the container:
 cd /usr/lib/waggle/server/
 python /usr/lib/waggle/server/Server.py &
 ```
-```
