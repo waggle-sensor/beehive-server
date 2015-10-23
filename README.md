@@ -23,7 +23,7 @@ docker run -d --name beehive-cassandra -v /mnt/cassandra/data/:/var/lib/cassandr
 ```
 You may want to change the -v option (format: "host:container") to point to file system location with sufficient space for the Cassandra database files.
 
-Installation instructions for Cassandera without Docker:
+Installation instructions for Cassandra without Docker:
 
 http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
