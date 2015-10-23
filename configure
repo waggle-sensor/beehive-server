@@ -45,8 +45,8 @@ echo Moving waggle server folder to proper place.
 
 
 # All of the code is copied into the /usr/lib/waggle folder
-cp --recursive ../server/ /usr/lib/waggle/
-cp --recursive ../devtools/protocol_common/* /usr/lib/waggle/
+cp --recursive . /usr/lib/waggle/
+cp --recursive ./waggle-protocol/* /usr/lib/waggle/
 
 
 source ./scripts/configure_cassandra.sh
