@@ -13,7 +13,7 @@ ADD . /beehive-server/
 #  cd /waggle/devtools && ls -1a | grep -v "^[.]*$" | grep -v protocol_common | xargs rm -rf
 
 # python modules
-RUN cd /waggle/server/packages_o/ && \
+RUN cd /beehive-server/packages_o/ && \
   pip install blist && \
   pip install cassandra-driver && \
   pip install crcmod && \
@@ -21,7 +21,7 @@ RUN cd /waggle/server/packages_o/ && \
   python setup.py install
 
 # cqlshlib for the cassandra client
-RUN cd /waggle/server/cassandra-pylib/ && \
+RUN cd /beehive-server/cassandra-pylib/ && \
   python ./setup.py install  
 
 ENV CASSANDRA_SERVER cassandra 
