@@ -31,7 +31,7 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
 
 ```bash
-docker run -ti --name beehive-server --link beehive-cassandra:cassandra waggle/beehive-server:latest
+docker run -ti --name beehive-server --link beehive-cassandra:cassandra -p 5672:5672 waggle/beehive-server:latest
 ```
 
 Inside the container:
