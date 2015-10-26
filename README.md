@@ -36,7 +36,14 @@ docker run -ti --name beehive-server --link beehive-cassandra:cassandra waggle/b
 
 Inside the container:
 ```bash
+cd /waggle/server
 ./configure
 cd /usr/lib/waggle/server/
 python /usr/lib/waggle/server/Server.py &
 ```
+Leave container and put it in background with "Ctrl-P" "Ctrl-Q".
+
+## Developer Notes
+
+TODO: Run RabbitMQ in its own container.
+
