@@ -38,8 +38,8 @@ Inside the container:
 ```bash
 cd /beehive-server/
 ./configure
-cd /usr/lib/waggle/server/
-python /usr/lib/waggle/server/Server.py &
+cd /usr/lib/waggle/
+python /usr/lib/waggle/Server.py &
 ```
 Leave container and put it in background with "Ctrl-P" "Ctrl-Q".
 
