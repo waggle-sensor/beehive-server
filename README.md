@@ -39,7 +39,7 @@ Inside the container:
 cd /beehive-server/
 ./configure
 cd /usr/lib/waggle/beehive-server/
-python /usr/lib/waggle/beehive-server/Server.py &
+python ./Server.py &
 ```
 Leave container and put it in background with "Ctrl-P" "Ctrl-Q".
 
