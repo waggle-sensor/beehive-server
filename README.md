@@ -36,7 +36,7 @@ docker run -ti --name beehive-server --link beehive-cassandra:cassandra waggle/b
 
 Inside the container:
 ```bash
-cd /waggle/server
+cd /beehive-server/
 ./configure
 cd /usr/lib/waggle/server/
 python /usr/lib/waggle/server/Server.py &
