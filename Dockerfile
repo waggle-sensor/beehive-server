@@ -7,7 +7,7 @@ RUN apt-get update ; apt-get install -y git \
 
 ADD . /beehive-server/
 
-RUN ln -s /beehive-server /usr/lib/waggle/beehive-server
+RUN mkdir -p /usr/lib/waggle/ ; ln -s /beehive-server /usr/lib/waggle/beehive-server
 #RUN cd / && \
 #  git clone https://github.com/waggle-sensor/waggle.git && \
 #  cd /waggle && ls -1a | grep -v "^[.]*$" | grep -v server | grep -v devtools | xargs rm -rf && \
