@@ -8,7 +8,7 @@ set -x
 # For the Certificate Authority setup, see waggle/server/SSL/caconfig.sh
 echo Setting up SSL
 mkdir -p /usr/lib/waggle/SSL
-#cp -r /usr/lib/waggle/server/SSL/* /usr/lib/waggle/SSL
+cp -r /usr/lib/waggle/beehive-server/SSL/* /usr/lib/waggle/SSL
 cd /usr/lib/waggle/SSL/
 source caconfig.sh
 
