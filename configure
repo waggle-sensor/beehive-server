@@ -33,7 +33,8 @@ if [ ${PLATFORM} == "armv7l"  ]  ; then
 elif [ ${PLATFORM} == "x86_64"  ] ; then
   echo "Architecture: x86_64"
 else
-  echo "Architecture not supported"
+  echo "Architecture not supported
+  exit 1
 fi
 
 mkdir -p /etc/waggle/
