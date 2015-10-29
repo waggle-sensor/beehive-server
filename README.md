@@ -47,3 +47,15 @@ Leave container and put it in background with "Ctrl-P" "Ctrl-Q".
 
 TODO: Run RabbitMQ in its own container.
 
+### Notes on Cassandra
+
+To directly connect to cassandra:
+```bash
+docker run -it --link beehive-cassandra:cassandra --rm cassandra cqlsh cassandra
+```
+To view database, e.g.:
+```bash
+use waggle;
+SELECT * FROM node_info;
+DESCRIBE TABLES;
+```
