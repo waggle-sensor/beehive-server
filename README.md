@@ -21,7 +21,7 @@ apt-get install -y  docker-engine
 ```bash
 docker run -d --name beehive-cassandra -v /mnt/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
 ```
-You may want to change the -v option (format: "host:container") to point to file system location with sufficient space for the Cassandra database files.
+You may want to change the -v option (format: "host:container") to point to a host file system location with sufficient space for the Cassandra database files. For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
 
 Installation instructions for Cassandra without Docker:
 
@@ -34,14 +34,24 @@ This requires that the cassandra container is already running on the same machin
 docker run -ti --name beehive-server --link beehive-cassandra:cassandra -p 5671:5671 waggle/beehive-server:latest
 ```
 
-Inside the container:
+You should now be inside the container. Run the configure and Server.py scripts:
 ```bash
 cd /beehive-server/
 ./configure
 cd /usr/lib/waggle/beehive-server/
-python ./Server.py &
+python ./Server.py
 ```
-Leave container and put it in background with "Ctrl-P" "Ctrl-Q".
+The beehive server should be running at this point. 
+
+Leave the container and put it in background using key combinations "Ctrl-P" "Ctrl-Q". You can re-attach to the container with
+```bash
+docker attach beehive-server
+```
+or enter the container without attaching to the main process (python Server.py) with "docker exec":
+```bash
+docker exec -ti beehive-server bash
+```
+
 
 ## Developer Notes
 
