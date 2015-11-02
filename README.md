@@ -61,7 +61,7 @@ TODO: Run RabbitMQ in its own container.
 
 To directly connect to cassandra:
 ```bash
-docker run -it --link beehive-cassandra:cassandra --rm cassandra cqlsh cassandra
+docker run -it --link beehive-cassandra:cassandra --rm cassandra:2.2.3 cqlsh cassandra
 ```
 To view database, e.g.:
 ```bash
