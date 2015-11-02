@@ -55,6 +55,8 @@ class DataProcess(Process):
             self.cassandra_connect()#TODO I don't know if this is neccessary
 
     def cassandra_insert(self,header,data):
+        # example cassandra query:
+        # INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         try:
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
                 " (node_id, sensor_name, timestamp, data_types, data, units, extra_info)" + \
