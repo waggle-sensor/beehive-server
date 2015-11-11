@@ -38,6 +38,11 @@ docker run -ti --name beehive-server \
   waggle/beehive-server:latest
 ```
 
+For developing purposes you can also mount the git repo into the container.
+```bash
+-v ${HOME}/git/beehive-server:/usr/lib/waggle/beehive-server
+```
+
 You should now be inside the container. Run the configure and Server.py scripts:
 ```bash
 cd /beehive-server/
