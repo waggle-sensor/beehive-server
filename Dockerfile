@@ -3,18 +3,10 @@ FROM ubuntu:14.04
 RUN apt-get update ; apt-get install -y git \
   rabbitmq-server python-dev python-pip
 
-# does not really work: RUN cd / ; git clone https://github.com/waggle-sensor/waggle.git
-
-ADD . /beehive-server/
-
-RUN mkdir -p /usr/lib/waggle/ ; ln -s /beehive-server /usr/lib/waggle/beehive-server
-#RUN cd / && \
-#  git clone https://github.com/waggle-sensor/waggle.git && \
-#  cd /waggle && ls -1a | grep -v "^[.]*$" | grep -v server | grep -v devtools | xargs rm -rf && \
-#  cd /waggle/devtools && ls -1a | grep -v "^[.]*$" | grep -v protocol_common | xargs rm -rf
+ADD . /usr/lib/waggle/beehive-server/
 
 # python modules
-RUN cd /beehive-server/packages_o/ && \
+RUN cd /usr/lib/waggle/beehive-server/packages_o/ && \
   pip install blist && \
   pip install cassandra-driver && \
   pip install crcmod && \
@@ -22,9 +14,9 @@ RUN cd /beehive-server/packages_o/ && \
   python setup.py install
 
 # cqlshlib for the cassandra client
-RUN cd /beehive-server/cassandra-pylib/ && \
+RUN cd /usr/lib/waggle/beehive-server/cassandra-pylib/ && \
   python ./setup.py install  
 
 ENV CASSANDRA_SERVER cassandra 
 
-
+WORKDIR /usr/lib/waggle/beehive-server/
