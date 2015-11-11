@@ -31,7 +31,11 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
 
 ```bash
-docker run -ti --name beehive-server --link beehive-cassandra:cassandra -p 5671:5671 waggle/beehive-server:latest
+docker run -ti --name beehive-server \
+  --link beehive-cassandra:cassandra \
+  -v /mnt/waggle/SSL:/usr/lib/waggle/SSL/ \
+  -p 5671:5671 \
+  waggle/beehive-server:latest
 ```
 
 You should now be inside the container. Run the configure and Server.py scripts:
