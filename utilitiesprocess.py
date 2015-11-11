@@ -6,7 +6,9 @@ from multiprocessing import Process, Manager
 import pika
 from protocol.PacketHandler import *
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
+#logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
+
+logger = logging.getLogger(__name__)
 
 class UtilProcess(Process):
 	"""

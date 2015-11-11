@@ -7,7 +7,9 @@ import pika
 from protocol.PacketHandler import *
 from utilities.packetassembler import PacketAssembler
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
+#logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
+
+logger = logging.getLogger(__name__)
 
 class WaggleRouter(Process):
 	"""
@@ -16,7 +18,7 @@ class WaggleRouter(Process):
 		queue for processing.
 	"""
 	def __init__(self,routing_table):
-		print "Initializing Routing Process"
+		logger.info("Initializing Routing Process")
 		super(WaggleRouter,self).__init__()
 
 		self.routing_table = routing_table
@@ -54,7 +56,7 @@ class WaggleRouter(Process):
 		try:
 			header = get_header(body)
 		except Exception as e:
-			print str(e)
+			logger.error(str(e))
 			ch.basic_ack(delivery_tag = method.delivery_tag)
 			return
 		if(header['r_uniqid'] == 0): # If the message is intended for the cloud...

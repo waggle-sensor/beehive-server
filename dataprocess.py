@@ -8,9 +8,12 @@ import pika
 from protocol.PacketHandler import *
 from utilities.gPickler import *
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
+#logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
 import time
+
+logger = logging.getLogger(__name__)
+
 
 with open('/etc/waggle/cassandra_ip','r') as f:
     CASSANDRA_IP = f.read().strip()
@@ -48,8 +51,8 @@ class DataProcess(Process):
             #It was most likely a formatting issue with the data string
             #Cassandra is very specific so the data string must follow the expected format found in the cassandra_insert function below
             ch.basic_ack(delivery_tag=method.delivery_tag)
-            print "Error when trying to insert data into Cassandra. Please check data format."
-            print e
+            logger.error("Error when trying to insert data into Cassandra. Please check data format.")
+            logger.error(e)
             # Wait a few seconds before trying to reconnect
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
@@ -64,7 +67,7 @@ class DataProcess(Process):
             bound_statement = prepared_statement.bind([header["s_uniqid"],data[0],int(data[1]),data[2],data[4],data[5],data[6]])
             self.session.execute(bound_statement)
         except Exception as e:
-            print e
+            logger.error(e)
             raise
 
     def cassandra_connect(self):
@@ -77,8 +80,8 @@ class DataProcess(Process):
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             self.session = self.cluster.connect('waggle')
         except:
-            print "WARNING: Cassandra connection to " + CASSANDRA_IP + " failed."
-            print "The process will attempt to re-connect at a later time."
+            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
+            logger.warning("The process will attempt to re-connect at a later time.")
 
     def run(self):
         self.cassandra_connect()
