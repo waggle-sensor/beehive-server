@@ -55,7 +55,7 @@ docker run -ti --name certs --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ wag
 
 Start RabbitMQ server
 ```bash
-docker run -d --hostname beehive-rabbit --name beehive-rabbit -v ${DATA}/rabbitmq/config/:/etc/rabbitmq -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ rabbitmq:3.5.6
+docker run -d --hostname beehive-rabbit --name beehive-rabbit -e RABBITMQ_NODENAME=beehive-rabbit -v ${DATA}/rabbitmq/config/:/etc/rabbitmq -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ rabbitmq:3.5.6
 ```
 
 
