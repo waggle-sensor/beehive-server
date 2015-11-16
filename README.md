@@ -18,7 +18,7 @@ apt-get install -y  docker-engine
 ```
 
 ### Data directory
-While services are running in containers, configuration files, SSL certificates and databases have to be stored persistently on the host. Depending on your system you might want to use a different location to store these files.
+While services are running in containers, configuration files, SSL certificates and databases have to be stored persistently on the host. This is configured in Docker with the -v option (format: "host:container"). Depending on your system you might want to use a different location to store these files.
 
 ```bash
 export DATA="/mnt"
@@ -28,12 +28,13 @@ export DATA="/mnt"
 # export DATA="/media/ephemeral/"
 ```
 
+### Cassandra
 
-### Cassandra:
+Be sure that environment variable $DATA is defined.
 ```bash
 docker run -d --name beehive-cassandra -v ${DATA}/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
 ```
-You may want to change the -v option (format: "host:container") to point to a host file system location with sufficient space for the Cassandra database files. For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
+For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
 
 Installation instructions for Cassandra without Docker:
 
