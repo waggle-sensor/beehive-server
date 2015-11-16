@@ -17,9 +17,21 @@ apt-get update
 apt-get install -y  docker-engine
 ```
 
+### Data directory
+While services are running in containers, configuration files, SSL certificates and databases have to be stored persistently on the host. Depending on your system you might want to use a different location to store these files.
+
+```bash
+export DATA="/mnt"
+
+# other examples:
+# export DATA="${HOME}/waggle"
+# export DATA="/media/ephemeral/"
+```
+
+
 ### Cassandra:
 ```bash
-docker run -d --name beehive-cassandra -v /mnt/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
+docker run -d --name beehive-cassandra -v ${DATA}/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
 ```
 You may want to change the -v option (format: "host:container") to point to a host file system location with sufficient space for the Cassandra database files. For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
 
@@ -31,18 +43,18 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
 Download rabbitmq.config
 ```bash
-mkdir -p /mnt/rabbitmq/config/
-curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/rabbitmq.config > /mnt/rabbitmq/config/rabbitmq.config
+mkdir -p ${DATA}/rabbitmq/config/
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
 Create server certificates
 ```bash
-docker run -ti --name certs --rm -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
+docker run -ti --name certs --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
 Start RabbitMQ server
 ```bash
-docker run -d --hostname beehive-rabbit --name beehive-rabbit -v /mnt/rabbitmq/config/:/etc/rabbitmq -v /mnt/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ rabbitmq:3.5.6
+docker run -d --hostname beehive-rabbit --name beehive-rabbit -v ${DATA}/rabbitmq/config/:/etc/rabbitmq -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ rabbitmq:3.5.6
 ```
 
 
@@ -66,7 +78,7 @@ This requires that the cassandra container is already running on the same machin
 ```bash
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
-  -v /mnt/waggle/SSL:/usr/lib/waggle/SSL/ \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   -p 5671:5671 \
   waggle/beehive-server:latest
 ```
