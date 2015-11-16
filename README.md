@@ -66,7 +66,7 @@ docker run -d \
   --name beehive-rabbit \
   -e RABBITMQ_NODENAME=beehive-rabbit \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
-  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/:rw \
+  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -p 5671:5671 \
   rabbitmq:3.5.6
 ```
