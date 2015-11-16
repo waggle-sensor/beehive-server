@@ -13,7 +13,7 @@ from cassandra.cluster import Cluster
 import time
 
 logger = logging.getLogger(__name__)
-
+logger.setLevel(logging.DEBUG)
 
 with open('/etc/waggle/cassandra_ip','r') as f:
     CASSANDRA_IP = f.read().strip()
@@ -28,6 +28,9 @@ class DataProcess(Process):
             Starts up the Data handling Process
         """
         super(DataProcess,self).__init__()
+        
+        logger.info("Initializing DataProcess")
+        
         # Set up the Rabbit connection
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
@@ -56,6 +59,8 @@ class DataProcess(Process):
             # Wait a few seconds before trying to reconnect
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
+        
+        logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
 
     def cassandra_insert(self,header,data):
         # example cassandra query:

@@ -10,6 +10,7 @@ import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class WaggleRouter(Process):
 	"""
@@ -19,6 +20,7 @@ class WaggleRouter(Process):
 	"""
 	def __init__(self,routing_table):
 		logger.info("Initializing Routing Process")
+		logger.debug("debug mode")
 		super(WaggleRouter,self).__init__()
 
 		self.routing_table = routing_table
@@ -59,7 +61,10 @@ class WaggleRouter(Process):
 			logger.error(str(e))
 			ch.basic_ack(delivery_tag = method.delivery_tag)
 			return
-		if(header['r_uniqid'] == 0): # If the message is intended for the cloud...
+        
+		logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
+
+		if (header['r_uniqid'] == 0): # If the message is intended for the cloud...
 
 			msg_type = chr(header["msg_mj_type"]),chr(header["msg_mi_type"])
 			#Figure out which queue this message belongs in.

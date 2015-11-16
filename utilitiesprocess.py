@@ -9,6 +9,7 @@ import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 class UtilProcess(Process):
 	"""
@@ -39,7 +40,8 @@ class UtilProcess(Process):
 		#throw this back in the waggle_in and get it routed again.
 		header = get_header(body)
 
-
+		logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
+        
 		if(header['msg_mj_type'] == ord('p') and header["msg_mi_type"] == ord('r')): # It's a ping request
 			#Create a response header
 			resp_header = {

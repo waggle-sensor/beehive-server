@@ -13,6 +13,7 @@ from cassandra.cluster import Cluster
 import time
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 with open('/etc/waggle/cassandra_ip','r') as f:
     CASSANDRA_IP = f.read().strip()
@@ -31,6 +32,8 @@ class RegProcess(Process):
         """
         super(RegProcess,self).__init__()
         self.routing_table = routing_table
+
+        logger.info("Initializing RegProcess")
 
         # Set up the Rabbit connection
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
