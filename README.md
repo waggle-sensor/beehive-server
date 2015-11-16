@@ -53,14 +53,20 @@ Create server certificates
 docker run -ti --name certs --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
+Fix directory permissions
+```bash
+mkdir -p ${DATA}/rabbitmq/data/ ${DATA}/rabbitmq/config/
+chmod 777 ${DATA}/rabbitmq/data/ ${DATA}/rabbitmq/config/
+```
+
 Start RabbitMQ server
 ```bash
 docker run -d \
   --hostname beehive-rabbit \
   --name beehive-rabbit \
   -e RABBITMQ_NODENAME=beehive-rabbit \
-  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq \
-  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ \
+  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
+  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/mnesia/:rw \
   -p 5671:5671 \
   rabbitmq:3.5.6
 ```
