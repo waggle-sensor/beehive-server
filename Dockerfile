@@ -7,7 +7,7 @@ ADD . /usr/lib/waggle/beehive-server/
 
 # python modules
 RUN cd /usr/lib/waggle/beehive-server/ && \
-  install_dependencies.sh 
+  ./install_dependencies.sh 
   
 
 
