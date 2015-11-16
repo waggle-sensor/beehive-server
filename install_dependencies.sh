@@ -31,7 +31,7 @@ pip install crcmod
 cd pika-0.9.14/
 python setup.py install
 
-cd ..
+cd ../../
 
 # cqlshlib for the cassandra client
 cd cassandra-pylib/
