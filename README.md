@@ -84,6 +84,13 @@ if [ $(rabbitmqctl list_users | grep -c waggle) -eq 0 ] ; then
 fi
 ```
 
+#### Alternative installation methods for RabbitMQ:
+```bash
+# Ubuntu
+apt-get install rabbitmq-server
+```
+or https://www.rabbitmq.com/download.html
+
 
 ### Beehive Server
 This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
