@@ -27,6 +27,39 @@ Installation instructions for Cassandra without Docker:
 
 http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
+### RabbitMQ
+
+Download rabbitmq.config
+```bash
+mkdir -p /mnt/rabbitmq/config/
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/rabbitmq.config > /mnt/rabbitmq/config/rabbitmq.config
+```
+
+Create server certificates
+```bash
+docker run -ti --name certs --rm -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
+```
+
+Start RabbitMQ server
+```bash
+docker run -d --hostname beehive-rabbit --name beehive-rabbit -v /mnt/rabbitmq/config/:/etc/rabbitmq -v /mnt/rabbitmq/data/:/var/lib/rabbitmq/mnesia/ rabbitmq:3.5.6
+```
+
+
+Create waggle user:
+```bash
+# Enter running container
+docker exec -ti  beehive-rabbit /bin/bash
+
+# Inside of the container:
+if [ $(rabbitmqctl list_users | grep -c waggle) -eq 0 ] ; then 
+  echo "add waggle user"  
+  rabbitmqctl add_user waggle waggle
+  rabbitmqctl set_permissions waggle ".*" ".*" ".*"
+fi
+```
+
+
 ### Beehive Server
 This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
 
