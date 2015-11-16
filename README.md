@@ -73,15 +73,8 @@ Or, in case you have problems with file permissions on the host, you might want 
 
 Create waggle user:
 ```bash
-# Enter running container
-docker exec -ti  beehive-rabbit /bin/bash
-
-# Inside of the container:
-if [ $(rabbitmqctl list_users | grep -c waggle) -eq 0 ] ; then 
-  echo "add waggle user"  
-  rabbitmqctl add_user waggle waggle
-  rabbitmqctl set_permissions waggle ".*" ".*" ".*"
-fi
+docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
+docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
 ```
 
 #### Alternative installation methods for RabbitMQ:
