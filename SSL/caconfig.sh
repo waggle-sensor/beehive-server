@@ -46,4 +46,4 @@ cp ${SSL_DIR}/rabbitmq.config /etc/rabbitmq/
 
 #does not make sense: cp -r SSL /usr/lib/waggle/
 
-service rabbitmq-server restart
+#service rabbitmq-server restart
