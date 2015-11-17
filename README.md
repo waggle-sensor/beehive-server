@@ -32,9 +32,13 @@ export DATA="/mnt"
 
 Be sure that environment variable $DATA is defined.
 ```bash
-docker run -d --name beehive-cassandra -v ${DATA}/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
+docker run -d \
+  --name beehive-cassandra \
+  -v ${DATA}/cassandra/data/:/var/lib/cassandra/data \
+  -p 7000:7000 \
+  cassandra:2.2.3
 ```
-For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
+For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. The port mapping "-p 7000:7000" can be omitted if the beehive server runs on the same host as the cassandra database.
 
 Installation instructions for Cassandra without Docker:
 
@@ -50,7 +54,11 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 
 Create server certificates
 ```bash
-docker run -ti --name certs --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
+docker run -ti \
+  --name certs \
+  --rm \
+  -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
 Start RabbitMQ server
@@ -61,6 +69,7 @@ docker run -d \
   -e RABBITMQ_NODENAME=beehive-rabbit \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   -p 5671:5671 \
   rabbitmq:3.5.6
 ```
@@ -86,12 +95,12 @@ or https://www.rabbitmq.com/download.html
 
 
 ### Beehive Server
-This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
+If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
 
 ```bash
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
-  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
+  --link beehive-rabbit:rabbitmq \
   waggle/beehive-server:latest
 ```
 
