@@ -2,7 +2,8 @@
 """
 	This module sets up and runs the waggle server.
 """
-import sys, pika, logging, argparse
+import sys, pika, logging, argparse, logging, logging.handlers
+from config import *
 from WaggleRouter import WaggleRouter
 from utilitiesprocess import UtilProcess
 from multiprocessing import Manager
@@ -10,9 +11,7 @@ from registrationprocess import RegProcess
 from dataprocess import DataProcess
 import time
 
-loglevel=logging.DEBUG
-LOG_FILENAME="/var/log/waggle/communicator/beehive-server.log"
-LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
+
 
 
 #pika is a bit too verbose...
@@ -22,9 +21,6 @@ logging.getLogger('cassandra').setLevel(logging.ERROR)
 
 logger = logging.getLogger(__name__)
 
-root_logger = logging.getLogger()
-root_logger.setLevel(loglevel)
-formatter = logging.Formatter(LOG_FORMAT)
 
 # The number of processes of each type to run on this server instance
 NUM_ROUTER_PROCS = 1
@@ -42,6 +38,24 @@ queue_bindings = {
 	"data"         : ("internal","data")
 }
 
+# from: http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
+class StreamToLogger(object):
+    """
+    Fake file-like stream object that redirects writes to a logger instance.
+    """
+    def __init__(self, logger, log_level=logging.INFO, prefix=''):
+        self.logger = logger
+        self.log_level = log_level
+        self.linebuf = ''
+        self.prefix = prefix
+ 
+    def write(self, buf):
+        for line in buf.rstrip().splitlines():
+            self.logger.log(self.log_level, self.prefix+line.rstrip())
+
+    def flush(self):
+        pass
+
 
 
 
@@ -54,6 +68,9 @@ if __name__ == "__main__":
     if args.enable_logging:
         # 5 times 10MB
         sys.stdout.write('logging to '+LOG_FILENAME+'\n')
+        log_dir = os.path.dirname(LOG_FILENAME)
+        if not os.path.isdir(log_dir):
+            os.makedirs(log_dir)
         handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10485760, backupCount=5)
         
         #stdout_logger = logging.getLogger('STDOUT')
@@ -64,12 +81,9 @@ if __name__ == "__main__":
         sl = StreamToLogger(logger, logging.ERROR, 'STDERR: ')
         sys.stderr = sl
         
-    else:
-        handler = logging.StreamHandler(stream=sys.stdout)
-        
-    handler.setFormatter(formatter)
-    root_logger.handlers = []
-    root_logger.addHandler(handler)
+        handler.setFormatter(formatter)
+        root_logger.handlers = []
+        root_logger.addHandler(handler)
 
 
 
@@ -89,7 +103,14 @@ if __name__ == "__main__":
     			routing_table[int(info[0])] = info[1]
 
     #Connect to rabbitMQ
-    rabbitConn = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+    try:
+        rabbitConn = pika.BlockingConnection(pika_params)
+    except Exception as e:
+        logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (RABBITMQ_HOST, e))
+        sys.exit(1)
+    
+    logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
+    
     rabbitChannel = rabbitConn.channel()
 
     #Declare all of the appropriate exchanges, queues, and bindings
@@ -110,7 +131,7 @@ if __name__ == "__main__":
     	new_router = WaggleRouter(routing_table)
     	new_router.start()
     	router_procs.append(new_router)
-    logger.info("Routing processes online.")
+    logger.info("%d routing processes online." % (NUM_ROUTER_PROCS))
 
     util_procs = []
     for i in range (0,NUM_UTIL_PROCS):

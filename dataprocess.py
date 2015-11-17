@@ -4,6 +4,7 @@ import sys
 sys.path.append("..")
 sys.path.append("/usr/lib/waggle/")
 from multiprocessing import Process, Manager
+from config import *
 import pika
 from protocol.PacketHandler import *
 from utilities.gPickler import *
@@ -32,7 +33,16 @@ class DataProcess(Process):
         logger.info("Initializing DataProcess")
         
         # Set up the Rabbit connection
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        #Connect to rabbitMQ
+        try:
+            self.connection = pika.BlockingConnection(pika_params)
+        except Exception as e:
+            logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+            sys.exit(1)
+    
+        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))		
+		
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
