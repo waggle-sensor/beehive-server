@@ -69,6 +69,7 @@ docker run -d \
   -e RABBITMQ_NODENAME=beehive-rabbit \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   -p 5671:5671 \
   rabbitmq:3.5.6
 ```
@@ -100,7 +101,6 @@ If cassandra or RabbitMQ are running remotely, omit the corresponding option "--
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
   --link beehive-rabbit:rabbitmq \
-  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest
 ```
 
