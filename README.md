@@ -55,8 +55,9 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 Create server certificates
 ```bash
 docker run -ti \
-  --name certs 
-  --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  --name certs \
+  --rm \
+  -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
