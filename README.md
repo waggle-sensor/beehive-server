@@ -35,9 +35,10 @@ Be sure that environment variable $DATA is defined.
 docker run -d \
   --name beehive-cassandra \
   -v ${DATA}/cassandra/data/:/var/lib/cassandra/data \
+  -p 7000:7000 \
   cassandra:2.2.3
 ```
-For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
+For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. The port mapping "-p 7000:7000" can be omitted if the beehive server runs on the same host as the cassandra database.
 
 Installation instructions for Cassandra without Docker:
 
