@@ -30,11 +30,11 @@ export DATA="/mnt"
 
 ### Cassandra
 
-
+See [README_cassandra.md](./README_cassandra.md)
 
 ### RabbitMQ
 
-
+See [README_rabbitmq.md](./README_rabbitmq.md)
 
 ### Beehive Server
 If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
