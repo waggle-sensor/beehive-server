@@ -93,11 +93,12 @@ or https://www.rabbitmq.com/download.html
 
 
 ### Beehive Server
-This requires that the cassandra container is already running on the same machine. If cassandra is running remotely, do not use option "--link ...".
+If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
 
 ```bash
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
+  --link beehive-rabbit:rabbitmq \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest
 ```
