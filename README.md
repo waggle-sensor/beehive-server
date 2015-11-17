@@ -32,7 +32,10 @@ export DATA="/mnt"
 
 Be sure that environment variable $DATA is defined.
 ```bash
-docker run -d --name beehive-cassandra -v ${DATA}/cassandra/data/:/var/lib/cassandra/data cassandra:2.2.3
+docker run -d \
+  --name beehive-cassandra \
+  -v ${DATA}/cassandra/data/:/var/lib/cassandra/data \
+  cassandra:2.2.3
 ```
 For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. 
 
@@ -50,7 +53,10 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 
 Create server certificates
 ```bash
-docker run -ti --name certs --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ waggle/beehive-server:latest ./scripts/configure_ssl.sh
+docker run -ti \
+  --name certs 
+  --rm -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
 Start RabbitMQ server
