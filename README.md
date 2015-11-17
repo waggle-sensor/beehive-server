@@ -37,6 +37,13 @@ See [README_cassandra.md](./README_cassandra.md)
 See [README_rabbitmq.md](./README_rabbitmq.md)
 
 ### Beehive Server
+
+If you are not using a Docker container you can install dependencies with this script.
+```bash
+./install_dependencies.sh
+```
+
+#### Starting the docker container
 If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
 
 ```bash
@@ -46,21 +53,31 @@ docker run -ti --name beehive-server \
   waggle/beehive-server:latest
 ```
 
+You should now be inside the container.
+
 **Tip:** For developing purposes you can also mount the git repo into the container.
 ```bash
 -v ${HOME}/git/beehive-server:/usr/lib/waggle/beehive-server
 ```
 
-You should now be inside the container. Run the configure and Server.py scripts:
+
+#### Configure the beehive server
+
+You can set RabbitMQ and Cassandra hostnames in /etc/waggle/beehive-server.cfg if they are installe remotely. (TODO: provide easy template)
+
+Run configure script.
 ```bash
-cd /beehive-server/
 ./configure
-cd /usr/lib/waggle/beehive-server/
+```
+
+Start the server.
+```bash
 python ./Server.py
 ```
+
 The beehive server should be running at this point. 
 
-Leave the container and put it in background using key combinations "Ctrl-P" "Ctrl-Q". You can re-attach to the container with
+If you are in a Docker container, leave the container and put it in background using key combinations "Ctrl-P" "Ctrl-Q". You can re-attach to the container with
 ```bash
 docker attach beehive-server
 ```
