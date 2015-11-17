@@ -44,6 +44,21 @@ Installation instructions for Cassandra without Docker:
 
 http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
+
+#### Notes
+
+To directly connect to cassandra:
+```bash
+docker run -it --link beehive-cassandra:cassandra --rm cassandra:2.2.3 cqlsh cassandra
+```
+To view database, e.g.:
+```bash
+use waggle;
+SELECT * FROM node_info;
+DESCRIBE TABLES;
+```
+
+
 ### RabbitMQ
 
 Download rabbitmq.config
@@ -127,20 +142,3 @@ or enter the container without attaching to the main process (python Server.py) 
 docker exec -ti beehive-server bash
 ```
 
-
-## Developer Notes
-
-TODO: Run RabbitMQ in its own container.
-
-### Notes on Cassandra
-
-To directly connect to cassandra:
-```bash
-docker run -it --link beehive-cassandra:cassandra --rm cassandra:2.2.3 cqlsh cassandra
-```
-To view database, e.g.:
-```bash
-use waggle;
-SELECT * FROM node_info;
-DESCRIBE TABLES;
-```
