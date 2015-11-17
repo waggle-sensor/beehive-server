@@ -119,7 +119,7 @@ docker run -ti --name beehive-server \
   waggle/beehive-server:latest
 ```
 
-For developing purposes you can also mount the git repo into the container.
+**Tip:** For developing purposes you can also mount the git repo into the container.
 ```bash
 -v ${HOME}/git/beehive-server:/usr/lib/waggle/beehive-server
 ```
