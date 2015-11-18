@@ -13,23 +13,23 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 Create server certificates
 ```bash
 docker run -ti \
---name certs \
---rm \
--v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
-waggle/beehive-server:latest ./scripts/configure_ssl.sh
+  --name certs \
+  --rm \
+  -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  waggle/beehive-server:latest ./scripts/configure_ssl.sh
 ```
 
 Start RabbitMQ server
 ```bash
 docker run -d \
---hostname beehive-rabbit \
---name beehive-rabbit \
--e RABBITMQ_NODENAME=beehive-rabbit \
--v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
--v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
--v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
--p 5671:5671 \
-rabbitmq:3.5.6
+  --hostname beehive-rabbit \
+  --name beehive-rabbit \
+  -e RABBITMQ_NODENAME=beehive-rabbit \
+  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
+  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
+  --expose=5671 \
+  rabbitmq:3.5.6
 ```
 
 Or, in case you have problems with file permissions on the host, you might want to call the rabbitmq-server binary directly to invoke it with root rights. Add the full path of the rabbitmq-server binary as an addtional argument to the call above.
