@@ -3,6 +3,9 @@
 import sys, os, StringIO, ConfigParser, logging, pika
 
 
+
+CONFIG_FILE="/etc/waggle/beehive-server.cfg"
+
 loglevel=logging.DEBUG
 LOG_FILENAME="/var/log/waggle/communicator/beehive-server.log"
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
@@ -39,7 +42,7 @@ def read_value(key, defaultval):
     
     
 
-CONFIG_FILE="/etc/waggle/beehive-server.cfg"
+
 ini_str = '[root]\n'
 if os.path.isfile(CONFIG_FILE):
     ini_str = ini_str + open(CONFIG_FILE, 'r').read()
