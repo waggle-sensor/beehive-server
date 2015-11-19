@@ -30,6 +30,7 @@ docker run -d \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   --expose=5671 \
+  -p 5671:5671 -p 5672:5672 \
   rabbitmq:3.5.6
 ```
 
