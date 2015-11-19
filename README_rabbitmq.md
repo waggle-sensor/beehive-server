@@ -6,12 +6,13 @@ Be sure that environment variable $DATA is defined.
 
 Download rabbitmq.config
 ```bash
-mkdir -p ${DATA}/rabbitmq/config/
+mkdir -p ${DATA}/rabbitmq/config/ && \
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
 Create server certificates
 ```bash
+docker pull waggle/beehive-server:latest
 docker run -ti \
   --name certs \
   --rm \
