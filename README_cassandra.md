@@ -24,6 +24,7 @@ docker run -it --link beehive-cassandra:cassandra --rm cassandra:2.2.3 cqlsh cas
 To view database, e.g.:
 ```bash
 use waggle;
-SELECT * FROM node_info;
 DESCRIBE TABLES;
+SELECT * FROM node_info;
+SELECT * FROM sensor_data;
 ```
