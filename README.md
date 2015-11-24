@@ -72,7 +72,7 @@ Run configure script.
 
 Start the server.
 ```bash
-python ./Server.py
+./Server.py [--logging]
 ```
 
 The beehive server should be running at this point. 
