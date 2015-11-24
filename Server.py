@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # The number of processes of each type to run on this server instance
 NUM_ROUTER_PROCS = 1
-NUM_DATA_PROCS = 1
+NUM_DATA_PROCS = 14
 NUM_REGISTRATION_PROCS = 1
 NUM_UTIL_PROCS = 1
 
@@ -94,19 +94,20 @@ if __name__ == "__main__":
 
 
     # Add node queue bindings that are already registered
-    with open('registrations/nodes.txt') as file_:
-    	for line in file_:
-    		if line and line != '\n':
-    			line = line[:-1] #Cut off the newline character
-    			info = line.split(":")
-    			queue_bindings[info[1]] = ("internal",info[1])
-    			routing_table[int(info[0])] = info[1]
+    if os.path.isfile('registrations/nodes.txt'): 
+        with open('registrations/nodes.txt') as file_:
+        	for line in file_:
+        		if line and line != '\n':
+        			line = line[:-1] #Cut off the newline character
+        			info = line.split(":")
+        			queue_bindings[info[1]] = ("internal",info[1])
+        			routing_table[int(info[0])] = info[1]
 
     #Connect to rabbitMQ
     try:
         rabbitConn = pika.BlockingConnection(pika_params)
     except Exception as e:
-        logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (RABBITMQ_HOST, e))
+        logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
         sys.exit(1)
     
     logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
