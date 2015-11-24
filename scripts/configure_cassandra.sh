@@ -1,5 +1,8 @@
 #!/bin/bash
 
+### This script is DEPRECATED!
+### Installation of cqlsh.py is too unreliable.
+
 set -e
 set -x 
 
