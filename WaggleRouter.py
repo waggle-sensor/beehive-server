@@ -37,7 +37,7 @@ class WaggleRouter(Process):
         try:
             self.rabbitConn = pika.BlockingConnection(pika_params)
         except Exception as e:
-            logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+            logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, str(e)))
             sys.exit(1)
     
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
