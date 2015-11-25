@@ -121,8 +121,8 @@ class RegProcess(Process):
         # This is inherent to Cassandra, so is not explicitly stated here.
             try:
                 self.cassandra_insert(header,msg)
-            except Exception:
-                logger.warning("Cassandra connection failed. Will retry soon...")
+            except Exception as e:
+                logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
                 ch.basic_nack(delivery_tag = method.delivery_tag)
                 time.sleep(1)
                 self.cassandra_connect()
@@ -144,6 +144,10 @@ class RegProcess(Process):
             raise
         try:            
             bound_statement = prepared_statement.bind([header["s_uniqid"],time.time()*1000,data])
+        except Exception as e:
+            logger.error("prepared_statement.bind: "+str(e))
+            raise
+        try:        
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error("self.session.execute crashed: "+str(e))
@@ -163,8 +167,9 @@ class RegProcess(Process):
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             self.session = self.cluster.connect('waggle')
         except:
-            logger.warning( "WARNING: Cassandra connection to " + CASSANDRA_IP + " failed." )
-            logger.warning( "The process will attempt to re-connect at a later time." )
+            logger.warning("self.cluster.connect failed: " + str(e))
+            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
+            logger.warning("The process will attempt to re-connect at a later time.")
 
     def run(self):
         self.cassandra_connect()
