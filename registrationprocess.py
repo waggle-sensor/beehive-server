@@ -180,7 +180,7 @@ class RegProcess(Process):
                 
             time.sleep(1)
             
-        mutex.release()
+        self.session_mutex.release()
 
     def run(self):
         self.cassandra_connect()
