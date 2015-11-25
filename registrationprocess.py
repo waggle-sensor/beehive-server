@@ -47,15 +47,20 @@ class RegProcess(Process):
             logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
             sys.exit(1)
     
+        self.session = None
+        self.cluster = None
+        self.session_mutex = threading.Lock()
+        
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
         self.channel.queue_declare("registration")
-        self.channel.basic_consume(self.callback, queue='registration')
-        self.session = None
-        self.cluster = None
-        self.session_mutex = threading.Lock()
+        try:
+            self.channel.basic_consume(self.callback, queue='registration')
+        except Exception as e:
+            logger.warning("pike basic_consume crashed "+ str(e))
+        
 
     def callback(self,ch,method,props,body):
         """
