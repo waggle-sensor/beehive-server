@@ -139,6 +139,11 @@ class RegProcess(Process):
         """
             Insert a list of data into the currently connected Cassandra database.
         """
+        
+        while self.session == None:
+            logger.debug("cassandra_insert is waiting for session...")
+            time.sleep(1)
+        
         try:
             prepared_statement = self.session.prepare("INSERT INTO node_info" + \
                 " (node_id, timestamp, config_file)" + \
@@ -169,16 +174,20 @@ class RegProcess(Process):
                 self.cluster.shutdown()
             except:
                 pass
-            self.cluster = Cluster(contact_points=[CASSANDRA_IP])
-
+            
+            try:    
+                self.cluster = Cluster(contact_points=[CASSANDRA_IP])
+            except Exception as e:
+                logger.error("self.cluster.connect failed: " + str(e))
+                time.sleep(1)
+                continue
+                
             try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                 self.session = self.cluster.connect('waggle')
-            except:
-                logger.warning("self.cluster.connect failed: " + str(e))
-                logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
-                logger.warning("The process will attempt to re-connect at a later time.")
-                
-            time.sleep(1)
+            except Exception as e:
+                logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_IP + " failed: " + str(e))
+                time.sleep(1)
+                continue
             
         self.session_mutex.release()
 
