@@ -145,9 +145,8 @@ class RegProcess(Process):
             Insert a list of data into the currently connected Cassandra database.
         """
         
-        while self.session == None:
-            logger.debug("cassandra_insert is waiting for session...")
-            time.sleep(1)
+        if self.session == None:
+            self.cassandra_connect()
         
         try:
             prepared_statement = self.session.prepare("INSERT INTO node_info" + \
