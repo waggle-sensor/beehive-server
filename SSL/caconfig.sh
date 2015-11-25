@@ -6,5 +6,6 @@
 ./create_server_cert.sh
 
 # Copy files to correct places
-cp ${SSL_DIR}/rabbitmq.config /etc/rabbitmq/
+mkdir -p /etc/rabbitmq/
+cp /usr/lib/waggle/SSL/rabbitmq.config /etc/rabbitmq/
 

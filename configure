@@ -23,7 +23,8 @@ echo Moving waggle server folder to proper place.
 ln -sf waggle-protocol/utilities/
 ln -sf waggle-protocol/protocol/
 
-source ./scripts/configure_cassandra.sh
+#deprecated
+#source ./scripts/configure_cassandra.sh
 
 # here not needed anymore
 #source ./scripts/configure_rabbitmq.sh 
