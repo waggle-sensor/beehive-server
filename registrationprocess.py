@@ -73,6 +73,8 @@ class RegProcess(Process):
             else:
                 logger.info("Registering new node.")
                 # Add the node to the registration file and make and bind its queue
+                if not os.path.exists('registrations'):
+                    os.makedirs('registrations')
                 with open('registrations/nodes.txt','a+') as nodeList:
                     nodeList.write("{}:{}\n".format(str(header["s_uniqid"]),msg))
                 self.channel.queue_declare(msg)
