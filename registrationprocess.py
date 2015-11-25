@@ -12,9 +12,12 @@ import logging
 from crcmod.predefined import mkCrcFun
 from cassandra.cluster import Cluster
 import time
+import threading
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
+
+
 
 with open('/etc/waggle/cassandra_ip','r') as f:
     CASSANDRA_IP = f.read().strip()
@@ -52,6 +55,7 @@ class RegProcess(Process):
         self.channel.basic_consume(self.callback, queue='registration')
         self.session = None
         self.cluster = None
+        self.session_mutex = threading.Lock()
 
     def callback(self,ch,method,props,body):
         """
@@ -158,18 +162,25 @@ class RegProcess(Process):
         """
             Try to establish a new connection to Cassandra.
         """
-        try:
-            self.cluster.shutdown()
-        except:
-            pass
-        self.cluster = Cluster(contact_points=[CASSANDRA_IP])
+        self.session_mutex.acquire()
+        
+        while self.session == None:     
+            try:
+                self.cluster.shutdown()
+            except:
+                pass
+            self.cluster = Cluster(contact_points=[CASSANDRA_IP])
 
-        try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            self.session = self.cluster.connect('waggle')
-        except:
-            logger.warning("self.cluster.connect failed: " + str(e))
-            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
-            logger.warning("The process will attempt to re-connect at a later time.")
+            try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
+                self.session = self.cluster.connect('waggle')
+            except:
+                logger.warning("self.cluster.connect failed: " + str(e))
+                logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
+                logger.warning("The process will attempt to re-connect at a later time.")
+                
+            time.sleep(1)
+            
+        mutex.release()
 
     def run(self):
         self.cassandra_connect()
