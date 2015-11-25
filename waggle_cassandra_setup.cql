@@ -2,7 +2,7 @@ CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrateg
 
 
 CREATE TABLE waggle.sensor_data (
-    node_id int,
+    node_id ascii,
     sensor_name ascii,
     timestamp timestamp,
     data list<double>,
@@ -14,7 +14,7 @@ CREATE TABLE waggle.sensor_data (
 
 
 CREATE TABLE waggle.node_info (
-    node_id int PRIMARY KEY,
+    node_id ascii PRIMARY KEY,
     timestamp timestamp,
     config_file ascii,
     extra_notes list<ascii>,
