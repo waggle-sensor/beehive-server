@@ -139,9 +139,14 @@ class RegProcess(Process):
             prepared_statement = self.session.prepare("INSERT INTO node_info" + \
                 " (node_id, timestamp, config_file)" + \
                 " VALUES (?, ?, ?)")
+        except Exception as e:
+            logger.error("self.session.prepare crashed: "+str(e))
+            raise
+        try:            
             bound_statement = prepared_statement.bind([header["s_uniqid"],time.time()*1000,data])
             self.session.execute(bound_statement)
         except Exception as e:
+            logger.error("self.session.execute crashed: "+str(e))
             raise
 
 
