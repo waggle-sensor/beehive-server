@@ -155,8 +155,12 @@ class RegProcess(Process):
         except Exception as e:
             logger.error("self.session.prepare crashed: "+str(e))
             raise
+            
+        # convert int to hex_str
+        s_uniqid_str = "%0s"%format(header["s_uniqid"],'x').lower().zfill(16)
         try:            
-            bound_statement = prepared_statement.bind([header["s_uniqid"],time.time()*1000,data])
+            #bound_statement = prepared_statement.bind([header["s_uniqid"],time.time()*1000,data])
+            bound_statement = prepared_statement.bind([s_uniqid_str,time.time()*1000,data])
         except Exception as e:
             logger.error("prepared_statement.bind: "+str(e))
             raise
