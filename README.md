@@ -47,6 +47,8 @@ If you are not using a Docker container you can install dependencies with this s
 If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
 
 ```bash
+docker rm -f beehive-server
+docker pull waggle/beehive-server
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
   --link beehive-rabbit:rabbitmq \
