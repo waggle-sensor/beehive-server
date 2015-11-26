@@ -73,13 +73,14 @@ class DataProcess(Process):
         logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
 
     def cassandra_insert(self,header,data):
+        s_uniqid_str = "%0s"%format(header["s_uniqid"],'x').lower().zfill(16)
         # example cassandra query:
         # INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         try:
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
                 " (node_id, sensor_name, timestamp, data_types, data, units, extra_info)" + \
                 " VALUES (?, ?, ?, ?, ?, ?, ?)")
-            bound_statement = prepared_statement.bind([header["s_uniqid"],data[0],int(data[1]),data[2],data[4],data[5],data[6]])
+            bound_statement = prepared_statement.bind([s_uniqid_str,data[0],int(data[1]),data[2],data[4],data[5],data[6]])
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error(e)
