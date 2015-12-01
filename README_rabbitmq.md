@@ -43,7 +43,9 @@ rabbitmq:3.5.6 /usr/lib/rabbitmq/bin/rabbitmq-server
 Create waggle user:
 ```bash
 docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
-docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
+# old: docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
+docker exec -ti  beehive-rabbit rabbitmqctl set_permissions node "node_.*" ".*" ".*"
+docker exec -ti  beehive-rabbit rabbitmqctl set_permissions server ".*" ".*" ".*"
 ```
 
 #### Alternative installation methods for RabbitMQ:
