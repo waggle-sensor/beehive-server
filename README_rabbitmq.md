@@ -26,7 +26,7 @@ docker run -d \
   --hostname beehive-rabbit \
   --name beehive-rabbit \
   -e RABBITMQ_NODENAME=beehive-rabbit \
-  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
+  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   --expose=5671 \
