@@ -15,7 +15,7 @@ cd ${SSL_DIR}/server
 openssl genrsa -out key.pem 2048
 
 openssl req -new -key key.pem -out req.pem -outform PEM \
-	-subj /CN=$(hostname)/O=server/ -nodes
+	-subj /CN=server/O=server/ -nodes
 
 cd ${SSL_DIR}/waggleca
 
