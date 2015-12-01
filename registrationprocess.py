@@ -157,7 +157,7 @@ class RegProcess(Process):
             raise
             
         # convert int to hex_str
-        s_uniqid_str = "%0s"%format(header["s_uniqid"],'x').lower().zfill(16)
+        s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         try:            
             #bound_statement = prepared_statement.bind([header["s_uniqid"],time.time()*1000,data])
             bound_statement = prepared_statement.bind([s_uniqid_str,time.time()*1000,data])
