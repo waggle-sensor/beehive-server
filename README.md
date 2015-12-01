@@ -63,7 +63,7 @@ docker pull waggle/beehive-server:latest
   --name certs \
   --rm \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
-  waggle/beehive-server:latest ./SSL/create_client_cert.sh server beehive-server
+  waggle/beehive-server:latest ./beehive-server/SSL/create_client_cert.sh server beehive-server
 ```  
 
 #### Starting the docker container
