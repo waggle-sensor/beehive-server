@@ -42,6 +42,12 @@ Or, in case you have problems with file permissions on the host, you might want 
 rabbitmq:3.5.6 /usr/lib/rabbitmq/bin/rabbitmq-server
 ```
 
+Confirm RabbitMQ is running:
+```bash
+docker logs beehive-rabbit
+```
+
+
 Create waggle user:
 ```bash
 # old: docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
