@@ -58,12 +58,15 @@ logger.info("RABBITMQ_HOST: %s" %(RABBITMQ_HOST))
 USE_SSL=True
 RABBITMQ_PORT=5671
 
-CLIENT_KEY_FILE="/usr/lib/waggle/SSL/node1/node1_key.pem"
-CLIENT_CERT_FILE="/usr/lib/waggle/SSL/node1/node1_cert.pem"
+
+# Beehive server has needs client certificates for RabbitMQ
+CLIENT_KEY_FILE="/usr/lib/waggle/SSL/beehive-server/key.pem"
+CLIENT_CERT_FILE="/usr/lib/waggle/SSL/beehive-server/cert.pem"
+
 CA_ROOT_FILE="/usr/lib/waggle/SSL/waggleca/cacert.pem"
 
 
-pika_credentials = pika.PlainCredentials('waggle', 'waggle')
+pika_credentials = pika.PlainCredentials('server', 'waggle')
     
 pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST, 
                                         credentials=pika_credentials, 
