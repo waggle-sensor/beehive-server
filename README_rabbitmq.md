@@ -1,8 +1,10 @@
 ### RabbitMQ
 
 
-Be sure that environment variable $DATA is defined.
-
+Be sure that environment variable $DATA is defined, e.g.:
+```bash
+export DATA="/mnt/"
+```
 
 Download rabbitmq.config
 ```bash
@@ -10,7 +12,7 @@ mkdir -p ${DATA}/rabbitmq/config/ && \
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
-Create server certificates
+Create SSL server certificate for RabbitMQ
 ```bash
 docker pull waggle/beehive-server:latest
 
