@@ -7,7 +7,7 @@ Be sure that environment variable $DATA is defined.
 Download rabbitmq.config
 ```bash
 mkdir -p ${DATA}/rabbitmq/config/ && \
-curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
 Create server certificates
