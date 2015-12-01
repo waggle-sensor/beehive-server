@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, StringIO, ConfigParser, logging, pika
+import sys, os, StringIO, ConfigParser, logging, pika, ssl
 
 
 
