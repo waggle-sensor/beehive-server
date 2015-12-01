@@ -56,7 +56,7 @@ If you are not using a Docker container you can install dependencies with this s
 ```
 
 #### Starting the docker container
-If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ...".
+If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ..." and configure /etc/waggle/beehive-server.cfg accordingly.
 
 ```bash
 docker rm -f beehive-server
@@ -77,7 +77,7 @@ You should now be inside the container.
 
 #### Configure the beehive server
 
-You can set RabbitMQ and Cassandra hostnames in /etc/waggle/beehive-server.cfg if they are installe remotely. (TODO: provide easy template)
+You can set RabbitMQ and Cassandra hostnames in /etc/waggle/beehive-server.cfg if they are installed remotely. The configure script will create this file if it does not yet exist. 
 
 Run configure script.
 ```bash
@@ -95,8 +95,8 @@ If you are in a Docker container, leave the container and put it in background u
 ```bash
 docker attach beehive-server
 ```
-or enter the container without attaching to the main process (python Server.py) with "docker exec":
+or enter the container without attaching to the main process (Server.py) with "docker exec":
 ```bash
-docker exec -ti beehive-server bash
+docker exec -ti beehive-server /bin/bash
 ```
 
