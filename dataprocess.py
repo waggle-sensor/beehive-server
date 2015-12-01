@@ -73,7 +73,7 @@ class DataProcess(Process):
         logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
 
     def cassandra_insert(self,header,data):
-        s_uniqid_str = "%0s"%format(header["s_uniqid"],'x').lower().zfill(16)
+        s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         # example cassandra query:
         # INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         try:
