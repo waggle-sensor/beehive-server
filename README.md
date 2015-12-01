@@ -55,6 +55,17 @@ If you are not using a Docker container you can install dependencies with this s
 ./install_dependencies.sh
 ```
 
+#### Client certificate for beehive server
+```bash
+docker pull waggle/beehive-server:latest
+
+[ ! -z "$DATA" ] && docker run -ti \
+  --name certs \
+  --rm \
+  -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  waggle/beehive-server:latest ./SSL/create_client_cert.sh server beehive-server
+```  
+
 #### Starting the docker container
 If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ..." and configure /etc/waggle/beehive-server.cfg accordingly.
 
