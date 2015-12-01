@@ -64,7 +64,7 @@ docker exec -ti  beehive-rabbit rabbitmqctl set_permissions node "node_.*" ".*" 
 docker exec -ti  beehive-rabbit rabbitmqctl set_permissions server ".*" ".*" ".*"
 ```
 
-#### Alternative installation methods for RabbitMQ:
+### Alternative installation methods for RabbitMQ:
 ```bash
 # Ubuntu
 apt-get install rabbitmq-server
