@@ -55,8 +55,25 @@ RABBITMQ_HOST=read_value("rabbitmq-host", "rabbitmq")
 
 logger.info("RABBITMQ_HOST: %s" %(RABBITMQ_HOST))
 
+USE_SSL=True
+RABBITMQ_PORT=5671
+
+SERVER_KEY_FILE="/usr/lib/waggle/SSL/server/key.pem"
+SERVER_CERT_FILE="/usr/lib/waggle/SSL/server/cert.pem"
+CA_ROOT_FILE="/usr/lib/waggle/SSL/waggleca/cacert.pem"
+
 
 pika_credentials = pika.PlainCredentials('waggle', 'waggle')
-pika_params=pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=pika_credentials, virtual_host='/')
+    
+pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST, 
+                                        credentials=pika_credentials, 
+                                        virtual_host='/', 
+                                        port=RABBITMQ_PORT, 
+                                        ssl=USE_SSL, 
+                                        ssl_options={"ca_certs": CA_ROOT_FILE , 'certfile': SERVER_CERT_FILE, 'keyfile': SERVER_KEY_FILE, 'cert_reqs' : ssl.CERT_REQUIRED} 
+                                         )
+
+
+
     
     
