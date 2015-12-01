@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 
 # this script creates the client-certificates for the RabbitMQ server.
 # This is used for nodes and the beehive-server.
@@ -9,12 +9,13 @@ export SSL_DIR="/usr/lib/waggle/SSL"
 if [ ! $# -eq 2 ];  then
     echo "usage: ./create_client_cert.sh node|server <dirname>"
     echo " example: ./create_client_cert.sh node node1"
+    exit 1
 fi
 
 RABBIT_USER=$1
 
 # refers to beehive-sever, not RabbitMQ.
-if [ "${RABBIT_USER}_" != "node" ] && [ "${RABBIT_USER}_" == "server" ] ; then
+if [ "${RABBIT_USER}_" != "node_" ] && [ "${RABBIT_USER}_" != "server_" ] ; then
   echo 'error: first argument must be either "node" or "server"'
   exit 1
 fi
@@ -22,7 +23,7 @@ fi
 
 export CERT_DIR=$2
 
-
+set -x
 
 rm -rf ${SSL_DIR}/${CERT_DIR}
 mkdir -p ${SSL_DIR}/${CERT_DIR}
