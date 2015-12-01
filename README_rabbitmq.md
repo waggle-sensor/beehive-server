@@ -13,7 +13,6 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 Create server certificates
 ```bash
 docker pull waggle/beehive-server:latest
-docker rm -f 
 
 [ ! -z "$DATA" ] && docker run -ti \
   --name certs \
@@ -24,6 +23,7 @@ docker rm -f
 
 Start RabbitMQ server
 ```bash
+docker rm -f beehive-rabbit
 [ ! -z "$DATA" ] && docker run -d \
   --hostname beehive-rabbit \
   --name beehive-rabbit \
