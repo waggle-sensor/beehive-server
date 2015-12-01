@@ -1,4 +1,4 @@
-### RabbitMQ
+## RabbitMQ for Waggle
 
 
 Be sure that environment variable $DATA is defined, e.g.:
@@ -6,13 +6,13 @@ Be sure that environment variable $DATA is defined, e.g.:
 export DATA="/mnt/"
 ```
 
-Download rabbitmq.config
+### rabbitmq.config
 ```bash
 mkdir -p ${DATA}/rabbitmq/config/ && \
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
-Create SSL server certificate for RabbitMQ
+### Create SSL server certificate for RabbitMQ
 ```bash
 docker pull waggle/beehive-server:latest
 
@@ -23,7 +23,11 @@ docker pull waggle/beehive-server:latest
   waggle/beehive-server:latest ./SSL/create_server_cert.sh
 ```
 
-Start RabbitMQ server
+### CA certificate cacert.pem
+In addition to its own private key (key.pem) and certificate (cert.pem), located under /usr/lib/waggle/SSL/beehive-server, RabbitMQ also needs access to the public certificate of the CA. You can either mount that file/directory into the docker container or copy it into the container. The example below mounts the SSL directory.
+
+
+### Start RabbitMQ server
 ```bash
 docker rm -f beehive-rabbit
 [ ! -z "$DATA" ] && docker run -d \
