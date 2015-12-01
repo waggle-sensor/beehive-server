@@ -1,6 +1,9 @@
 #!/bin/bash
 
 
+# this script creates the "server"-certificate for the RabbitMQ server.
+
+
 export SSL_DIR="/usr/lib/waggle/SSL"
 
 
@@ -15,7 +18,7 @@ cd ${SSL_DIR}/server
 openssl genrsa -out key.pem 2048
 
 openssl req -new -key key.pem -out req.pem -outform PEM \
-	-subj /CN=server/O=server/ -nodes
+	-subj /CN=$(hostname)/O=server/ -nodes
 
 cd ${SSL_DIR}/waggleca
 
