@@ -30,7 +30,7 @@ docker rm -f beehive-rabbit
   -e RABBITMQ_NODENAME=beehive-rabbit \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
-  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/:ro \
   --expose=5671 \
   -p 5671:5671 -p 5672:5672 \
   rabbitmq:3.5.6
