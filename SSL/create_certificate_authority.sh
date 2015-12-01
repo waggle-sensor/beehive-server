@@ -5,6 +5,10 @@ export SSL_DIR="/usr/lib/waggle/SSL"
 
 # Begin constructing the Certificate Authority
 
+mkdir -p /usr/lib/waggle
+chmod 777 -R /usr/lib/waggle
+
+
 rm -rf ${SSL_DIR}/waggleca
 mkdir -p ${SSL_DIR}/waggleca
 
