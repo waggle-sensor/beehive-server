@@ -13,7 +13,8 @@ curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/SSL/r
 Create server certificates
 ```bash
 docker pull waggle/beehive-server:latest
-docker run -ti \
+
+[ ! -z "$DATA" ] && docker run -ti \
   --name certs \
   --rm \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
@@ -22,11 +23,12 @@ docker run -ti \
 
 Start RabbitMQ server
 ```bash
-docker run -d \
+docker rm -f beehive-rabbit
+[ ! -z "$DATA" ] && docker run -d \
   --hostname beehive-rabbit \
   --name beehive-rabbit \
   -e RABBITMQ_NODENAME=beehive-rabbit \
-  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:ro \
+  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/ \
   --expose=5671 \
@@ -40,10 +42,20 @@ Or, in case you have problems with file permissions on the host, you might want 
 rabbitmq:3.5.6 /usr/lib/rabbitmq/bin/rabbitmq-server
 ```
 
+Confirm RabbitMQ is running:
+```bash
+docker logs beehive-rabbit
+```
+
+
 Create waggle user:
 ```bash
-docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
-docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
+# old: docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
+# old: docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
+docker exec -ti  beehive-rabbit rabbitmqctl add_user node waggle
+docker exec -ti  beehive-rabbit rabbitmqctl add_user server waggle
+docker exec -ti  beehive-rabbit rabbitmqctl set_permissions node "node_.*" ".*" ".*"
+docker exec -ti  beehive-rabbit rabbitmqctl set_permissions server ".*" ".*" ".*"
 ```
 
 #### Alternative installation methods for RabbitMQ:
