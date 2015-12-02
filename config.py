@@ -52,8 +52,12 @@ my_config = ConfigParser.RawConfigParser()
 my_config.readfp(ini_fp)
 
 RABBITMQ_HOST=read_value("rabbitmq-host", "rabbitmq")
-
 logger.info("RABBITMQ_HOST: %s" %(RABBITMQ_HOST))
+
+CASSANDRA_HOST=read_value("cassandra-host", "cassandra")
+logger.info("CASSANDRA_HOST: %s" %(CASSANDRA_HOST))
+
+
 
 USE_SSL=True
 RABBITMQ_PORT=5671
