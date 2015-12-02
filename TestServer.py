@@ -5,7 +5,7 @@ import pika
 from waggle_protocol.protocol.PacketHandler import *
 import logging
 import time
-from utilities.gPickler import *
+from waggle_protocol.utilities.gPickler import *
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
 

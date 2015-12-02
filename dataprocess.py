@@ -7,7 +7,7 @@ from multiprocessing import Process, Manager
 from config import *
 import pika
 from waggle_protocol.protocol.PacketHandler import *
-from utilities.gPickler import *
+from waggle_protocol.utilities.gPickler import *
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
