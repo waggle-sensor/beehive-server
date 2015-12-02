@@ -16,8 +16,6 @@ import time
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-with open('/etc/waggle/cassandra_ip','r') as f:
-    CASSANDRA_IP = f.read().strip()
 
 class DataProcess(Process):
     """
@@ -91,12 +89,12 @@ class DataProcess(Process):
             self.cluster.shutdown()
         except:
             pass
-        self.cluster = Cluster(contact_points=[CASSANDRA_IP])
+        self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
 
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             self.session = self.cluster.connect('waggle')
         except:
-            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_IP + " failed.")
+            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
             logger.warning("The process will attempt to re-connect at a later time.")
 
     def run(self):
