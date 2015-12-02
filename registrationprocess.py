@@ -18,10 +18,6 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-
-with open('/etc/waggle/cassandra_ip','r') as f:
-    CASSANDRA_IP = f.read().strip()
-
 class RegProcess(Process):
     """
         This process handles all registration requests.
@@ -184,7 +180,7 @@ class RegProcess(Process):
                 pass
             
             try:    
-                self.cluster = Cluster(contact_points=[CASSANDRA_IP])
+                self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
             except Exception as e:
                 logger.error("self.cluster.connect failed: " + str(e))
                 time.sleep(1)
@@ -193,7 +189,7 @@ class RegProcess(Process):
             try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                 self.session = self.cluster.connect('waggle')
             except Exception as e:
-                logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_IP + " failed: " + str(e))
+                logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
                 time.sleep(1)
                 continue
             
