@@ -2,7 +2,7 @@
 import sys
 sys.path.append("../devtools/protocol_common")
 import pika
-from protocol.PacketHandler import *
+from waggle-protocol.protocol.PacketHandler import *
 import logging
 import time
 from utilities.gPickler import *

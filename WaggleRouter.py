@@ -5,7 +5,7 @@ sys.path.append("/usr/lib/waggle/")
 from multiprocessing import Process, Manager
 from config import *
 import pika
-from protocol.PacketHandler import *
+from waggle-protocol.protocol.PacketHandler import *
 from utilities.packetassembler import PacketAssembler
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
