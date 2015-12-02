@@ -22,7 +22,7 @@ touch index.txt
 
 # Generate the root certificate
 
-openssl req -x509 -config openssl.cnf -newkey rsa:2048 -days 365 \
+openssl req -x509 -config /usr/lib/waggle/beehive-server/SSL/waggleca/openssl.cnf -newkey rsa:2048 -days 365 \
 	-out cacert.pem -outform PEM -subj /CN=waggleca/ -nodes
 
 openssl x509 -in cacert.pem -out cacert.cer -outform DER
