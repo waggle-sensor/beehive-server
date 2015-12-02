@@ -23,6 +23,13 @@ docker pull waggle/beehive-server:latest
   waggle/beehive-server:latest ./SSL/create_server_cert.sh
 ```
 
+This will create server ceritifcates in ${DATA}/waggle/SSL/server. Make sure rabbitmq my can access the directory.
+
+```bash
+chmod +x ${DATA}/waggle/SSL/server
+```
+
+
 ### CA certificate cacert.pem
 In addition to its own private key (key.pem) and certificate (cert.pem), located under /usr/lib/waggle/SSL/beehive-server, RabbitMQ also needs access to the public certificate of the CA. You can either mount that file/directory into the docker container or copy it into the container. The example below mounts the SSL directory.
 
