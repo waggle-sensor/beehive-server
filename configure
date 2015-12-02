@@ -20,19 +20,5 @@ mkdir -p /usr/lib/waggle
 echo Moving waggle server folder to proper place.
 
 
-# All of the code is copied into the /usr/lib/waggle folder
-#cp --recursive . /usr/lib/waggle/
-#cp --recursive ./waggle-protocol/* /usr/lib/waggle/
-
-#ln -sf waggle-protocol/utilities/
-#ln -sf waggle-protocol/protocol/
-
-source ./scripts/configure_cassandra.sh
-
-# here not needed anymore
-#source ./scripts/configure_rabbitmq.sh 
-#source ./scripts/configure_ssl.sh
-
-
 
 exit 0
