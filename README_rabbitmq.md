@@ -64,6 +64,11 @@ docker exec -ti  beehive-rabbit rabbitmqctl set_permissions node "node_.*" ".*" 
 docker exec -ti  beehive-rabbit rabbitmqctl set_permissions server ".*" ".*" ".*"
 ```
 
+To enabled the rabbitmq_auth_mechanism_ssl plugin
+```bash
+docker exec -ti  beehive-rabbit rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl
+```
+
 ### Alternative installation methods for RabbitMQ:
 ```bash
 # Ubuntu
