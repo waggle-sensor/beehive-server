@@ -20,7 +20,7 @@ docker pull waggle/beehive-server:latest
   --name certs \
   --rm \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
-  waggle/beehive-server:latest ./beehive-server/SSL/create_server_cert.sh
+  waggle/beehive-server:latest ./SSL/create_server_cert.sh
 ```
 
 ### CA certificate cacert.pem
