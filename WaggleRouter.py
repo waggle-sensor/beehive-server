@@ -6,7 +6,7 @@ from multiprocessing import Process, Manager
 from config import *
 import pika
 from waggle_protocol.protocol.PacketHandler import *
-from utilities.packetassembler import PacketAssembler
+from waggle_protocol.utilities.packetassembler import PacketAssembler
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
