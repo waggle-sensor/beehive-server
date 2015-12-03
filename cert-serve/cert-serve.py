@@ -43,7 +43,7 @@ class certca:
         return result
 
 class newnode:        
-    def GET(self, node_id):
+    def GET(self):
 
         subprocess.call(['/usr/lib/waggle/beehive-server/SSL/create_client_cert.sh', 'node', 'temp_client_cert'])
         privkey = read_file("/usr/lib/waggle/SSL/temp_client_cert/key.pem")
