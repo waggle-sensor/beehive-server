@@ -2,12 +2,14 @@
 import web
 import os.path
 import subprocess
-
+import threading
 
 
 # apt-get install python-webpy
 # pip install web.py
 
+
+resource_lock = threading.RLock()
 
 def read_file( str ):
     if not os.path.isfile(str) :
@@ -45,12 +47,16 @@ class certca:
 class newnode:        
     def GET(self):
 
-        subprocess.call(['/usr/lib/waggle/beehive-server/SSL/create_client_cert.sh', 'node', 'temp_client_cert'])
-        privkey = read_file("/usr/lib/waggle/SSL/temp_client_cert/key.pem")
+        privkey=""
+        cert=""
+        with resource_lock:
+            subprocess.call(['/usr/lib/waggle/beehive-server/SSL/create_client_cert.sh', 'node', 'temp_client_cert'])
+            privkey = read_file("/usr/lib/waggle/SSL/temp_client_cert/key.pem")
+            cert = read_file("/usr/lib/waggle/SSL/temp_client_cert/cert.pem")
+            
         if not privkey:
             return "error: privkey file not found !?"
-
-        cert = read_file("/usr/lib/waggle/SSL/temp_client_cert/cert.pem")
+        
         if not cert:
             return "error: cert file not found !?"
 
