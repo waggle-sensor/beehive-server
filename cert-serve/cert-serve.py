@@ -23,8 +23,9 @@ def read_file( str ):
 urls = (
     '/certca', 'certca',
     '/newnode', 'newnode',
-    '/(.*)', 'hello'
+    '/(.*)', 'use resources /certca and /newnode'
 )
+
 app = web.application(urls, globals())
 
 class hello:        
@@ -37,22 +38,21 @@ class certca:
     def GET(self):
         result = read_file("/usr/lib/waggle/SSL/waggleca/cacert.pem")
         if not result:
-          return "error: cacert file not found !?"
+            return "error: cacert file not found !?"
 
         return result
 
 class newnode:        
     def GET(self, node_id):
 
-	subprocess.call(['/usr/lib/waggle/beehive-server/SSL/create_client_cert.sh', 'node', 'temp_client_cert'])
-
+        subprocess.call(['/usr/lib/waggle/beehive-server/SSL/create_client_cert.sh', 'node', 'temp_client_cert'])
         privkey = read_file("/usr/lib/waggle/SSL/temp_client_cert/key.pem")
         if not privkey:
-          return "error: privkey file not found !?"
+            return "error: privkey file not found !?"
 
-	 cert = read_file("/usr/lib/waggle/SSL/temp_client_cert/cert.pem")
+        cert = read_file("/usr/lib/waggle/SSL/temp_client_cert/cert.pem")
         if not cert:
-          return "error: cert file not found !?"
+            return "error: cert file not found !?"
 
         return privkey + "\n" + cert
 
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 9999))
     app.run()
 
-# docker run -d -p 9999:9999 beehive-server /bin/bash
+# docker run -ti -p 9999:9999 -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/  waggle/beehive-server /bin/bash
 # cd /usr/lib/waggle/beehive-server/cert-serve ; ./cert-serve.py
 
 
