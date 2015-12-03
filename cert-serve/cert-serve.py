@@ -67,7 +67,7 @@ if __name__ == "__main__":
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 9999))
     app.run()
 
-# docker run -ti -p 9999:9999 -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/  waggle/beehive-server /bin/bash
+# docker run -ti -p 9999:9999 -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ --name cert-serve waggle/beehive-server /bin/bash
 # cd /usr/lib/waggle/beehive-server/cert-serve ; ./cert-serve.py
 
 
