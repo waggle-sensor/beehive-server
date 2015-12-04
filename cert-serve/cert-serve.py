@@ -64,7 +64,7 @@ class newnode:
                     return "error: Could not parse node id."
                     
                 # TODO check that this is a valid node id
-            else
+            else:
                 return "error: Could not parse argument. Questionmark missing."
         else:
             print "requested cert without nodeid"
