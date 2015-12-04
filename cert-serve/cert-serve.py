@@ -93,7 +93,7 @@ class newnode:
         else:
             print "No nodeid provided."
             with resource_lock:
-                subprocess.call([ssl_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
+                subprocess.call([script_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
                 privkey = read_file(ssl_path + 'temp_client_cert/key.pem')
                 cert    = read_file(ssl_path + 'temp_client_cert/cert.pem')
             
