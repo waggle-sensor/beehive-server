@@ -15,7 +15,7 @@ resource_lock = threading.RLock()
 
 ssl_path = "/usr/lib/waggle/beehive-server/SSL/"
 
-hexaPattern = re.compile(r'^/([0-9A-F]*)$')
+hexaPattern = re.compile(r'^\?([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
 
 
@@ -32,7 +32,7 @@ def read_file( str ):
 
 urls = (
     '/certca', 'certca',
-    '/node(/.*)', 'newnode',
+    '/node/?', 'newnode',
     '/', 'index'
 )
 
@@ -51,12 +51,15 @@ class certca:
         return result
 
 class newnode:        
-    def GET(self, nodeid):
+    def GET(self):
+        
+        nodeid = referer = web.ctx.query
+        
         global prog
         # TODO: make it an option to allow or disallow anonymous nodes
         if nodeid:
             print "requested cert wit nodeid "+nodeid
-            if nodeid.startswith("/"):
+            if nodeid.startswith("?"):
                 nodeid = nodeid[1:].upper()
                 
                 result = prog.match(nodeid)
