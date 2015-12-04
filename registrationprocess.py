@@ -55,7 +55,7 @@ class RegProcess(Process):
         try:
             self.channel.basic_consume(self.callback, queue='registration')
         except Exception as e:
-            logger.warning("pike basic_consume crashed "+ str(e))
+            logger.warning("channel.basic_consume crashed :"+ str(e))
         
 
     def callback(self,ch,method,props,body):
