@@ -22,6 +22,7 @@ fi
 
 
 # platform-independent python packages
+pip install web.py
 
 cd packages_o/
 pip install blist
