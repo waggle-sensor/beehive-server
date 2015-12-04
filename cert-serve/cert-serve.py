@@ -15,7 +15,7 @@ resource_lock = threading.RLock()
 
 ssl_path = "/usr/lib/waggle/beehive-server/SSL/"
 
-hexaPattern = re.compile(r'\?([0-9A-F]*)')
+hexaPattern = re.compile(r'^\?([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
 
 
@@ -52,7 +52,7 @@ class certca:
 
 class newnode:        
     def GET(self, nodeid):
-
+        global prog
         # TODO: make it an option to allow or disallow anonymous nodes
         if nodeid:
             print "requested cert wit nodeid"
