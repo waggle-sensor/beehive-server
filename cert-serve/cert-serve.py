@@ -15,7 +15,7 @@ resource_lock = threading.RLock()
 
 ssl_path = "/usr/lib/waggle/beehive-server/SSL/"
 
-hexaPattern = re.compile(r'^\?([0-9A-F]*)$')
+hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
 
 
