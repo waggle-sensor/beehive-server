@@ -13,7 +13,8 @@ import re
 
 resource_lock = threading.RLock()
 
-ssl_path = "/usr/lib/waggle/beehive-server/SSL/"
+script_path = "/usr/lib/waggle/beehive-server/SSL/"
+ssl_path = "/usr/lib/waggle/SSL/"
 
 hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
@@ -85,7 +86,7 @@ class newnode:
             node_dir = ssl_path + 'node_'+ nodeid
             if not os.path.isdir(node_dir):
                 with resource_lock:
-                    subprocess.call([ssl_path + 'create_client_cert.sh', 'node', 'node_'+ nodeid])
+                    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'node_'+ nodeid])
             
             privkey = read_file(node_dir + '/key.pem')
             cert    = read_file(node_dir + '/cert.pem')       
