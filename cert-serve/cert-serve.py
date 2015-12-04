@@ -61,7 +61,7 @@ class newnode:
         global prog
         # TODO: make it an option to allow or disallow anonymous nodes
         if len(query) > 1 :
-            print "requested cert with nodeid "+nodeid
+            
             if query.startswith("?"):
                 nodeid = query[1:].upper()
                 
@@ -71,7 +71,7 @@ class newnode:
                     
                 # TODO check that this is a valid node id
             else:
-                return "error: Could not parse argument. Questionmark missing."
+                return "error: Could not parse query. Questionmark missing."
         else:
             print "requested cert without nodeid"
         
