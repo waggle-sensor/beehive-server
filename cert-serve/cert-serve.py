@@ -32,7 +32,7 @@ def read_file( str ):
 
 urls = (
     '/certca', 'certca',
-    '/newnode(?.*)', 'newnode',
+    '/newnode(\?.*)', 'newnode',
     '/', 'index'
 )
 
@@ -55,7 +55,7 @@ class newnode:
         global prog
         # TODO: make it an option to allow or disallow anonymous nodes
         if nodeid:
-            print "requested cert wit nodeid"
+            print "requested cert wit nodeid "+nodeid
             if nodeid.startswith("?"):
                 nodeid = nodeid[1:].upper()
                 
