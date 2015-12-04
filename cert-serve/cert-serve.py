@@ -53,14 +53,17 @@ class certca:
 class newnode:        
     def GET(self):
         
-        nodeid = referer = web.ctx.query
+        query = referer = web.ctx.query
+        nodeid=None
+        
+        print "query: "+str(query)
         
         global prog
         # TODO: make it an option to allow or disallow anonymous nodes
-        if nodeid:
-            print "requested cert wit nodeid "+nodeid
-            if nodeid.startswith("?"):
-                nodeid = nodeid[1:].upper()
+        if len(query) > 1 :
+            print "requested cert with nodeid "+nodeid
+            if query.startswith("?"):
+                nodeid = query[1:].upper()
                 
                 result = prog.match(nodeid)
                 if not result:
@@ -77,6 +80,7 @@ class newnode:
         cert=""
         
         if nodeid:
+            print "Using nodeid: "+str(nodeid)
             node_dir = ssl_path + 'node_'+ nodeid
             if not os.path.isdir():
                 with resource_lock:
@@ -85,6 +89,7 @@ class newnode:
             privkey = read_file(ssl_path + 'node_'+ nodeid + '/key.pem')
             cert    = read_file(ssl_path + 'node_'+ nodeid + '/cert.pem')       
         else:
+            print "No nodeid provided."
             with resource_lock:
                 subprocess.call([ssl_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
                 privkey = read_file(ssl_path + 'temp_client_cert/key.pem')
