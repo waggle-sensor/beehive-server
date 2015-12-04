@@ -82,12 +82,12 @@ class newnode:
         if nodeid:
             print "Using nodeid: "+str(nodeid)
             node_dir = ssl_path + 'node_'+ nodeid
-            if not os.path.isdir():
+            if not os.path.isdir(node_dir):
                 with resource_lock:
                     subprocess.call([ssl_path + 'create_client_cert.sh', 'node', 'node_'+ nodeid])
             
-            privkey = read_file(ssl_path + 'node_'+ nodeid + '/key.pem')
-            cert    = read_file(ssl_path + 'node_'+ nodeid + '/cert.pem')       
+            privkey = read_file(node_dir + '/key.pem')
+            cert    = read_file(node_dir + '/cert.pem')       
         else:
             print "No nodeid provided."
             with resource_lock:
