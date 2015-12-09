@@ -61,20 +61,19 @@ docker logs beehive-rabbit
 ```
 
 
-Create waggle user:
+Create users, set permissions and enable rabbitmq_auth_mechanism_ssl plugin:
 ```bash
-# old: docker exec -ti  beehive-rabbit rabbitmqctl add_user waggle waggle
-# old: docker exec -ti  beehive-rabbit rabbitmqctl set_permissions waggle ".*" ".*" ".*"
 docker exec -ti  beehive-rabbit rabbitmqctl add_user node waggle
+sleep 1
 docker exec -ti  beehive-rabbit rabbitmqctl add_user server waggle
+sleep 1
 docker exec -ti  beehive-rabbit rabbitmqctl set_permissions node "node_.*" ".*" ".*"
+sleep 1
 docker exec -ti  beehive-rabbit rabbitmqctl set_permissions server ".*" ".*" ".*"
-```
-
-To enabled the rabbitmq_auth_mechanism_ssl plugin
-```bash
+sleep 1
 docker exec -ti  beehive-rabbit rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl
 ```
+
 
 ### Alternative installation methods for RabbitMQ:
 ```bash
