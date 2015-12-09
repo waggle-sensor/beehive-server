@@ -33,7 +33,7 @@ class RegProcess(Process):
 
         logger.info("Initializing RegProcess")
 
-        cassandra_init()
+        self.cassandra_init()
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         try:
