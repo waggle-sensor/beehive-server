@@ -195,18 +195,19 @@ class RegProcess(Process):
             
     def cassandra_init(self):
         tables_cql = read_file('waggle_cassandra_setup.cql')
+        tables_cql = tables_cql.replace('\n', ' ').replace('\r', '')
         if not tables_cql:
             logger.error("File waggle_cassandra_setup.cql not found")
             raise FileNotFoundError()
             
-        node_table = '''CREATE TABLE waggle.nodes (
+        node_table_cql = '''CREATE TABLE waggle.nodes (
                         node_id ascii,
                         queue ascii,
                         extension_nodes list<ascii>,
                         updated timestamp,
                         PRIMARY KEY (node_id)
                         );'''
-                        
+        node_table_cql = node_table_cql.replace('\n', ' ').replace('\r', '')
         while True:
             self.cassandra_connect()
             try: 
@@ -217,9 +218,9 @@ class RegProcess(Process):
                 continue
             
             try: 
-                self.session.execute(node_table)
+                self.session.execute(node_table_cql)
             except Exception as e:
-                logger.error("(self.session.execute(tables_cql)) failed: "+str(e))
+                logger.error("(self.session.execute(node_table_cql)) failed: "+str(e))
                 time.sleep(5)
                 continue
                 
