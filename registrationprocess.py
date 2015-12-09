@@ -24,8 +24,6 @@ class RegProcess(Process):
         It is responsible to receiving all requests, updating the routing table,
         and writing the routing information to a permanent file.
     """
-
-
     def __init__(self,routing_table):
         """
             Starts up the Registration Process
@@ -35,6 +33,7 @@ class RegProcess(Process):
 
         logger.info("Initializing RegProcess")
 
+        cassandra_init()
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         try:
