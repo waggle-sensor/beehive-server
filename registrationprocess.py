@@ -30,7 +30,9 @@ class RegProcess(Process):
         """
         super(RegProcess,self).__init__()
         self.routing_table = routing_table
-
+        self.session = None
+        self.cluster = None
+        
         logger.info("Initializing RegProcess")
 
         self.cassandra_init()
@@ -42,8 +44,7 @@ class RegProcess(Process):
             logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
             sys.exit(1)
     
-        self.session = None
-        self.cluster = None
+        
        
         
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
