@@ -47,18 +47,18 @@ class WaggleRouter(Process):
         # self.assembler = PacketAssembler()
 
         #Load all of the existing registered node queues
-        if os.path.isfile('registrations/nodes.txt'):
-            with open('registrations/nodes.txt','r') as nodes:
-                for line in nodes:
-                    if line and line != '\n':
-                        info = line.strip().split(":")
-                        self.channel.queue_declare(info[1])
+        #if os.path.isfile('registrations/nodes.txt'):
+        #    with open('registrations/nodes.txt','r') as nodes:
+        #        for line in nodes:
+        #            if line and line != '\n':
+        #                info = line.strip().split(":")
+        #                self.channel.queue_declare(info[1])
 
         #declare the default queues
         #TODO: Check to see if this section can be culled.
-        queue_list = ["incoming","registration","util"]
-        for queueName in queue_list:
-            self.channel.queue_declare(queueName)
+        #queue_list = ["incoming","registration","util"]
+        #for queueName in queue_list:
+        #    self.channel.queue_declare(queueName)
 
         #Start consuming things from the incoming queue
         self.channel.basic_consume(self.gotPacket,queue='incoming')

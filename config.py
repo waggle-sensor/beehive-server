@@ -28,6 +28,15 @@ root_logger.addHandler(handler)
 
 # log rotate will be activated in main method 
 
+def read_file( str ):
+    if not os.path.isfile(str) :
+        return ""
+    with open(str,'r') as file_:
+        return file_.read().strip()
+    return ""
+    
+    
+
 def read_value(key, defaultval):
     value=None
     try:

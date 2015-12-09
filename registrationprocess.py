@@ -12,7 +12,7 @@ import logging
 from crcmod.predefined import mkCrcFun
 from cassandra.cluster import Cluster
 import time
-import threading
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -45,7 +45,7 @@ class RegProcess(Process):
     
         self.session = None
         self.cluster = None
-        self.session_mutex = threading.Lock()
+       
         
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.channel = self.connection.channel()
@@ -171,7 +171,7 @@ class RegProcess(Process):
         """
             Try to establish a new connection to Cassandra.
         """
-        self.session_mutex.acquire()
+        
         
         while self.session == None:     
             try:
@@ -190,10 +190,42 @@ class RegProcess(Process):
                 self.session = self.cluster.connect('waggle')
             except Exception as e:
                 logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
-                time.sleep(1)
+                time.sleep(3)
                 continue
             
-        self.session_mutex.release()
+    def cassandra_init(self):
+        tables_cql = read_file('waggle_cassandra_setup.cql')
+        if not tables_cql:
+            logger.error("File waggle_cassandra_setup.cql not found")
+            raise FileNotFoundError()
+            
+        node_table = '''CREATE TABLE waggle.nodes (
+                        node_id ascii,
+                        queue ascii,
+                        extension_nodes list<ascii>,
+                        updated timestamp,
+                        PRIMARY KEY (node_id)
+                        );'''
+                        
+        while True:
+            self.cassandra_connect()
+            try: 
+                self.session.execute(tables_cql)
+            except Exception as e:
+                logger.error("(self.session.execute(tables_cql)) failed: "+str(e))
+                time.sleep(5)
+                continue
+            
+            try: 
+                self.session.execute(node_table)
+            except Exception as e:
+                logger.error("(self.session.execute(tables_cql)) failed: "+str(e))
+                time.sleep(5)
+                continue
+                
+            break
+        logger.debug("Cassandra database initialized.")
+
 
     def run(self):
         self.cassandra_connect()
