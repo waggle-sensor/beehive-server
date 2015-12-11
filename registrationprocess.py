@@ -211,9 +211,10 @@ class RegProcess(Process):
                             );'''
         sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
 
-        node_info_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_info (
+        nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                             node_id ascii PRIMARY KEY,
                             timestamp timestamp,
+                            queue ascii,
                             config_file ascii,
                             extra_notes list<ascii>,
                             sensor_names list<ascii>,
@@ -222,20 +223,11 @@ class RegProcess(Process):
                             longitude double,
                             name ascii
                         );'''
-        node_info_cql = node_info_cql.replace('\n', ' ').replace('\r', '')
-        
-            
-        node_table_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
-                        node_id ascii,
-                        queue ascii,
-                        extension_nodes list<ascii>,
-                        updated timestamp,
-                        PRIMARY KEY (node_id)
-                        );'''
-        node_table_cql = node_table_cql.replace('\n', ' ').replace('\r', '')
+        nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
         
         
-        statements = [keyspace_cql, sensor_data_cql, node_info_cql, node_table_cql]
+        
+        statements = [keyspace_cql, sensor_data_cql, nodes_cql]
         
         while True:
             self.cassandra_connect()
