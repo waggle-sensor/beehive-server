@@ -199,7 +199,7 @@ class RegProcess(Process):
         keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
 
 
-        sensor_data_cql = '''CREATE TABLE waggle.sensor_data (
+        sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                                 node_id ascii,
                                 sensor_name ascii,
                                 timestamp timestamp,
@@ -211,7 +211,7 @@ class RegProcess(Process):
                             );'''
         sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
 
-        node_info_cql = '''CREATE TABLE waggle.node_info (
+        node_info_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_info (
                             node_id ascii PRIMARY KEY,
                             timestamp timestamp,
                             config_file ascii,
@@ -225,7 +225,7 @@ class RegProcess(Process):
         node_info_cql = node_info_cql.replace('\n', ' ').replace('\r', '')
         
             
-        node_table_cql = '''CREATE TABLE waggle.nodes (
+        node_table_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                         node_id ascii,
                         queue ascii,
                         extension_nodes list<ascii>,
