@@ -194,11 +194,36 @@ class RegProcess(Process):
                 continue
             
     def cassandra_init(self):
-        tables_cql = read_file('waggle_cassandra_setup.cql')
-        tables_cql = tables_cql.replace('\n', ' ').replace('\r', '')
-        if not tables_cql:
-            logger.error("File waggle_cassandra_setup.cql not found")
-            raise FileNotFoundError()
+        
+        
+        keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
+
+
+        sensor_data_cql = '''CREATE TABLE waggle.sensor_data (
+                                node_id ascii,
+                                sensor_name ascii,
+                                timestamp timestamp,
+                                data list<double>,
+                                data_types list<ascii>,
+                                extra_info list<ascii>,
+                                units list<ascii>,
+                                PRIMARY KEY (node_id, sensor_name, timestamp)
+                            );'''
+        sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
+
+        node_info_cql = '''CREATE TABLE waggle.node_info (
+                            node_id ascii PRIMARY KEY,
+                            timestamp timestamp,
+                            config_file ascii,
+                            extra_notes list<ascii>,
+                            sensor_names list<ascii>,
+                            height double,
+                            latitude double,
+                            longitude double,
+                            name ascii
+                        );'''
+        node_info_cql = node_info_cql.replace('\n', ' ').replace('\r', '')
+        
             
         node_table_cql = '''CREATE TABLE waggle.nodes (
                         node_id ascii,
@@ -208,23 +233,26 @@ class RegProcess(Process):
                         PRIMARY KEY (node_id)
                         );'''
         node_table_cql = node_table_cql.replace('\n', ' ').replace('\r', '')
+        
+        
+        statements = [keyspace_cql, sensor_data_cql, node_info_cql, node_table_cql]
+        
         while True:
             self.cassandra_connect()
-            try: 
-                self.session.execute(tables_cql)
-            except Exception as e:
-                logger.error("(self.session.execute(tables_cql)) failed: "+str(e))
+            success = True
+            for statement in statements:
+                try: 
+                    self.session.execute(statement)
+                except Exception as e:
+                    logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
+                    success = False
+                    break
+                    
+            if success:
+                break
+            else:
                 time.sleep(5)
-                continue
-            
-            try: 
-                self.session.execute(node_table_cql)
-            except Exception as e:
-                logger.error("(self.session.execute(node_table_cql)) failed: "+str(e))
-                time.sleep(5)
-                continue
-                
-            break
+          
         logger.debug("Cassandra database initialized.")
 
 
