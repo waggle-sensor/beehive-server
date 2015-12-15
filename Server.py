@@ -90,18 +90,48 @@ if __name__ == "__main__":
     # Create a manager to handle some shared memory, like the routing table.
     manager = Manager()
     #The shared routing table that all routers use
-    routing_table = manager.dict()
+    #routing_table = manager.dict()
+    node_table = manager.dict()
 
-
+    # DEPRECATED
     # Add node queue bindings that are already registered
-    if os.path.isfile('registrations/nodes.txt'): 
-        with open('registrations/nodes.txt') as file_:
-        	for line in file_:
-        		if line and line != '\n':
-        			line = line[:-1] #Cut off the newline character
-        			info = line.split(":")
-        			queue_bindings[info[1]] = ("internal",info[1])
-        			routing_table[int(info[0])] = info[1]
+    #if os.path.isfile('registrations/nodes.txt'): 
+    #    with open('registrations/nodes.txt') as file_:
+    #   	for line in file_:
+    #    		if line and line != '\n':
+    #    			line = line[:-1] #Cut off the newline character
+    #    			info = line.split(":")
+    #    			queue_bindings[info[1]] = ("internal",info[1])
+    #    			routing_table[int(info[0])] = info[1]
+
+
+    while cassandra_session == None:     
+        try:    
+            cassandra_cluster = Cluster(contact_points=[CASSANDRA_HOST])
+        except Exception as e:
+            logger.error("Connecting to cassandra failed (%s): %s" % ( CASSANDRA_HOST ,str(e) ) )
+            time.sleep(1)
+            continue
+            
+        try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
+            cassandra_session = self.cluster.connect('waggle')
+        except Exception as e:
+            logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
+            time.sleep(3)
+            continue
+    
+    waggle_nodes = []
+    try:
+        statement = "select node_id, timestamp, queue, name from waggle.nodes"
+        waggle_nodes = cassandra_session.execute(statement)
+    except Exception as e:
+        logger.error("(cassandra_session.execute) failed. Statement: %s Error: %s " % (statement, str(e)) )
+        sys.exit(1)
+        
+    for node in waggle_nodes:
+        node_table[node.node_id] = node
+        
+    
 
     #Connect to rabbitMQ
     try:
@@ -129,7 +159,7 @@ if __name__ == "__main__":
     #start the processes
     router_procs = []
     for i in range (0,NUM_ROUTER_PROCS):
-    	new_router = WaggleRouter(routing_table)
+    	new_router = WaggleRouter(node_table)
     	new_router.start()
     	router_procs.append(new_router)
     logger.info("%d routing processes online." % (NUM_ROUTER_PROCS))
@@ -143,7 +173,7 @@ if __name__ == "__main__":
 
     reg_procs = []
     for i in range (0,NUM_REGISTRATION_PROCS):
-    	new_reg = RegProcess(routing_table)
+    	new_reg = RegProcess(node_table)
     	new_reg.start()
     	reg_procs.append(new_reg)
     logger.info("Registration processes online.")
@@ -170,7 +200,7 @@ if __name__ == "__main__":
     while True:
     	for i in range(0,len(router_procs)):
     		if not router_procs[0].is_alive():
-    			new_router = WaggleRouter(routing_table)
+    			new_router = WaggleRouter(node_table)
     			router_procs[i] = new_router
     	for i in range(0,len(data_procs)):
     		if not data_procs[i].is_alive():
@@ -179,7 +209,7 @@ if __name__ == "__main__":
 
     	for i in range(0,len(reg_procs)):
     		if not reg_procs[i].is_alive():
-    			new_reg = RegProcess(routing_table)
+    			new_reg = RegProcess(node_table)
     			reg_procs[i] = new_reg
 
     	for i in range(0,len(util_procs)):
