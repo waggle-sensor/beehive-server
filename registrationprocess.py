@@ -12,7 +12,7 @@ import logging
 from crcmod.predefined import mkCrcFun
 from cassandra.cluster import Cluster
 import time
-
+import json
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -24,12 +24,12 @@ class RegProcess(Process):
         It is responsible to receiving all requests, updating the routing table,
         and writing the routing information to a permanent file.
     """
-    def __init__(self,routing_table):
+    def __init__(self,node_table):
         """
             Starts up the Registration Process
         """
         super(RegProcess,self).__init__()
-        self.routing_table = routing_table
+        self.node_table = node_table
         self.session = None
         self.cluster = None
         
@@ -67,24 +67,41 @@ class RegProcess(Process):
 
             Each subtype is handled as a apart of an if-elif statement.
         """
-        logger.info("Received a registration request.")
-
-        # Unpack the header and see if it is already registered
+        
         header,msg = unpack(body)
+        s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
+        
+        logger.info("Received a registration request from node \"%s\"." % (s_uniqid_str))
+        
+        # Unpack the header and see if it is already registered
+        
         minor_type = None
         if header["msg_mi_type"] == ord('r'):
-            if header["s_uniqid"] in self.routing_table:
+            
+            #
+            #  DEPRECATED for now. (major, minor = rr)
+            #
+            logger.error("rr is deprecated")
+            return
+            
+            if header["s_uniqid"] in self.node_table:
                 minor_type = ord('a');
             else:
                 logger.info("Registering new node.")
                 # Add the node to the registration file and make and bind its queue
-                if not os.path.exists('registrations'):
-                    os.makedirs('registrations')
-                with open('registrations/nodes.txt','a+') as nodeList:
-                    nodeList.write("{}:{}\n".format(str(header["s_uniqid"]),msg))
+                #if not os.path.exists('registrations'):
+                #    os.makedirs('registrations')
+                #with open('registrations/nodes.txt','a+') as nodeList:
+                #    nodeList.write("{}:{}\n".format(str(header["s_uniqid"]),msg))
+                
+                s_uniqid_int = header["s_uniqid"]
+                
+                self.cassandra_register_node()
+                
+                
                 self.channel.queue_declare(msg)
                 self.channel.queue_bind(exchange='internal',queue=msg,routing_key=msg)
-                self.routing_table[header["s_uniqid"]] = msg
+                #self.routing_table[header["s_uniqid"]] = msg
                 minor_type = ord('n')
 
             # Send the node a registration confirmation.
@@ -100,7 +117,14 @@ class RegProcess(Process):
             self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
 
         elif header["msg_mi_type"] == ord('s'): # They want to get an SSL Certificate
-            logger.info("Someone wants an SSL cert.")
+        
+            #
+            # DEPRECATED
+            #
+            logger.error("Someone wants an SSL cert.")
+            return
+            
+            
             # Write the request to a file to be used by the CA for signing
             replyQueue = msg.split("\n")[0]
             msg = "\n".join(msg.split("\n")[1:])
@@ -124,17 +148,55 @@ class RegProcess(Process):
         # Cassandra note: If the node is already in the node_info table,
         # then this will preform an UPSERT of the config file instead of an INSERT.
         # This is inherent to Cassandra, so is not explicitly stated here.
+        
+            # convert int to hex_str
+            
+            
+            config_dict = json.loads(msg)
+            #TODO check 
+        
+            node_id = config_dict['node_id']
+            
+            if s_uniqid_str != node_id:
+                logger.error("Sender node IDs do not match. header=%s config=%s" % (s_uniqid_str, node_id) )
+                return
+            
+            queue = config_dict['queue']
+            self.channel.queue_declare(queue)
+            self.channel.queue_bind(exchange='internal',queue=msg,routing_key=queue)
+            
+            node_name = config_dict['name']
+            if not node_name:
+                node_name = "unknown"
+            
             try:
-                self.cassandra_insert(header,msg)
+                #self.cassandra_insert(header,msg)
+                self.cassandra_register_node(node_id, queue, node_name))
             except Exception as e:
                 logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
                 ch.basic_nack(delivery_tag = method.delivery_tag)
                 time.sleep(1)
                 self.cassandra_connect()
                 return
+                
+            # update node_table
+            node_table[node_id] = {'queue' : queue , 'name' : node_name}
+            
+            ch.basic_ack(delivery_tag = method.delivery_tag)
+            
+            # Send the node a registration confirmation.
+            resp_header = {
+                    "msg_mj_type" : ord('r'),
+                    "msg_mi_type" : ord('n'),
+                    "r_uniqid"    : header["s_uniqid"],
+                    "resp_session": header["snd_session"]
+            }
+            msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue)
+            for packet in pack(resp_header,msg):
+                response = packet
+            self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
 
-
-        ch.basic_ack(delivery_tag = method.delivery_tag)
+            
 
     def cassandra_insert(self,header,data):
         """
@@ -166,6 +228,27 @@ class RegProcess(Process):
             logger.error("self.session.execute crashed: "+str(e))
             raise
 
+    def cassandra_register_node(self, node_id, queue, name):
+        
+        statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s')" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
+        
+        
+        while True:
+            self.cassandra_connect()
+            success = True
+            
+            try: 
+                self.session.execute(statement)
+            except Exception as e:
+                logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
+                success = False
+                break
+                
+            if success:
+                break
+            else:
+                time.sleep(5)
+        
 
     def cassandra_connect(self):
         """
