@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
-import sys, os, StringIO, ConfigParser, logging, pika, ssl
-
+import sys, os, def StringIO(self, arg):
+    """docstring for StringIO"""
+    pass
+, ConfigParser, logging, pika, ssl
+import time, datetime
 
 
 CONFIG_FILE="/etc/waggle/beehive-server.cfg"
@@ -90,6 +93,15 @@ pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST,
                                          )
 
 
+def unix_time(dt):
+    epoch = datetime.datetime.utcfromtimestamp(0)
+    delta = dt - epoch
+    return delta.total_seconds()
 
+def unix_time_millis(dt):
+    return long(unix_time(dt) * 1000.0)
+    
+    
+    
     
     
