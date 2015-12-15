@@ -122,7 +122,7 @@ if __name__ == "__main__":
     
     waggle_nodes = []
     try:
-        statement = "select node_id, timestamp, queue, name from waggle.nodes"
+        statement = "select node_id, timestamp, queue, name from nodes"
         waggle_nodes = cassandra_session.execute(statement)
     except Exception as e:
         logger.error("(cassandra_session.execute) failed. Statement: %s Error: %s " % (statement, str(e)) )
@@ -130,7 +130,7 @@ if __name__ == "__main__":
         
     for node in waggle_nodes:
         node_table[node.node_id] = node
-        
+        logger.debug("loading node information for node %s" % (node.node_id) )
     
 
     #Connect to rabbitMQ
