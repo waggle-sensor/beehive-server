@@ -161,7 +161,7 @@ class RegProcess(Process):
             try:
                 config_dict = json.loads(msg)
             except ValueError, e:
-                logger.error("error parsing json (msg=%s): %s", % (msg, str(e)))
+                logger.error("error parsing json (msg=%s): %s" % (msg, str(e)))
                 ch.basic_nack(delivery_tag = method.delivery_tag)
                 return
         
