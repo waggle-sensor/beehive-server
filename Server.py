@@ -133,6 +133,7 @@ if __name__ == "__main__":
     for node in waggle_nodes:
         num_nodes+=1
         node_table[node.node_id] = node
+        queue_bindings[node.queue] = ("internal",node.queue)
         logger.debug("loading node information for node %s" % (node.node_id) )
     
     logger.debug("number of nodes: %d" % (num_nodes)) 
