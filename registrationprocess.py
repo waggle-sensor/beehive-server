@@ -277,25 +277,23 @@ class RegProcess(Process):
             Try to establish a new connection to Cassandra.
         """
         
-        
-        while self.session == None:
-            logger.debug("self.session == None")
-            try:
-                self.cluster.shutdown()
-            except:
-                pass
-            
+        while not self.cluster:
             try:    
                 self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
             except Exception as e:
                 logger.error("self.cluster.connect failed: " + str(e))
-                time.sleep(1)
-                continue
+                self.cluster = None
+                time.sleep(2)
+            
+        
+        while not self.session:
+            logger.debug("self.session == None")
                 
             try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                 self.session = self.cluster.connect('waggle')
             except Exception as e:
                 logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
+                self.session = None
                 time.sleep(3)
                 continue
                 
