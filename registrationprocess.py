@@ -253,14 +253,20 @@ class RegProcess(Process):
         
         while True:
             
-            self.cassandra_connect()
             
             success = True
             
             try: 
-                self.session.execute(statement)
+                reg_cluster = Cluster(contact_points=['cassandra'])
+                logger.debug("created cluster object")
+                reg_session = reg_cluster.connect('waggle')
+                logger.debug("created session object")
+                reg_session.execute(statement)
+                logger.debug("executed statement")
+                reg_cluster.shutdown()
+                logger.debug("shut reg_cluster down")
             except Exception as e:
-                logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
+                logger.error("registration session failed. Statement: %s Error: %s " % (statement, str(e)) )
                 success = False
             
             if success:
