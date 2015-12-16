@@ -84,6 +84,7 @@ class RegProcess(Process):
             #  DEPRECATED for now. (major, minor = rr)
             #
             logger.error("rr is deprecated")
+            ch.basic_ack(delivery_tag = method.delivery_tag)
             return
             
             if header["s_uniqid"] in self.node_table:
@@ -124,6 +125,7 @@ class RegProcess(Process):
             # DEPRECATED
             #
             logger.error("Someone wants an SSL cert.")
+            ch.basic_ack(delivery_tag = method.delivery_tag)
             return
             
             
@@ -185,8 +187,6 @@ class RegProcess(Process):
             # update node_table
             node_table[node_id] = {'queue' : queue , 'name' : node_name}
             
-            ch.basic_ack(delivery_tag = method.delivery_tag)
-            
             # Send the node a registration confirmation.
             resp_header = {
                     "msg_mj_type" : ord('r'),
@@ -199,6 +199,7 @@ class RegProcess(Process):
                 response = packet
             self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
 
+        ch.basic_ack(delivery_tag = method.delivery_tag)
             
 
     def cassandra_insert(self,header,data):
