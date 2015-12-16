@@ -9,6 +9,7 @@ from utilitiesprocess import UtilProcess
 from multiprocessing import Manager
 from registrationprocess import RegProcess
 from dataprocess import DataProcess
+from cassandra.cluster import Cluster
 import time
 
 
