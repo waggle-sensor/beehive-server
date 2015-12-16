@@ -171,7 +171,7 @@ class RegProcess(Process):
             
             try:
                 #self.cassandra_insert(header,msg)
-                self.cassandra_register_node(node_id, queue, node_name))
+                self.cassandra_register_node(node_id, queue, node_name)
             except Exception as e:
                 logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
                 ch.basic_nack(delivery_tag = method.delivery_tag)
