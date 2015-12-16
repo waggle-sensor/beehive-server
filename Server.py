@@ -115,7 +115,7 @@ if __name__ == "__main__":
             continue
             
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            cassandra_session = self.cluster.connect('waggle')
+            cassandra_session = cassandra_cluster.connect('waggle')
         except Exception as e:
             logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
             time.sleep(3)
