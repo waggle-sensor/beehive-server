@@ -74,7 +74,7 @@ class WaggleRouter(Process):
             
         s_uniqid_str = nodeid_int2hexstr(header['s_uniqid'])
         r_uniqid_str = nodeid_int2hexstr(header['r_uniqid'])
-        logger.debug("message from %s for %s" % (s_uniqid_str, r_uniqid_str) )
+        logger.debug("message (%s%s) from %s for %s" % (chr(header["msg_mj_type"]), chr(header["msg_mi_type"]), s_uniqid_str, r_uniqid_str) )
 
         if (header['r_uniqid'] == 0): # If the message is intended for the cloud...
 
