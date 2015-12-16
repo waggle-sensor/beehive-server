@@ -51,6 +51,7 @@ class RegProcess(Process):
         
         logger.info("Received a registration request (%s%s) from node \"%s\"." % (major, minor, s_uniqid_str))
         
+        logger.debug("header: "+str(header))
         # Unpack the header and see if it is already registered
         
         minor_type = None
