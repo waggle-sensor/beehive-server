@@ -251,15 +251,17 @@ class RegProcess(Process):
         logger.debug("trying cassandra statement: %s" % (statement))
         
         while True:
+            logger.debug("A1")
             self.cassandra_connect()
+            logger.debug("A2")
             success = True
-            
+            logger.debug("A3")
             try: 
                 self.session.execute(statement)
             except Exception as e:
                 logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
                 success = False
-                
+            logger.debug("B")    
             if success:
                 break
             else:
