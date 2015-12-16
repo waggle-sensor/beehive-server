@@ -261,10 +261,11 @@ class RegProcess(Process):
                 success = False
                 
             if success:
-                logger.debug("node %s registered." % (node_id))
                 break
             else:
                 time.sleep(5)
+        
+        logger.debug("node %s registered." % (node_id))
         
 
     def cassandra_connect(self):
@@ -273,7 +274,8 @@ class RegProcess(Process):
         """
         
         
-        while self.session == None:     
+        while self.session == None:
+            logger.debug("self.session == None")
             try:
                 self.cluster.shutdown()
             except:
@@ -292,6 +294,8 @@ class RegProcess(Process):
                 logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
                 time.sleep(3)
                 continue
+                
+        logger.debug("self.session should be OK now")
             
     def cassandra_init(self):
         
