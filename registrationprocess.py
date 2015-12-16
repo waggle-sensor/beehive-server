@@ -30,34 +30,7 @@ class RegProcess(Process):
         """
         super(RegProcess,self).__init__()
         self.node_table = node_table
-        self.session = None
-        self.cluster = None
-        self.connection = None
         
-        logger.info("Initializing RegProcess")
-
-        self.cassandra_init()
-        # Set up the Rabbit connection
-        #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        while True:
-            try:
-                self.connection = pika.BlockingConnection(pika_params)
-            except Exception as e:
-                logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
-                time.sleep(1)
-                continue
-            break
-       
-        
-        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
-        self.channel = self.connection.channel()
-        self.channel.basic_qos(prefetch_count=1)
-        # Declare this process's queue
-        self.channel.queue_declare("registration")
-        try:
-            self.channel.basic_consume(self.callback, queue='registration')
-        except Exception as e:
-            logger.warning("channel.basic_consume crashed :"+ str(e))
         
 
     def callback(self,ch,method,props,body):
@@ -255,7 +228,7 @@ class RegProcess(Process):
             
             
             success = True
-            
+            # Using self.session did not work, thus use separate cluster/session object.
             try: 
                 reg_cluster = Cluster(contact_points=['cassandra'])
                 logger.debug("created cluster object")
@@ -361,6 +334,36 @@ class RegProcess(Process):
 
 
     def run(self):
+        
+        self.session = None
+        self.cluster = None
+        self.connection = None
+        
+        logger.info("Initializing RegProcess")
+
+        self.cassandra_init()
+        # Set up the Rabbit connection
+        #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        while True:
+            try:
+                self.connection = pika.BlockingConnection(pika_params)
+            except Exception as e:
+                logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+                time.sleep(1)
+                continue
+            break
+       
+        
+        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
+        self.channel = self.connection.channel()
+        self.channel.basic_qos(prefetch_count=1)
+        # Declare this process's queue
+        self.channel.queue_declare("registration")
+        try:
+            self.channel.basic_consume(self.callback, queue='registration')
+        except Exception as e:
+            logger.warning("channel.basic_consume crashed :"+ str(e))
+            
         self.cassandra_connect()
         self.channel.start_consuming()
 
