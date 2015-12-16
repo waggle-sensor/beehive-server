@@ -81,131 +81,129 @@ class RegProcess(Process):
         # Unpack the header and see if it is already registered
         
         minor_type = None
-        if minor == 'r':
+        # while is not used as a loop, I just want to use break
+        while True:
+            if minor == 'r':
             
-            #
-            #  DEPRECATED for now. (major, minor = rr)
-            #
-            logger.error("rr is deprecated")
-            ch.basic_ack(delivery_tag = method.delivery_tag)
-            return
+                #
+                #  DEPRECATED for now. (major, minor = rr)
+                #
+                logger.error("rr is deprecated")
+                break
             
-            if header["s_uniqid"] in self.node_table:
-                minor_type = ord('a');
-            else:
-                logger.info("Registering new node.")
-                # Add the node to the registration file and make and bind its queue
-                #if not os.path.exists('registrations'):
-                #    os.makedirs('registrations')
-                #with open('registrations/nodes.txt','a+') as nodeList:
-                #    nodeList.write("{}:{}\n".format(str(header["s_uniqid"]),msg))
+                if header["s_uniqid"] in self.node_table:
+                    minor_type = ord('a');
+                else:
+                    logger.info("Registering new node.")
+                    # Add the node to the registration file and make and bind its queue
+                    #if not os.path.exists('registrations'):
+                    #    os.makedirs('registrations')
+                    #with open('registrations/nodes.txt','a+') as nodeList:
+                    #    nodeList.write("{}:{}\n".format(str(header["s_uniqid"]),msg))
                 
-                s_uniqid_int = header["s_uniqid"]
+                    s_uniqid_int = header["s_uniqid"]
                 
-                self.cassandra_register_node()
+                    self.cassandra_register_node()
                 
                 
-                self.channel.queue_declare(msg)
-                self.channel.queue_bind(exchange='internal',queue=msg,routing_key=msg)
-                #self.routing_table[header["s_uniqid"]] = msg
-                minor_type = ord('n')
+                    self.channel.queue_declare(msg)
+                    self.channel.queue_bind(exchange='internal',queue=msg,routing_key=msg)
+                    #self.routing_table[header["s_uniqid"]] = msg
+                    minor_type = ord('n')
 
-            # Send the node a registration confirmation.
-            resp_header = {
-                    "msg_mj_type" : ord('r'),
-                    "msg_mi_type" : minor_type,
-                    "r_uniqid"    : header["s_uniqid"],
-                    "resp_session": header["snd_session"]
-            }
-            msg = "Congratulations node {}! You are registered under the queue {}!".format(header["s_uniqid"],msg)
-            for packet in pack(resp_header,msg):
-                response = packet
-            self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
+                # Send the node a registration confirmation.
+                resp_header = {
+                        "msg_mj_type" : ord('r'),
+                        "msg_mi_type" : minor_type,
+                        "r_uniqid"    : header["s_uniqid"],
+                        "resp_session": header["snd_session"]
+                }
+                msg = "Congratulations node {}! You are registered under the queue {}!".format(header["s_uniqid"],msg)
+                for packet in pack(resp_header,msg):
+                    response = packet
+                self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
 
-        elif minor == 's': # They want to get an SSL Certificate
+            elif minor == 's': # They want to get an SSL Certificate
         
-            #
-            # DEPRECATED
-            #
-            logger.error("Someone wants an SSL cert.")
-            ch.basic_ack(delivery_tag = method.delivery_tag)
-            return
+                #
+                # DEPRECATED
+                #
+                logger.error("Someone wants an SSL cert.")
+                break
             
             
-            # Write the request to a file to be used by the CA for signing
-            replyQueue = msg.split("\n")[0]
-            msg = "\n".join(msg.split("\n")[1:])
-            print replyQueue
-            certFile = "/tmp/" + self.name
-            with open(certFile + "_req.pem","w+") as cert:
-                cert.write(msg)
-            cmd = "openssl ca -config /usr/lib/waggle/SSL/waggleca/openssl.cnf " + \
-                "-in " + certFile + "_req.pem" + " -out " + certFile + "_cert.pem " + \
-                "-notext -batch -extensions client_ca_extensions"
-            os.system(cmd)
-            cert = ""
-            with open(certFile + "_cert.pem","r") as cert:
-            	cert = cert.read()
-            	print cert
-            ch.basic_publish(exchange='',
-                 routing_key=replyQueue,
-                 body=cert)
+                # Write the request to a file to be used by the CA for signing
+                replyQueue = msg.split("\n")[0]
+                msg = "\n".join(msg.split("\n")[1:])
+                print replyQueue
+                certFile = "/tmp/" + self.name
+                with open(certFile + "_req.pem","w+") as cert:
+                    cert.write(msg)
+                cmd = "openssl ca -config /usr/lib/waggle/SSL/waggleca/openssl.cnf " + \
+                    "-in " + certFile + "_req.pem" + " -out " + certFile + "_cert.pem " + \
+                    "-notext -batch -extensions client_ca_extensions"
+                os.system(cmd)
+                cert = ""
+                with open(certFile + "_cert.pem","r") as cert:
+                	cert = cert.read()
+                	print cert
+                ch.basic_publish(exchange='',
+                     routing_key=replyQueue,
+                     body=cert)
 
-        elif minor == 'n': # They are sending us a config file.
-        # Cassandra note: If the node is already in the node_info table,
-        # then this will preform an UPSERT of the config file instead of an INSERT.
-        # This is inherent to Cassandra, so is not explicitly stated here.
+            elif minor == 'n': # They are sending us a config file.
+            # Cassandra note: If the node is already in the node_info table,
+            # then this will preform an UPSERT of the config file instead of an INSERT.
+            # This is inherent to Cassandra, so is not explicitly stated here.
         
-            # convert int to hex_str
-            config_dict = {}
-            try:
-                config_dict = json.loads(msg)
-            except ValueError, e:
-                logger.error("error parsing json (msg=%s): %s" % (msg, str(e)))
-                ch.basic_nack(delivery_tag = method.delivery_tag)
-                return
+                # convert int to hex_str
+                config_dict = {}
+                try:
+                    config_dict = json.loads(msg)
+                except ValueError, e:
+                    logger.error("error parsing json (msg=%s): %s" % (msg, str(e)))
+                    break
         
-            node_id = config_dict['node_id']
+                node_id = config_dict['node_id']
             
-            if s_uniqid_str != node_id:
-                logger.error("Sender node IDs do not match. header=%s config=%s" % (s_uniqid_str, node_id) )
-                ch.basic_nack(delivery_tag = method.delivery_tag)
-                return
+                if s_uniqid_str != node_id:
+                    logger.error("Sender node IDs do not match. header=%s config=%s" % (s_uniqid_str, node_id) )
+                    break
             
-            logger.info("registration request from node %s" % (node_id))
-            queue = config_dict['queue']
-            self.channel.queue_declare(queue)
-            self.channel.queue_bind(exchange='internal',queue=msg,routing_key=queue)
+                logger.info("registration request from node %s" % (node_id))
+                queue = config_dict['queue']
+                self.channel.queue_declare(queue)
+                self.channel.queue_bind(exchange='internal',queue=msg,routing_key=queue)
             
-            node_name = config_dict['name']
-            if not node_name:
-                node_name = "unknown"
+                node_name = config_dict['name']
+                if not node_name:
+                    node_name = "unknown"
             
-            try:
-                #self.cassandra_insert(header,msg)
-                self.cassandra_register_node(node_id, queue, node_name)
-            except Exception as e:
-                logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
-                ch.basic_nack(delivery_tag = method.delivery_tag)
-                time.sleep(1)
-                self.cassandra_connect()
-                return
+                try:
+                    #self.cassandra_insert(header,msg)
+                    self.cassandra_register_node(node_id, queue, node_name)
+                except Exception as e:
+                    logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
+                    time.sleep(1)
+                    self.cassandra_connect()
+                    break
                 
-            # update node_table
-            node_table[node_id] = {'queue' : queue , 'name' : node_name}
+                # update node_table
+                node_table[node_id] = {'queue' : queue , 'name' : node_name}
             
-            # Send the node a registration confirmation.
-            resp_header = {
-                    "msg_mj_type" : ord('r'),
-                    "msg_mi_type" : ord('n'),
-                    "r_uniqid"    : header["s_uniqid"],
-                    "resp_session": header["snd_session"]
-            }
-            msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue)
-            for packet in pack(resp_header,msg):
-                response = packet
-            self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
-
+                # Send the node a registration confirmation.
+                resp_header = {
+                        "msg_mj_type" : ord('r'),
+                        "msg_mi_type" : ord('n'),
+                        "r_uniqid"    : header["s_uniqid"],
+                        "resp_session": header["snd_session"]
+                }
+                msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue)
+                for packet in pack(resp_header,msg):
+                    response = packet
+                self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
+            break
+            
         ch.basic_ack(delivery_tag = method.delivery_tag)
             
 
