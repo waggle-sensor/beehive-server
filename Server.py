@@ -131,7 +131,7 @@ if __name__ == "__main__":
     
     num_nodes=0   
     for node in waggle_nodes:
-        num_nodes++
+        num_nodes+=1
         node_table[node.node_id] = node
         logger.debug("loading node information for node %s" % (node.node_id) )
     
