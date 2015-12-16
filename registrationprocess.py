@@ -172,8 +172,12 @@ class RegProcess(Process):
             
                 logger.info("registration request from node %s" % (node_id))
                 queue = config_dict['queue']
+                if not queue:
+                    logger.error("no queue specified" )
+                    break
+                
                 self.channel.queue_declare(queue)
-                self.channel.queue_bind(exchange='internal',queue=msg,routing_key=queue)
+                self.channel.queue_bind(exchange='internal',queue=queue,routing_key=queue)
             
                 node_name = config_dict['name']
                 if not node_name:
