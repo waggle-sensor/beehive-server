@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, def StringIO(self, arg):
-    """docstring for StringIO"""
-    pass
-, ConfigParser, logging, pika, ssl
+import sys, os, StringIO, ConfigParser, logging, pika, ssl
 import time, datetime
 
 
