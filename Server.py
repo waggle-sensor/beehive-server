@@ -104,7 +104,7 @@ if __name__ == "__main__":
     #    			queue_bindings[info[1]] = ("internal",info[1])
     #    			routing_table[int(info[0])] = info[1]
 
-
+    cassandra_session = None
     while cassandra_session == None:     
         try:    
             cassandra_cluster = Cluster(contact_points=[CASSANDRA_HOST])
