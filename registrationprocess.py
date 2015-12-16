@@ -73,12 +73,15 @@ class RegProcess(Process):
         header,msg = unpack(body)
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
-        logger.info("Received a registration request from node \"%s\"." % (s_uniqid_str))
+        major = chr(header["msg_mj_type"])
+        minor = chr(header["msg_mi_type"])
+        
+        logger.info("Received a registration request (%s%s) from node \"%s\"." % (major, minor, s_uniqid_str))
         
         # Unpack the header and see if it is already registered
         
         minor_type = None
-        if header["msg_mi_type"] == ord('r'):
+        if minor == 'r':
             
             #
             #  DEPRECATED for now. (major, minor = rr)
@@ -119,7 +122,7 @@ class RegProcess(Process):
                 response = packet
             self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
 
-        elif header["msg_mi_type"] == ord('s'): # They want to get an SSL Certificate
+        elif minor == 's': # They want to get an SSL Certificate
         
             #
             # DEPRECATED
@@ -148,21 +151,25 @@ class RegProcess(Process):
                  routing_key=replyQueue,
                  body=cert)
 
-        elif header["msg_mi_type"] == ord('n'): # They are sending us a config file.
+        elif minor == 'n': # They are sending us a config file.
         # Cassandra note: If the node is already in the node_info table,
         # then this will preform an UPSERT of the config file instead of an INSERT.
         # This is inherent to Cassandra, so is not explicitly stated here.
         
             # convert int to hex_str
-            
-            
-            config_dict = json.loads(msg)
-            #TODO check 
+            config_dict = {}
+            try:
+                config_dict = json.loads(msg)
+            except ValueError, e:
+                logger.error("error parsing json (msg=%s): %s", % (msg, str(e)))
+                ch.basic_nack(delivery_tag = method.delivery_tag)
+                return
         
             node_id = config_dict['node_id']
             
             if s_uniqid_str != node_id:
                 logger.error("Sender node IDs do not match. header=%s config=%s" % (s_uniqid_str, node_id) )
+                ch.basic_nack(delivery_tag = method.delivery_tag)
                 return
             
             logger.info("registration request from node %s" % (node_id))
