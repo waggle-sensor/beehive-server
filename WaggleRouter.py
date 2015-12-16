@@ -103,7 +103,7 @@ class WaggleRouter(Process):
                 
                 #recipient = self.nodes_table[header['r_uniqid']]
                 recipient_node = self.nodes_table[r_uniqid_str]
-                recipient = recipient_node.queue
+                recipient = recipient_node['queue']
                 self.channel.basic_publish(exchange='internal', routing_key = recipient, body=body)
             except Exception as e:
                 print str(e)
