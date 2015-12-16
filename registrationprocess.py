@@ -163,6 +163,7 @@ class RegProcess(Process):
                 logger.error("Sender node IDs do not match. header=%s config=%s" % (s_uniqid_str, node_id) )
                 return
             
+            logger.info("registration request from node %s" % (node_id))
             queue = config_dict['queue']
             self.channel.queue_declare(queue)
             self.channel.queue_bind(exchange='internal',queue=msg,routing_key=queue)

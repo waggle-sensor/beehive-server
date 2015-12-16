@@ -74,16 +74,20 @@ class WaggleRouter(Process):
             
         s_uniqid_str = nodeid_int2hexstr(header['s_uniqid'])
         r_uniqid_str = nodeid_int2hexstr(header['r_uniqid'])
-        logger.debug("message (%s%s) from %s for %s" % (chr(header["msg_mj_type"]), chr(header["msg_mi_type"]), s_uniqid_str, r_uniqid_str) )
+        major = chr(header["msg_mj_type"])
+        minor = chr(header["msg_mi_type"])
+        logger.debug("message (%s%s) from %s for %s" % (major, minor, s_uniqid_str, r_uniqid_str) )
 
         if (header['r_uniqid'] == 0): # If the message is intended for the cloud...
 
-            msg_type = chr(header["msg_mj_type"]),chr(header["msg_mi_type"])
+            #msg_type = chr(header["msg_mj_type"]),chr(header["msg_mi_type"])
             #Figure out which queue this message belongs in.
-            msg_dest = self.routeQueues.get(msg_type[0],'invalid')
+            msg_dest = self.routeQueues.get(major,'invalid')
             if(msg_dest == 'invalid'):
+                logger.debug("msg_dest == 'invalid'")
                 ch.basic_ack(delivery_tag = method.delivery_tag)
                 return
+            logger.debug("forwarding message to %s" % (msg_dest))
             self.channel.basic_publish(exchange='internal',routing_key=msg_dest, body=body)
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
