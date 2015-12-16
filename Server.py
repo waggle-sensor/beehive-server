@@ -142,6 +142,10 @@ if __name__ == "__main__":
     
     logger.debug("number of nodes: %d" % (num_nodes)) 
 
+
+    cassandra_cluster.shutdown()
+    
+
     #Connect to rabbitMQ
     try:
         rabbitConn = pika.BlockingConnection(pika_params)
