@@ -28,7 +28,7 @@ class DataProcess(Process):
         """
         super(DataProcess,self).__init__()
         
-        logger.info("Initializing DataProcess, pid="+str(os.getpid()))
+        logger.info("Initializing DataProcess")
         
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
