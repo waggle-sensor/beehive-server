@@ -129,11 +129,13 @@ if __name__ == "__main__":
         logger.error("(cassandra_session.execute) failed. Statement: %s Error: %s " % (statement, str(e)) )
         sys.exit(1)
     
-    logger.debug("number of nodes: %d" % (len(waggle_nodes)))    
+    num_nodes=0   
     for node in waggle_nodes:
+        num_nodes++
         node_table[node.node_id] = node
         logger.debug("loading node information for node %s" % (node.node_id) )
     
+    logger.debug("number of nodes: %d" % (num_nodes)) 
 
     #Connect to rabbitMQ
     try:
