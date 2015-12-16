@@ -17,7 +17,7 @@ import time
 
 #pika is a bit too verbose...
 logging.getLogger('pika').setLevel(logging.ERROR)
-#logging.getLogger('cassandra').setLevel(logging.ERROR)
+logging.getLogger('cassandra').setLevel(logging.ERROR)
 
 
 logger = logging.getLogger(__name__)
