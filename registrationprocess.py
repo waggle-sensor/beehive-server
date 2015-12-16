@@ -191,10 +191,12 @@ class RegProcess(Process):
                     time.sleep(1)
                     self.cassandra_connect()
                     break
+                logger.debug("node registered in cassandra")
                 
                 # update node_table
-                node_table[node_id] = {'queue' : queue , 'name' : node_name}
-            
+                self.node_table[node_id] = {'queue' : queue , 'name' : node_name}
+                logger.debug("node_table updated")
+                
                 # Send the node a registration confirmation.
                 resp_header = {
                         "msg_mj_type" : ord('r'),
