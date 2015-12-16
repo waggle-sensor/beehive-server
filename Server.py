@@ -132,7 +132,11 @@ if __name__ == "__main__":
     num_nodes=0   
     for node in waggle_nodes:
         num_nodes+=1
-        node_table[node.node_id] = node
+        node_table[node.node_id] = {'node_id': node.node_id,
+                                    'queue' : node.queue,
+                                    'name': node.name}
+                    #'device_dict' : node.device_dict,
+                    #'priority_order' : node.priority_order} 
         queue_bindings[node.queue] = ("internal",node.queue)
         logger.debug("loading node information for node %s" % (node.node_id) )
     
