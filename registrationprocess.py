@@ -247,8 +247,8 @@ class RegProcess(Process):
 
     def cassandra_register_node(self, node_id, queue, name):
         
-        #statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s')" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
-        statement = "UPDATE nodes SET timestamp='%s' , queue='%s' , name='%s' WHERE node_id='%s'" % (unix_time_millis(datetime.datetime.now()), queue, name, node_id)
+        statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s')" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
+        #statement = "UPDATE nodes SET timestamp='%s' , queue='%s' , name='%s' WHERE node_id='%s'" % (unix_time_millis(datetime.datetime.now()), queue, name, node_id)
         logger.debug("trying cassandra statement: %s" % (statement))
         
         while True:
@@ -266,6 +266,7 @@ class RegProcess(Process):
             if success:
                 break
             else:
+                logger.debug("sleep 5 seconds")
                 time.sleep(5)
         
         logger.debug("node %s registered." % (node_id))
