@@ -193,10 +193,10 @@ class RegProcess(Process):
                     time.sleep(1)
                     self.cassandra_connect()
                     break
-                logger.debug("node registered in cassandra")
+                
                 
                 # update node_table
-                self.node_table[node_id] = {'queue' : queue , 'name' : node_name}
+                self.node_table[node_id] = {'node_id': node_id, 'queue' : queue , 'name' : node_name}
                 logger.debug("node_table updated")
                 
                 # Send the node a registration confirmation.
@@ -248,7 +248,7 @@ class RegProcess(Process):
     def cassandra_register_node(self, node_id, queue, name):
         
         statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s')" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
-        logger.debug("trying cassadra statement: %s" % (statement))
+        logger.debug("trying cassandra statement: %s" % (statement))
         
         while True:
             self.cassandra_connect()
@@ -259,9 +259,9 @@ class RegProcess(Process):
             except Exception as e:
                 logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
                 success = False
-                break
                 
             if success:
+                logger.debug("node %s registered." % (node_id))
                 break
             else:
                 time.sleep(5)
