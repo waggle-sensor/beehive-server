@@ -33,11 +33,15 @@ class DataProcess(Process):
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         #Connect to rabbitMQ
-        try:
-            self.connection = pika.BlockingConnection(pika_params)
-        except Exception as e:
-            logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
-            sys.exit(1)
+        while True:
+            try:
+                self.connection = pika.BlockingConnection(pika_params)
+            except Exception as e:
+                logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+                time.sleep(1)
+                continue
+            break
+            
     
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))		
 		
