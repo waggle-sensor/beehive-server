@@ -179,6 +179,8 @@ class RegProcess(Process):
                 self.channel.queue_declare(queue)
                 self.channel.queue_bind(exchange='internal',queue=queue,routing_key=queue)
             
+                logger.debug("queue %s declared." % (queue))
+                
                 node_name = config_dict['name']
                 if not node_name:
                     node_name = "unknown"
@@ -246,7 +248,7 @@ class RegProcess(Process):
     def cassandra_register_node(self, node_id, queue, name):
         
         statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s')" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
-        
+        logger.debug("trying cassadra statement: %s" % (statement))
         
         while True:
             self.cassandra_connect()
