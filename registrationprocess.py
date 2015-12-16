@@ -262,7 +262,7 @@ class RegProcess(Process):
             except Exception as e:
                 logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
                 success = False
-            logger.debug("B")    
+            
             if success:
                 break
             else:
