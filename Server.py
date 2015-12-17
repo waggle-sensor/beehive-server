@@ -122,12 +122,14 @@ if __name__ == "__main__":
             continue
     
     waggle_nodes = []
-    try:
-        statement = "select node_id, timestamp, queue, name from waggle.nodes"
-        waggle_nodes = cassandra_session.execute(statement)
-    except Exception as e:
-        logger.error("(cassandra_session.execute) failed. Statement: %s Error: %s " % (statement, str(e)) )
-        sys.exit(1)
+    
+    for statement in [ keyspace_cql , nodes_cql, "select node_id, timestamp, queue, name from waggle.nodes"]:
+        try: 
+            cassandra_session.execute(statement)
+        except Exception as e:
+            logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
+            sys.exit(1)            
+    
     
     num_nodes=0   
     for node in waggle_nodes:

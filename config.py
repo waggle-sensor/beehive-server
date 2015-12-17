@@ -92,7 +92,19 @@ pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST,
 
 # cassandra
 keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
-
+nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
+                    node_id ascii PRIMARY KEY,
+                    timestamp timestamp,
+                    queue ascii,
+                    config_file ascii,
+                    extra_notes list<ascii>,
+                    sensor_names list<ascii>,
+                    height double,
+                    latitude double,
+                    longitude double,
+                    name ascii
+                );'''
+nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
 
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)

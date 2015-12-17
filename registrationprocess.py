@@ -281,10 +281,6 @@ class RegProcess(Process):
             
     def cassandra_init(self):
         
-        
-        
-
-
         sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                                 node_id ascii,
                                 sensor_name ascii,
@@ -296,22 +292,6 @@ class RegProcess(Process):
                                 PRIMARY KEY (node_id, sensor_name, timestamp)
                             );'''
         sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
-
-        nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
-                            node_id ascii PRIMARY KEY,
-                            timestamp timestamp,
-                            queue ascii,
-                            config_file ascii,
-                            extra_notes list<ascii>,
-                            sensor_names list<ascii>,
-                            height double,
-                            latitude double,
-                            longitude double,
-                            name ascii
-                        );'''
-        nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
-        
-        
         
         statements = [keyspace_cql, sensor_data_cql, nodes_cql]
         
