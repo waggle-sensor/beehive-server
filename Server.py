@@ -115,7 +115,7 @@ if __name__ == "__main__":
             continue
             
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            cassandra_session = cassandra_cluster.connect('waggle')
+            cassandra_session = cassandra_cluster.connect()
         except Exception as e:
             logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
             time.sleep(3)
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     
     waggle_nodes = []
     try:
-        statement = "select node_id, timestamp, queue, name from nodes"
+        statement = "select node_id, timestamp, queue, name from waggle.nodes"
         waggle_nodes = cassandra_session.execute(statement)
     except Exception as e:
         logger.error("(cassandra_session.execute) failed. Statement: %s Error: %s " % (statement, str(e)) )

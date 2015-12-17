@@ -90,6 +90,10 @@ pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST,
                                          )
 
 
+# cassandra
+keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
+
+
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
     delta = dt - epoch

@@ -282,7 +282,7 @@ class RegProcess(Process):
     def cassandra_init(self):
         
         
-        keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
+        
 
 
         sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
