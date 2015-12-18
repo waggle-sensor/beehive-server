@@ -20,6 +20,9 @@ chmod 700 private
 echo 01 > serial
 touch index.txt
 
+# this is needed for "node" certificates. We may change that later.
+echo "unique_subject = no" > index.txt.attr
+
 # Generate the root certificate
 
 openssl req -x509 -config /usr/lib/waggle/beehive-server/SSL/waggleca/openssl.cnf -newkey rsa:2048 -days 365 \
