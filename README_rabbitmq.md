@@ -44,8 +44,8 @@ docker rm -f beehive-rabbit
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/:ro \
-  --expose=5671 \
-  -p 5671:5671 \
+  --expose=23181 \
+  -p 23181:23181 \
   rabbitmq:3.5.6
 ```
 

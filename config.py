@@ -69,7 +69,7 @@ logger.info("CASSANDRA_HOST: %s" %(CASSANDRA_HOST))
 
 
 USE_SSL=True
-RABBITMQ_PORT=5671
+RABBITMQ_PORT=23181
 
 
 # Beehive server has needs client certificates for RabbitMQ
