@@ -1,5 +1,5 @@
 
-# Certificate Server fort Waggle
+# Certificate Server for Waggle
  
 Do not use this for production purposes ! 
 
