@@ -5,7 +5,7 @@ import subprocess
 import threading
 import re
 
-
+port = 80
 
 resource_lock = threading.RLock()
 
@@ -107,7 +107,7 @@ class newnode:
 
 
 if __name__ == "__main__":
-    web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", 9999))
+    web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     app.run()
 
 
