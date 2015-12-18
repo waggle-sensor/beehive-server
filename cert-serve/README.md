@@ -8,7 +8,6 @@ configuration:
 ```bash
 apt-get install python-webpy
 pip install web.py
-echo "unique_subject = no" > SSL/waggleca/index.txt.attr
 ```
 
 Run:
