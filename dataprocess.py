@@ -43,8 +43,8 @@ class DataProcess(Process):
             break
             
     
-        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))		
-		
+        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))        
+        
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
@@ -77,12 +77,14 @@ class DataProcess(Process):
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         # example cassandra query:
-        # INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
+        # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
+        # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
         try:
+            # TODO: Should statement preparation not be done only once !?
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
-                " (node_id, sensor_name, timestamp, data_types, data, units, extra_info)" + \
-                " VALUES (?, ?, ?, ?, ?, ?, ?)")
-            bound_statement = prepared_statement.bind([s_uniqid_str,data[0],int(data[1]),data[2],data[4],data[5],data[6]])
+                " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+            bound_statement = prepared_statement.bind([s_uniqid_str]+data[:6])
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error(e)

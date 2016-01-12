@@ -105,6 +105,23 @@ nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     name ascii
                 );'''
 nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
+                
+sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
+                        node_id ascii,
+                        date ascii,
+                        plugin_id ascii,
+                        plugin_version int,
+                        timestamp timestamp,
+                        
+                        sensor_id list<ascii>,
+                        data list<ascii>,
+                        meta list<ascii>,
+                        
+                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
+                    );'''
+sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
+
+
 
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
