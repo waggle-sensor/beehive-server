@@ -95,7 +95,7 @@ class DataProcess(Process):
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
                 " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            bound_statement = prepared_statement.bind([s_uniqid_str]+data[1:3]+[xxxx]+data[5:6])
+            bound_statement = prepared_statement.bind([s_uniqid_str]+data[1:3]+[timestamp_int]+data[5:6])
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error(e)
