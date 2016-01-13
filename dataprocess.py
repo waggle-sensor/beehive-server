@@ -56,21 +56,33 @@ class DataProcess(Process):
     def callback(self,ch,method,props,body):
         try:
             header,data = unpack(body)
+        except Exception as e:    
+            logger.error("Error unpacking data: %s" % (str(e)))
+            time.sleep(1)
+            self.cassandra_connect()#TODO I don't know if this is neccessary
+            return
+            
+        try:    
             data = un_gPickle(data)
+        except Exception as e:    
+            logger.error("Error un_gPickle data: %s" % (str(e)))
+            time.sleep(1)
+            self.cassandra_connect()#TODO I don't know if this is neccessary
+            return
+            
+        try:
             #print "Data: ", data
             # Send the data off to Cassandra
             self.cassandra_insert(header,data)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-        except Exception as e:
-            # Something went wrong when trying to insert the data into Cassandra
-            #It was most likely a formatting issue with the data string
-            #Cassandra is very specific so the data string must follow the expected format found in the cassandra_insert function below
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            logger.error("Error when trying to insert data into Cassandra. Please check data format.")
-            logger.error(e)
-            # Wait a few seconds before trying to reconnect
+        except Exception as e:    
+            logger.error("Error inserting data: %s" % (str(e)))
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
+            return
+    
+            
+            
+        ch.basic_ack(delivery_tag=method.delivery_tag)
         
         logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
 
