@@ -237,5 +237,6 @@ if __name__ == "__main__":
             time.sleep(3)
     except KeyboardInterrupt:
        logger.info("exiting.")
+       sys.exit(0)
     except Exception as e:
        logger.error("error: %s" % (str(e)))
