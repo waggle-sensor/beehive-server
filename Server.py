@@ -12,7 +12,8 @@ from dataprocess import DataProcess
 from cassandra.cluster import Cluster
 import time
 
-
+import os
+import signal
 
 
 #pika is a bit too verbose...
@@ -238,19 +239,19 @@ if __name__ == "__main__":
        print "try to close child processes..."
        for i in range(0,len(router_procs)):
            if router_procs[i].is_alive():
-               router_procs[i].terminate()
+               os.kill(router_procs[i].pid(), signal.SIGKILL)
                
        for i in range(0,len(data_procs)):
            if data_procs[i].is_alive():
-               data_procs[i].terminate()
+               os.kill(data_procs[i].pid(), signal.SIGKILL)
                
        for i in range(0,len(reg_procs)):
            if reg_procs[i].is_alive():
-               reg_procs[i].terminate()
+               os.kill(reg_procs[i].pid(), signal.SIGKILL)
                
        for i in range(0,len(util_procs)):
            if util_procs[i].is_alive():
-               util_procs[i].terminate()
+               os.kill(util_procs[i].pid(), signal.SIGKILL)
        print "exiting."
        
     except Exception as e:
