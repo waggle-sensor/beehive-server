@@ -99,14 +99,18 @@ class DataProcess(Process):
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
-
-
+        if not data[4]:
+            logger.error("data array too short")
+            return
+            
         try:
             timestamp_int = int(data[4])
         except ValueError as e:
-            logger.error("Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
+            logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
             raise
-
+        except Exception as e:
+            logger.error("(Exception) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
+            raise
         
         value_array = [s_uniqid_str]+data[1:3]+[timestamp_int]+data[5:6]
         
