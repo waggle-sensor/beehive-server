@@ -104,7 +104,7 @@ class DataProcess(Process):
             return
             
         try:
-            timestamp_int = int(data[4])
+            timestamp_int = int(data[3])
         except ValueError as e:
             logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
             raise
@@ -112,7 +112,7 @@ class DataProcess(Process):
             logger.error("(Exception) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
             raise
         
-        value_array = [s_uniqid_str]+data[1:3]+[timestamp_int]+data[5:6]
+        value_array = [s_uniqid_str]+data[0:2]+[timestamp_int]+data[4:6]
         
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
