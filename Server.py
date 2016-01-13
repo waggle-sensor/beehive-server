@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-	This module sets up and runs the waggle server.
+    This module sets up and runs the waggle server.
 """
 import sys, pika, logging, argparse, logging, logging.handlers
 from config import *
@@ -33,10 +33,10 @@ exchage_list = ["waggle_in","internal"]
 
 # Permanant queue bindings
 queue_bindings = {
-	"incoming"     : ("waggle_in","in"),
-	"registration" : ("internal","registration"),
-	"util"         : ("internal","util"),
-	"data"         : ("internal","data")
+    "incoming"     : ("waggle_in","in"),
+    "registration" : ("internal","registration"),
+    "util"         : ("internal","util"),
+    "data"         : ("internal","data")
 }
 
 # from: http://www.electricmonk.nl/log/2011/08/14/redirect-stdout-and-stderr-to-a-logger-in-python/
@@ -98,12 +98,12 @@ if __name__ == "__main__":
     # Add node queue bindings that are already registered
     #if os.path.isfile('registrations/nodes.txt'): 
     #    with open('registrations/nodes.txt') as file_:
-    #   	for line in file_:
-    #    		if line and line != '\n':
-    #    			line = line[:-1] #Cut off the newline character
-    #    			info = line.split(":")
-    #    			queue_bindings[info[1]] = ("internal",info[1])
-    #    			routing_table[int(info[0])] = info[1]
+    #       for line in file_:
+    #            if line and line != '\n':
+    #                line = line[:-1] #Cut off the newline character
+    #                info = line.split(":")
+    #                queue_bindings[info[1]] = ("internal",info[1])
+    #                routing_table[int(info[0])] = info[1]
 
     cassandra_session = None
     while cassandra_session == None:     
@@ -162,42 +162,42 @@ if __name__ == "__main__":
     #Declare all of the appropriate exchanges, queues, and bindings
 
     for queueName in queue_bindings.keys():
-    	rabbitChannel.queue_declare(queueName)
+        rabbitChannel.queue_declare(queueName)
 
     for exchName in exchage_list:
-    	rabbitChannel.exchange_declare(exchName)
+        rabbitChannel.exchange_declare(exchName)
     for key in queue_bindings.keys():
-    	bind = queue_bindings[key]
-    	rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
+        bind = queue_bindings[key]
+        rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
 
 
     #start the processes
     router_procs = []
     for i in range (0,NUM_ROUTER_PROCS):
-    	new_router = WaggleRouter(node_table)
-    	new_router.start()
-    	router_procs.append(new_router)
+        new_router = WaggleRouter(node_table)
+        new_router.start()
+        router_procs.append(new_router)
     logger.info("%d routing processes online." % (NUM_ROUTER_PROCS))
 
     util_procs = []
     for i in range (0,NUM_UTIL_PROCS):
-    	new_util = UtilProcess()
-    	new_util.start()
-    	util_procs.append(new_util)
+        new_util = UtilProcess()
+        new_util.start()
+        util_procs.append(new_util)
     logger.info("Utility processes online.")
 
     reg_procs = []
     for i in range (0,NUM_REGISTRATION_PROCS):
-    	new_reg = RegProcess(node_table)
-    	new_reg.start()
-    	reg_procs.append(new_reg)
+        new_reg = RegProcess(node_table)
+        new_reg.start()
+        reg_procs.append(new_reg)
     logger.info("Registration processes online.")
 
     data_procs = []
     for i in range (0,NUM_DATA_PROCS):
-    	new_data = DataProcess()
-    	new_data.start()
-    	data_procs.append(new_reg)
+        new_data = DataProcess()
+        new_data.start()
+        data_procs.append(new_reg)
     logger.info("Data forwarding processes online.")
 
 
@@ -214,27 +214,44 @@ if __name__ == "__main__":
     # it has sole control over standard in/out.
     try:
         while True:
-        	for i in range(0,len(router_procs)):
-        		if not router_procs[0].is_alive():
-        			new_router = WaggleRouter(node_table)
-        			router_procs[i] = new_router
-        	for i in range(0,len(data_procs)):
-        		if not data_procs[i].is_alive():
-        			new_data = DataProcess()
-        			data_procs[i] = new_data
+            for i in range(0,len(router_procs)):
+                if not router_procs[i].is_alive():
+                    new_router = WaggleRouter(node_table)
+                    router_procs[i] = new_router
+            for i in range(0,len(data_procs)):
+                if not data_procs[i].is_alive():
+                    new_data = DataProcess()
+                    data_procs[i] = new_data
 
-        	for i in range(0,len(reg_procs)):
-        		if not reg_procs[i].is_alive():
-        			new_reg = RegProcess(node_table)
-        			reg_procs[i] = new_reg
+            for i in range(0,len(reg_procs)):
+                if not reg_procs[i].is_alive():
+                    new_reg = RegProcess(node_table)
+                    reg_procs[i] = new_reg
 
-        	for i in range(0,len(util_procs)):
-        		if not util_procs[i].is_alive():
-        			new_util = UtilProcess()
-        			util_procs[i] = new_util
+            for i in range(0,len(util_procs)):
+                if not util_procs[i].is_alive():
+                    new_util = UtilProcess()
+                    util_procs[i] = new_util
 
-        	time.sleep(3)
+            time.sleep(3)
     except KeyboardInterrupt:
-       print "exiting..."
+       print "try to close child processes..."
+       for i in range(0,len(router_procs)):
+           if router_procs[i].is_alive():
+               router_procs[i].terminate()
+               
+       for i in range(0,len(data_procs)):
+           if data_procs[i].is_alive():
+               data_procs[i].terminate()
+               
+       for i in range(0,len(reg_procs)):
+           if reg_procs[i].is_alive():
+               reg_procs[i].terminate()
+               
+       for i in range(0,len(util_procs)):
+           if util_procs[i].is_alive():
+               util_procs[i].terminate()
+       print "exiting."
+       
     except Exception as e:
        print "error: "+str(e)
