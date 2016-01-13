@@ -54,6 +54,7 @@ class DataProcess(Process):
         self.cluster = None
 
     def callback(self,ch,method,props,body):
+        #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         try:
             header,data = unpack(body)
         except Exception as e:    
