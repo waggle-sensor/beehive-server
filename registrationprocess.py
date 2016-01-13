@@ -336,7 +336,12 @@ class RegProcess(Process):
             logger.warning("channel.basic_consume crashed :"+ str(e))
             
         self.cassandra_connect()
-        self.channel.start_consuming()
+        try:
+            self.channel.start_consuming()
+        except KeyboardInterrupt:
+           logger.info("exiting.")
+        except Exception as e:
+           logger.error("error: %s" % (str(e)))
 
 
     def join(self):

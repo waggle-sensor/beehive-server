@@ -236,23 +236,6 @@ if __name__ == "__main__":
 
             time.sleep(3)
     except KeyboardInterrupt:
-       print "try to close child processes..."
-       for i in range(0,len(router_procs)):
-           if router_procs[i].is_alive():
-               os.kill(router_procs[i].pid(), signal.SIGKILL)
-               
-       for i in range(0,len(data_procs)):
-           if data_procs[i].is_alive():
-               os.kill(data_procs[i].pid(), signal.SIGKILL)
-               
-       for i in range(0,len(reg_procs)):
-           if reg_procs[i].is_alive():
-               os.kill(reg_procs[i].pid(), signal.SIGKILL)
-               
-       for i in range(0,len(util_procs)):
-           if util_procs[i].is_alive():
-               os.kill(util_procs[i].pid(), signal.SIGKILL)
-       print "exiting."
-       
+       logger.info("exiting.")
     except Exception as e:
-       print "error: "+str(e)
+       logger.error("error: %s" % (str(e)))

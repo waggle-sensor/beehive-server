@@ -44,15 +44,20 @@ class DataProcess(Process):
             
     
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))        
+        self.session = None
+        self.cluster = None
         
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
         self.channel.queue_declare("data")
-        self.channel.basic_consume(self.callback, queue='data')
-        self.session = None
-        self.cluster = None
-
+        try: 
+            self.channel.basic_consume(self.callback, queue='data')
+        except KeyboardInterrupt:
+           logger.info("exiting.")
+        except Exception as e:
+           logger.error("error: %s" % (str(e)))
+        
     def callback(self,ch,method,props,body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         try:
