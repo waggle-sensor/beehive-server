@@ -76,6 +76,17 @@ class DataProcess(Process):
 
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
+        
+
+
+        try:
+            timestamp_int = int(data[4])
+        except ValueError as e:
+            logger.error("Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
+            raise
+
+        
+        
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
@@ -84,7 +95,7 @@ class DataProcess(Process):
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
                 " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            bound_statement = prepared_statement.bind([s_uniqid_str]+data[:6])
+            bound_statement = prepared_statement.bind([s_uniqid_str]+data[1:3]+[xxxx]+data[5:6])
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error(e)
