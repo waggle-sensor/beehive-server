@@ -212,24 +212,29 @@ if __name__ == "__main__":
     # and then performing whatever needs to be done right here.
     # A separate command-line process might be a good way to do this, making sure that
     # it has sole control over standard in/out.
-    while True:
-    	for i in range(0,len(router_procs)):
-    		if not router_procs[0].is_alive():
-    			new_router = WaggleRouter(node_table)
-    			router_procs[i] = new_router
-    	for i in range(0,len(data_procs)):
-    		if not data_procs[i].is_alive():
-    			new_data = DataProcess()
-    			data_procs[i] = new_data
+    try:
+        while True:
+        	for i in range(0,len(router_procs)):
+        		if not router_procs[0].is_alive():
+        			new_router = WaggleRouter(node_table)
+        			router_procs[i] = new_router
+        	for i in range(0,len(data_procs)):
+        		if not data_procs[i].is_alive():
+        			new_data = DataProcess()
+        			data_procs[i] = new_data
 
-    	for i in range(0,len(reg_procs)):
-    		if not reg_procs[i].is_alive():
-    			new_reg = RegProcess(node_table)
-    			reg_procs[i] = new_reg
+        	for i in range(0,len(reg_procs)):
+        		if not reg_procs[i].is_alive():
+        			new_reg = RegProcess(node_table)
+        			reg_procs[i] = new_reg
 
-    	for i in range(0,len(util_procs)):
-    		if not util_procs[i].is_alive():
-    			new_util = UtilProcess()
-    			util_procs[i] = new_util
+        	for i in range(0,len(util_procs)):
+        		if not util_procs[i].is_alive():
+        			new_util = UtilProcess()
+        			util_procs[i] = new_util
 
-    	time.sleep(3)
+        	time.sleep(3)
+    except KeyboardInterrupt:
+       print "exiting..."
+    except Exception as e:
+       print "error: "+str(e)
