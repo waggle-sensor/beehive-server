@@ -138,4 +138,5 @@ class DataProcess(Process):
     def join(self):
         super(DataProcess,self).terminate()
         self.connection.close(0)
-        self.cluster.shutdown()
+        if self.cluster:
+            self.cluster.shutdown()
