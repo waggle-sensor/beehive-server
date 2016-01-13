@@ -339,7 +339,7 @@ class RegProcess(Process):
         try:
             self.channel.start_consuming()
         except KeyboardInterrupt:
-           logger.info("exiting.")
+            logger.info("exiting.")
             sys.exit(0)
         except Exception as e:
            logger.error("error: %s" % (str(e)))
