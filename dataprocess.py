@@ -58,6 +58,7 @@ class DataProcess(Process):
             header,data = unpack(body)
         except Exception as e:    
             logger.error("Error unpacking data: %s" % (str(e)))
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
             return
@@ -66,6 +67,7 @@ class DataProcess(Process):
             data = un_gPickle(data)
         except Exception as e:    
             logger.error("Error un_gPickle data: %s" % (str(e)))
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
             return
@@ -76,6 +78,7 @@ class DataProcess(Process):
             self.cassandra_insert(header,data)
         except Exception as e:    
             logger.error("Error inserting data: %s" % (str(e)))
+            ch.basic_ack(delivery_tag=method.delivery_tag)
             time.sleep(1)
             self.cassandra_connect()#TODO I don't know if this is neccessary
             return
