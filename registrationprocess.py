@@ -134,10 +134,14 @@ class RegProcess(Process):
                 config_dict = {}
                 try:
                     config_dict = json.loads(msg)
-                except ValueError, e:
-                    logger.error("error parsing json (msg=%s): %s" % (msg, str(e)))
+                except ValueError as e:
+                    logger.error("error (ValueError) parsing json (msg=%s): %s" % (msg, str(e)))
                     break
-        
+                except Exception as e:
+                    logger.error("error (Exception) parsing json (msg=%s): %s" % (msg, str(e)))
+                    break
+                
+                logger.debug("registration message: %s" % (str(config_dict)))
                 node_id = config_dict['node_id']
             
                 if s_uniqid_str != node_id:
@@ -161,7 +165,7 @@ class RegProcess(Process):
             
                 try:
                     #self.cassandra_insert(header,msg)
-                    self.cassandra_register_node(node_id, queue, node_name)
+                    self.cassandra_register_node(config_dict)
                 except Exception as e:
                     logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
                     time.sleep(1)
@@ -219,9 +223,21 @@ class RegProcess(Process):
             logger.error("self.session.execute crashed: "+str(e))
             raise
 
-    def cassandra_register_node(self, node_id, queue, name):
+    def cassandra_register_node(self, config_dict):
         
-        statement = "INSERT INTO nodes (node_id, timestamp, queue, name) VALUES ('%s', '%s', '%s', '%s');" % (node_id, unix_time_millis(datetime.datetime.now()), queue, name)
+        
+        # table: node_id ascii PRIMARY KEY, timestamp timestamp, queue ascii, config_file ascii, extra_notes list<ascii>, sensor_names list<ascii>, height double, latitude double, longitude double, name ascii
+        # node_id, timestamp, queue, config_file, extra_notes, sensor_names, height, latitude, longitude, name
+        
+        
+        registration_timestamp = int(float(datetime.datetime.utcnow().strftime("%s.%f"))) * 1000
+        config_dict[timestamp]=registration_timestamp
+        
+        statement = "INSERT INTO nodes (node_id, timestamp, queue, config_file, extra_notes, sensor_names, height, latitude, longitude, name) VALUES (%(node_id)s, %(timestamp)s, %(queue)s, %(config_file)s, %(extra_notes)s, %(sensor_names)s, %(height)s, %(latitude)s, %(longitude)s, %(name)s);"
+        
+        
+        
+        
         #statement = "UPDATE nodes SET timestamp='%s' , queue='%s' , name='%s' WHERE node_id='%s'" % (unix_time_millis(datetime.datetime.now()), queue, name, node_id)
         logger.debug("trying cassandra statement: %s" % (statement))
         
@@ -235,7 +251,7 @@ class RegProcess(Process):
                 logger.debug("created cluster object")
                 reg_session = reg_cluster.connect('waggle')
                 logger.debug("created session object")
-                reg_session.execute(statement)
+                reg_session.execute(statement, config_dict)
                 logger.debug("executed statement")
                 reg_cluster.shutdown()
                 logger.debug("shut reg_cluster down")
