@@ -122,14 +122,14 @@ class DataProcess(Process):
             raise
         
         #value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
-        value_dict = {      node_id : s_uniqid_str,
-                            date : data[0],
-                            plugin_id : data[1],
-                            plugin_version : plugin_version_int,
-                            timestamp : timestamp_int,
-                            sensor_id : data[4],
-                            data : data[5],
-                            meta : data[6]};
+        value_dict = {      'node_id' : s_uniqid_str,
+                            'date' : data[0],
+                            'plugin_id' : data[1],
+                            'plugin_version' : plugin_version_int,
+                            'timestamp' : timestamp_int,
+                            'sensor_id' : data[4],
+                            'data' : data[5],
+                            'meta' : data[6]};
          
          
         #
