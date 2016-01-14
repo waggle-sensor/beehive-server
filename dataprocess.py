@@ -126,10 +126,10 @@ class DataProcess(Process):
                             date : data[0],
                             plugin_id : data[1],
                             plugin_version : plugin_version_int,
-                            timestamp timestamp_int,
+                            timestamp : timestamp_int,
                             sensor_id : data[4],
                             data : data[5],
-                            meta : data[6]}
+                            meta : data[6]};
          
          
         #
