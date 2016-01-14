@@ -92,6 +92,7 @@ pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST,
 
 # cassandra
 keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
+
 nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     node_id ascii PRIMARY KEY,
                     timestamp timestamp,
@@ -105,6 +106,25 @@ nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     name ascii
                 );'''
 nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
+
+# event is "register" or "deregister"
+# deregister event can have empty values everywhere.
+node_reglog_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_reglog (
+                    node_id ascii,
+                    timestamp timestamp,
+                    event ascii,
+                    queue ascii,
+                    config_file ascii,
+                    extra_notes list<ascii>,
+                    sensor_names list<ascii>,
+                    height double,
+                    latitude double,
+                    longitude double,
+                    name ascii,
+                    PRIMARY KEY (node_id, timestamp, event)
+                );'''
+node_reglog_cql = node_reglog_cql.replace('\n', ' ').replace('\r', '')
+
                 
 sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         node_id ascii,
@@ -120,7 +140,6 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
                     );'''
 sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
-
 
 
 def unix_time(dt):
