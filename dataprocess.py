@@ -121,8 +121,18 @@ class DataProcess(Process):
             logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
             raise
         
-        value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
-        
+        #value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
+        value_dict = {      node_id : s_uniqid_str,
+                            date : data[0],
+                            plugin_id : data[1],
+                            plugin_version : plugin_version_int,
+                            timestamp timestamp_int,
+                            sensor_id : data[4],
+                            data : data[5],
+                            meta : data[6]}
+         
+         
+        #
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
@@ -131,10 +141,11 @@ class DataProcess(Process):
             prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
                 " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
                 " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            bound_statement = prepared_statement.bind(value_array)
+            #bound_statement = prepared_statement.bind(value_array)
+            bound_statement = prepared_statement.bind(value_dict)
             self.session.execute(bound_statement)
         except Exception as e:
-            logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
             raise
 
     def cassandra_connect(self):
