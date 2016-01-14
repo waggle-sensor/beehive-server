@@ -239,7 +239,7 @@ class RegProcess(Process):
         for key in ('timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name'):
             if config_dict[key]:
                 reg_keys = reg_keys + ", " + key
-                reg_values = reg_values +  ", %(" + config_dict[key] + ")s" 
+                reg_values = reg_values +  ", %(" + key + ")s" 
         
         statement = "INSERT INTO nodes ("+ reg_keys +") VALUES (" + reg_values + ");"
         
