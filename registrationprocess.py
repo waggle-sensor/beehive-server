@@ -274,7 +274,7 @@ class RegProcess(Process):
                 logger.debug("sleep 5 seconds")
                 time.sleep(5)
         
-        logger.debug("node %s registered." % (node_id))
+        logger.debug("node %s registered." % (config_dict['node_id']))
         
 
     def cassandra_connect(self):
