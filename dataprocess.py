@@ -150,7 +150,7 @@ class DataProcess(Process):
                 
         
         try:
-            bound_statement = prepared_statement.bind(value_dict)
+            bound_statement = self.prepared_statement.bind(value_dict)
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
