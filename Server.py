@@ -106,6 +106,7 @@ if __name__ == "__main__":
     #                queue_bindings[info[1]] = ("internal",info[1])
     #                routing_table[int(info[0])] = info[1]
 
+    logger.info("connecting to cassandra...")
     cassandra_session = None
     while cassandra_session == None:     
         try:    
@@ -122,16 +123,26 @@ if __name__ == "__main__":
             time.sleep(3)
             continue
     
-    waggle_nodes = []
     
-    for statement in [ keyspace_cql , nodes_cql, "select node_id, timestamp, queue, name from waggle.nodes"]:
+    logger.info("setting up cassandra...")
+    for statement in [ keyspace_cql , nodes_cql, node_reglog_cql, "select node_id, timestamp, queue, name from waggle.nodes"]:
         try: 
             cassandra_session.execute(statement)
         except Exception as e:
             logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
-            sys.exit(1)            
-    
-    
+            sys.exit(1)      
+                  
+                  
+    logger.info("getting list of registered nodes...")
+    waggle_nodes = []
+   
+    statement = "select node_id, timestamp, queue, name from waggle.nodes"
+    try:     
+        waggle_nodes = cassandra_session.execute(statement)
+    except Exception as e:
+        logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
+        sys.exit(1)
+
     num_nodes=0   
     for node in waggle_nodes:
         num_nodes+=1
@@ -148,7 +159,7 @@ if __name__ == "__main__":
 
     cassandra_cluster.shutdown()
     
-
+    logger.info("connecting to RabbitMQ...")
     #Connect to rabbitMQ
     try:
         rabbitConn = pika.BlockingConnection(pika_params)
@@ -172,7 +183,8 @@ if __name__ == "__main__":
         rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
 
 
-    #start the processes
+    logger.info("start the processes...")
+
     router_procs = []
     for i in range (0,NUM_ROUTER_PROCS):
         new_router = WaggleRouter(node_table)
@@ -217,24 +229,22 @@ if __name__ == "__main__":
         while True:
             for i in range(0,len(router_procs)):
                 if not router_procs[i].is_alive():
-                    new_router = WaggleRouter(node_table)
-                    router_procs[i] = new_router
+                    router_procs[i] = WaggleRouter(node_table)
+
             for i in range(0,len(data_procs)):
                 if not data_procs[i].is_alive():
-                    new_data = DataProcess()
-                    data_procs[i] = new_data
+                    data_procs[i] = DataProcess()
 
             for i in range(0,len(reg_procs)):
                 if not reg_procs[i].is_alive():
-                    new_reg = RegProcess(node_table)
-                    reg_procs[i] = new_reg
+                    reg_procs[i] = RegProcess(node_table)
 
             for i in range(0,len(util_procs)):
                 if not util_procs[i].is_alive():
-                    new_util = UtilProcess()
-                    util_procs[i] = new_util
+                    util_procs[i] = UtilProcess()
 
             time.sleep(3)
+            
     except KeyboardInterrupt:
        logger.info("exiting.")
        sys.exit(0)
