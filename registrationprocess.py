@@ -233,7 +233,15 @@ class RegProcess(Process):
         registration_timestamp = int(float(datetime.datetime.utcnow().strftime("%s.%f"))) * 1000
         config_dict['timestamp']=registration_timestamp
         
-        statement = "INSERT INTO nodes (node_id, timestamp, queue, config_file, extra_notes, sensor_names, height, latitude, longitude, name) VALUES (%(node_id)s, %(timestamp)s, %(queue)s, %(config_file)s, %(extra_notes)s, %(sensor_names)s, %(height)s, %(latitude)s, %(longitude)s, %(name)s);"
+        reg_keys="node_id"
+        reg_values = "%(node_id)s"
+        
+        for key in ('timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name'):
+            if config_dict[key]:
+                reg_keys = reg_keys + ", " + key
+                reg_values = reg_values +  ", %(" + config_dict[key] + ")s" 
+        
+        statement = "INSERT INTO nodes ("+ reg_keys +") VALUES (" + reg_values + ");"
         
         
         
