@@ -167,7 +167,7 @@ class RegProcess(Process):
                     #self.cassandra_insert(header,msg)
                     self.cassandra_register_node(config_dict)
                 except Exception as e:
-                    logger.warning("Cassandra connection failed. Will retry soon... "+ str(e))
+                    logger.warning("Cassandra registration failed. Will retry soon... "+ str(e))
                     time.sleep(1)
                     self.cassandra_connect()
                     break
@@ -236,7 +236,7 @@ class RegProcess(Process):
         reg_keys="node_id"
         reg_values = "%(node_id)s"
         
-        for key in ('timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name'):
+        for key in ['timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name']:
             if config_dict[key]:
                 reg_keys = reg_keys + ", " + key
                 reg_values = reg_values +  ", %(" + key + ")s" 
@@ -247,7 +247,7 @@ class RegProcess(Process):
         
         
         #statement = "UPDATE nodes SET timestamp='%s' , queue='%s' , name='%s' WHERE node_id='%s'" % (unix_time_millis(datetime.datetime.now()), queue, name, node_id)
-        logger.debug("trying cassandra statement: %s" % (statement))
+        logger.debug("created cassandra statement: %s" % (statement))
         
         while True:
             
