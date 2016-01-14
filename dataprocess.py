@@ -46,6 +46,7 @@ class DataProcess(Process):
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))        
         self.session = None
         self.cluster = None
+        self.prepared_statement = None
         
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
@@ -136,12 +137,19 @@ class DataProcess(Process):
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
+        
+        
+        if not self.prepared_statement:
+            try: 
+                self.prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
+                    " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+            except Exception as e:
+                logger.error("Error preparing statement: %s" % (str(e)) )
+                raise
+                
+        
         try:
-            # TODO: Should statement preparation not be done only once !?
-            prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
-                " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-            #bound_statement = prepared_statement.bind(value_array)
             bound_statement = prepared_statement.bind(value_dict)
             self.session.execute(bound_statement)
         except Exception as e:
