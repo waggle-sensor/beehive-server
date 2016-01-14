@@ -167,9 +167,8 @@ class RegProcess(Process):
                     #self.cassandra_insert(header,msg)
                     self.cassandra_register_node(config_dict)
                 except Exception as e:
-                    logger.warning("Cassandra registration failed. Will retry soon... "+ str(e))
+                    logger.warning("Cassandra registration failed. Will retry soon... error: %s" % (str(e)))
                     time.sleep(1)
-                    self.cassandra_connect()
                     break
                 
                 
@@ -229,20 +228,22 @@ class RegProcess(Process):
         # table: node_id ascii PRIMARY KEY, timestamp timestamp, queue ascii, config_file ascii, extra_notes list<ascii>, sensor_names list<ascii>, height double, latitude double, longitude double, name ascii
         # node_id, timestamp, queue, config_file, extra_notes, sensor_names, height, latitude, longitude, name
         
+        try: 
+            registration_timestamp = int(float(datetime.datetime.utcnow().strftime("%s.%f"))) * 1000
+            config_dict['timestamp']=registration_timestamp
         
-        registration_timestamp = int(float(datetime.datetime.utcnow().strftime("%s.%f"))) * 1000
-        config_dict['timestamp']=registration_timestamp
+            reg_keys="node_id"
+            reg_values = "%(node_id)s"
         
-        reg_keys="node_id"
-        reg_values = "%(node_id)s"
+            for key in ['timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name']:
+                if config_dict[key]:
+                    reg_keys = reg_keys + ", " + key
+                    reg_values = reg_values +  ", %(" + key + ")s" 
         
-        for key in ['timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name']:
-            if config_dict[key]:
-                reg_keys = reg_keys + ", " + key
-                reg_values = reg_values +  ", %(" + key + ")s" 
-        
-        statement = "INSERT INTO nodes ("+ reg_keys +") VALUES (" + reg_values + ");"
-        
+            statement = "INSERT INTO nodes ("+ reg_keys +") VALUES (" + reg_values + ");"
+        except Exception as e:
+            logger.error("statement creation failed: "+str(e))
+            raise
         
         
         
