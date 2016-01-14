@@ -99,20 +99,29 @@ class DataProcess(Process):
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
-        if not data[4]:
+        if not data[3]:
             logger.error("data array too short")
             return
             
         try:
             timestamp_int = int(data[3])
         except ValueError as e:
-            logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
+            logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[3], str(e)))
             raise
         except Exception as e:
-            logger.error("(Exception) Error converting timestamp (%s) into int: %s" % (data[4], str(e)))
+            logger.error("(Exception) Error converting timestamp (%s) into int: %s" % (data[3], str(e)))
             raise
         
-        value_array = [s_uniqid_str]+data[0:2]+[timestamp_int]+data[4:6]
+        try:
+            plugin_version_int = int(data[2])
+        except ValueError as e:
+            logger.error("(ValueError) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
+            raise
+        except Exception as e:
+            logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
+            raise
+        
+        value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
         
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
