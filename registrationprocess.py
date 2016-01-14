@@ -231,7 +231,7 @@ class RegProcess(Process):
         
         
         registration_timestamp = int(float(datetime.datetime.utcnow().strftime("%s.%f"))) * 1000
-        config_dict[timestamp]=registration_timestamp
+        config_dict['timestamp']=registration_timestamp
         
         statement = "INSERT INTO nodes (node_id, timestamp, queue, config_file, extra_notes, sensor_names, height, latitude, longitude, name) VALUES (%(node_id)s, %(timestamp)s, %(queue)s, %(config_file)s, %(extra_notes)s, %(sensor_names)s, %(height)s, %(latitude)s, %(longitude)s, %(name)s);"
         
