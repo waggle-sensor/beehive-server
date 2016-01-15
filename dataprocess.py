@@ -11,6 +11,7 @@ from waggle_protocol.utilities.gPickler import *
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
+cassandra.query import BatchStatement
 import time
 
 logger = logging.getLogger(__name__)
