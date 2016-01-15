@@ -129,8 +129,8 @@ class DataProcess(Process):
         
         for i in range(0, len(data[4])):
             
-            
             fields = { 'name' : data[4][i]}
+            
             try:
                 data_field = data[5][i]
             except Exception:
@@ -183,6 +183,11 @@ class DataProcess(Process):
         
         try:
             bound_statement = self.prepared_statement.bind(value_dict)
+        except Exception as e:
+            logger.error("Error binding cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
+            raise
+            
+        try:
             self.session.execute(bound_statement)
         except Exception as e:
             logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
