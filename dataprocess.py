@@ -148,23 +148,15 @@ class DataProcess(Process):
             data_array.append(fields)
         
         
-        value_dict = {  'node_id'           : s_uniqid_str,
-                        'date'              : data[0],
-                        'plugin_id'         : data[1],
-                        'plugin_version'    : plugin_version_int,
-                        'timestamp'         : timestamp_int,
-                        'data'              : data_array };
-                                    
-        #value_dict = {      'node_id' : s_uniqid_str,
-        #                    'date' : data[0],
-        #                    'plugin_id' : data[1],
-        #                    'plugin_version' : plugin_version_int,
-        #                    'timestamp' : timestamp_int,
-        #                    'sensor_id' : data[4],
-        #                    'data' : data[5],
-        #                    'meta' : data[6]};
-         
-         
+        #value_dict = {  'node_id'           : s_uniqid_str,
+        #                'date'              : data[0],
+        #                'plugin_id'         : data[1],
+        #                'plugin_version'    : plugin_version_int,
+        #                'timestamp'         : timestamp_int,
+        #                'data'              : data_array };
+        #                            
+      
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, data_array ]
         #
         # example cassandra query:
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
@@ -180,15 +172,15 @@ class DataProcess(Process):
                 
         
         try:
-            bound_statement = self.prepared_statement.bind(value_dict)
+            bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:
-            logger.error("Error binding cassandra cql statement:(%s)  %s -- value_dict was: %s" % (type(e).__name__, str(e), str(value_dict)) )
+            logger.error("Error binding cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
             
         try:
             self.session.execute(bound_statement)
         except Exception as e:
-            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
+            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_array)) )
             raise
 
     def cassandra_connect(self):
