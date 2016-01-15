@@ -130,9 +130,19 @@ class DataProcess(Process):
                     name = Ascii()
                     data = Ascii()
                     meta = Ascii()
-                    
+        
+        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, data) VALUES (?, ?, ?, ?, ?, ?)"
+        if not self.prepared_statement:
+            try: 
+                self.prepared_statement = self.session.prepare(statement)
+            except Exception as e:
+                logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
+                raise
+                
+                
         # create data array
-        data_array = []
+        #data_array = []
+        batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
         
         for i in range(0, len(data[4])):
             
@@ -150,43 +160,32 @@ class DataProcess(Process):
                 pass
             
             sv = sensor_value(name=name_field, data=data_field, meta=meta_field)
-            data_array.append(sv)
-        
-        
-        #value_dict = {  'node_id'           : s_uniqid_str,
-        #                'date'              : data[0],
-        #                'plugin_id'         : data[1],
-        #                'plugin_version'    : plugin_version_int,
-        #                'timestamp'         : timestamp_int,
-        #                'data'              : data_array };
-        #                            
-      
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, data_array ]
-        #
-        # example cassandra query:
-        # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
-        # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
-        
-        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, data) VALUES (?, ?, ?, ?, ?, ?)"
-        if not self.prepared_statement:
-            try: 
-                self.prepared_statement = self.session.prepare(statement)
-            except Exception as e:
-                logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
-                raise
-                
-        
-        try:
-            bound_statement = self.prepared_statement.bind(value_array)
-        except Exception as e:
-            logger.error("Error binding cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(value_array)) )
-            raise
             
+            #data_array.append(sv)
+            #value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv ]
+            
+            try:
+                batch.add(statement, s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv)
+            except Exception as e:
+                        logger.error("Error batch.add cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(sv)) )
+                        raise
+            
+        
+        #try:
+        #    bound_statement = self.prepared_statement.bind(value_array)
+        #except Exception as e:
+        #    logger.error("Error binding cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(sv)) )
+        #    raise
+        
         try:
-            self.session.execute(bound_statement)
+            self.session.execute(batch)
         except Exception as e:
-            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_array)) )
+            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(sv)) )
             raise
+    
+      
+      
+        
 
     def cassandra_connect(self):
         try:
