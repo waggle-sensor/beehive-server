@@ -235,7 +235,7 @@ class RegProcess(Process):
             reg_keys="node_id"
             reg_values = "%(node_id)s"
         
-            for key in ['timestamp', 'queue', 'config_file', 'extra_notes', 'sensor_names', 'height', 'latitude', 'longitude', 'name']:
+            for key in ['timestamp', 'queue', 'plugins' ,'reverse_port' ,'name' ,'parent','children']:
                 if key in config_dict:
                     reg_keys = reg_keys + ", " + key
                     reg_values = reg_values +  ", %(" + key + ")s" 

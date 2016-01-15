@@ -123,14 +123,46 @@ class DataProcess(Process):
             raise
         
         #value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
-        value_dict = {      'node_id' : s_uniqid_str,
-                            'date' : data[0],
-                            'plugin_id' : data[1],
-                            'plugin_version' : plugin_version_int,
-                            'timestamp' : timestamp_int,
-                            'sensor_id' : data[4],
-                            'data' : data[5],
-                            'meta' : data[6]};
+        
+        # create data array
+        data_array = []
+        
+        for i in range(0, len(data[4])):
+            
+            
+            fields = { 'name' : data[4][i]}
+            try:
+                data_field = data[5][i]
+            except Exception:
+                pass
+            else:
+                fields['data'] = data_field
+            
+            try:
+                meta_field = data[6][i]
+            except Exception:
+                pass
+            else:
+                fields['meta'] = meta_field
+            
+            data_array.append(fields)
+        
+        
+        value_dict = {  'node_id'           : s_uniqid_str,
+                        'date'              : data[0],
+                        'plugin_id'         : data[1],
+                        'plugin_version'    : plugin_version_int,
+                        'timestamp'         : timestamp_int,
+                        'data'              : data_array };
+                                    
+        #value_dict = {      'node_id' : s_uniqid_str,
+        #                    'date' : data[0],
+        #                    'plugin_id' : data[1],
+        #                    'plugin_version' : plugin_version_int,
+        #                    'timestamp' : timestamp_int,
+        #                    'sensor_id' : data[4],
+        #                    'data' : data[5],
+        #                    'meta' : data[6]};
          
          
         #
@@ -142,8 +174,8 @@ class DataProcess(Process):
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
-                    " (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta)" + \
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+                    " (node_id, date, plugin_id, plugin_version, timestamp, data)" + \
+                    " VALUES (?, ?, ?, ?, ?, ?)")
             except Exception as e:
                 logger.error("Error preparing statement: %s" % (str(e)) )
                 raise
