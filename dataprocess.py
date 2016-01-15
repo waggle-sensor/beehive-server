@@ -164,10 +164,10 @@ class DataProcess(Process):
             sv = sensor_value(name=name_field, data=data_field, meta=meta_field)
             
             #data_array.append(sv)
-            #value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv ]
+            value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv ]
             
             try:
-                batch.add(statement, s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv)
+                batch.add(statement, value_array)
             except Exception as e:
                         logger.error("Error batch.add cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(sv)) )
                         raise
