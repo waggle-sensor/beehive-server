@@ -100,14 +100,14 @@ keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'clas
 
 
 
-type_plugin_sql  = '''CREATE TYPE waggle.plugin (
+type_plugin_sql  = '''CREATE TYPE IF NOT EXISTS waggle.plugin (
     name ascii,
     version int
 );'''
 type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
 
 
-type_sensor_value_sql  = '''CREATE TYPE waggle.sensor_value (
+type_sensor_value_sql  = '''CREATE TYPE IF NOT EXISTS waggle.sensor_value (
     name ascii,
     data ascii,
     meta ascii
