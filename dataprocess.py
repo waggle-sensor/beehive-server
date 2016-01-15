@@ -143,7 +143,7 @@ class DataProcess(Process):
                 
         # create data array
         #data_array = []
-        batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
+        batch = BatchStatement(consistency_level=cassandra.ConsistencyLevel.QUORUM)
         
         for i in range(0, len(data[4])):
             
