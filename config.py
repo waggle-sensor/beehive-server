@@ -155,7 +155,7 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         plugin_version int,
                         timestamp timestamp,
                         
-                        frozen <sensor_value>,
+                        data frozen <sensor_value>,
                         
                         PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
                     );'''
