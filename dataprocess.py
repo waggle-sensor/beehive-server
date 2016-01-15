@@ -144,7 +144,8 @@ class DataProcess(Process):
                 
         # create data array
         #data_array = []
-        batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
+        #batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, None ]
         
         for i in range(0, len(data[4])):
             
@@ -161,29 +162,30 @@ class DataProcess(Process):
             except Exception:
                 pass
             
-            sv = sensor_value(name=name_field, data=data_field, meta=meta_field)
+            value_array[5]=sensor_value(name=name_field, data=data_field, meta=meta_field)
             
             #data_array.append(sv)
-            value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv ]
+            #value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, sv ]
+            
+            # batch did not work for me.
+            #try:
+            #    batch.add(statement, value_array)
+            #except Exception as e:
+            #    logger.error("Error batch.add cassandra cql statement:(%s) %s -- sv was: %s" % (type(e).__name__, str(e), str(sv)) )
+            #    raise
+                  
             
             try:
-                batch.add(statement, value_array)
+                bound_statement = self.prepared_statement.bind(value_array)
             except Exception as e:
-                        logger.error("Error batch.add cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(sv)) )
-                        raise
-            
+                logger.error("Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
+                raise
         
-        #try:
-        #    bound_statement = self.prepared_statement.bind(value_array)
-        #except Exception as e:
-        #    logger.error("Error binding cassandra cql statement:(%s) %s -- value_dict was: %s" % (type(e).__name__, str(e), str(sv)) )
-        #    raise
-        
-        try:
-            self.session.execute(batch)
-        except Exception as e:
-            logger.error("Error executing cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(sv)) )
-            raise
+            try:
+                self.session.execute(bound_statement)
+            except Exception as e:
+                logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                raise
     
       
       
