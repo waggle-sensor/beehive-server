@@ -170,21 +170,19 @@ class DataProcess(Process):
         # OLD: INSERT INTO sensor_data (node_id, sensor_name, timestamp, data_types, data, units, extra_info) VALUES ( 0 , 'b', 1231546493284, ['d'], [0], ['f'], ['g']);
         # INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, sensor_id, data, meta) VALUES ( 'abc_id' , '2000-01-01', 'my_plugin', 1, '2013-04-03 07:02:00',   ['mysensor1'], ['mydata'], ['metafoo']);
         
-        
+        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, data) VALUES (?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
-                self.prepared_statement = self.session.prepare("INSERT INTO sensor_data" + \
-                    " (node_id, date, plugin_id, plugin_version, timestamp, data)" + \
-                    " VALUES (?, ?, ?, ?, ?, ?)")
+                self.prepared_statement = self.session.prepare(statement)
             except Exception as e:
-                logger.error("Error preparing statement: %s" % (str(e)) )
+                logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
                 
         
         try:
             bound_statement = self.prepared_statement.bind(value_dict)
         except Exception as e:
-            logger.error("Error binding cassandra cql statement: %s -- value_dict was: %s" % (str(e), str(value_dict)) )
+            logger.error("Error binding cassandra cql statement:(%s)  %s -- value_dict was: %s" % (type(e).__name__, str(e), str(value_dict)) )
             raise
             
         try:
