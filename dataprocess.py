@@ -12,6 +12,7 @@ import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement
+from cassandra import ConsistencyLevel
 import time
 
 logger = logging.getLogger(__name__)
@@ -143,7 +144,7 @@ class DataProcess(Process):
                 
         # create data array
         #data_array = []
-        batch = BatchStatement(consistency_level=cassandra.ConsistencyLevel.QUORUM)
+        batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
         
         for i in range(0, len(data[4])):
             
