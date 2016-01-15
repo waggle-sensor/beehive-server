@@ -125,7 +125,7 @@ if __name__ == "__main__":
     
     
     logger.info("setting up cassandra...")
-    for statement in [ keyspace_cql , nodes_cql, node_reglog_cql, "select node_id, timestamp, queue, name from waggle.nodes"]:
+    for statement in [ keyspace_cql, type_plugin_sql, nodes_cql, node_event_log_cql, sensor_data_cql]:
         try: 
             cassandra_session.execute(statement)
         except Exception as e:

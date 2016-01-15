@@ -67,9 +67,11 @@ CASSANDRA_HOST=read_value("cassandra-host", "cassandra")
 logger.info("CASSANDRA_HOST: %s" %(CASSANDRA_HOST))
 
 
+### RabbitMQ ###
 
 USE_SSL=True
 RABBITMQ_PORT=23181
+
 
 
 # Beehive server has needs client certificates for RabbitMQ
@@ -90,40 +92,60 @@ pika_params=pika.ConnectionParameters(  host=RABBITMQ_HOST,
                                          )
 
 
-# cassandra
+### Cassandra ###
+
+# Note: Cassandra tables are created in Server.py
 keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'class': 'SimpleStrategy', 'replication_factor': '2'}  AND durable_writes = true;'''
 
+
+
+
+type_plugin_sql  = '''CREATE TYPE waggle.plugin (
+    name ascii,
+    version int
+);'''
+type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
+
+
+type_sensor_value_sql  = '''CREATE TYPE waggle.sensor_value (
+    name ascii,
+    data ascii,
+    meta ascii
+);'''
+type_sensor_value_sql = type_sensor_value_sql.replace('\n', ' ').replace('\r', '')
+
+
 nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
-                    node_id ascii PRIMARY KEY,
+                    node_id ascii,
+                    
                     timestamp timestamp,
                     queue ascii,
-                    config_file ascii,
-                    extra_notes list<ascii>,
-                    sensor_names list<ascii>,
-                    height double,
-                    latitude double,
-                    longitude double,
-                    name ascii
+                    plugins list <frozen <plugin>>,
+                    reverse_port,
+                    name ascii,
+                    parent ascii,
+                    children list<ascii>
+                    PRIMARY KEY (node_id)
                 );'''
 nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
 
+
 # event is "register" or "deregister"
 # deregister event can have empty values everywhere.
-node_reglog_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_reglog (
+node_event_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_event_log (
                     node_id ascii,
                     timestamp timestamp,
                     event ascii,
+                    
                     queue ascii,
-                    config_file ascii,
-                    extra_notes list<ascii>,
-                    sensor_names list<ascii>,
-                    height double,
-                    latitude double,
-                    longitude double,
+                    plugins list <frozen <plugin>>,
+                    reverse_port,
                     name ascii,
+                    parent ascii,
+                    children list<ascii>
                     PRIMARY KEY (node_id, timestamp, event)
                 );'''
-node_reglog_cql = node_reglog_cql.replace('\n', ' ').replace('\r', '')
+node_event_log_cql = node_event_log_cql.replace('\n', ' ').replace('\r', '')
 
                 
 sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
@@ -133,9 +155,7 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         plugin_version int,
                         timestamp timestamp,
                         
-                        sensor_id list<ascii>,
-                        data list<ascii>,
-                        meta list<ascii>,
+                        data list<frozen <sensor_value>>
                         
                         PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
                     );'''
