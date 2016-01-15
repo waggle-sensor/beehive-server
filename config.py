@@ -124,7 +124,7 @@ nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     reverse_port int,
                     name ascii,
                     parent ascii,
-                    children list<ascii>
+                    children list<ascii>,
                     PRIMARY KEY (node_id)
                 );'''
 nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
@@ -142,7 +142,7 @@ node_event_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_event_log (
                     reverse_port int,
                     name ascii,
                     parent ascii,
-                    children list<ascii>
+                    children list<ascii>,
                     PRIMARY KEY (node_id, timestamp, event)
                 );'''
 node_event_log_cql = node_event_log_cql.replace('\n', ' ').replace('\r', '')
@@ -155,7 +155,7 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         plugin_version int,
                         timestamp timestamp,
                         
-                        data list<frozen <sensor_value>>
+                        data list<frozen <sensor_value>>,
                         
                         PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
                     );'''
