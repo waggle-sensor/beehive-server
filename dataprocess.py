@@ -123,29 +123,34 @@ class DataProcess(Process):
             raise
         
         #value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
-        
+        from cassandra.cqlengine.columns import Ascii
+        from cassandra.cqlengine.usertype import UserType
+                
+        class sensor_value(UserType):
+                    name = Ascii()
+                    data = Ascii()
+                    meta = Ascii()
+                    
         # create data array
         data_array = []
         
         for i in range(0, len(data[4])):
             
-            fields = { 'name' : data[4][i]}
-            
+            name_field = data[4][i]
+            data_field = ""
+            meta_field = ""
             try:
                 data_field = data[5][i]
             except Exception:
                 pass
-            else:
-                fields['data'] = data_field
             
             try:
                 meta_field = data[6][i]
             except Exception:
                 pass
-            else:
-                fields['meta'] = meta_field
             
-            data_array.append(fields)
+            sv = sensor_value(name=name_field, data=data_field, meta=meta_field)
+            data_array.append(sv)
         
         
         #value_dict = {  'node_id'           : s_uniqid_str,
