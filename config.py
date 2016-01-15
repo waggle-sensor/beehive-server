@@ -121,7 +121,7 @@ nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     timestamp timestamp,
                     queue ascii,
                     plugins list<frozen <plugin>>,
-                    reverse_port,
+                    reverse_port int,
                     name ascii,
                     parent ascii,
                     children list<ascii>
@@ -139,7 +139,7 @@ node_event_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_event_log (
                     
                     queue ascii,
                     plugins list <frozen <plugin>>,
-                    reverse_port,
+                    reverse_port int,
                     name ascii,
                     parent ascii,
                     children list<ascii>
