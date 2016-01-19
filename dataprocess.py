@@ -176,6 +176,11 @@ class DataProcess(Process):
             logger.error("Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
     
+        if not self.session:
+            self.cassandra_connect()
+           
+                
+            
         try:
             self.session.execute(bound_statement)
         except Exception as e:
@@ -193,11 +198,14 @@ class DataProcess(Process):
             pass
         self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
 
-        try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            self.session = self.cluster.connect('waggle')
-        except:
-            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-            logger.warning("The process will attempt to re-connect at a later time.")
+        while not self.session:
+            try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
+                self.session = self.cluster.connect('waggle')
+            except:
+                logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
+                logger.warning("The process will attempt to re-connect at a later time.")
+            if not self.session:
+                 time.sleep(3)
 
     def run(self):
         self.cassandra_connect()
