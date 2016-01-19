@@ -8,12 +8,15 @@ from config import *
 import pika
 from waggle_protocol.protocol.PacketHandler import *
 from waggle_protocol.utilities.gPickler import *
-import logging
+import logging, time
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement
 from cassandra import ConsistencyLevel
-import time
+from cassandra.cqlengine.columns import Ascii
+from cassandra.cqlengine.usertype import UserType
+
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -124,9 +127,8 @@ class DataProcess(Process):
             logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
             raise
         
-        #value_array = [s_uniqid_str]+data[0:1]+[plugin_version_int]+[timestamp_int]+data[4:6]
-        from cassandra.cqlengine.columns import Ascii
-        from cassandra.cqlengine.usertype import UserType
+    
+       
                 
         class sensor_value(UserType):
                     name = Ascii()
@@ -142,10 +144,8 @@ class DataProcess(Process):
                 raise
                 
                 
-        # create data array
+        # create data array (convert 3 arrays into one array of triplets)
         data_array = []
-        #batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
-        
         
         for i in range(0, len(data[5])):
             
@@ -166,9 +166,10 @@ class DataProcess(Process):
             
             data_array.append(sensor_value(name=name_field, data=data_field, meta=meta_field))
             
-        
+        if not data[3]:
+            data[3] = 'default'
                   
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, timestamp_int, data_array ]    
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data_array ]    
         try:
             bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:
