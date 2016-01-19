@@ -102,12 +102,12 @@ class DataProcess(Process):
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
-        if not data[3]:
+        if not data[4]:
             logger.error("data array too short")
             return
             
         try:
-            timestamp_int = int(data[3])
+            timestamp_int = int(data[4])
         except ValueError as e:
             logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[3], str(e)))
             raise
@@ -133,7 +133,7 @@ class DataProcess(Process):
                     data = Ascii()
                     meta = Ascii()
         
-        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, timestamp, data) VALUES (?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, data) VALUES (?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
@@ -147,18 +147,18 @@ class DataProcess(Process):
         #batch = BatchStatement(consistency_level=ConsistencyLevel.QUORUM)
         
         
-        for i in range(0, len(data[4])):
+        for i in range(0, len(data[5])):
             
-            name_field = data[4][i]
+            name_field = data[5][i]
             data_field = ""
             meta_field = ""
             try:
-                data_field = data[5][i]
+                data_field = data[6][i]
             except Exception:
                 pass
             
             try:
-                meta_field = data[6][i]
+                meta_field = data[7][i]
             except Exception:
                 pass
             
