@@ -102,10 +102,11 @@ keyspace_cql = '''CREATE KEYSPACE IF NOT EXISTS waggle WITH replication = {'clas
 
 type_plugin_sql  = '''CREATE TYPE IF NOT EXISTS waggle.plugin (
     name ascii,
-    version int
+    version int, 
+    instance ascii       # optional, should be "default" if not specified otherwise
 );'''
 type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
-
+type_plugin_sql = re.sub('[ ]*#.*', '', type_plugin_sql)
 
 type_sensor_value_sql  = '''CREATE TYPE IF NOT EXISTS waggle.sensor_value (
     name ascii,
@@ -119,20 +120,24 @@ nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     node_id ascii,
                     
                     timestamp timestamp,
-                    queue ascii,
-                    plugins list<frozen <plugin>>,
-                    reverse_port int,
-                    name ascii,
-                    parent ascii,
-                    children list<ascii>,
+                    queue ascii,                                # provided by the NC registration
+                    plugins_currently set<frozen <plugin>>,     # provided by either Server (filter messages) of plugin registration
+                    plugins_all set<frozen <plugin>>,           # provided by either Server (filter messages) of plugin registration
+                    reverse_port int,                           # provided by the NC registration
+                    name ascii,                                 # descriptive name provided by the NC
+                    parent ascii,                               # guest nodes sends registration message (NC modifies message and adds itself as parent)
+                    children list<ascii>,                       # guest nodes sends registration message
                     PRIMARY KEY (node_id)
                 );'''
+# remove comments
+nodes_cql = re.sub('[ ]*#.*', '', nodes_cql)
+# remove line breaks
 nodes_cql = nodes_cql.replace('\n', ' ').replace('\r', '')
 
 
 # event is "register" or "deregister"
 # deregister event can have empty values everywhere.
-node_event_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_event_log (
+registration_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.registration_log (
                     node_id ascii,
                     timestamp timestamp,
                     event ascii,
@@ -145,7 +150,7 @@ node_event_log_cql = '''CREATE TABLE IF NOT EXISTS waggle.node_event_log (
                     children list<ascii>,
                     PRIMARY KEY (node_id, timestamp, event)
                 );'''
-node_event_log_cql = node_event_log_cql.replace('\n', ' ').replace('\r', '')
+registration_log_cql = registration_log_cql.replace('\n', ' ').replace('\r', '')
 
                 
 sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
@@ -153,11 +158,12 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         date ascii,
                         plugin_id ascii,
                         plugin_version int,
+                        plugin_instance ascii,
                         timestamp timestamp,
                         
                         data list<frozen <sensor_value>>,
                         
-                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp)
+                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp)
                     );'''
 sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
 
