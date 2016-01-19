@@ -105,8 +105,9 @@ type_plugin_sql  = '''CREATE TYPE IF NOT EXISTS waggle.plugin (
     version int, 
     instance ascii       # optional, should be "default" if not specified otherwise
 );'''
-type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
 type_plugin_sql = re.sub('[ ]*#.*', '', type_plugin_sql)
+type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
+
 
 type_sensor_value_sql  = '''CREATE TYPE IF NOT EXISTS waggle.sensor_value (
     name ascii,
