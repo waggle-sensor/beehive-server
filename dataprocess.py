@@ -125,7 +125,7 @@ class DataProcess(Process):
         
 
         
-        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, output, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
@@ -138,8 +138,8 @@ class DataProcess(Process):
         if not data[3]:
             data[3] = 'default'
         
-        #                              date    plugin                      instance                sensor sensor_meta  output   data
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7], data[8] ]    
+        #                              date    plugin                      instance                sensor sensor_meta  data
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7]]    
         try:
             bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:
