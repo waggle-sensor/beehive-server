@@ -139,7 +139,7 @@ class DataProcess(Process):
             data[3] = 'default'
         
         #                              date    plugin                      instance                sensor sensor_meta  output   data
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7], data[7] ]    
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7], data[8] ]    
         try:
             bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:
