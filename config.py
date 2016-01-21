@@ -164,6 +164,24 @@ sensor_data_cql = re.sub('[ ]*#.*', '', sensor_data_cql)
 sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
 
 
+# this copy of the data has a very short TTL, e.g. 5 min
+sensor_data_latest_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data_latest (
+                        node_id ascii,
+                        date ascii,
+                        plugin_id ascii,
+                        plugin_version int,
+                        plugin_instance ascii,
+                        timestamp timestamp,
+                        sensor ascii,
+                        sensor_meta ascii,             # pointer to data description (syntax, semantics and other metadata (accuracy, configuration))
+                        data list<ascii>,
+                        
+                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp, sensor)
+                    );'''
+sensor_data_latest_cql = re.sub('[ ]*#.*', '', sensor_data_latest_cql)
+sensor_data_latest_cql = sensor_data_latest_cql.replace('\n', ' ').replace('\r', '')
+
+
 def unix_time(dt):
     epoch = datetime.datetime.utcfromtimestamp(0)
     delta = dt - epoch
