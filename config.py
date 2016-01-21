@@ -155,7 +155,8 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         plugin_instance ascii,
                         timestamp timestamp,
                         sensor ascii,
-                        meta ascii,             # pointer to data description (syntax, semantics and other metadata (accuracy, configuration))
+                        sensor_meta ascii,             # pointer to data description (syntax, semantics and other metadata (accuracy, configuration))
+                        output ascii,                  # name of the sensor output
                         data ascii,
                         
                         PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp, sensor)
