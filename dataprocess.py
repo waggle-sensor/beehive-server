@@ -105,10 +105,6 @@ class DataProcess(Process):
     def cassandra_insert(self,header,data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
-        if not data[4]:
-            logger.error("data array too short")
-            return
-            
         try:
             timestamp_int = int(data[4])
         except ValueError as e:
@@ -127,49 +123,23 @@ class DataProcess(Process):
             logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
             raise
         
-    
-       
-                
-        class sensor_value(UserType):
-                    name = Ascii()
-                    data = Ascii()
-                    meta = Ascii()
+
         
-        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, data) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
             except Exception as e:
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
-                
-                
-        # create data array (convert 3 arrays into one array of triplets)
-        data_array = []
         
-        for i in range(0, len(data[5])):
-            
-            name_field = data[5][i]
-            data_field = ""
-            meta_field = ""
-            try:
-                data_field = data[6][i]
-            except Exception:
-                pass
-            
-            try:
-                meta_field = data[7][i]
-            except Exception:
-                pass
-            
-            #value_array[5]=sensor_value(name=name_field, data=data_field, meta=meta_field)
-            
-            data_array.append(sensor_value(name=name_field, data=data_field, meta=meta_field))
-            
+        
+        
         if not data[3]:
             data[3] = 'default'
-                  
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data_array ]    
+        
+        #                              date    plugin                      instance                 sensor    meta    data
+        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7] ]    
         try:
             bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:

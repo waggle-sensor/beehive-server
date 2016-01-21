@@ -109,13 +109,6 @@ type_plugin_sql = re.sub('[ ]*#.*', '', type_plugin_sql)
 type_plugin_sql = type_plugin_sql.replace('\n', ' ').replace('\r', '')
 
 
-type_sensor_value_sql  = '''CREATE TYPE IF NOT EXISTS waggle.sensor_value (
-    name ascii,
-    data ascii,
-    meta ascii
-);'''
-type_sensor_value_sql = type_sensor_value_sql.replace('\n', ' ').replace('\r', '')
-
 
 nodes_cql = '''CREATE TABLE IF NOT EXISTS waggle.nodes (
                     node_id ascii,
@@ -161,11 +154,13 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         plugin_version int,
                         plugin_instance ascii,
                         timestamp timestamp,
+                        sensor ascii,
+                        meta ascii,             # pointer to data description (syntax, semantics and other metadata (accuracy, configuration))
+                        data ascii,
                         
-                        data list<frozen <sensor_value>>,
-                        
-                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp)
+                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp, sensor)
                     );'''
+sensor_data_cql = re.sub('[ ]*#.*', '', sensor_data_cql)
 sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
 
 
