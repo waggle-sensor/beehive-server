@@ -156,10 +156,9 @@ sensor_data_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data (
                         timestamp timestamp,
                         sensor ascii,
                         sensor_meta ascii,             # pointer to data description (syntax, semantics and other metadata (accuracy, configuration))
-                        output ascii,                  # name of the sensor output
-                        data ascii,
+                        data list<ascii>,
                         
-                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp, sensor, output)
+                        PRIMARY KEY ((node_id, date), plugin_id, plugin_version, plugin_instance, timestamp, sensor)
                     );'''
 sensor_data_cql = re.sub('[ ]*#.*', '', sensor_data_cql)
 sensor_data_cql = sensor_data_cql.replace('\n', ' ').replace('\r', '')
