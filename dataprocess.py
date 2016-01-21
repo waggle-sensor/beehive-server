@@ -134,7 +134,7 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
         
-        statement_ttl = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) USING TTL 180"
+        statement_ttl = "INSERT INTO sensor_data_ttl (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) USING TTL 180"
         if not self.prepared_statement_ttl:
             try: 
                 self.prepared_statement_ttl = self.session.prepare(statement_ttl)

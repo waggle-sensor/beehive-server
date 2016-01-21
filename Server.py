@@ -125,7 +125,7 @@ if __name__ == "__main__":
     
     
     logger.info("setting up cassandra types and tables...")
-    for statement in [ keyspace_cql, type_plugin_sql, nodes_cql, registration_log_cql, sensor_data_cql, sensor_data_latest_cql]:
+    for statement in [ keyspace_cql, type_plugin_sql, nodes_cql, registration_log_cql, sensor_data_cql, sensor_data_ttl_cql]:
         try: 
             cassandra_session.execute(statement)
         except Exception as e:
