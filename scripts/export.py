@@ -26,12 +26,12 @@ def export(node_id, date, ttl):
             time.sleep(3)
 
     if not ttl:
-        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+
-                    "FROM waggle.sensor_data "+
+        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
+                    "FROM waggle.sensor_data "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
     else:
-        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+
-                    "FROM waggle.sensor_data_ttl "+
+        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
+                    "FROM waggle.sensor_data_ttl "+ \
                     "WHERE node_id='%s'" %(node_id)
 
     rows = session.execute(statement)
