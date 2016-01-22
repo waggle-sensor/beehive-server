@@ -7,7 +7,15 @@ from cassandra.cluster import Cluster
 #docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm waggle/beehive-server /bin/bash
 
 
+LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
+formatter = logging.Formatter(LOG_FORMAT)
+
+handler = logging.StreamHandler(stream=sys.stdout)
+handler.setFormatter(formatter)
+
 logger = logging.getLogger(__name__)
+
+logger.addHandler(handler)
 
 CASSANDRA_HOST="cassandra"
 
