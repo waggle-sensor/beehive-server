@@ -24,7 +24,7 @@ def export_generator(node_id, date, ttl):
     session = None
 
     while not session:
-        print "try to connect"
+        logger.info("try to connect to %s" % (CASSANDRA_HOST))
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             session = cluster.connect('waggle')
         except:
@@ -44,9 +44,12 @@ def export_generator(node_id, date, ttl):
 
     rows = session.execute(statement)
 
-
+    count = 0
     for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
+        count +=1
         yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
+    
+    logger.info("Retrieved %d rows" % (count))
 
 
 if __name__ == "__main__":
