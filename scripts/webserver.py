@@ -53,7 +53,7 @@ class nodes_latest:
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
         
-        for row in export_generator(node_id):
+        for row in export_generator(node_id, '', True):
             yield row
         
         
