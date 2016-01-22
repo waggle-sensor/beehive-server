@@ -2,9 +2,12 @@
 import web
 import os.path
 
+# conatiner
+#docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /bin/bash
 
-#port = 80
-port = 3030
+
+port = 80
+#port = 3030
 
 
 def read_file( str ):
