@@ -124,7 +124,8 @@ class DataProcess(Process):
             logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
             raise
         
-
+        if not self.session:
+            self.cassandra_connect()
         
         statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
@@ -160,8 +161,7 @@ class DataProcess(Process):
             logger.error("Error binding cassandra cql statement_ttl:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
     
-        if not self.session:
-            self.cassandra_connect()
+        
            
         
         # this is long term storage    
