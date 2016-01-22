@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import web
 import os.path
-
+from export import export
 # conatiner
 #docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /bin/bash
 
@@ -48,10 +48,15 @@ class nodes_latest:
     def GET(self, node_id):
         
         query = web.ctx.query
-        nodeid=None
         
         
-        return str(query)+" node_id: "+node_id
+        web.header('Content-type','text/plain')
+        web.header('Transfer-Encoding','chunked')
+        
+        for row in export_generator(node_id):
+            yield row
+        
+        
 
 
 
