@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import logging, time, argparse
+import logging, time, argparse, sys
 from cassandra.cluster import Cluster
 
 #start container:
@@ -47,7 +47,7 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     #parser.add_argument('--logging', dest='enable_logging', help='write to log files instead of stdout', action='store_true')
-    parser.add_argument('ttl', help='export only ttl data (latest sensor data)', action='store_false')
+    parser.add_argument('--ttl', dest='ttl', help='export only ttl data (latest sensor data)', action='store_false')
     parser.add_argument('--node_id', dest='node_id', help='node_id')
     parser.add_argument('--date', dest='date', help='date (not needed with ttl), format: YYYY-MM-DD, e.g. 2016-01-21')
     
