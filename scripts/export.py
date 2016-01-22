@@ -54,6 +54,15 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
+    if not args.node_id:
+        parser.print_help()
+        sys.exit(1)
+    
+    if (not args.ttl) and (not args.date):
+        parser.print_help()
+        sys.exit(1)
+        
+        
     export(args.node_id, args.date, args.ttl)
         
    
