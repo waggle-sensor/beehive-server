@@ -55,10 +55,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if not args.node_id:
+        logger.error("node_id not defined")
         parser.print_help()
         sys.exit(1)
     
     if (not args.ttl) and (not args.date):
+        logger.error("neither ttl nor date provided")
         parser.print_help()
         sys.exit(1)
         
