@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import web, os.path, logging
+import web, os.path, logging, re, urlparse
 from export import export_generator
 # conatiner
 #docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /bin/bash
@@ -30,6 +30,10 @@ urls = (
 
 app = web.application(urls, globals())
 
+
+
+    
+    
 class index:        
     def GET(self):
         
@@ -54,21 +58,33 @@ class nodes_latest:
         web.header('Transfer-Encoding','chunked')
         
         for row in export_generator(node_id, '', True):
-            print row+"\n"
             yield row+"\n"
-        
-        
 
 
 
 class export:        
     def GET(self, node_id):
+        web.header('Content-type','text/plain')
+        web.header('Transfer-Encoding','chunked')
         
         query = web.ctx.query
-        nodeid=None
+        #TODO parse query
         
+        query_dict = urlparse.parse_qs(query)
         
-        return str(query)+" node_id: "+node_id
+        date = query_dict['date']
+        
+        if date:
+            r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
+            if r.match(date):
+                logger.info("date: %s" %(date))
+    
+                for row in export_generator(node_id, date, FALSE):
+                    yield row+"\n"
+            else:
+                raise web.notfound()
+        else:
+            raise web.notfound()
 
 if __name__ == "__main__":
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
