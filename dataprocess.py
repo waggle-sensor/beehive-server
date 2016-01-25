@@ -53,6 +53,8 @@ class DataProcess(Process):
         self.cluster = None
         self.prepared_statement = None
         self.prepared_statement_ttl = None
+        self.cassandra_connect()
+        
         
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
@@ -190,12 +192,15 @@ class DataProcess(Process):
         
 
     def cassandra_connect(self):
-        try:
-            self.cluster.shutdown()
-        except:
-            pass
+        if self.cluster:
+            try:
+                self.cluster.shutdown()
+            except:
+                pass
+                
         self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
-
+        self.session = None
+        
         while not self.session:
             try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                 self.session = self.cluster.connect('waggle')
