@@ -163,21 +163,24 @@ class DataProcess(Process):
     
         
            
-        
-        # this is long term storage    
-        try:
-            self.session.execute(bound_statement)
-        except Exception as e:
-            logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
-            raise
+        while True :
+            # this is long term storage    
+            try:
+                self.session.execute(bound_statement)
+            except Exception as e:
+                logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                time.sleep(1)
+                continue
     
-        # this is for TTL data       
-        try:
-            self.session.execute(bound_statement_ttl)
-        except Exception as e:
-            logger.error("Error executing cassandra cql statement_ttl: %s -- value_array was: %s" % (str(e), str(value_array)) )
-            raise
-      
+            # this is for TTL data       
+            try:
+                self.session.execute(bound_statement_ttl)
+            except Exception as e:
+                logger.error("Error executing cassandra cql statement_ttl: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                time.sleep(1)
+                continue
+            
+            break
         
 
     def cassandra_connect(self):
