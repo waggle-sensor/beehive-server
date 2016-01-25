@@ -20,6 +20,8 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 port = 80
 #port = 3030
 
+web.config.log_toprint = True
+
 
 def read_file( str ):
     print "read_file: "+str
@@ -90,10 +92,12 @@ class export:
         except KeyError:
             logger.warning("date key not found")
             raise web.notfound()
+            
+        logger.info("date: %s", str(date))
         if date:
             r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
             if r.match(date):
-                logger.info("date: %s" %(date))
+                logger.info("accepted date: %s" %(date))
     
                 for row in export_generator(node_id, date, FALSE):
                     yield row+"\n"
