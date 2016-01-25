@@ -54,8 +54,8 @@ class nodes_latest:
         web.header('Transfer-Encoding','chunked')
         
         for row in export_generator(node_id, '', True):
-            print row
-            yield row
+            print row+"\n"
+            yield row+"\n"
         
         
 
