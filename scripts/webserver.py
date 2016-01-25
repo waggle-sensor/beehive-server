@@ -104,7 +104,7 @@ class export:
             if r.match(date):
                 logger.info("accepted date: %s" %(date))
     
-                for row in export_generator(node_id, date, FALSE):
+                for row in export_generator(node_id, date, False):
                     yield row+"\n"
             else:
                 logger.warning("date format not correct")
