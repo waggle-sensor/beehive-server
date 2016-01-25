@@ -88,10 +88,15 @@ class export:
         query_dict = urlparse.parse_qs(query)
         
         try:
-            date = query_dict['date']
+            date_array = query_dict['date']
         except KeyError:
             logger.warning("date key not found")
             raise web.notfound()
+        
+        if len(date_array) == 0:
+            logger.warning("date_array empty")
+            raise web.notfound()
+        date = date_array[0]
             
         logger.info("date: %s", str(date))
         if date:
