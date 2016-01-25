@@ -80,7 +80,7 @@ class export:
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
         
-        query = web.ctx.query
+        query = web.ctx.query.encode('ascii', 'ignore') #get rid of unicode
         if query:
             query = query[1:]
         #TODO parse query
