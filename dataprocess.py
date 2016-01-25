@@ -162,14 +162,17 @@ class DataProcess(Process):
             raise
     
         
-           
+        connection_retry_delay = 1
         while True :
             # this is long term storage    
             try:
                 self.session.execute(bound_statement)
             except Exception as e:
                 logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
-                time.sleep(1)
+                self.cassandra_connect()
+                time.sleep(connection_retry_delay)
+                if connection_retry_delay < 10:
+                    connection_retry_delay = connection_retry_delay + 1
                 continue
     
             # this is for TTL data       
@@ -177,7 +180,10 @@ class DataProcess(Process):
                 self.session.execute(bound_statement_ttl)
             except Exception as e:
                 logger.error("Error executing cassandra cql statement_ttl: %s -- value_array was: %s" % (str(e), str(value_array)) )
-                time.sleep(1)
+                self.cassandra_connect()
+                time.sleep(connection_retry_delay)
+                if connection_retry_delay < 10:
+                    connection_retry_delay = connection_retry_delay + 1
                 continue
             
             break
