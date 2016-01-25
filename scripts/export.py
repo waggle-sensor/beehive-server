@@ -42,8 +42,11 @@ def export_generator(node_id, date, ttl):
                     "FROM waggle.sensor_data_ttl "+ \
                     "WHERE node_id='%s'" %(node_id)
 
-    rows = session.execute(statement)
-
+    try:
+        rows = session.execute(statement)
+    except Exeception as e:
+        logger.error("Could not execute statement: %s" % (str(e)))
+        raise
     count = 0
     for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
         count +=1
