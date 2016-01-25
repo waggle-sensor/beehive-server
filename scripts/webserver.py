@@ -68,12 +68,17 @@ class export:
         web.header('Transfer-Encoding','chunked')
         
         query = web.ctx.query
+        if query:
+            query = query[1:]
         #TODO parse query
-        
+        logger.info("query: %s", query)
         query_dict = urlparse.parse_qs(query)
         
-        date = query_dict['date']
-        
+        try:
+            date = query_dict['date']
+        except KeyError:
+            logger.warning("date key not found")
+            raise web.notfound()
         if date:
             r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
             if r.match(date):
@@ -82,8 +87,10 @@ class export:
                 for row in export_generator(node_id, date, FALSE):
                     yield row+"\n"
             else:
+                logger.warning("date format not correct")
                 raise web.notfound()
         else:
+            logger.warning("date is empty")
             raise web.notfound()
 
 if __name__ == "__main__":
