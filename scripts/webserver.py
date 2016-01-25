@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-import web
-import os.path
+import web, os.path, logging
 from export import export_generator
 # conatiner
 #docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /bin/bash
 
+logging.getLogger('export').setLevel(logging.DEBUG)
 
 port = 80
 #port = 3030
