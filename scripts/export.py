@@ -4,7 +4,7 @@ import logging, time, argparse, sys
 from cassandra.cluster import Cluster
 
 #start container:
-#docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm waggle/beehive-server /bin/bash
+#docker run -it --name=export -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm waggle/beehive-server /bin/bash
 
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
