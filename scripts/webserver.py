@@ -13,6 +13,7 @@ handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
 
 logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 logging.getLogger('export').setLevel(logging.DEBUG)
 
