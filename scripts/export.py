@@ -47,7 +47,7 @@ def export_generator(node_id, date, ttl):
     logger.debug("statement: %s" % (statement))
     try:
         rows = session.execute(statement)
-    except Exeception as e:
+    except Exception as e:
         logger.error("Could not execute statement: %s" % (str(e)))
         raise
     count = 0
