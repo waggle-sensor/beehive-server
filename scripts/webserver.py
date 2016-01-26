@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 import web, os.path, logging, re, urlparse, sys
 from export import export_generator
-# conatiner
-#docker run -it  -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /bin/bash
+# container
+# docker run -it  --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
+# optional: -v ${DATA}/export:/export
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
@@ -17,8 +18,9 @@ logger.setLevel(logging.DEBUG)
 
 logging.getLogger('export').setLevel(logging.DEBUG)
 
+
 port = 80
-#port = 3030
+
 
 web.config.log_toprint = True
 
