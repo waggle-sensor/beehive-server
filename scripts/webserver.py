@@ -89,19 +89,11 @@ class index:
         
         logger.debug("req.json: %s" % ( str(req.json())) )
         
-        try:
-            req_dict = json.loads(req.json())
-        except Exception as e:
-            logger.error("Could not parse json: %s", (str(e)))
-            raise web.internalerror()
-            
-        logger.debug("answer: " + str(req_dict) )
-        
-        if not 'data' in req_dict:
-            logger.error("data is empty")
+        if not u'data' in req.json():
+            logger.error("data field not found")
             raise web.internalerror()
         
-        for node_id in req_dict[u'data']:
+        for node_id in req.json()[u'data']:
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
         
         yield "<br><br>API resources:<br><br>\n\n"
