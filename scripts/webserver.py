@@ -72,6 +72,7 @@ class index:
         
         yield "<h2>This is the Waggle Beehive web server.</h2>\n\n\n"
         
+        yield "Public nodes:\n\n"
         # TODO: use API call !
         nodes_dict = list_node_dates()
         for node_id in nodes_dict.keys():
@@ -98,7 +99,9 @@ class web_node_page:
         if not node_id in nodes_dict:
             raise web.notfound()
         
-        for date in nodes_dict[node_id]:
+        dates = nodes_dict[node_id]
+        logger.debug(str(dates))
+        for date in dates:
             yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, node_id)
 
         yield html_footer()
