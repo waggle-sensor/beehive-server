@@ -90,7 +90,7 @@ class index:
         logger.debug("req.json: %s" % ( str(req.json())) )
         
         try:
-            req_dict = json.loads()
+            req_dict = json.loads(req.json())
         except Exception as e:
             logger.error("Could not parse json: %s", (str(e)))
             raise web.internalerror()
@@ -101,7 +101,7 @@ class index:
             logger.error("data is empty")
             raise web.internalerror()
         
-        for node_id in req_dict['data']:
+        for node_id in req_dict[u'data']:
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
         
         yield "<br><br>API resources:<br><br>\n\n"
