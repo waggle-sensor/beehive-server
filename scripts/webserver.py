@@ -65,7 +65,8 @@ def html_header(title):
     return header.format(title)
  
 def html_footer():
-    return '''</body>
+    return '''
+</body>
 </html>
 '''
     
@@ -98,17 +99,19 @@ class index:
         for node_id in req.json()[u'data']:
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
         
-        yield "<br><br>API resources:<br><br>\n\n"
-        
-        
-        for i in range(0, len(urls), 2):
-            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
         yield  "<br>\n<br>\n"
         
         yield "Corresponding API call:<br>\ncurl %s" % (api_call)
         
         yield  "<br>\n<br>\n"
+        
+        yield "<br><br>API resources:<br><br>\n\n"
+        
+        
+        for i in range(0, len(urls), 2):
+            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
+        
         
         yield html_footer()
         
