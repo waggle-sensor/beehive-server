@@ -88,16 +88,22 @@ class index:
         
 class web_node_page:
     def GET(self, node_id):
+        try:
+            nodes_dict = list_node_dates()
+        except Exception as e:
+            logger.error(str(e))
+            raise web.notfound()
+            
+        if not node_id in nodes_dict:
+            raise web.notfound()
+        
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         #TODO check that node_id exists!
         yield html_header('Node '+node_id)
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
-        nodes_dict = list_node_dates()
         
-        if not node_id in nodes_dict:
-            raise web.notfound()
         
         dates = nodes_dict[node_id]
         logger.debug(str(dates))
