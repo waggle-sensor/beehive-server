@@ -50,17 +50,20 @@ app = web.application(urls, globals())
 
 
 def html_header(title):
-    header= '<!DOCTYPE html>' + "\n"+ \
-            '<html lang="en">' + "\n"+ \
-            '<head>' + "\n"+ \
-            '<meta charset="utf-8">' + "\n"+ \
-            '<title>'+title+'</title>' + "\n"+ \
-            '</head>' + "\n"+ \
-            '<body> ' + "\n"
-    return header
+    header= '''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{0}</title>
+</head>
+<body>
+'''
+    return header.format(title)
  
 def html_footer():
-    return '</body>'+"\n"+'</html>'
+    return '''</body>
+</html>
+'''
     
 class index:        
     def GET(self):
@@ -104,11 +107,11 @@ class web_node_page:
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
         
-        
+        yield "Available data<br>"
         dates = nodes_dict[node_id]
         logger.debug(str(dates))
         for date in dates:
-            yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, node_id)
+            yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, date)
 
         yield html_footer()
 
