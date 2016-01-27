@@ -92,7 +92,7 @@ class web_node_page:
             nodes_dict = list_node_dates()
         except Exception as e:
             logger.error(str(e))
-            raise web.notfound()
+            raise web.internalerror()
             
         if not node_id in nodes_dict:
             raise web.notfound()
