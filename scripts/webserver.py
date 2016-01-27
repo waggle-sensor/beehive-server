@@ -127,7 +127,7 @@ class web_node_page:
             logger.error("Could not make request: %s", (str(e)))
             raise web.internalerror()
             
-        if not data in req.json():
+        if not 'data' in req.json():
             raise web.internalerror()
         
         web.header('Content-type','text/html')
