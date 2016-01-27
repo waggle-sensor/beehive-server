@@ -20,7 +20,7 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 port = 80
-
+self_url = 'http://beehive1.mcs.anl.gov'
 
 web.config.log_toprint = True
 
@@ -38,11 +38,12 @@ def read_file( str ):
 
 
 urls = (
-    '/api/1/nodes/(.+)/latest', 'nodes_latest',
-    '/api/1/nodes/(.+)/export', 'export',
-    '/api/1/nodes/(.+)/dates', 'dates',
-    '/api/1/nodes/', 'nodes',
-    '/', 'index'
+    '/api/1/nodes/(.+)/latest',     'api_nodes_latest',
+    '/api/1/nodes/(.+)/export',     'api_export',
+    '/api/1/nodes/(.+)/dates',      'api_dates',
+    '/api/1/nodes/',                'api_nodes',
+    '/nodes/(.+)',                  'web_node_page',
+    '/',                            'index'
 )
 
 app = web.application(urls, globals())
@@ -54,19 +55,43 @@ app = web.application(urls, globals())
 class index:        
     def GET(self):
         
-        text = "This is the Waggle Beehive web server.\n\n\n" + \
-                "    Available resources:\n\n"
+        web.header('Content-type','text/html')
+        web.header('Transfer-Encoding','chunked')
+        
+        
+        yield "This is the Waggle Beehive web server.\n\n\n"
+        
+        # TODO: use API call !
+        nodes_dict = list_node_dates()
+        for node_id in nodes_dict.keys():
+            yield '<a href="%s/nodes/%s/">node_id</a><br>' % (self_url, node_id)
+        
+        yield "\n\nAvailable API resources:\n\n"
         
         
         for i in range(0, len(urls), 2):
-            text = text + "\n" + "    " +  urls[i]
+            yield  "    " +  urls[i] + "\n"
         
         
-        return text+"\n\n"
+        
+class web_node_page:
+    def GET(self):
+        web.header('Content-type','text/html')
+        web.header('Transfer-Encoding','chunked')
+        #TODO check that node_id exists!
+        
+        yield "Node "+node_id+"\n\n\n"
+        
+        nodes_dict = list_node_dates()
+        
+        if not node_id in nodes_dict:
+            raise web.notfound()
+        
+        for date in nodes_dict[node_id]
+            yield '<a href="%s/api/1/nodes/%s/export?date=%s">node_id</a><br>' % (self_url, node_id, date)
 
 
-
-class nodes:        
+class api_nodes:        
     def GET(self):
         
         #query = web.ctx.query
@@ -83,7 +108,7 @@ class nodes:
         return  json.dumps(obj, indent=4)
         
             
-class dates:        
+class api_dates:        
     def GET(self, node_id):
         
         query = web.ctx.query
@@ -103,7 +128,7 @@ class dates:
         
                         
 
-class nodes_latest:        
+class api_nodes_latest:        
     def GET(self, node_id):
         
         query = web.ctx.query
@@ -117,7 +142,7 @@ class nodes_latest:
 
 
 
-class export:        
+class api_export:        
     def GET(self, node_id):
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
