@@ -171,7 +171,7 @@ done
 '''
         yield examples.format(node_id)
         
-        yield "<br><br>API resources:<br><br>\n\n"
+        yield "<br>\n<br>\n"
 
         yield html_footer()
 
