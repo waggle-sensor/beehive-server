@@ -117,17 +117,22 @@ class index:
         
 class web_node_page:
     def GET(self, node_id):
+       
+        
+        api_call = '%s/api/1/nodes/%s/dates' % (api_url, node_id)
+        
         try:
-            nodes_dict = list_node_dates()
+            req = requests.get( api_call ) # , auth=('user', 'password')
         except Exception as e:
-            logger.error(str(e))
+            logger.error("Could not make request: %s", (str(e)))
             raise web.internalerror()
             
-        if not node_id in nodes_dict:
-            raise web.notfound()
+        if not data in req.json():
+            raise web.internalerror()
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
+        
         #TODO check that node_id exists!
         yield html_header('Node '+node_id)
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
@@ -135,9 +140,9 @@ class web_node_page:
         
         yield "Available data<br>\n"
         yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
-        dates = nodes_dict[node_id]
-        logger.debug(str(dates))
-        for date in dates:
+        
+        logger.debug(str(req.json()))
+        for date in req.json()['data']:
             yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
 
         yield html_footer()
