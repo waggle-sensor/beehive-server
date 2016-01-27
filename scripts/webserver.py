@@ -145,6 +145,15 @@ class web_node_page:
         for date in req.json()['data']:
             yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
 
+
+        yield  "<br>\n<br>\n"
+        
+        yield "Corresponding API call:<br>\ncurl %s" % (api_call)
+        
+        yield  "<br>\n<br>\n"
+        
+        yield "<br><br>API resources:<br><br>\n\n"
+
         yield html_footer()
 
 class api_nodes:        
