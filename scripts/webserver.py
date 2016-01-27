@@ -80,7 +80,7 @@ class index:
         
         yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
-        yield "Public nodes:<br>\n"
+        yield "<h3>Public nodes:</h3>\n"
         
         api_call = api_url+'/api/1/nodes/'
         
@@ -106,11 +106,12 @@ class index:
         
         yield  "<br>\n<br>\n"
         
-        yield "<br><br>API resources:<br><br>\n\n"
+        yield "<br><br><h3>API resources:</h3><br>\n\n"
         
         
         for i in range(0, len(urls), 2):
-            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
+            if urls[i].startswith('/api'):
+                yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
         
         yield html_footer()
@@ -138,7 +139,7 @@ class web_node_page:
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
         
-        yield "Available data<br>\n"
+        yield "<h3>Available data</h3>\n"
         yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug(str(req.json()))
@@ -150,7 +151,7 @@ class web_node_page:
         
         yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
         
-        yield  "<br>\n<br>\n Download examples:<br>\n"
+        yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
         
         examples='''
 <pre>
