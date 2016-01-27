@@ -73,19 +73,19 @@ class index:
         
         yield html_header('Beehive web server')
         
-        yield "<h2>This is the Waggle Beehive web server.</h2>\n\n\n"
+        yield "<h2>This is the Waggle Beehive web server.</h2><br><br>"
         
-        yield "Public nodes:\n\n"
+        yield "Public nodes:<br>"
         # TODO: use API call !
         nodes_dict = list_node_dates()
         for node_id in nodes_dict.keys():
             yield '<a href="%s/nodes/%s/">%s</a><br>' % (self_url, node_id, node_id)
         
-        yield "\n\nAvailable API resources:\n\n"
+        yield "<br><br>API resources:<br><br>"
         
         
         for i in range(0, len(urls), 2):
-            yield  "    " +  urls[i] + "\n"
+            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>"
         
         yield html_footer()
         
