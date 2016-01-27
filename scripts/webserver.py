@@ -80,7 +80,7 @@ class nodes:
         obj = {}
         obj['data'] = nodes_dict.keys()
         
-        return obj
+        return  json.dumps(obj, indent=4)
         
             
 class dates:        
