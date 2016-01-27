@@ -50,12 +50,12 @@ app = web.application(urls, globals())
 
 
 def html_header(title):
-    header= '<!DOCTYPE html>' + "\n"+
-            '<html lang="en">' + "\n"+
-            '<head>' + "\n"+
-            '<meta charset="utf-8">' + "\n"+
-            '<title>'+title+'</title>' + "\n"+
-            '</head>' + "\n"+
+    header= '<!DOCTYPE html>' + "\n"+ \
+            '<html lang="en">' + "\n"+ \
+            '<head>' + "\n"+ \
+            '<meta charset="utf-8">' + "\n"+ \
+            '<title>'+title+'</title>' + "\n"+ \
+            '</head>' + "\n"+ \
             '<body> '''
     return header
  
