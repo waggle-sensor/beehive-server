@@ -49,8 +49,18 @@ urls = (
 app = web.application(urls, globals())
 
 
-
-    
+def html_header(title):
+    header= '<!DOCTYPE html>' + "\n"+
+            '<html lang="en">' + "\n"+
+            '<head>' + "\n"+
+            '<meta charset="utf-8">' + "\n"+
+            '<title>'+title+'</title>' + "\n"+
+            '</head>' + "\n"+
+            '<body> '''
+    return header
+ 
+def html_footer():
+    return '</body></html>'   
     
 class index:        
     def GET(self):
@@ -58,6 +68,7 @@ class index:
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         
+        yield html_header('Beehive web server')
         
         yield "<h2>This is the Waggle Beehive web server.</h2>\n\n\n"
         
@@ -72,14 +83,14 @@ class index:
         for i in range(0, len(urls), 2):
             yield  "    " +  urls[i] + "\n"
         
-        
+        yield html_footer
         
 class web_node_page:
     def GET(self, node_id):
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         #TODO check that node_id exists!
-        
+        yield html_header('Node '+node_id)
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
         nodes_dict = list_node_dates()
@@ -90,6 +101,7 @@ class web_node_page:
         for date in nodes_dict[node_id]:
             yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, node_id)
 
+        yield html_footer
 
 class api_nodes:        
     def GET(self):
