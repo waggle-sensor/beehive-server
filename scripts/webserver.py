@@ -23,6 +23,8 @@ port = 80
 self_url = 'http://beehive1.mcs.anl.gov'
 api_url = 'http://beehive1.mcs.anl.gov'
 
+# modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
+
 web.config.log_toprint = True
 
 
@@ -84,9 +86,11 @@ class index:
         except Exception as e:
             logger.error("Could not make request: %s", (str(e)))
             raise web.internalerror()
-            
+        
+        logger.debug("req.json: %s" % ( str(req.json())) )
+        
         try:
-            req_dict = json.loads(req.json())
+            req_dict = json.loads()
         except Exception as e:
             logger.error("Could not parse json: %s", (str(e)))
             raise web.internalerror()
