@@ -34,14 +34,15 @@ def read_file( str ):
     return ""
 
 
-
+# TODO
+# show API calls on the web pages !
 
 
 urls = (
     '/api/1/nodes/(.+)/latest',     'api_nodes_latest',
     '/api/1/nodes/(.+)/export',     'api_export',
     '/api/1/nodes/(.+)/dates',      'api_dates',
-    '/api/1/nodes/',                'api_nodes',
+    '/api/1/nodes/?',               'api_nodes',
     '/nodes/(.+)',                  'web_node_page',
     '/',                            'index'
 )
