@@ -40,6 +40,7 @@ def read_file( str ):
 urls = (
     '/api/1/nodes/(.+)/latest', 'nodes_latest',
     '/api/1/nodes/(.+)/export', 'export',
+    '/api/1/nodes/', 'nodes',
     '/', 'index'
 )
 
@@ -62,6 +63,22 @@ class index:
         
         return text+"\n\n"
 
+
+
+class nodes:        
+    def GET(self):
+        
+        #query = web.ctx.query
+        
+        
+        #web.header('Content-type','text/plain')
+        #web.header('Transfer-Encoding','chunked')
+        
+        
+        nodes_dict = list_node_dates()
+        return str(nodes_dict.keys())
+            
+            
 
 class nodes_latest:        
     def GET(self, node_id):

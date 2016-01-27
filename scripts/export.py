@@ -19,7 +19,7 @@ logger.addHandler(handler)
 
 CASSANDRA_HOST="cassandra"
 
-def export_generator(node_id, date, ttl):
+def query(statement):
     cluster = Cluster(contact_points=[CASSANDRA_HOST])
     session = None
 
@@ -32,6 +32,18 @@ def export_generator(node_id, date, ttl):
             logger.warning("The process will attempt to re-connect at a later time.")
         if not session:
             time.sleep(3)
+            
+    logger.debug("statement: %s" % (statement))
+    try:
+        rows = session.execute(statement)
+    except Exception as e:
+        logger.error("Could not execute statement: %s" % (str(e)))
+        raise
+    
+    return rows
+
+def export_generator(node_id, date, ttl):
+    
 
 
     # TODO check if node exists
@@ -44,18 +56,37 @@ def export_generator(node_id, date, ttl):
         statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
                     "FROM waggle.sensor_data_ttl "+ \
                     "WHERE node_id='%s' ORDER BY date DESC" %(node_id)
-    logger.debug("statement: %s" % (statement))
+    
     try:
-        rows = session.execute(statement)
-    except Exception as e:
-        logger.error("Could not execute statement: %s" % (str(e)))
+        rows = query(statement)
+    except:
         raise
+    
     count = 0
     for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
         count +=1
         yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
     
     logger.info("Retrieved %d rows" % (count))
+
+
+def list_node_dates():
+    statement = "SELECT DISTINCT node_id,date FROM sensor_data"
+    
+    try:
+        rows = query(statement)
+    except:
+        raise
+    
+    nodes={}    
+    for (node_id, date) in rows:
+        if not node_id in nodes:
+            nodes[node_id]=[]
+            
+        nodes[node_id].append(date)
+            
+       
+    return nodes
 
 
 if __name__ == "__main__":
