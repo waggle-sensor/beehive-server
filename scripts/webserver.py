@@ -79,7 +79,7 @@ class index:
         # TODO: use API call !
         nodes_dict = list_node_dates()
         for node_id in nodes_dict.keys():
-            yield '<a href="%s/nodes/%s/">%s</a><br>' % (self_url, node_id, node_id)
+            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s/">%s</a><br>' % (self_url, node_id, node_id)
         
         yield "<br><br>API resources:<br><br>"
         
