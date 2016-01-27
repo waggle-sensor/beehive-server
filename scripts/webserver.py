@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import web, os.path, logging, re, urlparse, sys
-from export import export_generator
+from export import export_generator, list_node_dates
 # container
 # docker run -it  --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
 # optional: -v ${DATA}/export:/export
