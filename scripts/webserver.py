@@ -102,7 +102,7 @@ class index:
         
         yield  "<br>\n<br>\n"
         
-        yield "Corresponding API call:<br>\ncurl %s" % (api_call)
+        yield "Corresponding API call to get list of nodes:<br>\n<pre>curl %s</pre>" % (api_call)
         
         yield  "<br>\n<br>\n"
         
@@ -148,9 +148,27 @@ class web_node_page:
 
         yield  "<br>\n<br>\n"
         
-        yield "Corresponding API call:<br>\ncurl %s" % (api_call)
+        yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
         
-        yield  "<br>\n<br>\n"
+        yield  "<br>\n<br>\n Download examples:<br>\n"
+        
+        examples='''
+        <pre>
+        # get data from two specific days<br>
+        for date in 2016-01-26 2016-01-27 ; do <br>
+        &nbsp&nbsp&nbsp&nbsp echo curl -O {0}_${date}.csv http://beehive1.mcs.anl.gov/api/1/nodes/{0}/export?date=${date} <br>
+        &nbsp&nbsp&nbsp&nbsp sleep 3 <br>
+        done <br>
+         <br>
+        # get all data of one node <br>
+        DATES=$(curl http://beehive1.mcs.anl.gov/api/1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]") <br>
+        for date in ${DATES} ; do <br>
+        &nbsp&nbsp&nbsp&nbsp echo curl -O {0}_${date}.csv http://beehive1.mcs.anl.gov/api/1/nodes/{0}/export?date=${date} <br>
+        &nbsp&nbsp&nbsp&nbsp sleep 3 <br>
+        done <br>
+        </pre>
+        '''
+        yield examples.format(node_id)
         
         yield "<br><br>API resources:<br><br>\n\n"
 
