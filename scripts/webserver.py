@@ -74,19 +74,19 @@ class index:
         
         yield html_header('Beehive web server')
         
-        yield "<h2>This is the Waggle Beehive web server.</h2><br><br>"
+        yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
-        yield "Public nodes:<br>"
+        yield "Public nodes:<br>\n"
         # TODO: use API call !
         nodes_dict = list_node_dates()
         for node_id in nodes_dict.keys():
-            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>' % (self_url, node_id, node_id)
+            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
         
-        yield "<br><br>API resources:<br><br>"
+        yield "<br><br>API resources:<br><br>\n\n"
         
         
         for i in range(0, len(urls), 2):
-            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>"
+            yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
         yield html_footer()
         
@@ -112,7 +112,7 @@ class web_node_page:
         dates = nodes_dict[node_id]
         logger.debug(str(dates))
         for date in dates:
-            yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, date)
+            yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, date)
 
         yield html_footer()
 
