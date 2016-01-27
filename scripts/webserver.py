@@ -87,7 +87,7 @@ class web_node_page:
         if not node_id in nodes_dict:
             raise web.notfound()
         
-        for date in nodes_dict[node_id]
+        for date in nodes_dict[node_id]:
             yield '<a href="%s/api/1/nodes/%s/export?date=%s">node_id</a><br>' % (self_url, node_id, date)
 
 
