@@ -56,11 +56,11 @@ def html_header(title):
             '<meta charset="utf-8">' + "\n"+ \
             '<title>'+title+'</title>' + "\n"+ \
             '</head>' + "\n"+ \
-            '<body> '''
+            '<body> ' + "\n"
     return header
  
 def html_footer():
-    return '</body></html>'
+    return '</body>'+"\n"+'</html>'
     
 class index:        
     def GET(self):
