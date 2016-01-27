@@ -21,6 +21,7 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 port = 80
 self_url = 'http://beehive1.mcs.anl.gov'
+api_url = 'http://beehive1.mcs.anl.gov'
 
 web.config.log_toprint = True
 
@@ -77,9 +78,26 @@ class index:
         yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
         yield "Public nodes:<br>\n"
-        # TODO: use API call !
-        nodes_dict = list_node_dates()
-        for node_id in nodes_dict.keys():
+        
+        try:
+            req = requests.get( api_url+'/api/1/nodes/') # , auth=('user', 'password')
+        except Exception as e:
+            logger.error("Could not make request: %s", (str(e)))
+            raise web.internalerror()
+            
+        try:
+            req_dict = json.loads(req.json())
+        except Exception as e:
+            logger.error("Could not parse json: %s", (str(e)))
+            raise web.internalerror()
+            
+        logger.debug("answer: " + str(req_dict) )
+        
+        if not 'data' in req_dict:
+            logger.error("data is empty")
+            raise web.internalerror()
+        
+        for node_id in req_dict['data']:
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
         
         yield "<br><br>API resources:<br><br>\n\n"
@@ -108,11 +126,12 @@ class web_node_page:
         yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
         
-        yield "Available data<br>"
+        yield "Available data<br>\n"
+        yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         dates = nodes_dict[node_id]
         logger.debug(str(dates))
         for date in dates:
-            yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, date)
+            yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
 
         yield html_footer()
 
