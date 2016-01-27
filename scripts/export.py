@@ -78,14 +78,15 @@ def list_node_dates():
     except:
         raise
     
-    nodes={}    
+    nodes={}
+    count = 0;
     for (node_id, date) in rows:
         if not node_id in nodes:
             nodes[node_id]=[]
-            
+            count = count +1
         nodes[node_id].append(date)
             
-       
+    logger.info("Found %d node_ids." % (count))   
     return nodes
 
 
