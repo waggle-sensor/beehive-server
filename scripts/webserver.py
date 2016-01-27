@@ -81,8 +81,10 @@ class index:
         
         yield "Public nodes:<br>\n"
         
+        api_call = api_url+'/api/1/nodes/'
+        
         try:
-            req = requests.get( api_url+'/api/1/nodes/') # , auth=('user', 'password')
+            req = requests.get( api_call ) # , auth=('user', 'password')
         except Exception as e:
             logger.error("Could not make request: %s", (str(e)))
             raise web.internalerror()
@@ -101,6 +103,12 @@ class index:
         
         for i in range(0, len(urls), 2):
             yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
+        
+        yield  "<br>\n<br>\n"
+        
+        yield "Corresponding API call:<br>\ncurl %s" % (api_call)
+        
+        yield  "<br>\n<br>\n"
         
         yield html_footer()
         
