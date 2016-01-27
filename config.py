@@ -177,7 +177,7 @@ sensor_data_ttl_cql = '''CREATE TABLE IF NOT EXISTS waggle.sensor_data_ttl (
                         data list<ascii>,
                         
                         PRIMARY KEY ((node_id), date, plugin_id, plugin_version, plugin_instance, timestamp, sensor)
-                    ) WITH GC_GRACE_SECONDS = 1800 ;'''
+                    ) WITH GC_GRACE_SECONDS = 360 AND compaction = {'class': 'DateTieredCompactionStrategy'} ;'''
 sensor_data_ttl_cql = re.sub('[ ]*#.*', '', sensor_data_ttl_cql)
 sensor_data_ttl_cql = sensor_data_ttl_cql.replace('\n', ' ').replace('\r', '')
 
