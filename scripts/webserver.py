@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import web, os.path, logging, re, urlparse, sys
+import web, os.path, logging, re, urlparse, sys, json
 from export import export_generator, list_node_dates
 # container
 # docker run -it  --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
@@ -40,6 +40,7 @@ def read_file( str ):
 urls = (
     '/api/1/nodes/(.+)/latest', 'nodes_latest',
     '/api/1/nodes/(.+)/export', 'export',
+    '/api/1/nodes/(.+)/dates', 'dates',
     '/api/1/nodes/', 'nodes',
     '/', 'index'
 )
@@ -74,11 +75,33 @@ class nodes:
         #web.header('Content-type','text/plain')
         #web.header('Transfer-Encoding','chunked')
         
+        nodes_dict = list_node_dates()
+        
+        obj = {}
+        obj['data'] = nodes_dict.keys()
+        
+        return obj
+        
+            
+class dates:        
+    def GET(self, node_id):
+        
+        query = web.ctx.query
         
         nodes_dict = list_node_dates()
-        return str(nodes_dict.keys())
-            
-            
+        
+        if not node_id in nodes_dict:
+            raise web.notfound()
+        
+        
+        obj = {}
+        obj['data'] = nodes_dict[node_id]
+        
+        return json.dumps(obj, indent=4)
+        
+        
+        
+                        
 
 class nodes_latest:        
     def GET(self, node_id):
