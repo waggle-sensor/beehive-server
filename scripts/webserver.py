@@ -59,7 +59,7 @@ class index:
         web.header('Transfer-Encoding','chunked')
         
         
-        yield "This is the Waggle Beehive web server.\n\n\n"
+        yield "<h2>This is the Waggle Beehive web server.</h2>\n\n\n"
         
         # TODO: use API call !
         nodes_dict = list_node_dates()
@@ -80,7 +80,7 @@ class web_node_page:
         web.header('Transfer-Encoding','chunked')
         #TODO check that node_id exists!
         
-        yield "Node "+node_id+"\n\n\n"
+        yield "<h2>Node "+node_id+"</h2>\n\n\n"
         
         nodes_dict = list_node_dates()
         
@@ -88,7 +88,7 @@ class web_node_page:
             raise web.notfound()
         
         for date in nodes_dict[node_id]:
-            yield '<a href="%s/api/1/nodes/%s/export?date=%s">%s</a><br>' % (self_url, node_id, date, node_id)
+            yield '<br><a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (self_url, node_id, date, node_id)
 
 
 class api_nodes:        
