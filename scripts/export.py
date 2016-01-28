@@ -69,7 +69,7 @@ def export_generator(node_id, date, ttl, delimiter):
     for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
         count +=1
         #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
-        yield delimiter.join((node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data))
+        yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
     
     logger.info("Retrieved %d rows" % (count))
 
