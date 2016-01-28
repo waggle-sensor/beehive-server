@@ -221,7 +221,7 @@ class api_nodes_latest:
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
         
-        for row in export_generator(node_id, '', True):
+        for row in export_generator(node_id, '', True, ';'):
             yield row+"\n"
 
 
@@ -255,7 +255,7 @@ class api_export:
             if r.match(date):
                 logger.info("accepted date: %s" %(date))
     
-                for row in export_generator(node_id, date, False):
+                for row in export_generator(node_id, date, False, ';'):
                     yield row+"\n"
             else:
                 logger.warning("date format not correct")

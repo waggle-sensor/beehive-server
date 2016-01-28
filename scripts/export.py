@@ -42,7 +42,7 @@ def query(statement):
     
     return rows
 
-def export_generator(node_id, date, ttl):
+def export_generator(node_id, date, ttl, delimiter):
     
 
 
@@ -62,10 +62,14 @@ def export_generator(node_id, date, ttl):
     except:
         raise
     
+    if not delimiter:
+        delimiter = ';'
+    
     count = 0
     for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
         count +=1
-        yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
+        #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
+        yield delimiter.join((node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data))
     
     logger.info("Retrieved %d rows" % (count))
 
@@ -114,7 +118,7 @@ if __name__ == "__main__":
         sys.exit(1)
         
         
-    for row in export_generator(args.node_id, args.date, args.ttl):
+    for row in export_generator(args.node_id, args.date, args.ttl, ';'):
         print row
         
    
