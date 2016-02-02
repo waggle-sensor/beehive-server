@@ -204,7 +204,7 @@ class api_dates:
         
         
         obj = {}
-        obj['data'] = nodes_dict[node_id]
+        obj['data'] = sorted(nodes_dict[node_id], reverse=True)
         
         return json.dumps(obj, indent=4)
         
