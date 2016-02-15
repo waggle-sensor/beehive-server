@@ -73,6 +73,19 @@ def html_footer():
 class index:        
     def GET(self):
         
+        
+        
+        api_call = api_url+'/api/1/nodes/'
+        
+        try:
+            req = requests.get( api_call ) # , auth=('user', 'password')
+        except Exception as e:
+            logger.error("Could not make request: %s", (str(e)))
+            raise web.internalerror(str(e))
+        
+        logger.debug("req.json: %s" % ( str(req.json())) )
+        
+        
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         
@@ -82,15 +95,6 @@ class index:
         
         yield "<h3>Public nodes:</h3>\n"
         
-        api_call = api_url+'/api/1/nodes/'
-        
-        try:
-            req = requests.get( api_call ) # , auth=('user', 'password')
-        except Exception as e:
-            logger.error("Could not make request: %s", (str(e)))
-            raise web.internalerror()
-        
-        logger.debug("req.json: %s" % ( str(req.json())) )
         
         if not u'data' in req.json():
             logger.error("data field not found")
