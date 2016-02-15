@@ -20,6 +20,9 @@ logger.addHandler(handler)
 CASSANDRA_HOST="cassandra"
 
 def query(statement):
+    """
+    Generic query function for Cassandra.
+    """
     cluster = Cluster(contact_points=[CASSANDRA_HOST])
     session = None
 
@@ -43,19 +46,17 @@ def query(statement):
     return rows
 
 def export_generator(node_id, date, ttl, delimiter):
-    
+    """
+    Python generator to export sensor data from Cassandra
+    """
 
 
     # TODO check if node exists
 
-    if not ttl:
-        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
-                    "FROM waggle.sensor_data "+ \
-                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
-    else:
-        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
-                    "FROM waggle.sensor_data_ttl "+ \
-                    "WHERE node_id='%s' ORDER BY date DESC" %(node_id)
+    statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
+                "FROM waggle.sensor_data "+ \
+                "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+
     
     try:
         rows = query(statement)
@@ -75,6 +76,9 @@ def export_generator(node_id, date, ttl, delimiter):
 
 
 def list_node_dates():
+    """
+    Returns hash of nodes with dates.
+    """
     statement = "SELECT DISTINCT node_id,date FROM sensor_data"
     
     try:

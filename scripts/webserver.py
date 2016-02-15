@@ -236,8 +236,9 @@ class api_nodes_latest:
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
         
-        for row in export_generator(node_id, '', True, ';'):
-            yield row+"\n"
+        #for row in export_generator(node_id, '', True, ';'):
+        #    yield row+"\n"
+        yield "not implemented"
 
 
 
