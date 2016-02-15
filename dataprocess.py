@@ -52,7 +52,7 @@ class DataProcess(Process):
         self.session = None
         self.cluster = None
         self.prepared_statement = None
-        self.prepared_statement_ttl = None
+        
         self.cassandra_connect()
         
         
@@ -137,13 +137,7 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
         
-        statement_ttl = "INSERT INTO sensor_data_ttl (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) USING TTL 180"
-        if not self.prepared_statement_ttl:
-            try: 
-                self.prepared_statement_ttl = self.session.prepare(statement_ttl)
-            except Exception as e:
-                logger.error("Error preparing statement_ttl: (%s) %s" % (type(e).__name__, str(e)) )
-                raise
+       
         
         
         if not data[3]:
@@ -157,11 +151,7 @@ class DataProcess(Process):
             logger.error("Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
     
-        try:
-            bound_statement_ttl = self.prepared_statement_ttl.bind(value_array)
-        except Exception as e:
-            logger.error("Error binding cassandra cql statement_ttl:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
-            raise
+        
     
         
         connection_retry_delay = 1
@@ -171,17 +161,6 @@ class DataProcess(Process):
                 self.session.execute(bound_statement)
             except Exception as e:
                 logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
-                self.cassandra_connect()
-                time.sleep(connection_retry_delay)
-                if connection_retry_delay < 10:
-                    connection_retry_delay = connection_retry_delay + 1
-                continue
-    
-            # this is for TTL data       
-            try:
-                self.session.execute(bound_statement_ttl)
-            except Exception as e:
-                logger.error("Error executing cassandra cql statement_ttl: %s -- value_array was: %s" % (str(e), str(value_array)) )
                 self.cassandra_connect()
                 time.sleep(connection_retry_delay)
                 if connection_retry_delay < 10:
