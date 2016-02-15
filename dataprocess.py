@@ -159,6 +159,9 @@ class DataProcess(Process):
             # this is long term storage    
             try:
                 self.session.execute(bound_statement)
+            except TypeError as e:    
+                 logger.error("(TypeError) Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                 break
             except Exception as e:
                 logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
                 self.cassandra_connect()
