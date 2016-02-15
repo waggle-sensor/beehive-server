@@ -72,7 +72,7 @@ def html_footer():
 
 
 def internalerror(e):
-     return internalerror("Sorry, there was an error:\n"+str(e))
+     return web.internalerror("Sorry, there was an error:\n"+str(e))
     
 
 class index:        
