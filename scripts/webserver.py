@@ -75,9 +75,7 @@ def internalerror(e):
     
     message = html_header("Error") + "Sorry, there was an error:<br>\n<pre>\n"+str(e) +"</pre>\n"+ html_footer()
     
-    
-    
-    return message
+    return web.internalerror(message)
     
 
 class index:        
