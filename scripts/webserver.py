@@ -155,7 +155,7 @@ class web_node_page:
         
         
         yield "<h3>Available data</h3>\n"
-        yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
+        # not available right now. yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug(str(req.json()))
         for date in req.json()['data']:
