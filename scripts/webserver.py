@@ -69,7 +69,12 @@ def html_footer():
 </body>
 </html>
 '''
+
+
+def internalerror(e):
+     return internalerror("Sorry, there was an error:\n"+str(e))
     
+
 class index:        
     def GET(self):
         
@@ -80,8 +85,9 @@ class index:
         try:
             req = requests.get( api_call ) # , auth=('user', 'password')
         except Exception as e:
-            logger.error("Could not make request: %s", (str(e)))
-            raise web.internalerror(str(e))
+            msg = "Could not make request: %s", (str(e))
+            logger.error(msg)
+            raise internalerror(msg)
         
         logger.debug("req.json: %s" % ( str(req.json())) )
         
@@ -97,8 +103,9 @@ class index:
         
         
         if not u'data' in req.json():
-            logger.error("data field not found")
-            raise web.internalerror()
+            msg = "data field not found"
+            logger.error(msg)
+            raise internalerror(msg)
         
         for node_id in req.json()[u'data']:
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
@@ -129,11 +136,12 @@ class web_node_page:
         try:
             req = requests.get( api_call ) # , auth=('user', 'password')
         except Exception as e:
-            logger.error("Could not make request: %s", (str(e)))
-            raise web.internalerror()
+            msg = "Could not make request: %s", (str(e))
+            logger.error(msg)
+            raise internalerror(msg)
             
         if not 'data' in req.json():
-            raise web.internalerror()
+            raise internalerror()
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
@@ -270,6 +278,7 @@ class api_export:
 
 if __name__ == "__main__":
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
+    app.internalerror = internalerror
     app.run()
 
 
