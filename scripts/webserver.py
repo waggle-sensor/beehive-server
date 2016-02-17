@@ -20,7 +20,7 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 port = 80
-self_url = 'http://beehive1.mcs.anl.gov'
+api_url_internal = 'http://localhost'
 api_url = 'http://beehive1.mcs.anl.gov'
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
@@ -84,9 +84,10 @@ class index:
         
         
         api_call = api_url+'/api/1/nodes/'
+        api_call_internal = api_url_internal+'/api/1/nodes/'
         
         try:
-            req = requests.get( api_call ) # , auth=('user', 'password')
+            req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
             msg = "Could not make request: %s", (str(e))
             logger.error(msg)
@@ -111,7 +112,7 @@ class index:
             raise internalerror(msg)
         
         for node_id in req.json()[u'data']:
-            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (self_url, node_id, node_id)
+            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (api_url_internal, node_id, node_id)
         
         
         yield  "<br>\n<br>\n"
@@ -134,10 +135,11 @@ class web_node_page:
     def GET(self, node_id):
        
         
-        api_call = '%s/api/1/nodes/%s/dates' % (api_url, node_id)
+        api_call            = '%s/api/1/nodes/%s/dates' % (api_url, node_id)
+        api_call_internal   = '%s/api/1/nodes/%s/dates' % (api_url_internal, node_id)
         
         try:
-            req = requests.get( api_call ) # , auth=('user', 'password')
+            req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
             msg = "Could not make request: %s", (str(e))
             logger.error(msg)
@@ -172,19 +174,19 @@ class web_node_page:
 <pre>
 # get data from two specific days
 for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv http://beehive1.mcs.anl.gov/api/1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}/api/1/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 
 # get all data of one node
-DATES=$(curl http://beehive1.mcs.anl.gov/api/1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
+DATES=$(curl {1}/api/1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv http://beehive1.mcs.anl.gov/api/1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}/api/1/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 </pre>
 '''
-        yield examples.format(node_id)
+        yield examples.format(node_id, api_url)
         
         yield "<br>\n<br>\n"
 
