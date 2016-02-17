@@ -112,7 +112,7 @@ class index:
             raise internalerror(msg)
         
         for node_id in req.json()[u'data']:
-            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (api_url_internal, node_id, node_id)
+            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (api_url, node_id, node_id)
         
         
         yield  "<br>\n<br>\n"
