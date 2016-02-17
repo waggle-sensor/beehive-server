@@ -163,7 +163,7 @@ class DataProcess(Process):
                  logger.error("(TypeError) Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
                  break
             except Exception as e:
-                logger.error("Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                logger.error("Error (type: %s) executing cassandra cql statement: %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
                 self.cassandra_connect()
                 time.sleep(connection_retry_delay)
                 if connection_retry_delay < 10:
