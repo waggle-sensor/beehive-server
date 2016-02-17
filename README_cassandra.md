@@ -5,7 +5,7 @@ Be sure that environment variable $DATA is defined.
 [ ! -z "$DATA" ] && \
 docker run -d \
 --name beehive-cassandra \
--v ${DATA}/cassandra/data/:/var/lib/cassandra/data \
+-v ${DATA}/cassandra/:/var/lib/cassandra/ \
 -p 7000:7000 \
 cassandra:3.2 -R
 ```
