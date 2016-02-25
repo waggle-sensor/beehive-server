@@ -111,19 +111,19 @@ class DataProcess(Process):
         try:
             timestamp_int = int(data[4])
         except ValueError as e:
-            logger.error("(ValueError) Error converting timestamp (%s) into int: %s" % (data[3], str(e)))
+            logger.error("(ValueError) Error converting timestamp (%s) into int: %s (sender: %s)" % (data[3], str(e), s_uniqid_str))
             raise
         except Exception as e:
-            logger.error("(Exception) Error converting timestamp (%s) into int: %s" % (data[3], str(e)))
+            logger.error("(Exception) Error converting timestamp (%s) into int: %s (sender: %s)" % (data[3], str(e), s_uniqid_str))
             raise
         
         try:
             plugin_version_int = int(data[2])
         except ValueError as e:
-            logger.error("(ValueError) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
+            logger.error("(ValueError) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
             raise
         except Exception as e:
-            logger.error("(Exception) Error converting plugin_version (%s) into int: %s" % (data[2], str(e)))
+            logger.error("(Exception) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
             raise
         
         if not self.session:
