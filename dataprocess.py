@@ -111,7 +111,7 @@ class DataProcess(Process):
         try:
             timestamp_int = int(data[4])
         except ValueError as e:
-            logger.error("(ValueError) Error converting timestamp (%s) into int: %s (sender: %s)" % (data[4], str(e), s_uniqid_str))
+            logger.error("(ValueError) Error converting timestamp (%s, type: %s) into int: %s (sender: %s)" % (data[4], str(type(data[4])), str(e), s_uniqid_str))
             raise
         except Exception as e:
             logger.error("(Exception) Error converting timestamp (%s) into int: %s (sender: %s)" % (data[4], str(e), s_uniqid_str))
