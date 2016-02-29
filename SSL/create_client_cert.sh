@@ -33,6 +33,8 @@ mkdir -p ${SSL_DIR}/${CERT_DIR}
 cd ${SSL_DIR}/${CERT_DIR}
 openssl genrsa -out key.pem 2048
 
+chmod 600 key.pem
+
 # create public RSA to allow node to create reverse ssh tunnel
 # -y          : Read private key file and print public key.
 # -f filename : Filename of the key file.
