@@ -33,6 +33,12 @@ mkdir -p ${SSL_DIR}/${CERT_DIR}
 cd ${SSL_DIR}/${CERT_DIR}
 openssl genrsa -out key.pem 2048
 
+# create public RSA to allow node to create reverse ssh tunnel
+# -y          : Read private key file and print public key.
+# -f filename : Filename of the key file.
+ssh-keygen -y -f key.pem > key_rsa.pub.tmp
+mv key_rsa.pub.tmp key_rsa.pub
+
 # create certificate request
 openssl req -new -key ./key.pem -out req.pem -outform PEM \
     -subj /CN=${RABBIT_USER}/O=client/ -nodes
