@@ -13,11 +13,11 @@ pip install web.py
 
 ## Run
 ```bash
-docker rm -f cert-serve
+docker rm -f beehive-cert
 docker run -ti \
   -p 24181:80 \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
-  --name cert-serve \
+  --name beehive-cert \
   waggle/beehive-server /bin/bash
 cd /usr/lib/waggle/beehive-server/cert-serve ; ./cert-serve.py
 ```
