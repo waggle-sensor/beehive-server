@@ -14,6 +14,7 @@ pip install web.py
 ## Run
 ```bash
 docker rm -f beehive-cert
+[ ! -z "$DATA" ] && \
 docker run -ti \
   -p 24181:80 \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
