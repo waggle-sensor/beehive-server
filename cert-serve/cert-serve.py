@@ -11,6 +11,8 @@ resource_lock = threading.RLock()
 
 script_path = "/usr/lib/waggle/beehive-server/SSL/"
 ssl_path = "/usr/lib/waggle/SSL/"
+ssl_path_nodes = ssl_path+"nodes/"
+
 
 hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
@@ -78,20 +80,34 @@ class newnode:
         cert=""
         
         if nodeid:
+            
+            # check for 16 digit hex
+            if len(nodeid) != 16:
+                print "node_id has wrong length."
+                return "node_id not recognized"
+                
+            try:
+                int(nodeid, 16)
+            except ValueError:
+                print "node_id not hex."
+                return "node_id not recognized"
+                
+            
             print "Using nodeid: "+str(nodeid)
-            node_dir = ssl_path + 'node_'+ nodeid
+            node_dir = ssl_path_nodes + 'node_'+ nodeid
             if not os.path.isdir(node_dir):
                 with resource_lock:
-                    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'node_'+ nodeid])
+                    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
             
             privkey = read_file(node_dir + '/key.pem')
             cert    = read_file(node_dir + '/cert.pem')       
         else:
-            print "No nodeid provided."
-            with resource_lock:
-                subprocess.call([script_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
-                privkey = read_file(ssl_path + 'temp_client_cert/key.pem')
-                cert    = read_file(ssl_path + 'temp_client_cert/cert.pem')
+            print "No node_id provided."
+            return "No node_id provided."
+            #with resource_lock:
+            #    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
+            #    privkey = read_file(ssl_path + 'temp_client_cert/key.pem')
+            #    cert    = read_file(ssl_path + 'temp_client_cert/cert.pem')
             
         if not privkey:
             return "error: privkey file not found !?"
