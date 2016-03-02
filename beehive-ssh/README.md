@@ -17,7 +17,7 @@ docker pull waggle/beehive-server:latest
 docker run -ti --name beehive-ssh \
     -p 20022:22 \
     -v ${DATA}/waggle/SSL/nodes/:/usr/lib/waggle/SSL/nodes/ \
-    waggle/beehive-server
+    waggle/beehive-ssh
 ```
 
 The directory /usr/lib/waggle/SSL/nodes/ should contain an authorized_keys file with the public keys of the waggle nodes.
