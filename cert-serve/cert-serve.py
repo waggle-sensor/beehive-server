@@ -98,6 +98,14 @@ class newnode:
             if not os.path.isdir(node_dir):
                 with resource_lock:
                     subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
+                    time.sleep(1)
+                    append_command = "cat {0}node_{1}/key_rsa.pub >> {0}authorized_keys".format(ssl_path_nodes, nodeid)
+                    # manual recreaetion of authorized_keys file: 
+                    # cat node_*/key_rsa.pub > authorized_keys 
+                    subprocess.call(append_command, shell=True)
+                    # manual recreation of authorized_keys file: 
+                    # cat node_*/key_rsa.pub > authorized_keys
+            
             
             privkey = read_file(node_dir + '/key.pem')
             cert    = read_file(node_dir + '/cert.pem')       
