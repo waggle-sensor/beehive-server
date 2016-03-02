@@ -100,9 +100,14 @@ class newnode:
                     subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
                     time.sleep(1)
                     append_command = "cat {0}node_{1}/key_rsa.pub >> {0}authorized_keys".format(ssl_path_nodes, nodeid)
+                    print "command: ", append_command
                     # manual recreaetion of authorized_keys file: 
                     # cat node_*/key_rsa.pub > authorized_keys 
                     subprocess.call(append_command, shell=True)
+                    
+                    chmod_cmd = "chmod 600 {0}authorized_keys".format(ssl_path_nodes)
+                    print "command: ", chmod_cmd
+                    subprocess.call(chmod_cmd, shell=True)
                     # manual recreation of authorized_keys file: 
                     # cat node_*/key_rsa.pub > authorized_keys
             
