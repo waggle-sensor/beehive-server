@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 
     while True:
-        p = subprocess.Popen(["/usr/sbin/sshd", "-d"],
+        p = subprocess.Popen(["/usr/sbin/sshd", "-D"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         stdout = []
