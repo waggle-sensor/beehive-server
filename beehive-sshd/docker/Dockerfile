@@ -1,7 +1,9 @@
 
-FROM waggle/beehive-server
+FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y openssh-server
+RUN apt-get update && apt-get install -y openssh-server git python
+
+ADD . /usr/lib/waggle/beehive/beehive-sshd/
 
 RUN mkdir -p /var/run/sshd /root/.ssh/ 
 
@@ -11,6 +13,7 @@ RUN sed -i -e 's/^.\?PermitRootLogin.*/PermitRootLogin yes/' \
     -e 's/^.\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/' \
     -e 's/^.\?PasswordAuthentication.*/PasswordAuthentication no/' \
     -e 's/^.\?UsePAM.*/UsePAM no/' \
+    -e 's/^.\?LogLevel.*/LogLevel DEBUG/' \
     -e 's:^.\?AuthorizedKeysFile.*:AuthorizedKeysFile /usr/lib/waggle/SSL/nodes/authorized_keys:' \
     /etc/ssh/sshd_config
 
@@ -24,4 +27,4 @@ ENV NOTVISIBLE "in users profile"
 RUN echo "export VISIBLE=now" >> /etc/profile
 
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+#CMD ["/usr/sbin/sshd", "-D"]
