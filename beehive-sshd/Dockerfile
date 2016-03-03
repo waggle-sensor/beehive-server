@@ -1,7 +1,10 @@
 
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y openssh-server git python2.7
+RUN apt-get update && \
+  apt-get install -y openssh-server && \
+  apt-get purge "python3*" openssh-server+ && \
+  apt-get install -y git python2.7
 
 ADD . /usr/lib/waggle/beehive/beehive-sshd/
 
