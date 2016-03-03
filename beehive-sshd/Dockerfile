@@ -1,7 +1,10 @@
 
 FROM ubuntu:16.04
 
-RUN apt-get update && \
+
+# delete files due to Hash Sum mismatch
+RUN rm -rf /var/lib/apt/lists/* ; \
+  apt-get update && \
   apt-get install -y openssh-server && \
   apt-get purge "python3*" openssh-server+ && \
   apt-get install -y git python2.7
