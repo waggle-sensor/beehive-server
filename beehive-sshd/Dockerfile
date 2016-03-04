@@ -5,9 +5,7 @@ FROM ubuntu:16.04
 # delete files due to Hash Sum mismatch
 RUN rm -rf /var/lib/apt/lists/* ; \
   apt-get update && \
-  apt-get install -y openssh-server && \
-  apt-get purge -y "python3*" openssh-server+ && \
-  apt-get install -y git python2.7
+  apt-get install -y openssh-server python git
 
 ADD . /usr/lib/waggle/beehive/beehive-sshd/
 
