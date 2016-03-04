@@ -6,6 +6,8 @@ SSH server to accept reverse ssh tunnel connections from waggle nodes.
 
 Build image:
 ```bash
+docker rm -f beehive-sshd
+docker rmi waggle/beehive-sshd
 docker build -t waggle/beehive-sshd .
 ```
 
