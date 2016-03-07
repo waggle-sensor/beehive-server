@@ -16,6 +16,7 @@ Start container:
 docker rm -f beehive-sshd
 [ ! -z "$DATA" ] && \
 docker run -ti --name beehive-sshd \
+    --link beehive-mysql:mysql \
     -p 20022:22 \
     -v ${DATA}/waggle/SSL/nodes/:/usr/lib/waggle/SSL/nodes/ \
     waggle/beehive-sshd
