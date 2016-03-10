@@ -11,6 +11,15 @@ apt-get install python-webpy
 pip install web.py
 ```
 
+$$ Build image:
+```bash
+docker rm -f beehive-cert
+docker rmi waggle/beehive-cert
+docker build -t waggle/beehive-cert .
+```
+
+
+
 ## Run
 ```bash
 docker rm -f beehive-cert
@@ -19,6 +28,6 @@ docker run -ti \
   -p 24181:80 \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   --name beehive-cert \
-  waggle/beehive-server /bin/bash
+  waggle/beehive-cert /bin/bash
 cd /usr/lib/waggle/beehive-server/beehive-cert ; ./cert-serve.py
 ```
