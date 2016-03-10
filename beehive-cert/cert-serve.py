@@ -17,6 +17,8 @@ ssl_path_nodes = ssl_path+"nodes/"
 hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
 
+authorized_keys_file = ssl_path_nodes+"authorized_keys"
+
 
 def read_file( str ):
     print "read_file: "+str
@@ -99,13 +101,13 @@ class newnode:
                 with resource_lock:
                     subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
                     time.sleep(1)
-                    append_command = "cat {0}node_{1}/key_rsa.pub >> {0}authorized_keys".format(ssl_path_nodes, nodeid)
+                    append_command = "cat {0}node_{1}/key_rsa.pub >> {2}".format(ssl_path_nodes, nodeid, authorized_keys_file)
                     print "command: ", append_command
                     # manual recreaetion of authorized_keys file: 
                     # cat node_*/key_rsa.pub > authorized_keys 
                     subprocess.call(append_command, shell=True)
                     
-                    chmod_cmd = "chmod 600 {0}authorized_keys".format(ssl_path_nodes)
+                    chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
                     print "command: ", chmod_cmd
                     subprocess.call(chmod_cmd, shell=True)
                     # manual recreation of authorized_keys file: 
@@ -136,6 +138,25 @@ class newnode:
 
 
 if __name__ == "__main__":
+    
+    
+    
+    
+    # create new authorized_keys file on every start, just to be sure.
+    
+    merge_command = "cat {0}node_*/key_rsa.pub > {1}authorized_keys".format(ssl_path_nodes, authorized_keys_file)
+    print "command: ", merge_command
+    # manual recreaetion of authorized_keys file: 
+    # cat node_*/key_rsa.pub > authorized_keys 
+    subprocess.call(merge_command, shell=True)
+    
+    chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
+    print "command: ", chmod_cmd
+    subprocess.call(chmod_cmd, shell=True)
+    
+    print "create "+authorized_keys_file
+    
+    
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     app.run()
 
