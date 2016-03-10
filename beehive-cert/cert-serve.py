@@ -144,7 +144,7 @@ if __name__ == "__main__":
     
     # create new authorized_keys file on every start, just to be sure.
     
-    merge_command = "cat {0}node_*/key_rsa.pub > {1}authorized_keys".format(ssl_path_nodes, authorized_keys_file)
+    merge_command = "cat {0}node_*/key_rsa.pub > {1}".format(ssl_path_nodes, authorized_keys_file)
     print "command: ", merge_command
     # manual recreaetion of authorized_keys file: 
     # cat node_*/key_rsa.pub > authorized_keys 
