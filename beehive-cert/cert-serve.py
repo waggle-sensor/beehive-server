@@ -4,6 +4,9 @@ import os.path
 import subprocess
 import threading
 import re
+import MySQLdb
+
+
 
 port = 80
 
@@ -137,10 +140,44 @@ class newnode:
         return privkey + "\n" + cert
 
 
+def mysql_query_generator(query):
+    db = MySQLdb.connect(host="beehive-mysql",    
+                         user="waggle",       
+                         passwd="waggle",  
+                         db="waggle")      
+
+    # you must create a Cursor object. It will let
+    #  you execute all the queries you need
+    cur = db.cursor()
+
+    # Use all the SQL you like
+    cur.execute("SELECT * FROM nodes")
+
+
+    # get array:
+    for row in cur.fetchall():
+        yield row
+
+    db.close()
+
+
+def find_port(node_id):
+    for row in mysql_query_generator("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id)):
+        print "port: ", row
+
 if __name__ == "__main__":
     
     
+    # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     
+    for row in mysql_query_generator("SELECT * FROM nodes"):
+        print row
+    
+    # get all ports:
+    for row in mysql_query_generator("SELECT node_id,reverse_ssh_port FROM nodes"):
+        print row
+    
+    find_port('0000001e06200335')
     
     # create new authorized_keys file on every start, just to be sure.
     
