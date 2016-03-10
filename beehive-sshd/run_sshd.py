@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
 
 
-    db = MySQLdb.connect(host="mysql",    
+    db = MySQLdb.connect(host="beehive-mysql",    
                          user="waggle",       
                          passwd="waggle",  
                          db="waggle")      
