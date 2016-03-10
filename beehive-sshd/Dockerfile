@@ -7,7 +7,7 @@ RUN rm -rf /var/lib/apt/lists/* ; \
   apt-get update && \
   apt-get install -y openssh-server python git python-mysqldb
 
-ADD . /usr/lib/waggle/beehive/beehive-sshd/
+ADD . /usr/lib/waggle/beehive-server/beehive-sshd/
 
 RUN mkdir -p /var/run/sshd /root/.ssh/ 
 
@@ -32,4 +32,4 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 EXPOSE 22
 #CMD ["/usr/sbin/sshd", "-D"]
-WORKDIR /usr/lib/waggle/beehive/beehive-sshd/
+WORKDIR /usr/lib/waggle/beehive-server/beehive-sshd/
