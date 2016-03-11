@@ -27,6 +27,13 @@ export DATA="/mnt"
 # export DATA="${HOME}/waggle"
 # export DATA="/media/ephemeral/"
 ```
+
+It might be helful to set this variable permanently. For example, if you are using bash:
+```bash
+echo "export DATA=/mnt/" >> ~/.bash_profile
+```
+
+
 ### SSL certificates
 
 Create certificate authority
