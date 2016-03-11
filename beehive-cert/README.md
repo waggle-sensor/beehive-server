@@ -28,6 +28,7 @@ docker run -ti \
   -p 24181:80 \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   --name beehive-cert \
+  --net beehive \
   waggle/beehive-cert /bin/bash
 cd /usr/lib/waggle/beehive-server/beehive-cert ; ./cert-serve.py
 ```
