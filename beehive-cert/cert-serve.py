@@ -151,6 +151,7 @@ def mysql_query_generator(query):
     cur = db.cursor()
 
     # Use all the SQL you like
+    print "query:", query
     cur.execute(query)
 
 
