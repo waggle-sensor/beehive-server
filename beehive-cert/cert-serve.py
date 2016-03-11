@@ -190,7 +190,7 @@ if __name__ == "__main__":
         print row
     
     port = find_port('0000001e06200335')
-    print "port: ", row[0]
+    print "port: ", port
     
     
     # create new authorized_keys file on every start, just to be sure.
