@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-port = 80
+httpserver_port = 80
 
 resource_lock = threading.RLock()
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     logger.debug( "create "+authorized_keys_file)
     
     
-    web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
+    web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", httpserver_port))
     app.run()
 
 
