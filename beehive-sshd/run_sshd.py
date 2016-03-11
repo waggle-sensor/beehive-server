@@ -73,7 +73,7 @@ if __name__ == "__main__":
                 handle_file_descriptors(ret)
                 break
 
-            print 'sshd ended !?'
+            print '########### sshd ended !?'
 
             print 'stdout:', "".join(stdout)
             print 'stderr:', "".join(stderr)
