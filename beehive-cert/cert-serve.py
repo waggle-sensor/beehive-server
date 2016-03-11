@@ -5,6 +5,7 @@ import subprocess
 import threading
 import re
 import MySQLdb
+import logging
 
 
 logger = logging.getLogger(__name__)
