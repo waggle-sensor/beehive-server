@@ -7,6 +7,7 @@ import re
 import MySQLdb
 
 
+logger = logging.getLogger(__name__)
 
 port = 80
 
@@ -151,7 +152,7 @@ def mysql_query_generator(query):
     cur = db.cursor()
 
     # Use all the SQL you like
-    print "query:", query
+    logger.debug("query: " + query)
     cur.execute(query)
 
 
@@ -164,7 +165,16 @@ def mysql_query_generator(query):
 
 def find_port(node_id):
     for row in mysql_query_generator("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id)):
-        print "port: ", row
+        
+        try:
+            port = int(row[0])
+        except ValueError:
+            logger.error("Could not parse port number %s" % (port)) 
+            port = None  
+        
+        
+        return port
+    return None
 
 if __name__ == "__main__":
     
@@ -178,21 +188,23 @@ if __name__ == "__main__":
     for row in mysql_query_generator("SELECT node_id,reverse_ssh_port FROM nodes"):
         print row
     
-    find_port('0000001e06200335')
+    port = find_port('0000001e06200335')
+    print "port: ", row[0]
+    
     
     # create new authorized_keys file on every start, just to be sure.
     
     merge_command = "cat {0}node_*/key_rsa.pub > {1}".format(ssl_path_nodes, authorized_keys_file)
-    print "command: ", merge_command
+    logger.debug("command: "+ merge_command)
     # manual recreaetion of authorized_keys file: 
     # cat node_*/key_rsa.pub > authorized_keys 
     subprocess.call(merge_command, shell=True)
     
     chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
-    print "command: ", chmod_cmd
+    logger.debug ( "command: "+ chmod_cmd)
     subprocess.call(chmod_cmd, shell=True)
     
-    print "create "+authorized_keys_file
+    logger.debug( "create "+authorized_keys_file)
     
     
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
