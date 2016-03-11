@@ -24,6 +24,7 @@ prog = re.compile(hexaPattern)
 
 authorized_keys_file = ssl_path_nodes+"authorized_keys"
 
+db = None
 
 def read_file( str ):
     print "read_file: "+str
@@ -120,7 +121,18 @@ class newnode:
             
             
             privkey = read_file(node_dir + '/key.pem')
-            cert    = read_file(node_dir + '/cert.pem')       
+            cert    = read_file(node_dir + '/cert.pem')
+            
+            port = find_port(nodeid)
+            if port:
+                logger.debug("port number found: %d" % (port))
+            else:
+                logger.debug("port number not found. Issue new one.")
+            
+                port = createNewNode(node_id)
+            
+            
+            
         else:
             print "No node_id provided."
             return "No node_id provided."
@@ -139,58 +151,103 @@ class newnode:
             print "issuing cert for node "+nodeid
         else:
             print "issuing cert for unknown node"
-        return privkey + "\n" + cert
+        return privkey + "\n" + cert + "\nPORT="+port + "\n"
 
 
-def mysql_query_generator(query):
-    db = MySQLdb.connect(host="beehive-mysql",    
-                         user="waggle",       
-                         passwd="waggle",  
-                         db="waggle")      
+class Mysql(object):
 
-    # you must create a Cursor object. It will let
-    #  you execute all the queries you need
-    cur = db.cursor()
+    
+    
+    def __init__(self, host='localhost', user='', passwd='', db=''):
 
-    # Use all the SQL you like
-    logger.debug("query: " + query)
-    cur.execute(query)
+        self._host=host
+        self._user=user
+        self._passwd=passwd
+        self._db=db
+        
+
+    def query(self, query, fetch='all'):
+        
+        result=None
+        
+        with MySQLdb.connect(  host=self._host,    
+                                     user=self._user,       
+                                     passwd=self._passwd,  
+                                     db=self._db) as db: 
+        
+            with db.cursor() as cur:
+       
+       
+        
+                # Use all the SQL you like
+                logger.debug("query: " + query)
+                try:
+                    cur.execute(query)
+                    self.db.commit()
+                    logger.debug("query was successful")
+                except Exception as e:
+                    logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+        
+                
+        
+                if (fetch=="all") or (fetch=="many"):
+                    # get array:
+                    for row in cur.fetchall():
+                        yield row
+                elif fetch == "one":
+                    result = cur.fetchone()
+                elif fetch == "none":
+                    pass
+                else:
+                    logger.error("fetch type %s unknown" % (str(fetch)))
 
 
-    # get array:
-    for row in cur.fetchall():
-        yield row
-
-    db.close()
+        
+        return result
 
 
-def find_port(node_id):
-    for row in mysql_query_generator("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id)):
+    def find_port(self, node_id):
+        row = self.query("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id), fetch='one'):
+        
+        if not row:
+            return None
         
         try:
             port = int(row[0])
         except ValueError:
             logger.error("Could not parse port number %s" % (port)) 
             port = None  
+    
         
-        
-        return port
-    return None
+            return port
+        return None
+
+
+    def createNewNode(self, node_id, description, port):
+    #0000001e06200335
+        self.query("INSERT INTO nodes (node_id, description, reverse_ssh_port) VALUES ('%s', '%s', %d)" % ( node_id, description, port ), fetch = none)
+
 
 if __name__ == "__main__":
     
     
+    
+    
+    db = Mysql( host="beehive-mysql",    
+                user="waggle",       
+                passwd="waggle",  
+                db="waggle")
+    
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     
-    for row in mysql_query_generator("SELECT * FROM nodes"):
+    for row in db.query("SELECT * FROM nodes"):
         print row
     
     # get all ports:
-    for row in mysql_query_generator("SELECT node_id,reverse_ssh_port FROM nodes"):
+    for row in db.query("SELECT node_id,reverse_ssh_port FROM nodes"):
         print row
     
-    port = find_port('0000001e06200335')
-    print "port: ", port
+    
     
     
     # create new authorized_keys file on every start, just to be sure.
