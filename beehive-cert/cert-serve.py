@@ -151,7 +151,7 @@ def mysql_query_generator(query):
     cur = db.cursor()
 
     # Use all the SQL you like
-    cur.execute("SELECT * FROM nodes")
+    cur.execute(query)
 
 
     # get array:
