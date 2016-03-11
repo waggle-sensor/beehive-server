@@ -3,7 +3,7 @@
 # Beehive MySQL
 
 
-Start container:
+## Start container:
 
 ```bash
 docker rm -f beehive-mysql
@@ -20,4 +20,27 @@ docker run -d \
   mysql:5.7.10
 ```
 
+## MySQL examples
+
+```bash
+# enter the container
+docker exec -ti beehive-mysql /bin/bash
+
+# run the mysql client
+mysql  -u root -p waggle
+mysql  -u waggle -p waggle
+
+# or run client directly
+docker exec -ti beehive-mysql mysql  -u waggle -p waggle
+
+# view tables
+SHOW TABLES;
+SELECT * FROM users;
+SELECT * FROM nodes;
+
+
+# execute querys directly from the host:
+docker exec -ti beehive-mysql mysql  -u waggle -p waggle -e "SELECT * FROM nodes;"
+
+```
 
