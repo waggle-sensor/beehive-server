@@ -301,8 +301,8 @@ if __name__ == "__main__":
     # explicit check for consistency
     for node_id in node_database:
         #logger.debug("node_id: %s" % (node_id))
-        if not 'pub' in node_database[node_id]:
-            logger.warning("Node %s has public key, but no port number is assigned in database.")
+        if not 'reverse_ssh_port' in node_database[node_id]:
+            logger.warning("Node %s has public key, but no port number is assigned in database." % (node_id))
     
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(node_database)
