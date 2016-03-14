@@ -166,9 +166,36 @@ class Mysql(object):
         self._db=db
         
 
-    def query(self, query, fetch='all'):
+    def query_all(self, query):
+        """
+        MySQL query that returns multiple results in form of a generator
+        """
         
-        result=None
+        
+        with MySQLdb.connect(  host=self._host,    
+                                     user=self._user,       
+                                     passwd=self._passwd,  
+                                     db=self._db) as db: 
+        
+            with db.cursor() as cur:
+                # Use all the SQL you like
+                logger.debug("query: " + query)
+                try:
+                    cur.execute(query)
+                    self.db.commit()
+                    logger.debug("query was successful")
+                except Exception as e:
+                    logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+                
+                    # get array:
+                for row in cur.fetchall():
+                    yield row
+                
+
+    def query_one(self, query):
+        """
+        MySQL query that returns a single result
+        """
         
         with MySQLdb.connect(  host=self._host,    
                                      user=self._user,       
@@ -188,26 +215,13 @@ class Mysql(object):
                 except Exception as e:
                     logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
         
-                
+                return cur.fetchone()
         
-                if (fetch=="all") or (fetch=="many"):
-                    # get array:
-                    for row in cur.fetchall():
-                        yield row
-                elif fetch == "one":
-                    result = cur.fetchone()
-                elif fetch == "none":
-                    pass
-                else:
-                    logger.error("fetch type %s unknown" % (str(fetch)))
-
-
         
-        return result
 
 
     def find_port(self, node_id):
-        row = self.query("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id), fetch='one')
+        row = self.query_one("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id), fetch='one')
         
         if not row:
             return None
@@ -225,7 +239,7 @@ class Mysql(object):
 
     def createNewNode(self, node_id, description, port):
     #0000001e06200335
-        self.query("INSERT INTO nodes (node_id, description, reverse_ssh_port) VALUES ('%s', '%s', %d)" % ( node_id, description, port ), fetch = none)
+        self.query_one("INSERT INTO nodes (node_id, description, reverse_ssh_port) VALUES ('%s', '%s', %d)" % ( node_id, description, port ))
 
 
 if __name__ == "__main__":
@@ -240,11 +254,11 @@ if __name__ == "__main__":
     
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     
-    for row in db.query("SELECT * FROM nodes"):
+    for row in db.query_all("SELECT * FROM nodes"):
         print row
     
     # get all ports:
-    for row in db.query("SELECT node_id,reverse_ssh_port FROM nodes"):
+    for row in db.query_all("SELECT node_id,reverse_ssh_port FROM nodes"):
         print row
     
     
