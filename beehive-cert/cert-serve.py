@@ -217,7 +217,7 @@ class Mysql(object):
 
 
     def find_port(self, node_id):
-        row = self.query_one("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id), fetch='one')
+        row = self.query_one("SELECT reverse_ssh_port FROM nodes WHERE node_id='{0}'".format(node_id))
         
         if not row:
             return None
