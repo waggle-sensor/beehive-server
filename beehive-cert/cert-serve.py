@@ -12,7 +12,9 @@ from os.path import isdir, join
 from contextlib import contextmanager
 
 
-logging.basicConfig(level=logging.DEBUG)
+LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
+
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 logger = logging.getLogger(__name__)
 
 httpserver_port = 80
@@ -243,7 +245,7 @@ class Mysql(object):
 if __name__ == "__main__":
     
     
-    node2key={}
+    node_database={}
 
     # get all public keys from disk
     for d in listdir(ssl_path_nodes):
@@ -253,14 +255,14 @@ if __name__ == "__main__":
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
                     node_id = d[5:].upper()
-                    node2key[node_id] = {}
-                    node2key[node_id]['pub']=data
+                    node_database[node_id] = {}
+                    node_database[node_id]['reverse_ssh_port']=data
             except Exception as e:
                 logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
             
 
 
-    print str(node2key)
+    print str(node_database)
     
     
     
@@ -285,31 +287,32 @@ if __name__ == "__main__":
         
         node_id = row[0].upper()
         
-        if not node_id in node2key:
+        if not node_id in node_database:
             logger.warning("Node %s is in database, but no public key was found")
-            node2key[node_id] = {}
+            node_database[node_id] = {}
             
         
         port = int(row[1])
         if port:
-            node2key[node_id]['port']=port
+            node_database[node_id]['port']=port
         else:
             logger.warning("node %s has no port assigned" % (node_id))
     
     # explicit check for consistency
-    for node_id in node2key:
-        if not 'pub' in node2key[node_id]:
+    for node_id in node_database:
+        logger.debug("node_id: %s" % (node_id))
+        if not 'reverse_ssh_port' in node_database[node_id]:
             logger.warning("Node %s has public key, but no port number is assigned in database.")
     
     pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(node2key)
+    pp.pprint(node_database)
     
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     new_authorized_keys_content = []
-    for node_id in node2key.keys():
-        if 'port' in node2key[node_id]:
+    for node_id in node_database.keys():
+        if 'port' in node_database[node_id]:
             permitopen = 'permitopen="localhost:%d"' % (port)
-            line="%s,%s %s" % (permitopen, auth_options, node2key[node_id]['pub'])
+            line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['reverse_ssh_port'])
             print line ,  "\n"
             new_authorized_keys_content.append(line)
             
