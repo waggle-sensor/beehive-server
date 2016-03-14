@@ -6,6 +6,8 @@ import threading
 import re
 import MySQLdb
 import logging
+from os import listdir
+from os.path import isdir, join
 from contextlib import contextmanager
 
 
@@ -210,18 +212,7 @@ class Mysql(object):
         MySQL query that returns a single result
         """
         
-        with MySQLdb.connect(  host=self._host,    
-                                     user=self._user,       
-                                     passwd=self._passwd,  
-                                     db=self._db) as db, db.cursor() as cur: 
-
-            logger.debug("query: " + query)
-            try:
-                cur.execute(query)
-                db.commit()
-                logger.debug("query was successful")
-            except Exception as e:
-                logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+         with self.get_cursor(query) as cur:
     
             return cur.fetchone()
         
@@ -252,6 +243,22 @@ class Mysql(object):
 
 if __name__ == "__main__":
     
+    
+    node2key={}
+
+    for d in listdir(ssl_path_nodes):
+        if isdir(join(ssl_path_nodes, d)) and d[0:5] == 'node_':
+            rsa_pub_filename =  ssl_path_nodes+'/'+d+'/key_rsa.pub'
+            try:
+                with open(rsa_pub_filename, 'r') as rsa_pub_file:
+                    data=rsa_pub_file.read()
+                    node2key[d[5:]]=data
+            catch Exception as e:
+                logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
+            
+
+
+    print str(node2key)
     
     
     
