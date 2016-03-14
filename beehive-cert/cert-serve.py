@@ -292,7 +292,7 @@ if __name__ == "__main__":
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     new_authorized_keys_content = []
     for node_id in node2key.keys():
-        if node2key[node_id]['port']:
+        if 'port' in node2key[node_id]:
             permitopen = 'permitopen="localhost:%d"' % (port)
             line="%s,%s %s" % (permitopen, auth_options, node2key[node_id]['pub'])
             print line ,  "\n"
