@@ -12,7 +12,7 @@ from os.path import isdir, join
 from contextlib import contextmanager
 
 
-logging.basicConfig()
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 httpserver_port = 80
