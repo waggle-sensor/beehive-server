@@ -2,7 +2,7 @@
 import web, os.path, logging, re, urlparse, sys, json, requests
 from export import export_generator, list_node_dates
 # container
-# docker run -it --name=beehive-web --link beehive-cassandra:cassandra --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
+# docker run -it --name=beehive-web --link beehive-cassandra:cassandra --net beehive --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
 # optional: -v ${DATA}/export:/export
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
