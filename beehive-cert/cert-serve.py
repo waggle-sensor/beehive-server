@@ -146,12 +146,12 @@ class newnode:
         
         
         
-        if not db:
-            db = Mysql( host="beehive-mysql",    
+        
+        db = Mysql( host="beehive-mysql",    
                         user="waggle",       
                         passwd="waggle",  
                         db="waggle")
-            logger.warning("should not happen")
+        logger.warning("should not happen")
         
         
         mysql_row_node = db.get_node(nodeid)
