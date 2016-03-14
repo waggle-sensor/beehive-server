@@ -289,7 +289,15 @@ if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(node2key)
     
-    
+    auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
+    new_authorized_keys_content = []
+    for node_id in node2key.keys():
+        if node2key[node_id]['port']:
+            permitopen = 'permitopen="localhost:%d"' % (port)
+            line="%s,%s %s" % (permitopen, auth_options, node2key[node_id]['pub'])
+            print line ,  "\n"
+            new_authorized_keys_content.append(line)
+            
     
     # create new authorized_keys file on every start, just to be sure.
     
