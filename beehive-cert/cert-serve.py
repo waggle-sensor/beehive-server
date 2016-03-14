@@ -296,6 +296,10 @@ if __name__ == "__main__":
         else:
             logger.warning("node %s has no port assigned" % (node_id))
     
+    # explicit check for consistency
+    for node_id in node2key:
+        if not 'pub' in node2key[node_id]:
+            logger.warning("Node %s has public key, but no port number is assigned in database.")
     
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(node2key)
