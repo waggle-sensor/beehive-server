@@ -250,7 +250,7 @@ if __name__ == "__main__":
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
                     node2key[d[5:]]=data
-            catch Exception as e:
+            except Exception as e:
                 logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
             
 
