@@ -6,6 +6,7 @@ import threading
 import re
 import MySQLdb
 import logging
+from contextlib import contextmanager
 
 
 logger = logging.getLogger(__name__)
@@ -166,30 +167,38 @@ class Mysql(object):
         self._db=db
         
 
+
+    @contextmanager
+    def get_cursor(self, query):
+
+        db =  MySQLdb.connect(  host=self._host,    
+                                     user=self._user,       
+                                     passwd=self._passwd,  
+                                     db=self._db)
+       
+        cur = db.cursor()
+        logger.debug("query: " + query)
+        try:
+            cur.execute(query)
+            db.commit()
+            logger.debug("query was successful")
+        except Exception as e:
+            logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+            
+        yield [db, cur]
+
+
     def query_all(self, query):
         """
         MySQL query that returns multiple results in form of a generator
         """
         
         
-        with MySQLdb.connect(  host=self._host,    
-                                     user=self._user,       
-                                     passwd=self._passwd,  
-                                     db=self._db) as db: 
-        
-            with db.cursor() as cur:
-                # Use all the SQL you like
-                logger.debug("query: " + query)
-                try:
-                    cur.execute(query)
-                    self.db.commit()
-                    logger.debug("query was successful")
-                except Exception as e:
-                    logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
-                
-                    # get array:
-                for row in cur.fetchall():
-                    yield row
+        with self.get_cursor(query) as db, cur:
+            
+            # get array:
+            for row in cur.fetchall():
+                yield row
                 
 
     def query_one(self, query):
@@ -200,22 +209,17 @@ class Mysql(object):
         with MySQLdb.connect(  host=self._host,    
                                      user=self._user,       
                                      passwd=self._passwd,  
-                                     db=self._db) as db: 
-        
-            with db.cursor() as cur:
-       
-       
-        
-                # Use all the SQL you like
-                logger.debug("query: " + query)
-                try:
-                    cur.execute(query)
-                    self.db.commit()
-                    logger.debug("query was successful")
-                except Exception as e:
-                    logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
-        
-                return cur.fetchone()
+                                     db=self._db) as db, db.cursor() as cur: 
+
+            logger.debug("query: " + query)
+            try:
+                cur.execute(query)
+                db.commit()
+                logger.debug("query was successful")
+            except Exception as e:
+                logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+    
+            return cur.fetchone()
         
         
 
