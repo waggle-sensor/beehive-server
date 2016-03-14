@@ -82,6 +82,7 @@ docker pull waggle/beehive-server
 docker run -ti --name beehive-server \
   --link beehive-cassandra:cassandra \
   --link beehive-rabbit:rabbitmq \
+  --net beehive \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest
 ```
