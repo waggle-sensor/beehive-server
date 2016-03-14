@@ -245,13 +245,14 @@ if __name__ == "__main__":
     
     node2key={}
 
+    # get all public keys from disk
     for d in listdir(ssl_path_nodes):
         if isdir(join(ssl_path_nodes, d)) and d[0:5] == 'node_':
             rsa_pub_filename =  ssl_path_nodes+'/'+d+'/key_rsa.pub'
             try:
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
-                    node_id = d[5:]
+                    node_id = d[5:].upper()
                     node2key[node_id] = {}
                     node2key[node_id]['pub']=data
             except Exception as e:
@@ -270,16 +271,26 @@ if __name__ == "__main__":
     
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     
+    
+    
+    # get all ports:
+    
+    
     for row in db.query_all("SELECT * FROM nodes"):
         print row
     
-    # get all ports:
+    # get nodes and ports from database
     for row in db.query_all("SELECT node_id,reverse_ssh_port FROM nodes"):
         print row
-    
-    
-    for node_id in node2key.keys():
-        port = db.find_port(node_id)
+        
+        node_id = row[0].upper()
+        
+        if not node_id in node2key:
+            logger.warning("Node %s is in database, but no public key was found")
+            node2key[node_id] = {}
+            
+        
+        port = int(row[1])
         if port:
             node2key[node_id]['port']=port
         else:
