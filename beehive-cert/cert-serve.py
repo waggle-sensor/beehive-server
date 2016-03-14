@@ -242,21 +242,25 @@ if __name__ == "__main__":
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     new_authorized_keys_content = []
     for node_id in node_database.keys():
+        line=None
         if 'reverse_ssh_port' in node_database[node_id]:
             port = node_database[node_id]['reverse_ssh_port']
             permitopen = 'permitopen="localhost:%d"' % (port)
             line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
-            print line ,  "\n"
+        else:
+            # add public keys without port number, but comment the line
+            if 'pub' in node_database[node_id]:
+                permitopen = 'permitopen="localhost:?"'
+                line="#%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
+        if line:
+            logger.debug(line)
             new_authorized_keys_content.append(line)
             
     
     # create new authorized_keys file on every start, just to be sure.
-    
-    merge_command = "cat {0}node_*/key_rsa.pub > {1}".format(ssl_path_nodes, authorized_keys_file)
-    logger.debug("command: "+ merge_command)
-    # manual recreaetion of authorized_keys file: 
-    # cat node_*/key_rsa.pub > authorized_keys 
-    subprocess.call(merge_command, shell=True)
+    with open(authorized_keys_file, 'w') as file:
+        for line in new_authorized_keys_content:
+            file.write("%s\n" % line)
     
     chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
     logger.debug ( "command: "+ chmod_cmd)
