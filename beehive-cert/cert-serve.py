@@ -277,7 +277,7 @@ if __name__ == "__main__":
     
     
     for node_id in node2key.keys():
-        port = find_port(node_id)
+        port = db.find_port(node_id)
         if port:
             node2key[node_id]['port']=port
         else:
