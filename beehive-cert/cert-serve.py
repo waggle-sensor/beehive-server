@@ -311,8 +311,9 @@ if __name__ == "__main__":
     new_authorized_keys_content = []
     for node_id in node_database.keys():
         if 'reverse_ssh_port' in node_database[node_id]:
+            port = node_database[node_id]['port']
             permitopen = 'permitopen="localhost:%d"' % (port)
-            line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['reverse_ssh_port'])
+            line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
             print line ,  "\n"
             new_authorized_keys_content.append(line)
             
