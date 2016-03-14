@@ -171,19 +171,25 @@ class Mysql(object):
     @contextmanager
     def get_cursor(self, query):
 
-        with MySQLdb.connect(  host=self._host,    
+
+        # using with does not work here
+        db = MySQLdb.connect(  host=self._host,    
                                      user=self._user,       
                                      passwd=self._passwd,  
-                                     db=self._db) as db,  db.cursor() as cur:
-            logger.debug("query: " + query)
-            try:
-                cur.execute(query)
-                db.commit()
-                logger.debug("query was successful")
-            except Exception as e:
-                logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
-            
-            yield cur
+                                     db=self._db)
+        cur = db.cursor()
+        logger.debug("query: " + query)
+        try:
+            cur.execute(query)
+            db.commit()
+            logger.debug("query was successful")
+        except Exception as e:
+            logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+        
+        yield cur
+        
+        cur.close()
+        db.close()
         
 
 
