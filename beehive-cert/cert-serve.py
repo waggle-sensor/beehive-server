@@ -78,6 +78,7 @@ class certca:
 class newnode:        
     def GET(self):
         
+        
         query = referer = web.ctx.query
         nodeid=None
         
@@ -142,6 +143,15 @@ class newnode:
         
         privkey = read_file(node_dir + '/key.pem')
         cert    = read_file(node_dir + '/cert.pem')
+        
+        
+        
+        if not db:
+            db = Mysql( host="beehive-mysql",    
+                        user="waggle",       
+                        passwd="waggle",  
+                        db="waggle")
+            logger.warning("should not happen")
         
         
         mysql_row_node = db.get_node(nodeid)
