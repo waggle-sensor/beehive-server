@@ -256,7 +256,7 @@ if __name__ == "__main__":
                     data=rsa_pub_file.read()
                     node_id = d[5:].upper()
                     node_database[node_id] = {}
-                    node_database[node_id]['reverse_ssh_port']=data
+                    node_database[node_id]['pub']=data
             except Exception as e:
                 logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
             
@@ -294,14 +294,14 @@ if __name__ == "__main__":
         
         port = int(row[1])
         if port:
-            node_database[node_id]['port']=port
+            node_database[node_id]['reverse_ssh_port']=port
         else:
             logger.warning("node %s has no port assigned" % (node_id))
     
     # explicit check for consistency
     for node_id in node_database:
-        logger.debug("node_id: %s" % (node_id))
-        if not 'reverse_ssh_port' in node_database[node_id]:
+        #logger.debug("node_id: %s" % (node_id))
+        if not 'pub' in node_database[node_id]:
             logger.warning("Node %s has public key, but no port number is assigned in database.")
     
     pp = pprint.PrettyPrinter(indent=4)
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     new_authorized_keys_content = []
     for node_id in node_database.keys():
-        if 'port' in node_database[node_id]:
+        if 'reverse_ssh_port' in node_database[node_id]:
             permitopen = 'permitopen="localhost:%d"' % (port)
             line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['reverse_ssh_port'])
             print line ,  "\n"
