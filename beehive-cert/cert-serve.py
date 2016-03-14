@@ -6,6 +6,7 @@ import threading
 import re
 import MySQLdb
 import logging
+import pprint
 from os import listdir
 from os.path import isdir, join
 from contextlib import contextmanager
