@@ -249,7 +249,9 @@ if __name__ == "__main__":
             try:
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
-                    node2key[d[5:]]=data
+                    node_id = d[5:]
+                    node2key[node_id] = {}
+                    node2key[node_id]['pub']=data
             except Exception as e:
                 logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
             
@@ -273,6 +275,17 @@ if __name__ == "__main__":
     for row in db.query_all("SELECT node_id,reverse_ssh_port FROM nodes"):
         print row
     
+    
+    for node_id in node2key.keys():
+        port = find_port(node_id)
+        if port:
+            node2key[node_id]['port']=port
+        else:
+            logger.warning("node %s has no port assigned" % (node_id))
+    
+    
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(node2key)
     
     
     
