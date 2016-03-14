@@ -190,7 +190,7 @@ class newnode:
             print "issuing cert for node "+nodeid
         else:
             print "issuing cert for unknown node"
-        return privkey + "\n" + cert + "\nPORT="+port + "\n"
+        return privkey + "\n" + cert + "\nPORT="+str(port) + "\n"
 
 
 
