@@ -171,21 +171,20 @@ class Mysql(object):
     @contextmanager
     def get_cursor(self, query):
 
-        db =  MySQLdb.connect(  host=self._host,    
+        with MySQLdb.connect(  host=self._host,    
                                      user=self._user,       
                                      passwd=self._passwd,  
-                                     db=self._db)
-       
-        cur = db.cursor()
-        logger.debug("query: " + query)
-        try:
-            cur.execute(query)
-            db.commit()
-            logger.debug("query was successful")
-        except Exception as e:
-            logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
+                                     db=self._db) as db,  db.cursor() as cur:
+            logger.debug("query: " + query)
+            try:
+                cur.execute(query)
+                db.commit()
+                logger.debug("query was successful")
+            except Exception as e:
+                logger.error("query failed: (%s) %s" % (str(type(e)), str(e) ) )
             
-        yield [db, cur]
+            yield cur
+        
 
 
     def query_all(self, query):
@@ -194,8 +193,7 @@ class Mysql(object):
         """
         
         
-        with self.get_cursor(query) as db, cur:
-            
+        with self.get_cursor(query) as cur:
             # get array:
             for row in cur.fetchall():
                 yield row
