@@ -199,8 +199,6 @@ class Mysql(object):
         """
         MySQL query that returns multiple results in form of a generator
         """
-        
-        
         with self.get_cursor(query) as cur:
             # get array:
             for row in cur.fetchall():
@@ -212,8 +210,7 @@ class Mysql(object):
         MySQL query that returns a single result
         """
         
-         with self.get_cursor(query) as cur:
-    
+        with self.get_cursor(query) as cur:
             return cur.fetchone()
         
         
