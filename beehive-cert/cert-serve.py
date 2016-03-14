@@ -104,59 +104,71 @@ class newnode:
         privkey=""
         cert=""
         
-        if nodeid:
-            
-            # check for 16 digit hex
-            if len(nodeid) != 16:
-                print "node_id has wrong length."
-                return "node_id not recognized"
-                
-            try:
-                int(nodeid, 16)
-            except ValueError:
-                print "node_id not hex."
-                return "node_id not recognized"
-                
-            
-            print "Using nodeid: "+str(nodeid)
-            node_dir = ssl_path_nodes + 'node_'+ nodeid
-            if not os.path.isdir(node_dir):
-                with resource_lock:
-                    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
-                    time.sleep(1)
-                    append_command = "cat {0}node_{1}/key_rsa.pub >> {2}".format(ssl_path_nodes, nodeid, authorized_keys_file)
-                    print "command: ", append_command
-                    # manual recreaetion of authorized_keys file: 
-                    # cat node_*/key_rsa.pub > authorized_keys 
-                    subprocess.call(append_command, shell=True)
-                    
-                    chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
-                    print "command: ", chmod_cmd
-                    subprocess.call(chmod_cmd, shell=True)
-                    # manual recreation of authorized_keys file: 
-                    # cat node_*/key_rsa.pub > authorized_keys
-            
-            
-            privkey = read_file(node_dir + '/key.pem')
-            cert    = read_file(node_dir + '/cert.pem')
-            
-            port = find_port(nodeid)
-            if port:
-                logger.debug("port number found: %d" % (port))
-            else:
-                logger.debug("port number not found. Issue new one.")
-            
-                port = createNewNode(node_id)
-            
-            
-            
-        else:
+        if not nodeid:
             print "No node_id provided."
             return "No node_id provided."
-            #with resource_lock:
-            #    subprocess.call([script_path + 'create_client_cert.sh', 'node', 'temp_client_cert'])
-            #    privkey = read_file(ssl_path + 'temp_client_cert/key.pem')
-            #    cert    = read_file(ssl_path + 'temp_client_cert/cert.pem')
+            
+            
+        # check for 16 digit hex
+        if len(nodeid) != 16:
+            print "node_id has wrong length."
+            return "node_id not recognized"
+            
+        try:
+            int(nodeid, 16)
+        except ValueError:
+            print "node_id not hex."
+            return "node_id not recognized"
+            
+        ##### Got node_id #####
+        print "Using nodeid: "+str(nodeid)
+        node_dir = ssl_path_nodes + 'node_'+ nodeid
+        if not os.path.isdir(node_dir):
+            with resource_lock:
+                subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
+                time.sleep(1)
+                append_command = "cat {0}node_{1}/key_rsa.pub >> {2}".format(ssl_path_nodes, nodeid, authorized_keys_file)
+                print "command: ", append_command
+                # manual recreaetion of authorized_keys file: 
+                # cat node_*/key_rsa.pub > authorized_keys 
+                subprocess.call(append_command, shell=True)
+                
+                chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
+                print "command: ", chmod_cmd
+                subprocess.call(chmod_cmd, shell=True)
+                # manual recreation of authorized_keys file: 
+                # cat node_*/key_rsa.pub > authorized_keys
+        
+        
+        privkey = read_file(node_dir + '/key.pem')
+        cert    = read_file(node_dir + '/cert.pem')
+        
+        
+        mysql_row_node = db.get_node(nodeid)
+        
+        if not mysql_row_node:
+            port=db.createNewNode(nodeid)
+            if not port:
+                print "Error: Node creation failed"
+                return "Error: Node creation failed"
+            mysql_row_node = db.get_node(nodeid)
+            
+        port = mysql_row_node[4]
+        
+        try:
+            port = int(port)
+        except:
+            print "Error: Node creation failed, port is an int"
+            return "Error: Node creation failed, port is an int"
+            
+        
+        if port:
+            logger.debug("port number found: %d" % (port))
+        else:
+            logger.debug("Error: port number not found !?")
+            return "Error: port number not found !?"
+            
+        
             
         if not privkey:
             return "error: privkey file not found !?"
