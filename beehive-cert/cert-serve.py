@@ -120,6 +120,8 @@ class newnode:
         except ValueError:
             print "node_id not hex."
             return "node_id not recognized"
+        
+        key_rsa_pub_file = "{0}node_{1}/key_rsa.pub".format(ssl_path_nodes, nodeid)
             
         ##### Got node_id #####
         print "Using nodeid: "+str(nodeid)
@@ -128,7 +130,7 @@ class newnode:
             with resource_lock:
                 subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
                 time.sleep(1)
-                append_command = "cat {0}node_{1}/key_rsa.pub >> {2}".format(ssl_path_nodes, nodeid, authorized_keys_file)
+                append_command = "cat {0} >> {1}".format(key_rsa_pub_file, authorized_keys_file)
                 print "command: ", append_command
                 # manual recreaetion of authorized_keys file: 
                 # cat node_*/key_rsa.pub > authorized_keys 
@@ -144,7 +146,7 @@ class newnode:
         privkey = read_file(node_dir + '/key.pem')
         cert    = read_file(node_dir + '/cert.pem')
         
-        
+        key_rsa_pub_file_content  = read_file(key_rsa_pub_file)
         
         
         db = Mysql( host="beehive-mysql",    
@@ -190,7 +192,7 @@ class newnode:
             print "issuing cert for node "+nodeid
         else:
             print "issuing cert for unknown node"
-        return privkey + "\n" + cert + "\nPORT="+str(port) + "\n"
+        return privkey + "\n" + cert + "\nPORT="+str(port) + "\n" + key_rsa_pub_file_content + "\n"
 
 
 
