@@ -168,14 +168,20 @@ class newnode:
                 print "Error: Node creation failed"
                 return "Error: Node creation failed"
             mysql_row_node = db.get_node(nodeid)
-            
+        
+        
+        logger.debug("got mysql_row_node: %s" % (mysql_row_node))
         port = mysql_row_node[4]
+        
+        if not port:
+            print "Error: Node creation failed, port not found"
+            return "Error: Node creation failed, port not found"
         
         try:
             port = int(port)
         except:
-            print "Error: Node creation failed, port is an int"
-            return "Error: Node creation failed, port is an int"
+            print "Error: Node creation failed, port is not an int"
+            return "Error: Node creation failed, port is not an int"
             
         
         if port:
