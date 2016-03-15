@@ -170,7 +170,7 @@ class newnode:
             mysql_row_node = db.get_node(nodeid)
         
         
-        logger.debug("got mysql_row_node: %s" % (mysql_row_node))
+        
         port = mysql_row_node[4]
         
         if not port:
