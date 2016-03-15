@@ -15,6 +15,7 @@ from waggle_protocol.utilities.mysql import *
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
+loglevel = logging.DEBUG
 
 handler = logging.StreamHandler(stream=sys.stdout)
 handler.setFormatter(formatter)
@@ -22,7 +23,10 @@ handler.setFormatter(formatter)
 logger = logging.getLogger(__name__)
 
 logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(loglevel)
+
+root_logger = logging.getLogger()
+root_logger.setLevel(loglevel)
 
 
 
