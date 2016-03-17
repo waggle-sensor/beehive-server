@@ -16,5 +16,5 @@ docker run -it \
   --net beehive \
   -p 80:80 \
   waggle/beehive-server \
-  /usr/lib/waggle/beehive-server/scripts/webserver.py
+  /usr/lib/waggle/beehive-server/beehive-web/webserver.py
 ```
