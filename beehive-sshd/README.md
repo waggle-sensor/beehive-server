@@ -19,6 +19,7 @@ docker rm -f beehive-sshd
 docker run -ti --name beehive-sshd \
     --net beehive \
     -p 20022:22 \
+    -v ${DATA}/ssh_keys/:/usr/lib/waggle/ssh_keys/ \
     -v ${DATA}/waggle/SSL/nodes/:/usr/lib/waggle/SSL/nodes/ \
     waggle/beehive-sshd
 ```
