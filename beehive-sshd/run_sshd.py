@@ -8,7 +8,7 @@ import MySQLdb
 
 log_forward_prefix = 'debug1: Local forwarding listening on 127.0.0.1 port '
 
-def handle_file_descriptors(ret):
+def handle_file_descriptors(p, ret):
     
     for fd in ret[0]:
         if fd == p.stdout.fileno():
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             reads = [p.stdout.fileno(), p.stderr.fileno()]
             ret = select.select(reads, [], [])
 
-            handle_file_descriptors(ret)
+            handle_file_descriptors(p, ret)
 
             if p.poll() != None:
                 time.sleep(3)
