@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
 
 
-
+    # restart loop
     while True:
         p = subprocess.Popen(["/usr/sbin/sshd", "-D", "-e"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -61,22 +61,25 @@ if __name__ == "__main__":
         stdout = []
         stderr = []
 
+        # reading loop
         while True:
             reads = [p.stdout.fileno(), p.stderr.fileno()]
             ret = select.select(reads, [], [])
 
             handle_file_descriptors(p, ret)
 
-            if p.poll() != None:
-                time.sleep(1)
-                ret = select.select(reads, [], [])
-                handle_file_descriptors(ret)
+            if p.poll():
+                print '########### sshd ended !?  #############'
+
+                print 'final stdout: [', "".join(stdout) , ']'
+                print 'final stderr: [', "".join(stderr) , ']'
                 break
-
-            print '########### sshd ended !?  #############'
-
-            print 'final stdout: [', "".join(stdout) , ']'
-            print 'final stderr: [', "".join(stderr) , ']'
+                
+            time.sleep(1)
+            ret = select.select(reads, [], [])
+            handle_file_descriptors(ret)
+            
+            
             
             
             
