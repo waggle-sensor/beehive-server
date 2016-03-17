@@ -8,23 +8,6 @@ import MySQLdb
 
 log_forward_prefix = 'debug1: Local forwarding listening on 127.0.0.1 port '
 
-def handle_file_descriptors(p, ret):
-    
-    for fd in ret[0]:
-        if fd == p.stdout.fileno():
-            read = p.stdout.readline()
-            if read:
-                sys.stdout.write('stdout: [' + read + ']')
-                stdout.append(read)
-        if fd == p.stderr.fileno():
-            read = p.stderr.readline()
-            if read:
-                if read.startswith(log_forward_prefix):
-                    print "MATCH !!!!!!!"
-                    print 'port:', read[len(log_forward_prefix):]
-                sys.stderr.write('stderr: [' + read+ ']')
-                stderr.append(read)
-
 
 if __name__ == "__main__":
 
@@ -66,7 +49,20 @@ if __name__ == "__main__":
             reads = [p.stdout.fileno(), p.stderr.fileno()]
             ret = select.select(reads, [], [])
 
-            handle_file_descriptors(p, ret)
+            for fd in ret[0]:
+                if fd == p.stdout.fileno():
+                    read = p.stdout.readline()
+                    if read:
+                        sys.stdout.write('stdout: [' + read + ']')
+                        stdout.append(read)
+                if fd == p.stderr.fileno():
+                    read = p.stderr.readline()
+                    if read:
+                        if read.startswith(log_forward_prefix):
+                            print "MATCH !!!!!!!"
+                            print 'port:', read[len(log_forward_prefix):]
+                        sys.stderr.write('stderr: [' + read+ ']')
+                        stderr.append(read)
 
             if p.poll():
                 print '########### sshd ended !?  #############'
