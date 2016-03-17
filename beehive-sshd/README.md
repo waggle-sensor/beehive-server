@@ -8,6 +8,7 @@ Build image:
 ```bash
 docker rm -f beehive-sshd
 docker rmi waggle/beehive-sshd
+docker pull waggle/beehive-server
 docker build -t waggle/beehive-sshd .
 ```
 
