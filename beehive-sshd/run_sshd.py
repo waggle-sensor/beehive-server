@@ -75,7 +75,6 @@ if __name__ == "__main__":
                 print 'final stderr: [', "".join(stderr) , ']'
                 break
                 
-            time.sleep(1)
             ret = select.select(reads, [], [])
             handle_file_descriptors(p, ret)
             
