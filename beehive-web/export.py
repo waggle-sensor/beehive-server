@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 logger.addHandler(handler)
 
-CASSANDRA_HOST="cassandra"
+CASSANDRA_HOST="beehive-cassandra"
 
 def query(statement):
     """
