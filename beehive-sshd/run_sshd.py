@@ -5,6 +5,7 @@ import sys
 import select
 import time
 import MySQLdb
+import re
 
 log_forward_prefix = 'debug1: Local forwarding listening on 127.0.0.1 port '
 
@@ -15,15 +16,18 @@ def handle_file_descriptors(p, ret):
             read = p.stdout.readline()
             if read:
                 sys.stdout.write('stdout: ' + read )
-                stdout.append(read)
+                #stdout.append(read)
         if fd == p.stderr.fileno():
             read = p.stderr.readline()
             if read:
                 if read.startswith(log_forward_prefix):
-                    print "MATCH !!!!!!!"
-                    print 'port:', read[len(log_forward_prefix):]
-                sys.stderr.write('stderr: ' + read )
-                stderr.append(read)
+                    print 'stderr: ', read
+                    
+                    port = re.findall("^debug1: Local forwarding listening on 127.0.0.1 port (\d+)",read)
+                    print 'port: ', port
+                if not read.startswith('debug1:'):
+                    sys.stderr.write('stderr: ' + read )
+                #stderr.append(read)
 
 
 if __name__ == "__main__":
