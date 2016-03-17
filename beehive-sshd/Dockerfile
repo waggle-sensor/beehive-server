@@ -1,13 +1,12 @@
 
-FROM ubuntu:16.04
+FROM waggle/beehive-server:latest
 
 
-# delete files due to Hash Sum mismatch
-RUN rm -rf /var/lib/apt/lists/* ; \
-  apt-get update && \
+# delete files due to Hash Sum mismatch in Ubuntu 16.04: rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
   apt-get install -y openssh-server python git python-mysqldb
 
-ADD . /usr/lib/waggle/beehive-server/beehive-sshd/
 
 RUN mkdir -p /var/run/sshd /root/.ssh/ 
 
