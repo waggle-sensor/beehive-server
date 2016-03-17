@@ -14,7 +14,7 @@ def handle_file_descriptors(p, ret):
         if fd == p.stdout.fileno():
             read = p.stdout.readline()
             if read:
-                sys.stdout.write('stdout: ' + read)
+                sys.stdout.write('stdout: [' + read + ']')
                 stdout.append(read)
         if fd == p.stderr.fileno():
             read = p.stderr.readline()
@@ -22,7 +22,7 @@ def handle_file_descriptors(p, ret):
                 if read.startswith(log_forward_prefix):
                     print "MATCH !!!!!!!"
                     print 'port:', read[len(log_forward_prefix):]
-                sys.stderr.write('stderr: ' + read)
+                sys.stderr.write('stderr: [' + read+ ']')
                 stderr.append(read)
 
 
@@ -68,12 +68,15 @@ if __name__ == "__main__":
             handle_file_descriptors(p, ret)
 
             if p.poll() != None:
-                time.sleep(3)
+                time.sleep(1)
                 ret = select.select(reads, [], [])
                 handle_file_descriptors(ret)
                 break
 
-            print '########### sshd ended !?'
+            print '########### sshd ended !?  #############'
 
-            print 'stdout:', "".join(stdout)
-            print 'stderr:', "".join(stderr)
+            print 'final stdout: [', "".join(stdout) , ']'
+            print 'final stderr: [', "".join(stderr) , ']'
+            
+            
+            
