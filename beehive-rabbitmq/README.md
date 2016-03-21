@@ -9,7 +9,7 @@ export DATA="/mnt/"
 ### rabbitmq.config
 ```bash
 mkdir -p ${DATA}/rabbitmq/config/ && \
-curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
 
 ### Create SSL server certificate for RabbitMQ
