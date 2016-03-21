@@ -53,7 +53,7 @@ See [beehive-cassandra/README.md](./beehive-cassandra/README.md)
 
 ### RabbitMQ
 
-See [beehive-rabbitmq/README_rabbitmq.md](./beehive-rabbitmq/README.md)
+See [beehive-rabbitmq/README.md](./beehive-rabbitmq/README.md)
 
 ### Beehive Server
 
