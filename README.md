@@ -49,11 +49,11 @@ docker pull waggle/beehive-server:latest
 
 ### Cassandra
 
-See [README_cassandra.md](./README_cassandra.md)
+See [beehive-cassandra/README.md](./beehive-cassandra/README.md)
 
 ### RabbitMQ
 
-See [README_rabbitmq.md](./README_rabbitmq.md)
+See [beehive-rabbitmq/README_rabbitmq.md](./beehive-rabbitmq/README.md)
 
 ### Beehive Server
 
