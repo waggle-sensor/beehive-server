@@ -1,0 +1,33 @@
+[Unit]
+Description=beehive-rabbitmq
+Requires=docker.service
+After=docker.service
+
+[Service]
+Environment='CONTAINER=beehive-rabbitmq'
+Environment='DATA=/mnt'
+
+
+Restart=always
+
+
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
+
+
+ExecStart=docker run \
+  --hostname beehive-rabbit \
+  --name beehive-rabbit \
+  -e RABBITMQ_NODENAME=beehive-rabbit \
+  -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
+  -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
+  -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/:ro \
+  --expose=23181 \
+  -p 23181:23181 \
+  --net beehive \
+  rabbitmq:3.5.6
+
+ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
+
+[Install]
+WantedBy=local.target
