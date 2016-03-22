@@ -11,7 +11,7 @@ apt-get install python-webpy
 pip install web.py
 ```
 
-$$ Build image:
+## Build image:
 ```bash
 docker rm -f beehive-cert
 docker rmi waggle/beehive-cert
