@@ -7,6 +7,9 @@ docker run -d \
 --name beehive-cassandra \
 --net beehive \
 -v ${DATA}/cassandra/:/var/lib/cassandra/ \
+--ulimit memlock=unlimited \
+--ulimit nofile 100000 \
+--ulimit nproc 32768 \
 cassandra:3.2 -R
 ```
 For simple testing without much data you can omit option "-v" above. Without "-v" Cassandra data is not stored persistently and data is lost when the container is removed. Add port mapping "-p 7000:7000" if the beehive server does not run on the same host as the cassandra database.
