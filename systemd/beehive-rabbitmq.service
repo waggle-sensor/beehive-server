@@ -4,7 +4,7 @@ Requires=docker.service
 After=docker.service
 
 [Service]
-Environment='CONTAINER=beehive-rabbitmq'
+Environment='CONTAINER=beehive-rabbit'
 Environment='DATA=/mnt'
 
 
@@ -17,8 +17,8 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
 ExecStart=/bin/docker run \
   --rm \
-  --hostname beehive-rabbit \
-  --name beehive-rabbit \
+  --hostname ${CONTAINER} \
+  --name ${CONTAINER} \
   -e RABBITMQ_NODENAME=beehive-rabbit \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
