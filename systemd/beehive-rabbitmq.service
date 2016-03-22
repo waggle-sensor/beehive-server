@@ -16,6 +16,7 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
 
 ExecStart=docker run \
+  --rm \
   --hostname beehive-rabbit \
   --name beehive-rabbit \
   -e RABBITMQ_NODENAME=beehive-rabbit \
