@@ -16,7 +16,7 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
 
 ExecStart=/bin/docker run \
-  --rm \ 
+  --rm \
   --name ${CONTAINER} \
   --net beehive \
   -v ${DATA}/cassandra/:/var/lib/cassandra/ \
