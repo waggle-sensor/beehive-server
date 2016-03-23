@@ -14,6 +14,7 @@ Restart=always
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
+ExecStartPre=/bin/docker pull waggle/beehive-sshd
 
 # python -u for unbuffered stdout
 
