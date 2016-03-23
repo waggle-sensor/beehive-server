@@ -22,7 +22,7 @@ Deploy all unit files:
 for service in *.service ; do
   echo "Deploy ${service}"
   rm -f /etc/systemd/system/${service}
-  cp ${i} /etc/systemd/system
+  cp ${service} /etc/systemd/system
   systemctl enable ${service}
   systemctl start ${service}
   sleep 3
