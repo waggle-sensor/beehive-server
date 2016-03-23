@@ -1,0 +1,31 @@
+[Unit]
+Description=beehive-server
+Requires=docker.service
+After=docker.service
+
+[Service]
+Environment='CONTAINER=beehive-server'
+Environment='DATA=/mnt'
+
+
+Restart=always
+
+
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
+
+
+ExecStart=/bin/docker run \
+  --rm \
+  --name ${CONTAINER} \
+  --link beehive-cassandra:cassandra \
+  --link beehive-rabbit:rabbitmq \
+  --net beehive \
+  -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
+  waggle/beehive-server:latest python -u ./Server.py
+
+
+ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
+
+[Install]
+WantedBy=multi-user.target
