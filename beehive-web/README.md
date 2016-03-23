@@ -10,7 +10,7 @@ This is a webserver and an API server. Those will be split into two scripts in t
 docker pull waggle/beehive-server
 docker rm -f beehive-web
 [ ! -z "$DATA" ] && \
-docker run -it \
+docker run \
   -d \
   --name=beehive-web \
   --net beehive \
