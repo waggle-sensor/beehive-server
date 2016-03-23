@@ -29,3 +29,11 @@ for service in *.service ; do
   systemctl status ${service}
 done
 ```
+
+## Logging
+
+For services that do not write log files, but print to stdout and stderr, use journald to see the logs:
+
+```bash
+journalctl -f -u beehive-web
+```
