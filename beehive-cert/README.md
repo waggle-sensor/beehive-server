@@ -15,6 +15,7 @@ pip install web.py
 ```bash
 docker rm -f beehive-cert
 docker rmi waggle/beehive-cert
+docker pull waggle/beehive-server
 docker build -t waggle/beehive-cert .
 ```
 
