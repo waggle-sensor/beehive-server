@@ -41,6 +41,8 @@ SHOW TABLES;
 SELECT * FROM users;
 SELECT * FROM nodes;
 
+# set description for a node
+UPDATE nodes SET description = "<description>" WHERE node_id="<node_id>";
 
 # execute querys directly from the host:
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "SELECT * FROM nodes;"
