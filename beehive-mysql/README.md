@@ -25,14 +25,7 @@ docker run -d \
 Please do not forget to change your password do something other than "waggle"
 
 ```bash
-# enter the container
-docker exec -ti beehive-mysql /bin/bash
-
 # run the mysql client
-mysql  -u root --password=waggle
-mysql  -u waggle --password=waggle
-
-# or run client directly
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle
 
 # view tables
@@ -44,7 +37,7 @@ SELECT * FROM nodes;
 # set description for a node
 UPDATE nodes SET description = "<description>" WHERE node_id="<node_id>";
 
-# execute querys directly from the host:
+# or execute querys directly from the host:
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "SELECT * FROM nodes;"
 
 ```
