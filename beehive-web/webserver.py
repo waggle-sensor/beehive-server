@@ -122,6 +122,8 @@ class index:
         
         all_nodes = req.json()[u'data']
         
+        
+        yield "<table>"
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -138,17 +140,17 @@ class index:
             hostname = ''
             if u'hostname' in node_obj:
                 if node_obj[u'hostname']:
-                    hostname = '(' + node_obj[u'hostname'].encode('ascii','replace') + ')'
+                    hostname = node_obj[u'hostname'].encode('ascii','replace')
             
-            
-            result_line = '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
+            #&nbsp&nbsp&nbsp&nbsp
+            result_line = '<tr><td><a href="%s/nodes/%s">%s</a></td><td>%s</td><td>%s</td><br></tr>\n' % (api_url, node_id, node_id, description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
             
             yield result_line
         
-        
+        yield "</table>"
         yield  "<br>\n<br>\n"
         
         yield "Corresponding API call to get list of nodes:<br>\n<pre>curl %s</pre>" % (api_call)
