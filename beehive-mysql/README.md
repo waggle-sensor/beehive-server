@@ -36,6 +36,7 @@ mysql  -u waggle --password=waggle
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle
 
 # view tables
+use waggle;
 SHOW TABLES;
 SELECT * FROM users;
 SELECT * FROM nodes;
