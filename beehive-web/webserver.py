@@ -123,7 +123,7 @@ class index:
         all_nodes = req.json()[u'data']
         
         
-        yield "<table>"
+        yield "<table>\n"
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -143,7 +143,7 @@ class index:
                     hostname = node_obj[u'hostname'].encode('ascii','replace')
             
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s/nodes/%s">%s</a></td><td>%s</td><td>%s</td><br></tr>\n' % (api_url, node_id, node_id, description, hostname)
+            result_line = '<tr><td><a href="%s/nodes/%s">%s</a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id, description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
