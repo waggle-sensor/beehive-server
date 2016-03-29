@@ -130,8 +130,11 @@ class index:
             logger.debug("node_obj: %s" % (str(node_obj)))
             
             description = 'unknown'
-            #if u'description' in node_obj:
-            #    description = node_obj[u'description'].encode('ascii','replace')
+            if u'description' in node_obj:
+                description = node_obj[u'description'].encode('ascii','replace')
+                logger.debug("description: %s" % (description))
+            else:
+                 logger.debug("no description")
                 
             hostname = 'unknown'
             #if u'hostname' in node_obj:
