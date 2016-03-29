@@ -81,7 +81,7 @@ def internalerror(e):
     
 
 def get_mysql_db():
-    db = Mysql( host="beehive-mysql",    
+    return Mysql( host="beehive-mysql",    
                     user="waggle",       
                     passwd="waggle",  
                     db="waggle")
