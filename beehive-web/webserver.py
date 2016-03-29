@@ -127,9 +127,12 @@ class index:
             description = ''
             if u'description' in node_obj:
                 description = node_obj[u'description']
+                
             hostname = ''
             if u'hostname' in node_obj:
                 hostname = '(' + node_obj[u'hostname'] + ')'
+            
+            logger.debug("got: %s %s" % (description, hostname))
             
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
         
