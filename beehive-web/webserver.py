@@ -131,14 +131,14 @@ class index:
             
             description = 'unknown'
             if u'description' in node_obj:
-                description = node_obj[u'description'].encode('ascii','replace')
-                logger.debug("description: %s" % (description))
-            else:
-                 logger.debug("no description")
+                if node_obj[u'description']:
+                    description = node_obj[u'description'].encode('ascii','replace')
+           
                 
             hostname = 'unknown'
-            #if u'hostname' in node_obj:
-            #    hostname = '(' + node_obj[u'hostname'].encode('ascii','replace') + ')'
+            if u'hostname' in node_obj:
+                if node_obj[u'hostname']:
+                    hostname = '(' + node_obj[u'hostname'].encode('ascii','replace') + ')'
             
             
             result_line = '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
