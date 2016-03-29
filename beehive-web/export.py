@@ -26,13 +26,18 @@ def query(statement):
     cluster = Cluster(contact_points=[CASSANDRA_HOST])
     session = None
 
+    try_connect = 0
     while not session:
+        try_connect += 1
         logger.info("try to connect to %s" % (CASSANDRA_HOST))
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             session = cluster.connect('waggle')
         except:
             logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-            logger.warning("The process will attempt to re-connect at a later time.")
+            if try_connect >= 3:
+                raise Exception("Error: 3 failed attempts to connect to cassandra.")
+            else:
+                logger.warning("The process will attempt to re-connect at a later time.")
         if not session:
             time.sleep(3)
             
