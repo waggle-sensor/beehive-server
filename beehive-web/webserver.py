@@ -28,7 +28,7 @@ api_url = 'http://beehive1.mcs.anl.gov'
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
 
 web.config.log_toprint = True
-db = None
+
 
 def read_file( str ):
     print "read_file: "+str
@@ -79,6 +79,13 @@ def internalerror(e):
     
     return web.internalerror(message)
     
+
+def get_mysql_db():
+    db = Mysql( host="beehive-mysql",    
+                    user="waggle",       
+                    passwd="waggle",  
+                    db="waggle")
+
 
 class index:        
     def GET(self):
@@ -213,6 +220,8 @@ class api_nodes:
         #web.header('Content-type','text/plain')
         #web.header('Transfer-Encoding','chunked')
         
+        db = get_mysql_db()
+        
         all_nodes = {}
         mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
         for result in mysql_nodes_result:
@@ -313,10 +322,7 @@ class api_export:
 
 if __name__ == "__main__":
     
-    db = Mysql( host="beehive-mysql",    
-                    user="waggle",       
-                    passwd="waggle",  
-                    db="waggle")
+    
     
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     app.internalerror = internalerror
