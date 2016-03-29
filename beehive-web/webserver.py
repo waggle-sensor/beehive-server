@@ -123,16 +123,20 @@ class index:
         all_nodes = req.json()[u'data']
         
         for node_id in all_nodes:
+            
             node_obj = all_nodes[node_id]
+            node_id = node_id.encode('ascii','replace')
+            logger.debug("node_id: %s" % (node_id))
+            
             description = ''
             if u'description' in node_obj:
-                description = node_obj[u'description']
+                description = node_obj[u'description'].encode('ascii','replace')
                 
             hostname = ''
             if u'hostname' in node_obj:
-                hostname = '(' + node_obj[u'hostname'] + ')'
+                hostname = '(' + node_obj[u'hostname'].encode('ascii','replace') + ')'
             
-            logger.debug("got: %s %s" % (description, hostname))
+            logger.debug("node_id: %s %s %s" % (node_id, description, hostname))
             
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
         
