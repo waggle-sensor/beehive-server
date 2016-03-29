@@ -31,6 +31,7 @@ ALTER TABLE projects ADD INDEX (owner);
 CREATE TABLE nodes (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             VARCHAR(16),
+    hostname            VARCHAR(64),
     project             INT,
     description         VARCHAR(255),
     reverse_ssh_port    MEDIUMINT
