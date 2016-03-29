@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import web, os.path, logging, re, urlparse, sys, json, requests
 from export import export_generator, list_node_dates
+from waggle_protocol.utilities.mysql import *
 # container
 # docker run -it --name=beehive-web --link beehive-cassandra:cassandra --net beehive --rm -p 80:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/webserver.py 
 # optional: -v ${DATA}/export:/export
@@ -26,7 +27,7 @@ api_url = 'http://beehive1.mcs.anl.gov'
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
 
 web.config.log_toprint = True
-
+db = None
 
 def read_file( str ):
     print "read_file: "+str
@@ -111,8 +112,18 @@ class index:
             logger.error(msg)
             raise internalerror(msg)
         
-        for node_id in req.json()[u'data']:
-            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a><br>\n' % (api_url, node_id, node_id)
+        all_nodes = req.json()[u'data']
+        
+        for node_id in all_nodes:
+            node_obj = all_nodes[node_id]
+            description = ''
+            if 'description' in node_obj:
+                description = node_obj['description']
+            hostname = ''
+            if 'hostname' in node_obj:
+                hostname = '(' + node_obj['hostname'] + ')'
+            
+            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
         
         
         yield  "<br>\n<br>\n"
@@ -201,10 +212,27 @@ class api_nodes:
         #web.header('Content-type','text/plain')
         #web.header('Transfer-Encoding','chunked')
         
+        all_nodes = {}
+        mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
+        for result in mysql_nodes_result:
+            node_id, hostname, project, description, reverse_ssh_port = result
+            logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
+            all_nodes[node_id] = {  'hostname'          : hostname
+                                    'project'           : project, 
+                                    'description'       : description ,
+                                    'reverse_ssh_port'  : reverse_ssh_port }
+            
+        
+        
         nodes_dict = list_node_dates()
         
+        for node_id in nodes_dict.keys():
+            if not node_id in all_nodes:
+                all_nodes[node_id]={}
+        
+        
         obj = {}
-        obj['data'] = nodes_dict.keys()
+        obj['data'] = all_nodes
         
         return  json.dumps(obj, indent=4)
         
@@ -283,6 +311,12 @@ class api_export:
             raise web.notfound()
 
 if __name__ == "__main__":
+    
+    db = Mysql( host="beehive-mysql",    
+                    user="waggle",       
+                    passwd="waggle",  
+                    db="waggle")
+    
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     app.internalerror = internalerror
     app.run()
