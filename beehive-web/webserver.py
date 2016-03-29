@@ -217,7 +217,7 @@ class api_nodes:
         for result in mysql_nodes_result:
             node_id, hostname, project, description, reverse_ssh_port = result
             logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
-            all_nodes[node_id] = {  'hostname'          : hostname
+            all_nodes[node_id] = {  'hostname'          : hostname,
                                     'project'           : project, 
                                     'description'       : description ,
                                     'reverse_ssh_port'  : reverse_ssh_port }
