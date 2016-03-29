@@ -157,7 +157,7 @@ class newnode:
                         user="waggle",       
                         passwd="waggle",  
                         db="waggle")
-        logger.warning("should not happen")
+        #logger.warning("should not happen")
         
         
         mysql_row_node = db.get_node(nodeid)
