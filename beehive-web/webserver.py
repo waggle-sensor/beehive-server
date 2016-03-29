@@ -125,11 +125,11 @@ class index:
         for node_id in all_nodes:
             node_obj = all_nodes[node_id]
             description = ''
-            if 'description' in node_obj:
-                description = node_obj['description']
+            if u'description' in node_obj:
+                description = node_obj[u'description']
             hostname = ''
-            if 'hostname' in node_obj:
-                hostname = '(' + node_obj['hostname'] + ')'
+            if u'hostname' in node_obj:
+                hostname = '(' + node_obj[u'hostname'] + ')'
             
             yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
         
