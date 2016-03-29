@@ -136,9 +136,13 @@ class index:
             if u'hostname' in node_obj:
                 hostname = '(' + node_obj[u'hostname'].encode('ascii','replace') + ')'
             
-            logger.debug("node_id: %s %s %s" % (node_id, description, hostname))
             
-            yield '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
+            result_line = '&nbsp&nbsp&nbsp&nbsp<a href="%s/nodes/%s">%s</a> %s %s<br>\n' % (api_url, node_id, node_id, description, hostname)
+            
+            logger.debug("result_line: %s" % (result_line))
+            
+            
+            yield result_line
         
         
         yield  "<br>\n<br>\n"
