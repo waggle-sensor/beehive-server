@@ -73,6 +73,17 @@ docker pull waggle/beehive-server:latest
   waggle/beehive-server:latest ./SSL/create_client_cert.sh server beehive-server
 ```  
 
+#### Build beehive-server image
+
+This step is not needed, as the image is available on Docker Hub.
+
+```bash
+docker rm -f beehive-server
+docker rmi waggle/beehive-server
+docker build -t waggle/beehive-server .
+```
+
+
 #### Starting the docker container
 If cassandra or RabbitMQ are running remotely, omit the corresponding option "--link ..." and configure /etc/waggle/beehive-server.cfg accordingly.
 
