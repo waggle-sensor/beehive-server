@@ -270,6 +270,7 @@ class api_dates:
         query = web.ctx.query
         
         nodes_dict = list_node_dates()
+        logger.debug(str(nodes_dict))
         
         if not node_id in nodes_dict:
             logger.debug("node_id not found in nodes_dict: " + node_id)
