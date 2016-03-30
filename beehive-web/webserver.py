@@ -272,6 +272,7 @@ class api_dates:
         nodes_dict = list_node_dates()
         
         if not node_id in nodes_dict:
+            logger.debug("node_id not found in nodes_dict: " + node_id)
             raise web.notfound()
         
         dates = nodes_dict[node_id]
