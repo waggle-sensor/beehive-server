@@ -148,7 +148,7 @@ class index:
                     hostname = node_obj[u'hostname'].encode('ascii','replace')
             
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s/nodes/%s"><pre>%s</pre></a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id.upper(), description, hostname)
+            result_line = '<tr><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id.upper(), description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
