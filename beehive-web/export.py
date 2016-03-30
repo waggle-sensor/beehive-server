@@ -55,7 +55,7 @@ def export_generator(node_id, date, ttl, delimiter):
     Python generator to export sensor data from Cassandra
     """
 
-
+    node_id = node_id.lower()
     # TODO check if node exists
 
     statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
