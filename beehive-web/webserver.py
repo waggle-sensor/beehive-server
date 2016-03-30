@@ -288,6 +288,8 @@ class api_nodes:
             if not node_id in all_nodes:
                 all_nodes[node_id]={}
         
+        for node_id in all_nodes.keys():
+            logger.debug("%s %s" % (node_id, type(node_id)))
         
         obj = {}
         obj['data'] = all_nodes
