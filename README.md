@@ -62,6 +62,16 @@ If you are not using a Docker container you can install dependencies with this s
 ./install_dependencies.sh
 ```
 
+#### Build beehive-server Docker image
+
+This step is not needed, as the image is available on Docker Hub.
+
+```bash
+docker rm -f beehive-server
+docker rmi waggle/beehive-server
+docker build -t waggle/beehive-server .
+```
+
 #### Client certificate for beehive server
 ```bash
 docker pull waggle/beehive-server:latest
@@ -72,16 +82,6 @@ docker pull waggle/beehive-server:latest
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest ./SSL/create_client_cert.sh server beehive-server
 ```  
-
-#### Build beehive-server image
-
-This step is not needed, as the image is available on Docker Hub.
-
-```bash
-docker rm -f beehive-server
-docker rmi waggle/beehive-server
-docker build -t waggle/beehive-server .
-```
 
 
 #### Starting the docker container
