@@ -94,6 +94,8 @@ def list_node_dates():
     nodes={}
     count = 0;
     for (node_id, date) in rows:
+        node_id = node_id.encode('ascii','replace').lower()
+        date = date.encode('ascii','replace')
         if not node_id in nodes:
             nodes[node_id]=[]
             count = count +1

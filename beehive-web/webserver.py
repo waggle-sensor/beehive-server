@@ -132,7 +132,7 @@ class index:
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
-            node_id = node_id.encode('ascii','replace')
+            node_id = node_id.encode('ascii','replace').lower()
             logger.debug("node_id: %s" % (node_id))
             logger.debug("node_obj: %s" % (str(node_obj)))
             
@@ -260,6 +260,14 @@ class api_nodes:
         mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
         for result in mysql_nodes_result:
             node_id, hostname, project, description, reverse_ssh_port = result
+            
+            node_id = node_id.encode('ascii','replace')
+            hostname = hostname.encode('ascii','replace')
+            project = project.encode('ascii','replace')
+            description = description.encode('ascii','replace')
+            reverse_ssh_port = reverse_ssh_port.encode('ascii','replace')
+            
+            
             logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
             all_nodes[node_id] = {  'hostname'          : hostname,
                                     'project'           : project, 
