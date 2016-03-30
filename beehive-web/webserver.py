@@ -102,6 +102,11 @@ class index:
             logger.error(msg)
             raise internalerror(msg)
         
+        if req.status_code != 200:
+            msg = "status code: %d" % (req.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
+        
         logger.debug("req.json: %s" % ( str(req.json())) )
         
         
@@ -180,15 +185,21 @@ class web_node_page:
             msg = "Could not make request: %s", (str(e))
             logger.error(msg)
             raise internalerror(msg)
+        
+        if req.status_code != 200:
+            msg = "status code: %d" % (req.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
             
         try:
             dates = req.json()
         except ValueError:
             logger.debug("Not json: " + str(req))
-            raise internalerror()
+            raise internalerror("not found")
            
         if not 'data' in dates:
-            raise internalerror()
+            logger.debug("data field not found")
+            raise internalerror("not found")
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
