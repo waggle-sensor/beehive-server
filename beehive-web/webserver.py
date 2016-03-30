@@ -184,7 +184,7 @@ class web_node_page:
         try:
             dates = req.json()
         except ValueError:
-            logger.debug("Not json: " + str(dates))
+            logger.debug("Not json: " + str(req))
             raise internalerror()
            
         if not 'data' in dates:
