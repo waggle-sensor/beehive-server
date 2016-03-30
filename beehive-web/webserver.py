@@ -148,7 +148,7 @@ class index:
                     hostname = node_obj[u'hostname'].encode('ascii','replace')
             
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s/nodes/%s">%s</a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id, description, hostname)
+            result_line = '<tr><td><a href="%s/nodes/%s">%s</a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id.upper(), description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
@@ -205,8 +205,8 @@ class web_node_page:
         web.header('Transfer-Encoding','chunked')
         
         #TODO check that node_id exists!
-        yield html_header('Node '+node_id)
-        yield "<h2>Node "+node_id+"</h2>\n\n\n"
+        yield html_header('Node '+node_id.upper())
+        yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
         
         
         yield "<h3>Available data</h3>\n"
@@ -300,15 +300,17 @@ class api_nodes:
 class api_dates:        
     def GET(self, node_id):
         
+        node_id = node_id.lower()
+        
         query = web.ctx.query
         
         nodes_dict = list_node_dates()
         
-        if not node_id.lower() in nodes_dict:
+        if not node_id in nodes_dict:
             logger.debug("node_id not found in nodes_dict: " + node_id)
             raise web.notfound()
         
-        dates = nodes_dict[node_id.lower()]
+        dates = nodes_dict[node_id]
         
         logger.debug("dates: " + str(dates))
         
