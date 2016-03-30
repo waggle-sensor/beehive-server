@@ -181,7 +181,13 @@ class web_node_page:
             logger.error(msg)
             raise internalerror(msg)
             
-        if not 'data' in req.json():
+        try:
+            dates = req.json()
+        except ValueError:
+            logger.debug("Not json: " + str(dates))
+            raise internalerror()
+           
+        if not 'data' in dates:
             raise internalerror()
         
         web.header('Content-type','text/html')
