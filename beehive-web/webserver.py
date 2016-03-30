@@ -262,7 +262,7 @@ class api_nodes:
             node_id, hostname, project, description, reverse_ssh_port = result
             
             if node_id:
-                node_id = node_id.encode('ascii','replace')
+                node_id = node_id.encode('ascii','replace').lower()
             else:
                 node_id = 'unknown'
                 
@@ -282,14 +282,14 @@ class api_nodes:
             
         
         
-        nodes_dict = list_node_dates()
+        nodes_dict = list_node_dates() # lower case
         
         for node_id in nodes_dict.keys():
             if not node_id in all_nodes:
                 all_nodes[node_id]={}
         
-        for node_id in all_nodes.keys():
-            logger.debug("%s %s" % (node_id, type(node_id)))
+        #for node_id in all_nodes.keys():
+        #    logger.debug("%s %s" % (node_id, type(node_id)))
         
         obj = {}
         obj['data'] = all_nodes
