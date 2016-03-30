@@ -274,9 +274,12 @@ class api_dates:
         if not node_id in nodes_dict:
             raise web.notfound()
         
+        dates = nodes_dict[node_id]
+        
+        logger.debug("dates: " + str(dates))
         
         obj = {}
-        obj['data'] = sorted(nodes_dict[node_id], reverse=True)
+        obj['data'] = sorted(dates, reverse=True)
         
         return json.dumps(obj, indent=4)
         
