@@ -261,11 +261,22 @@ class api_nodes:
         for result in mysql_nodes_result:
             node_id, hostname, project, description, reverse_ssh_port = result
             
-            node_id = node_id.encode('ascii','replace')
-            hostname = hostname.encode('ascii','replace')
-            project = project.encode('ascii','replace')
-            description = description.encode('ascii','replace')
-            reverse_ssh_port = reverse_ssh_port.encode('ascii','replace')
+            if node_id:
+                node_id = node_id.encode('ascii','replace')
+            else:
+                node_id = 'unknown'
+                
+            if hostname:
+                hostname = hostname.encode('ascii','replace')
+                
+            if project:
+                project = project.encode('ascii','replace')
+                
+            if description:
+                description = description.encode('ascii','replace')
+                
+            if reverse_ssh_port:
+                reverse_ssh_port = reverse_ssh_port.encode('ascii','replace')
             
             
             logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
