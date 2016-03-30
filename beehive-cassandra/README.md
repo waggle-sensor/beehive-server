@@ -25,7 +25,7 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
 To directly connect to cassandra:
 ```bash
-docker run -it --link beehive-cassandra:cassandra --rm cassandra:3.2 cqlsh cassandra
+docker run -it --net beehive --rm cassandra:3.2 cqlsh beehive-cassandra
 ```
 To view database, e.g.:
 ```bash
