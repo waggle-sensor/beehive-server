@@ -328,8 +328,15 @@ class api_export:
             if r.match(date):
                 logger.info("accepted date: %s" %(date))
     
+                num_lines = 0
                 for row in export_generator(node_id, date, False, ';'):
                     yield row+"\n"
+                    num_lines += 1
+                
+                if num_lines == 0:
+                    raise web.notfound()
+                else:
+                    yield "# %d results" % (num_lines)
             else:
                 logger.warning("date format not correct")
                 raise web.notfound()
