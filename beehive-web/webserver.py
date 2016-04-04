@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import web, os.path, logging, re, urlparse, sys, json, requests
+import web, os.path, logging, re, urlparse, sys, json, requests, time
 from export import export_generator, list_node_dates
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
@@ -48,6 +48,7 @@ urls = (
     '/api/1/nodes/(.+)/export',     'api_export',
     '/api/1/nodes/(.+)/dates',      'api_dates',
     '/api/1/nodes/?',               'api_nodes',
+    '/api/1/epoch',                 'api_epoch',
     '/nodes/(.+)/?',                'web_node_page',
     '/',                            'index'
 )
@@ -244,6 +245,25 @@ done
         yield "<br>\n<br>\n"
 
         yield html_footer()
+
+
+class api_epoch:
+    """
+    Epoch time in seconds.
+    """
+
+    def GET(self):
+    
+
+        try:
+            epoch= int(time.time())
+        except:
+            raise internalerror('error getting server time')
+            
+            
+            
+        return '{"epoch": %d}' % (epoch)
+
 
 class api_nodes:        
     def GET(self):
