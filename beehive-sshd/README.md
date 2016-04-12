@@ -25,3 +25,17 @@ docker run -ti --name beehive-sshd \
 ```
 
 The directory /usr/lib/waggle/SSL/nodes/ should contain an authorized_keys file with the public keys of the waggle nodes.
+
+## SSH via tunnel
+
+To find port use the beehive API:
+
+http://beehive1.mcs.anl.gov/api/1/nodes/
+
+
+ssh into node:
+```bash
+docker exec -ti beehive-sshd ssh -i /usr/lib/waggle/ssh_keys/id_rsa_waggle_aot waggle@localhost -p <PORT>
+```
+
+
