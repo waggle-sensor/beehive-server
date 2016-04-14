@@ -59,6 +59,11 @@ if __name__ == "__main__":
 
     # restart loop
     while True:
+        
+        # sshd
+        # -e   Write debug logs to standard error instead of the system log.
+        # -D   When this option is specified, sshd will not detach and does not become a daemon. This allows easy monitoring of sshd.
+        
         p = subprocess.Popen(["/usr/sbin/sshd", "-D", "-e"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

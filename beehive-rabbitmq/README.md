@@ -36,11 +36,11 @@ In addition to its own private key (key.pem) and certificate (cert.pem), located
 
 ### Start RabbitMQ server
 ```bash
-docker rm -f beehive-rabbit
+docker rm -f beehive-rabbitmq
 [ ! -z "$DATA" ] && docker run -d \
-  --hostname beehive-rabbit \
-  --name beehive-rabbit \
-  -e RABBITMQ_NODENAME=beehive-rabbit \
+  --hostname beehive-rabbitmq \
+  --name beehive-rabbitmq \
+  -e RABBITMQ_NODENAME=beehive-rabbitmq \
   -v ${DATA}/rabbitmq/config/:/etc/rabbitmq:rw \
   -v ${DATA}/rabbitmq/data/:/var/lib/rabbitmq/:rw \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/:ro \
@@ -58,13 +58,13 @@ rabbitmq:3.5.6 /usr/lib/rabbitmq/bin/rabbitmq-server
 
 Confirm RabbitMQ is running:
 ```bash
-docker logs beehive-rabbit
+docker logs beehive-rabbitmq
 ```
 
 
 Create users, set permissions and enable rabbitmq_auth_mechanism_ssl plugin:
 ```bash
-docker exec -ti  beehive-rabbit bash -c '\
+docker exec -ti  beehive-rabbitmq bash -c '\
     rabbitmqctl add_user node waggle  ; \
     rabbitmqctl add_user server waggle  ; \
     rabbitmqctl set_permissions node "node_.*" ".*" ".*"  ; \

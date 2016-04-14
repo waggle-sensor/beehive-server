@@ -12,8 +12,8 @@ mkdir -p /etc/waggle/
 echo 0 > /etc/waggle/hostname # The cloud's hostname is defined as 0
 
 if [ ! -e /etc/waggle/beehive-server.cfg ] ; then
-  echo "rabbitmq-host=rabbitmq" > /etc/waggle/beehive-server.cfg
-  echo "cassandra-host=cassandra" >> /etc/waggle/beehive-server.cfg
+  echo "rabbitmq-host=beehive-rabbitmq" > /etc/waggle/beehive-server.cfg
+  echo "cassandra-host=beehive-cassandra" >> /etc/waggle/beehive-server.cfg
 fi
 
 # All of the general configuration files for Waggle are stored here

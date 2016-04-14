@@ -18,8 +18,6 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 ExecStart=/bin/docker run \
   --rm \
   --name ${CONTAINER} \
-  --link beehive-cassandra:cassandra \
-  --link beehive-rabbit:rabbitmq \
   --net beehive \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest python -u ./Server.py
