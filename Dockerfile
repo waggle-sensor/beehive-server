@@ -11,6 +11,6 @@ RUN cd /usr/lib/waggle/beehive-server/ && \
   
 
 
-ENV CASSANDRA_SERVER cassandra 
+ENV CASSANDRA_SERVER beehive-cassandra 
 
 WORKDIR /usr/lib/waggle/beehive-server/
