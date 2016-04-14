@@ -256,7 +256,7 @@ class RegProcess(Process):
             success = True
             # Using self.session did not work, thus use separate cluster/session object.
             try: 
-                reg_cluster = Cluster(contact_points=['cassandra'])
+                reg_cluster = Cluster(contact_points=[CASSANDRA_HOST])
                 logger.debug("created cluster object")
                 reg_session = reg_cluster.connect('waggle')
                 logger.debug("created session object")
