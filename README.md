@@ -33,6 +33,17 @@ It might be helful to set this variable permanently. For example, if you are usi
 echo "export DATA=/mnt/" >> ~/.bash_profile
 ```
 
+### Docker network
+Docker network provides a mechanism for service discovery. To us it create the network "beehive":
+```bash
+docker network create beehive
+```
+
+To verify these command can be used:
+```bash
+docker network ls
+docker network inspect beehive
+```
 
 ### SSL certificates
 
