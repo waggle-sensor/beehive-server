@@ -22,6 +22,9 @@ CASSANDRA_HOST="beehive-cassandra"
 def query(statement):
     """
     Generic query function for Cassandra.
+    Returns: 
+    cluster opbject. it is the callers responsibility to call cluster.shutdown()
+    rows: result of the query
     """
     cluster = Cluster(contact_points=[CASSANDRA_HOST])
     session = None
@@ -48,7 +51,7 @@ def query(statement):
         logger.error("Could not execute statement: %s" % (str(e)))
         raise
     
-    return rows
+    return cluster, rows
 
 def export_generator(node_id, date, ttl, delimiter):
     """
@@ -64,7 +67,7 @@ def export_generator(node_id, date, ttl, delimiter):
 
     
     try:
-        rows = query(statement)
+        cluster, rows = query(statement)
     except:
         raise
     
@@ -77,6 +80,7 @@ def export_generator(node_id, date, ttl, delimiter):
         #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
         yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
     
+    cluster.shutdown()
     logger.info("Retrieved %d rows" % (count))
 
 
@@ -87,7 +91,7 @@ def list_node_dates():
     statement = "SELECT DISTINCT node_id,date FROM sensor_data"
     
     try:
-        rows = query(statement)
+        cluster, rows = query(statement)
     except:
         raise
     
@@ -101,6 +105,7 @@ def list_node_dates():
             count = count +1
         nodes[node_id].append(date)
             
+    cluster.shutdown()
     logger.info("Found %d node_ids." % (count))   
     return nodes
 
