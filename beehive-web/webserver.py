@@ -90,7 +90,7 @@ def get_mysql_db():
 
 class index:        
     def GET(self):
-        
+        logger.debug('GET index')
         
         
         api_call = api_url+'/api/1/nodes/'
@@ -175,7 +175,7 @@ class index:
         
 class web_node_page:
     def GET(self, node_id):
-       
+        logger.debug('GET web_node_page')
         
         api_call            = '%s/api/1/nodes/%s/dates' % (api_url, node_id)
         api_call_internal   = '%s/api/1/nodes/%s/dates' % (api_url_internal, node_id)
@@ -253,7 +253,7 @@ class api_epoch:
     """
 
     def GET(self):
-    
+        logger.debug('GET api_epoch')
 
         try:
             epoch= int(time.time())
@@ -267,7 +267,7 @@ class api_epoch:
 
 class api_nodes:        
     def GET(self):
-        
+        logger.debug('GET api_nodes')
         #query = web.ctx.query
         
         
@@ -319,6 +319,7 @@ class api_nodes:
             
 class api_dates:        
     def GET(self, node_id):
+        logger.debug('GET api_dates')
         
         node_id = node_id.lower()
         
@@ -345,6 +346,7 @@ class api_dates:
 
 class api_nodes_latest:        
     def GET(self, node_id):
+        logger.debug('GET api_nodes_latest')
         
         query = web.ctx.query
         
@@ -360,6 +362,9 @@ class api_nodes_latest:
 
 class api_export:        
     def GET(self, node_id):
+        
+        logger.debug('GET api_export')
+        
         web.header('Content-type','text/plain')
         web.header('Transfer-Encoding','chunked')
         
