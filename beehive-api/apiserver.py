@@ -4,7 +4,7 @@ from export import export_generator, list_node_dates
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
 # container
-# docker run -it --name=beehive-api --link beehive-cassandra:cassandra --net beehive --rm -p 80:8183 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/apiserver.py 
+# docker run -it --name=beehive-api --link beehive-cassandra:cassandra --net beehive --rm -p 8183:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/apiserver.py 
 # optional: -v ${DATA}/export:/export
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'

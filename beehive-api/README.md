@@ -21,6 +21,6 @@ docker run \
   -d \
   --name=beehive-api \
   --net beehive \
-  -p 80:8183 \
+  -p 8183:80 \
   waggle/beehive-api
 ```

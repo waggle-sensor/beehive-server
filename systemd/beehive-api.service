@@ -19,7 +19,7 @@ ExecStart=/bin/docker run \
   --rm \
   --name=${CONTAINER} \
   --net beehive \
-  -p 80:8183 \
+  -p 8183:80 \
   waggle/beehive-api bash -c 'cd /usr/lib/waggle/beehive-server ; git pull ; cd waggle_protocol ; git pull origin master ; python -u /usr/lib/waggle/beehive-server/beehive-api/apiserver.py'
 
 
