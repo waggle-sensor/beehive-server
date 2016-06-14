@@ -140,3 +140,9 @@ or enter the container without attaching to the main process (Server.py) with "d
 docker exec -ti beehive-server /bin/bash
 ```
 
+## Systemd
+
+To use systemd unit files for the beehive components, follow these instructions:
+
+
+[systemd/README.md](./systemd/README.md)
