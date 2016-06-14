@@ -40,7 +40,7 @@ UPDATE nodes SET description = "<description>" WHERE node_id="<node_id>";
 UPDATE nodes SET description = "<description>", hostname = "<hostname>" WHERE node_id="<node_id>";
 
 # or execute querys directly from the host:
-docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "SELECT * FROM nodes;"
+docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; SELECT * FROM nodes;"
 
 ```
 
