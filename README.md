@@ -59,27 +59,14 @@ See [beehive-cassandra/README.md](./beehive-cassandra/README.md)
 
 See [beehive-rabbitmq/README.md](./beehive-rabbitmq/README.md)
 
-### Beehive Server
-
-If you are not using a Docker container you can install dependencies with this script.
+### Beehive Server (with Docker)
 ```bash
-./install_dependencies.sh
+docker pull waggle/beehive-server:latest
 ```
 
-#### Build beehive-server Docker image
-
-This step is not needed, as the image is available on Docker Hub.
-
-```bash
-docker rm -f beehive-server
-docker rmi waggle/beehive-server
-docker build -t waggle/beehive-server .
-```
 
 #### Client certificate for beehive server
 ```bash
-docker pull waggle/beehive-server:latest
-
 [ ! -z "$DATA" ] && docker run -ti \
   --name certs \
   --rm \
@@ -132,6 +119,38 @@ or enter the container without attaching to the main process (Server.py) with "d
 ```bash
 docker exec -ti beehive-server /bin/bash
 ```
+
+### Beehive Server (without Docker)
+If you are not using a Docker container you can install dependencies with this script.
+```bash
+./install_dependencies.sh
+```
+
+Client certificate for beehive server
+```bash
+./SSL/create_client_cert.sh server beehive-server
+```
+
+Configure
+```bash
+./configure
+```
+
+Start the server.
+```bash
+./Server.py [--logging]
+```
+
+#### Build beehive-server Docker image
+
+If you want to build the docker image on your own:
+
+```bash
+docker rm -f beehive-server
+docker rmi waggle/beehive-server
+docker build -t waggle/beehive-server .
+```
+
 
 ## Systemd
 
