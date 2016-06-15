@@ -38,4 +38,8 @@ ssh into node:
 docker exec -ti beehive-sshd ssh -i /usr/lib/waggle/ssh_keys/id_rsa_waggle_aot waggle@localhost -p <PORT>
 ```
 
+## Open ports
 
+```bash
+docker exec -ti beehive-sshd netstat -tulpn
+```
