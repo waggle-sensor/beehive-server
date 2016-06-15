@@ -104,7 +104,7 @@ Run configure script.
 ./configure
 ```
 
-Start the server.
+#### Start the server.
 ```bash
 ./Server.py [--logging]
 ```
