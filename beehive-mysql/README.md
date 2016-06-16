@@ -42,5 +42,9 @@ UPDATE nodes SET description = "<description>", hostname = "<hostname>" WHERE no
 # or execute querys directly from the host:
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; SELECT * FROM nodes;"
 
+
+#delete entries:
+DELETE FROM nodes WHERE node_id = "0000000000AAAAAA";
+
 ```
 
