@@ -16,7 +16,7 @@ ExecStart=/bin/bash -c ' \
     if [ $(curl --max-time 10 localhost | grep "This is the Waggle Beehive web server." | wc -l) -ne 1 ] ; then \
       docker rm -f ${CONTAINER} \
     fi \
-  done
+  done'
 
 
 [Install]
