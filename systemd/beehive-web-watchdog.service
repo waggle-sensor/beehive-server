@@ -10,12 +10,13 @@ Restart=always
 RestartSec=5
 
 
-ExecStart=/bin/bash -c 'while [ 1 ] ; do\
-  sleep 2m \
-  if [ $(curl --max-time 10 localhost | grep "This is the Waggle Beehive web server." | wc -l) -ne 1 ] ; then \
-    docker rm -f ${CONTAINER} \
-  fi \
-done
+ExecStart=/bin/bash -c ' \
+  while [ 1 ] ; do \
+    sleep 2m \
+    if [ $(curl --max-time 10 localhost | grep "This is the Waggle Beehive web server." | wc -l) -ne 1 ] ; then \
+      docker rm -f ${CONTAINER} \
+    fi \
+  done
 
 
 [Install]
