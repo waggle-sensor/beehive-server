@@ -8,6 +8,7 @@ export DATA="/mnt/"
 
 ### rabbitmq.config
 ```bash
+apt-get install curl
 mkdir -p ${DATA}/rabbitmq/config/ && \
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 ```
