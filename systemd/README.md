@@ -10,6 +10,10 @@ git clone https://github.com/waggle-sensor/beehive-server.git
 cd ~/git/beehive-server/systemd/
 ```
 
+At this point, we assume the program 'docker' exists in /bin/docker.  If it does not, then a link to the actual docker must be created in its place.  For example, if it is installed at '/usr/bin/docker', then use:
+```bash
+ln -s /usr/bin/docker /bin/docker
+```
 
 Enable docker.service if needed:
 ```bash
