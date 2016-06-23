@@ -210,7 +210,7 @@ if __name__ == "__main__":
     for i in range (0,NUM_DATA_PROCS):
         new_data = DataProcess()
         new_data.start()
-        data_procs.append(new_reg)
+        data_procs.append(new_data)
     logger.info("Data forwarding processes online.")
 
 
