@@ -23,11 +23,13 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
 #### Notes
 
+After initialization, cassandra will not contain any databases (It will not include the "waggle" database).  However, *after* the database has been created and populated, it can be interactively explored using a "cqlsh" prompt via the following commands. 
+
 To directly connect to cassandra:
 ```bash
 docker run -it --net beehive --rm cassandra:3.2 cqlsh beehive-cassandra
 ```
-To view database, e.g.:
+To view database (after it is created), e.g.:
 ```bash
 use waggle;
 DESCRIBE TABLES;
