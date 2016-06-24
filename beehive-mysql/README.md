@@ -20,6 +20,12 @@ docker run -d \
   mysql:5.7.10
 ```
 
+## Create tables
+
+```bash
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-mysql/tables.sql | docker exec -i beehive-mysql mysql  -u waggle --password=waggle
+```
+
 ## MySQL examples
 
 Please do not forget to change your password do something other than "waggle"
