@@ -1,6 +1,16 @@
 
 ## Systemd unit files for all beehive server components 
 
+Download files if not already done:
+```bash
+cd ~
+mkdir -p git
+cd git
+git clone https://github.com/waggle-sensor/beehive-server.git
+cd ~/git/beehive-server/systemd/
+```
+
+
 Enable docker.service if needed:
 ```bash
 systemctl enable docker.service
