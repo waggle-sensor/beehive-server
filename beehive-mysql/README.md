@@ -53,4 +53,12 @@ docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle;
 DELETE FROM nodes WHERE node_id = "0000000000AAAAAA";
 
 ```
+## Drop tables (WARNING: DO NOT do this as part of installation)
+Only do this while debugging - for example, to drop all the tables before testing their creation.
+
+Note: The beehive server will not function properly without these tables - therefore, tables should be created after being DROPped.
+
+```bash
+curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-mysql/dropTables.sql | docker exec -i beehive-mysql mysql  -u waggle --password=waggle
+```
 
