@@ -1,6 +1,8 @@
 
 use waggle;
 
+DROP TABLE users;
+
 CREATE TABLE users (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     username            VARCHAR(64) NOT NULL UNIQUE,
