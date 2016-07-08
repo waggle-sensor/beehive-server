@@ -32,7 +32,8 @@ CREATE TABLE nodes (
     hostname            VARCHAR(64),
     project             INT,
     description         VARCHAR(255),
-    reverse_ssh_port    MEDIUMINT
+    reverse_ssh_port    MEDIUMINT,
+    hardware            JSON
 );
 ALTER TABLE nodes ADD INDEX (project);
 
