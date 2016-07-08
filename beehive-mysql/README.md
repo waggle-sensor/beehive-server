@@ -44,6 +44,9 @@ SELECT * FROM nodes;
 UPDATE nodes SET description = "<description>" WHERE node_id="<node_id>";
 # set description and a hostname for a node
 UPDATE nodes SET description = "<description>", hostname = "<hostname>" WHERE node_id="<node_id>";
+# write hardware info
+UPDATE nodes SET hardware = '<JSON>' WHERE node_id="<node_id>";
+
 
 # or execute querys directly from the host:
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; SELECT * FROM nodes;"
