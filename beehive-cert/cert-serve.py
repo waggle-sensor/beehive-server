@@ -258,8 +258,11 @@ if __name__ == "__main__":
             logger.warning("Node %s is in database, but no public key was found")
             node_database[node_id] = {}
             
-        
-        port = int(row[1])
+        try:
+            port = int(row[1])
+        except:
+            port = None
+            
         if port:
             node_database[node_id]['reverse_ssh_port']=port
         else:
