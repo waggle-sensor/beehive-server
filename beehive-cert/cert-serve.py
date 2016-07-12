@@ -172,7 +172,8 @@ class newnode:
         
         
         
-        port = mysql_row_node[4]
+        #port = mysql_row_node[4]
+        port = db.find_port(nodeid)
         
         if not port:
             print "Error: Node creation failed, port not found"
