@@ -27,12 +27,14 @@ do echo ' removing container ' $container
 done
 echo "AFTER removal...."
 docker ps
+service docker stop
 echo "...."
 
 
 #####################################################################
 #########   INSTALL
 #####################################################################
+apt-get install curl
 
 #### Docker
 
@@ -41,6 +43,8 @@ export CODENAME=$(lsb_release --codename | grep -o "[a-z]*$" | tr -d '\n')
 echo "deb https://apt.dockerproject.org/repo ubuntu-${CODENAME} main" > /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y  docker-engine
+service docker restart
+
 
 export DATA="/mnt"
 echo "export DATA=/mnt/" >> ~/.bash_profile
@@ -58,6 +62,30 @@ docker pull waggle/beehive-server:latest
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest ./SSL/create_certificate_authority.sh
 
+### mysql
+docker rm -f beehive-mysql
+
+[ ! -z "$DATA" ] && \
+docker run -d \
+  --name beehive-mysql \
+  --net beehive \
+  -v ${DATA}/mysql/datadir:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=waggle \
+  -e MYSQL_DATABASE=waggle \
+  -e MYSQL_USER=waggle \
+  -e MYSQL_PASSWORD=waggle \
+  mysql:5.7.10
+
+sleep 20
+while true
+do curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-mysql/tables.sql | docker exec -i beehive-mysql mysql  -u waggle --password=waggle \
+        && break
+  sleep 10
+  nTries=$[$nTries+1]
+  echo "  mysql try #" $nTries " ..."
+done
+  
+  
 ### Cassandra
 [ ! -z "$DATA" ] && \
 docker run -d \
@@ -70,8 +98,8 @@ docker run -d \
 --cap-add IPC_LOCK \
 cassandra:3.2 -R
 
+  
 ### RabbitMQ
-apt-get install curl
 mkdir -p ${DATA}/rabbitmq/config/ && \
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-rabbitmq/rabbitmq.config > ${DATA}/rabbitmq/config/rabbitmq.config
 
@@ -98,14 +126,27 @@ docker rm -f beehive-rabbitmq
   --net beehive \
   rabbitmq:3.5.6
 
+#sleep 10     # TODO: give rabbit container a chance to come up, TODO: fix hack with something more rigorous - eg. poll for service
+
+nTries=0
+sleep 20
+while true
+do docker exec -ti  beehive-rabbitmq bash -c '\
+        rabbitmqctl add_user node waggle  ; \
+        rabbitmqctl add_user server waggle  ; \
+        rabbitmqctl set_permissions node "node_.*" ".*" ".*"  ; \
+        rabbitmqctl set_permissions server ".*" ".*" ".*"  ; \
+        rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl' \
+        && break
+  sleep 10
+  nTries=$[$nTries+1]
+  echo "rabbitmqctl try #" $nTries " ..."
+done
+
+
+
 docker logs beehive-rabbitmq
 
-docker exec -ti  beehive-rabbitmq bash -c '\
-    rabbitmqctl add_user node waggle  ; \
-    rabbitmqctl add_user server waggle  ; \
-    rabbitmqctl set_permissions node "node_.*" ".*" ".*"  ; \
-    rabbitmqctl set_permissions server ".*" ".*" ".*"  ; \
-    rabbitmq-plugins enable rabbitmq_auth_mechanism_ssl'
 
 ### Beehive Server (with Docker)
 docker pull waggle/beehive-server:latest
