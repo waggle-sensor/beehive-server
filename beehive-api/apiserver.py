@@ -16,6 +16,9 @@ from flask import jsonify
 # docker run -it --name=beehive-api --link beehive-cassandra:cassandra --net beehive --rm -p 8183:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/apiserver.py 
 # optional: -v ${DATA}/export:/export
 
+# docker run -it --name=beehive-api-test --net beehive -p 8184:80 waggle/beehive-server 
+
+
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
 
@@ -82,7 +85,7 @@ class InvalidUsage(Exception):
     def __init__(self, message, status_code=None, payload=None):
         Exception.__init__(self)
         self.message = message
-        if status_code AND status_code==STATUS_Server_Error:
+        if status_code and status_code==STATUS_Server_Error:
             logger.warning(message)
         else:
             logger.debug(message)
@@ -119,7 +122,7 @@ def get_mysql_db():
 
 
 @app.route('/api/1/epoch')
-def api_epoch:
+def api_epoch():
     """
     Epoch time in seconds.
     """
@@ -137,7 +140,7 @@ def api_epoch:
 
 
 @app.route('/api/1/nodes/')
-def api_nodes:        
+def api_nodes():        
 
     logger.debug('GET api_nodes')
     #query = web.ctx.query
