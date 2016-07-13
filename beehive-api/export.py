@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import logging, time, argparse, sys
 from cassandra.cluster import Cluster
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         
         
     for row in export_generator(args.node_id, args.date, args.ttl, ';'):
-        print row
+        print(row)
         
    
 
