@@ -1,8 +1,17 @@
-#!/usr/bin/env python
-import web, os.path, logging, re, urlparse, sys, json, requests, time
+#!/usr/bin/env python3
+import os.path, logging, re, urlparse, sys, json, requests, time
 from export import export_generator, list_node_dates
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
+
+from flask import Flask
+app = Flask(__name__)
+from flask import Response
+from flask import request
+from flask import jsonify
+
+# pip3 install Flask
+
 # container
 # docker run -it --name=beehive-api --link beehive-cassandra:cassandra --net beehive --rm -p 8183:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/apiserver.py 
 # optional: -v ${DATA}/export:/export
@@ -27,11 +36,16 @@ api_url = 'http://beehive1.mcs.anl.gov'
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
 
-web.config.log_toprint = True
+
+
+STATUS_Bad_Request = 400 # A client error
+STATUS_Unauthorized = 401
+STATUS_Not_Found = 404
+STATUS_Server_Error =  500
 
 
 def read_file( str ):
-    print "read_file: "+str
+    logger.debug("read_file: "+str)
     if not os.path.isfile(str) :
         return ""
     with open(str,'r') as file_:
@@ -39,20 +53,8 @@ def read_file( str ):
     return ""
 
 
-# TODO
-# show API calls on the web pages !
 
 
-urls = (
-    '/api/1/nodes/(.+)/latest',     'api_nodes_latest',
-    '/api/1/nodes/(.+)/export',     'api_export',
-    '/api/1/nodes/(.+)/dates',      'api_dates',
-    '/api/1/nodes/?',               'api_nodes',
-    '/api/1/epoch',                 'api_epoch',
-#   '/',                            'index'
-)
-
-app = web.application(urls, globals())
 
 
 def html_header(title):
@@ -73,11 +75,40 @@ def html_footer():
 '''
 
 
+
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code AND status_code==STATUS_Server_Error:
+            logger.warning(message)
+        else:
+            logger.debug(message)
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+        
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+
+
 def internalerror(e):
     
     message = html_header("Error") + "Sorry, there was an error:<br>\n<pre>\n"+str(e) +"</pre>\n"+ html_footer()
     
-    return web.internalerror(message)
+    return message
     
 
 def get_mysql_db():
@@ -87,174 +118,146 @@ def get_mysql_db():
                     db="waggle")
 
 
-
-class api_epoch:
+@app.route('/api/1/epoch')
+def api_epoch:
     """
     Epoch time in seconds.
     """
 
-    def GET(self):
-        logger.debug('GET api_epoch')
+    logger.debug('GET api_epoch')
 
-        try:
-            epoch= int(time.time())
-        except:
-            raise internalerror('error getting server time')
-            
-            
-            
-        return '{"epoch": %d}' % (epoch)
+    try:
+        epoch= int(time.time())
+    except:
+        raise InvalidUsage('error getting server time', status_code=STATUS_Server_Error)
+        
+        
+        
+    return '{"epoch": %d}' % (epoch)
 
 
-class api_nodes:        
-    def GET(self):
-        logger.debug('GET api_nodes')
-        #query = web.ctx.query
+@app.route('/api/1/nodes/')
+def api_nodes:        
+
+    logger.debug('GET api_nodes')
+    #query = web.ctx.query
+    
+    
+    #web.header('Content-type','text/plain')
+    #web.header('Transfer-Encoding','chunked')
+    
+    db = get_mysql_db()
+    
+    all_nodes = {}
+    mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
+    for result in mysql_nodes_result:
+        node_id, hostname, project, description, reverse_ssh_port = result
         
-        
-        #web.header('Content-type','text/plain')
-        #web.header('Transfer-Encoding','chunked')
-        
-        db = get_mysql_db()
-        
-        all_nodes = {}
-        mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
-        for result in mysql_nodes_result:
-            node_id, hostname, project, description, reverse_ssh_port = result
+        if node_id:
+            node_id = node_id.encode('ascii','replace').lower()
+        else:
+            node_id = 'unknown'
             
-            if node_id:
-                node_id = node_id.encode('ascii','replace').lower()
-            else:
-                node_id = 'unknown'
-                
-            if hostname:
-                hostname = hostname.encode('ascii','replace')
-                
-            if description:
-                description = description.encode('ascii','replace')
-                
+        if hostname:
+            hostname = hostname.encode('ascii','replace')
             
-            
-            logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
-            all_nodes[node_id] = {  'hostname'          : hostname,
-                                    'project'           : project, 
-                                    'description'       : description ,
-                                    'reverse_ssh_port'  : reverse_ssh_port }
+        if description:
+            description = description.encode('ascii','replace')
             
         
         
-        nodes_dict = list_node_dates() # lower case
+        logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
+        all_nodes[node_id] = {  'hostname'          : hostname,
+                                'project'           : project, 
+                                'description'       : description ,
+                                'reverse_ssh_port'  : reverse_ssh_port }
         
-        for node_id in nodes_dict.keys():
-            if not node_id in all_nodes:
-                all_nodes[node_id]={}
-        
-        #for node_id in all_nodes.keys():
-        #    logger.debug("%s %s" % (node_id, type(node_id)))
-        
-        obj = {}
-        obj['data'] = all_nodes
-        
-        return  json.dumps(obj, indent=4)
-        
-            
-class api_dates:        
-    def GET(self, node_id):
-        logger.debug('GET api_dates')
-        
-        node_id = node_id.lower()
-        
-        query = web.ctx.query
-        
-        nodes_dict = list_node_dates()
-        
-        if not node_id in nodes_dict:
-            logger.debug("node_id not found in nodes_dict: " + node_id)
-            raise web.notfound()
-        
-        dates = nodes_dict[node_id]
-        
-        logger.debug("dates: " + str(dates))
-        
-        obj = {}
-        obj['data'] = sorted(dates, reverse=True)
-        
-        return json.dumps(obj, indent=4)
-        
+    
+    
+    nodes_dict = list_node_dates() # lower case
+    
+    for node_id in nodes_dict.keys():
+        if not node_id in all_nodes:
+            all_nodes[node_id]={}
+    
+    #for node_id in all_nodes.keys():
+    #    logger.debug("%s %s" % (node_id, type(node_id)))
+    
+    obj = {}
+    obj['data'] = all_nodes
+    
+    return  json.dumps(obj, indent=4)
+    
+@app.route('/api/1/nodes/<node_id>/dates')
+def api_dates(node_id):        
+
+    logger.debug('GET api_dates')
+    
+    node_id = node_id.lower()
+    
+    query = web.ctx.query
+    
+    nodes_dict = list_node_dates()
+    
+    if not node_id in nodes_dict:
+        raise InvalidUsage("node_id not found in nodes_dict: " + node_id,  status_code=STATUS_Bad_Request )
+    
+    dates = nodes_dict[node_id]
+    
+    logger.debug("dates: " + str(dates))
+    
+    obj = {}
+    obj['data'] = sorted(dates, reverse=True)
+    
+    return json.dumps(obj, indent=4)
+    
         
         
                         
 
-class api_nodes_latest:        
-    def GET(self, node_id):
-        logger.debug('GET api_nodes_latest')
-        
-        query = web.ctx.query
-        
-        
-        web.header('Content-type','text/plain')
-        web.header('Transfer-Encoding','chunked')
-        
-        #for row in export_generator(node_id, '', True, ';'):
-        #    yield row+"\n"
-        yield "not implemented"
 
 
-
-class api_export:        
-    def GET(self, node_id):
-        
+@app.route('/api/1/nodes/<node_id>/export')
+def api_export(node_id):        
+   
+   
+    def generate():
         logger.debug('GET api_export')
         
-        web.header('Content-type','text/plain')
-        web.header('Transfer-Encoding','chunked')
+        date = request.args.get('date').encode('ascii', 'ignore') #get rid of unicode
+       
         
-        query = web.ctx.query.encode('ascii', 'ignore') #get rid of unicode
-        if query:
-            query = query[1:]
-        #TODO parse query
-        logger.info("query: %s", query)
-        query_dict = urlparse.parse_qs(query)
-        
-        try:
-            date_array = query_dict['date']
-        except KeyError:
-            logger.warning("date key not found")
-            raise web.notfound()
-        
-        if len(date_array) == 0:
-            logger.warning("date_array empty")
-            raise web.notfound()
-        date = date_array[0]
-            
         logger.info("date: %s", str(date))
         if date:
             r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
             if r.match(date):
                 logger.info("accepted date: %s" %(date))
-    
+
                 num_lines = 0
                 for row in export_generator(node_id, date, False, ';'):
                     yield row+"\n"
                     num_lines += 1
-                
+            
                 if num_lines == 0:
-                    raise web.notfound()
+                    raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
                 else:
                     yield "# %d results" % (num_lines)
             else:
-                logger.warning("date format not correct")
-                raise web.notfound()
+            
+                raise InvalidUsage("date format not correct", status_code=STATUS_Not_Found)
         else:
-            logger.warning("date is empty")
-            raise web.notfound()
+        
+            raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
+            
+    return Response(generate(), mimetype='text/csv')
 
 if __name__ == "__main__":
     
     
     
-    web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
-    app.internalerror = internalerror
+    #web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
+    #app.internalerror = internalerror
+    #app.run()
     app.run()
 
 
