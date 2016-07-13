@@ -282,15 +282,18 @@ if __name__ == "__main__":
     new_authorized_keys_content = []
     for node_id in node_database.keys():
         line=None
-        if 'reverse_ssh_port' in node_database[node_id]:
-            port = node_database[node_id]['reverse_ssh_port']
-            permitopen = 'permitopen="localhost:%d"' % (port)
-            line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
-        else:
-            # add public keys without port number, but comment the line
-            if 'pub' in node_database[node_id]:
+        if 'pub' in node_database[node_id]:
+            if 'reverse_ssh_port' in node_database[node_id]:
+                port = node_database[node_id]['reverse_ssh_port']
+                permitopen = 'permitopen="localhost:%d"' % (port)
+                line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
+            else:
+                # add public keys without port number, but comment the line
                 permitopen = 'permitopen="localhost:?"'
                 line="#%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
+        else:
+            logger.warning("Node %s has no public key" % (node_id))
+
         if line:
             logger.debug(line)
             new_authorized_keys_content.append(line)
