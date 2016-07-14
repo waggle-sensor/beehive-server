@@ -201,7 +201,6 @@ def api_dates(node_id):
     
     node_id = node_id.lower()
     
-    query = web.ctx.query
     
     nodes_dict = list_node_dates()
     
