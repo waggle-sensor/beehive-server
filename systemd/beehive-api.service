@@ -20,7 +20,10 @@ ExecStart=/bin/docker run \
   --name=${CONTAINER} \
   --net beehive \
   -p 8183:80 \
-  waggle/beehive-api bash -c 'cd /usr/lib/waggle/beehive-server ; git pull ; cd waggle_protocol ; git pull origin master ; python -u /usr/lib/waggle/beehive-server/beehive-api/apiserver.py'
+  waggle/beehive-api
+
+
+#waggle/beehive-api bash -c 'cd /usr/lib/waggle/beehive-server ; git pull ; cd waggle_protocol ; git pull origin master ; python -u /usr/lib/waggle/beehive-server/beehive-api/apiserver.py'
 
 
 
