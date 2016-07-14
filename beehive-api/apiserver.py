@@ -9,7 +9,7 @@ app = Flask(__name__)
 from flask import Response
 from flask import request
 from flask import jsonify
-
+from flask import stream_with_context
 
 
 # a production container
@@ -256,7 +256,7 @@ def api_export(node_id):
         
             raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
             
-    return Response(generate(), mimetype='text/csv')
+    return Response(stream_with_context(generate()), mimetype='text/csv')
 
 if __name__ == "__main__":
     
