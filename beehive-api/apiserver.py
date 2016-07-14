@@ -163,20 +163,11 @@ def api_nodes():
         logger.debug("node_id type: "+ str(type(node_id)))
         
         if node_id:
-            node_id = node_id.decode('utf-8').lower()
+            node_id = node_id.lower()
         else:
             node_id = 'unknown'
     
         logger.debug("node_id type afterwards: " + str(type(node_id)))
-        
-        if hostname:
-            hostname = hostname.decode('utf-8')
-    
-        if project:
-            project = project.decode('utf-8')
-        
-        if description:
-            description = description.decode('utf-8')
         
         
         
