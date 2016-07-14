@@ -254,7 +254,7 @@ def api_export(node_id):
         if num_lines == 0:
             raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
         else:
-            yield "# %d results" % (num_lines)
+            yield "# %d results\n" % (num_lines)
             
     return Response(stream_with_context(generate()), mimetype='text/csv')
     
