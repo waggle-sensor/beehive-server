@@ -139,8 +139,9 @@ def api_epoch():
         raise InvalidUsage('error getting server time', status_code=STATUS_Server_Error)
         
         
-        
     return '{"epoch": %d}' % (epoch)
+    # jsonify might brake trivial parser on the node.
+    #return jsonify(obj)
 
 
 @app.route('/api/1/nodes/')
@@ -215,7 +216,7 @@ def api_dates(node_id):
     obj = {}
     obj['data'] = sorted(dates, reverse=True)
     
-    return json.dumps(obj, indent=4)
+    return jsonify(obj)
     
         
         
