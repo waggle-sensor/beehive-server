@@ -227,36 +227,38 @@ def api_dates(node_id):
 @app.route('/api/1/nodes/<node_id>/export')
 def api_export(node_id):        
    
-   
-    def generate():
-        logger.debug('GET api_export')
-        
-        date = request.args.get('date').encode('ascii', 'ignore') #get rid of unicode
-       
-        
-        logger.info("date: %s", str(date))
-        if date:
-            r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
-            if r.match(date):
-                logger.info("accepted date: %s" %(date))
+    logger.debug('GET api_export')
+    
+    date = request.args.get('date')
 
-                num_lines = 0
-                for row in export_generator(node_id, date, False, ';'):
-                    yield row+"\n"
-                    num_lines += 1
-            
-                if num_lines == 0:
-                    raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
-                else:
-                    yield "# %d results" % (num_lines)
-            else:
-            
-                raise InvalidUsage("date format not correct", status_code=STATUS_Not_Found)
-        else:
+    logger.info("date: %s", str(date))
+   
+    if not date:
+        raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
+    
+    
+    r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
+    
+    if not r.match(date):
+        raise InvalidUsage("date format not correct", status_code=STATUS_Not_Found)
         
-            raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
+    
+    logger.info("accepted date: %s" %(date))
+    
+    def generate():
+        num_lines = 0
+        for row in export_generator(node_id, date, False, ';'):
+            yield row+"\n"
+            num_lines += 1
+
+        if num_lines == 0:
+            raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
+        else:
+            yield "# %d results" % (num_lines)
             
     return Response(stream_with_context(generate()), mimetype='text/csv')
+    
+   
 
 if __name__ == "__main__":
     
