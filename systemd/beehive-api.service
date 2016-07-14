@@ -19,7 +19,7 @@ ExecStart=/bin/docker run \
   --rm \
   --name=${CONTAINER} \
   --net beehive \
-  -p 8183:80 \
+  -p 8183:5000 \
   waggle/beehive-api
 
 
