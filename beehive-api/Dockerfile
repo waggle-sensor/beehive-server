@@ -29,4 +29,4 @@ EXPOSE 5000
 
 
 WORKDIR /usr/lib/waggle/beehive-server/beehive-api/
-CMD ["flask", "run"]
+CMD ["flask", "run", "--host=0.0.0.0"]
