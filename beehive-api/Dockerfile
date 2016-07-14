@@ -1,10 +1,32 @@
 
 FROM waggle/beehive-server
 
-RUN apt-get update && apt-get install -y python-mysqldb
+RUN apt-get update && apt-get install -y apt-get install 
+    python3-dev \
+    python3-pip \
+    libmysqlclient-dev
 
-RUN cd /usr/lib/waggle/beehive-server/beehive-api/ ; git pull
 
-EXPOSE 80
+# python modules
+# Note regarding the mysql library (mysqlclient is a replacement for MySQL-python which has some python3 issues)
+
+RUN pip3 install \
+    mysqlclient \
+    Flask \
+    cassandra-driver
+
+
+# Flask needs that
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+ENV FLASK_APP=apiserver.py
+
+
+# pip3 install cassandra-driver
+
+# that is FLASK default port
+EXPOSE 5000
+
+
 WORKDIR /usr/lib/waggle/beehive-server/beehive-api/
-CMD ["python", "-u", "/usr/lib/waggle/beehive-server/beehive-api/apiserver.py"]
+CMD ["flask", "run"]
