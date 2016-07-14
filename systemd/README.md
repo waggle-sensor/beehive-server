@@ -35,7 +35,7 @@ Deploy all unit files:
 ```bash
 for service in *.service ; do
   echo "Deploy ${service}"
-  rm -f /etc/systemd/system/${service}
+  rm -f /etc/systemd/system/${service}.service
   cp ${service} /etc/systemd/system
   systemctl enable ${service}
   systemctl start ${service}
