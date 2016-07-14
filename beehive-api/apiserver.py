@@ -160,17 +160,25 @@ def api_nodes():
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port = result
         
+        logger.debug("node_id type:", str(type(node_id)))
+        
         if node_id:
-            node_id = node_id.lower()
+            node_id = node_id.decode('utf-8').lower()
         else:
             node_id = 'unknown'
-            
-        #encode('ascii','replace')
+    
+        logger.debug("node_id type afterwards:", str(type(node_id)))
         
-            
-        #if description:
-        #    description = description.encode('ascii','replace')
-            
+        if hostname:
+            hostname = hostname.decode('utf-8')
+    
+        if project:
+            project = project.decode('utf-8')
+        
+        if description:
+            description = description.decode('utf-8')
+        
+        
         
         
         logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
@@ -192,7 +200,6 @@ def api_nodes():
     
     obj = {}
     obj['data'] = all_nodes
-    
     return jsonify(obj)
     #return  json.dumps(obj, indent=4)
     
