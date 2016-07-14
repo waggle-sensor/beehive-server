@@ -21,5 +21,5 @@ docker run \
   --name=beehive-nginx \
   --net beehive \
   -p 80:80 \
-  waggle/beehive-nginx
+  waggle/beehive-nginx /usr/sbin/nginx -g 'daemon off;'
 ```
