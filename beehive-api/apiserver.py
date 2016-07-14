@@ -160,14 +160,14 @@ def api_nodes():
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port = result
         
-        logger.debug("node_id type:", str(type(node_id)))
+        logger.debug("node_id type: "+ str(type(node_id)))
         
         if node_id:
             node_id = node_id.decode('utf-8').lower()
         else:
             node_id = 'unknown'
     
-        logger.debug("node_id type afterwards:", str(type(node_id)))
+        logger.debug("node_id type afterwards: " + str(type(node_id)))
         
         if hostname:
             hostname = hostname.decode('utf-8')
