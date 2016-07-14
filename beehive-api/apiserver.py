@@ -10,13 +10,14 @@ from flask import Response
 from flask import request
 from flask import jsonify
 
-# pip3 install Flask
 
-# container
-# docker run -it --name=beehive-api --link beehive-cassandra:cassandra --net beehive --rm -p 8183:80 waggle/beehive-server /usr/lib/waggle/beehive-server/scripts/apiserver.py 
-# optional: -v ${DATA}/export:/export
 
-# docker run -it --name=beehive-api-test --net beehive -p 8184:80 waggle/beehive-server 
+# a production container
+# docker run -it --name=beehive-api --net beehive --rm -p 8183:5000 waggle/beehive-api
+
+
+# testing setup
+# docker run -it --name=beehive-api-test --net beehive -p 8184:5000 waggle/beehive-server 
 
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
