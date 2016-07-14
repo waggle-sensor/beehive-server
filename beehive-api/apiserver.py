@@ -17,7 +17,7 @@ from flask import jsonify
 
 
 # testing setup
-# docker run -it --name=beehive-api-test --net beehive -p 8184:5000 waggle/beehive-server 
+# docker run -it --rm --name=beehive-api-test --net beehive -p 8184:5000 waggle/beehive-api-test
 
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
@@ -121,7 +121,10 @@ def get_mysql_db():
                     passwd="waggle",  
                     db="waggle")
 
-
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+    
 @app.route('/api/1/epoch')
 def api_epoch():
     """
@@ -158,15 +161,15 @@ def api_nodes():
         node_id, hostname, project, description, reverse_ssh_port = result
         
         if node_id:
-            node_id = node_id.encode('ascii','replace').lower()
+            node_id = node_id.lower()
         else:
             node_id = 'unknown'
             
-        if hostname:
-            hostname = hostname.encode('ascii','replace')
+        #encode('ascii','replace')
+        
             
-        if description:
-            description = description.encode('ascii','replace')
+        #if description:
+        #    description = description.encode('ascii','replace')
             
         
         
@@ -190,7 +193,8 @@ def api_nodes():
     obj = {}
     obj['data'] = all_nodes
     
-    return  json.dumps(obj, indent=4)
+    return jsonify(obj)
+    #return  json.dumps(obj, indent=4)
     
 @app.route('/api/1/nodes/<node_id>/dates')
 def api_dates(node_id):        
