@@ -23,7 +23,7 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 port = 80
 #api_url_internal = 'http://localhost'
-api_url_internal = 'http://beehive-api'
+api_url_internal = 'http://beehive-api:5000'
 api_url = 'http://beehive1.mcs.anl.gov'
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
