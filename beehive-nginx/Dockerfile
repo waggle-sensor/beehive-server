@@ -1,6 +1,6 @@
-FROM nginx:1.10.1-alpine
+FROM nginx:1.10.1
 
-# or nginx:1.10.1
+# or nginx:1.10.1-alpine
 
 ADD beehive.conf /etc/nginx/conf.d/beehive.conf
 
