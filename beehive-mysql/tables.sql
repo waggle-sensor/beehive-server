@@ -11,11 +11,11 @@ CREATE TABLE users (
     city                VARCHAR(32),
     postal_code         VARCHAR(10),
     country             VARCHAR(15),
-    admin               BOOLEAN NOT NULL DEFAULT 0
+    admin               BOOLEAN NOT NULL DEFAULT 0,
+    token               VARCHAR(36)
 );
 
 ALTER TABLE users ADD INDEX (username);
-
 
 CREATE TABLE projects (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
