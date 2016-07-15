@@ -23,8 +23,13 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 port = 80
 #api_url_internal = 'http://localhost'
+
+
+web_host = 'http://beehive1.mcs.anl.gov'
+
 api_url_internal = 'http://beehive-api:5000/api/'
-api_url = 'http://beehive1.mcs.anl.gov/api/'
+api_url = web_url+'/api/'
+
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
 
@@ -145,7 +150,7 @@ class index:
                     hostname = node_obj[u'hostname'].encode('ascii','replace')
             
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (api_call, node_id, node_id.upper(), description, hostname)
+            result_line = '<tr><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (web_host, node_id, node_id.upper(), description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
