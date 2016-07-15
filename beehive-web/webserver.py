@@ -28,7 +28,7 @@ port = 80
 web_host = 'http://beehive1.mcs.anl.gov'
 
 api_url_internal = 'http://beehive-api:5000/api/'
-api_url = web_url+'/api/'
+api_url = web_host+'/api/'
 
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
