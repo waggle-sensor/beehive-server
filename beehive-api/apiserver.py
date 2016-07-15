@@ -126,7 +126,7 @@ def api_root():
     return 'This is the beehive API server.'
 
 @app.route('/api/1/')
-def api_root():
+def api_version():
     return 'This is the beehive API server.'
     
 @app.route('/api/1/epoch')
