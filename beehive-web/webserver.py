@@ -22,7 +22,8 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 port = 80
-api_url_internal = 'http://localhost'
+#api_url_internal = 'http://localhost'
+api_url_internal = 'http://beehive-api'
 api_url = 'http://beehive1.mcs.anl.gov'
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
@@ -261,8 +262,8 @@ class api_epoch:
             raise internalerror('error getting server time')
             
             
-            
-        return '{"epoch": %d}' % (epoch)
+        return '{"epoch": "deprecated"}'
+        #return '{"epoch": %d}' % (epoch)
 
 
 class api_nodes:        
