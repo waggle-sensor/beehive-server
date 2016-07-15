@@ -44,6 +44,12 @@ for service in *.service ; do
 done
 ```
 
+See status of all beehive services:
+```bash
+systemctl -a | grep beehive-
+```
+
+
 ## Logging
 
 For services that do not write log files, but print to stdout and stderr, use journald to see the logs:
