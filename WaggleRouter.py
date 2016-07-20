@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
+
 # WaggleRouter.py
 import sys
 sys.path.append("..")
 sys.path.append("/usr/lib/waggle/")
 from multiprocessing import Process, Manager
-from config import *
+from .config import *
 import pika
-from waggle_protocol.protocol.PacketHandler import *
-from waggle_protocol.utilities.packetassembler import PacketAssembler
+from .waggle_protocol.protocol.PacketHandler import *
+from .waggle_protocol.utilities.packetassembler import PacketAssembler
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
@@ -106,7 +108,7 @@ class WaggleRouter(Process):
                 recipient = recipient_node['queue']
                 self.channel.basic_publish(exchange='internal', routing_key = recipient, body=body)
             except Exception as e:
-                print str(e)
+                print(str(e))
             finally:
                 ch.basic_ack(delivery_tag =method.delivery_tag)
 

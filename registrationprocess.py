@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
+
 # registrationprocess.py
 import sys
 import os
 sys.path.append("..")
 sys.path.append("/usr/lib/waggle/")
 from multiprocessing import Process, Manager
-from config import *
+from .config import *
 import pika
-from waggle_protocol.protocol.PacketHandler import *
+from .waggle_protocol.protocol.PacketHandler import *
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from crcmod.predefined import mkCrcFun
@@ -109,7 +111,7 @@ class RegProcess(Process):
                 # Write the request to a file to be used by the CA for signing
                 replyQueue = msg.split("\n")[0]
                 msg = "\n".join(msg.split("\n")[1:])
-                print replyQueue
+                print(replyQueue)
                 certFile = "/tmp/" + self.name
                 with open(certFile + "_req.pem","w+") as cert:
                     cert.write(msg)
@@ -120,7 +122,7 @@ class RegProcess(Process):
                 cert = ""
                 with open(certFile + "_cert.pem","r") as cert:
                 	cert = cert.read()
-                	print cert
+                	print(cert)
                 ch.basic_publish(exchange='',
                      routing_key=replyQueue,
                      body=cert)

@@ -1,14 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
     This module sets up and runs the waggle server.
 """
 import sys, pika, logging, argparse, logging, logging.handlers
-from config import *
-from WaggleRouter import WaggleRouter
-from utilitiesprocess import UtilProcess
+from .config import *
+from .WaggleRouter import WaggleRouter
+from .utilitiesprocess import UtilProcess
 from multiprocessing import Manager
-from registrationprocess import RegProcess
-from dataprocess import DataProcess
+from .registrationprocess import RegProcess
+from .dataprocess import DataProcess
 from cassandra.cluster import Cluster
 import time
 
@@ -173,12 +173,12 @@ if __name__ == "__main__":
 
     #Declare all of the appropriate exchanges, queues, and bindings
 
-    for queueName in queue_bindings.keys():
+    for queueName in list(queue_bindings.keys()):
         rabbitChannel.queue_declare(queueName)
 
     for exchName in exchage_list:
         rabbitChannel.exchange_declare(exchName)
-    for key in queue_bindings.keys():
+    for key in list(queue_bindings.keys()):
         bind = queue_bindings[key]
         rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
 
