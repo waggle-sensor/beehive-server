@@ -121,8 +121,12 @@ def get_mysql_db():
                     passwd="waggle",  
                     db="waggle")
 
-@app.route('/')
+@app.route('/api/')
 def api_root():
+    return 'This is the beehive API server.'
+
+@app.route('/api/1/')
+def api_version():
     return 'This is the beehive API server.'
     
 @app.route('/api/1/epoch')

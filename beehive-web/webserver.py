@@ -22,8 +22,14 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 port = 80
-api_url_internal = 'http://localhost'
-api_url = 'http://beehive1.mcs.anl.gov'
+#api_url_internal = 'http://localhost'
+
+
+web_host = 'http://beehive1.mcs.anl.gov'
+
+api_url_internal = 'http://beehive-api:5000/api/'
+api_url = web_host+'/api/'
+
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
 
@@ -44,11 +50,6 @@ def read_file( str ):
 
 
 urls = (
-    '/api/1/nodes/(.+)/latest',     'api_nodes_latest',
-    '/api/1/nodes/(.+)/export',     'api_export',
-    '/api/1/nodes/(.+)/dates',      'api_dates',
-    '/api/1/nodes/?',               'api_nodes',
-    '/api/1/epoch',                 'api_epoch',
     '/nodes/(.+)/?',                'web_node_page',
     '/',                            'index'
 )
@@ -93,8 +94,8 @@ class index:
         logger.debug('GET index')
         
         
-        api_call = api_url+'/api/1/nodes/'
-        api_call_internal = api_url_internal+'/api/1/nodes/'
+        api_call = api_url+'1/nodes/'
+        api_call_internal = api_url_internal+'1/nodes/'
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
@@ -149,7 +150,7 @@ class index:
                     hostname = node_obj[u'hostname'].encode('ascii','replace')
             
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (api_url, node_id, node_id.upper(), description, hostname)
+            result_line = '<tr><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (web_host, node_id, node_id.upper(), description, hostname)
             
             logger.debug("result_line: %s" % (result_line))
             
@@ -177,8 +178,8 @@ class web_node_page:
     def GET(self, node_id):
         logger.debug('GET web_node_page')
         
-        api_call            = '%s/api/1/nodes/%s/dates' % (api_url, node_id)
-        api_call_internal   = '%s/api/1/nodes/%s/dates' % (api_url_internal, node_id)
+        api_call            = '%s1/nodes/%s/dates' % (api_url, node_id)
+        api_call_internal   = '%s1/nodes/%s/dates' % (api_url_internal, node_id)
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
@@ -211,11 +212,11 @@ class web_node_page:
         
         
         yield "<h3>Available data</h3>\n"
-        # not available right now. yield '<br>\n<a href="%s/api/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
+        # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug(str(req.json()))
         for date in req.json()['data']:
-            yield '<br>\n<a href="%s/api/1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
+            yield '<br>\n<a href="%s1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
 
 
         yield  "<br>\n<br>\n"
@@ -228,14 +229,14 @@ class web_node_page:
 <pre>
 # get data from two specific days
 for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}/api/1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 
 # get all data of one node
-DATES=$(curl {1}/api/1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
+DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}/api/1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 </pre>
@@ -247,166 +248,6 @@ done
         yield html_footer()
 
 
-class api_epoch:
-    """
-    Epoch time in seconds.
-    """
-
-    def GET(self):
-        logger.debug('GET api_epoch')
-
-        try:
-            epoch= int(time.time())
-        except:
-            raise internalerror('error getting server time')
-            
-            
-            
-        return '{"epoch": %d}' % (epoch)
-
-
-class api_nodes:        
-    def GET(self):
-        logger.debug('GET api_nodes')
-        #query = web.ctx.query
-        
-        
-        #web.header('Content-type','text/plain')
-        #web.header('Transfer-Encoding','chunked')
-        
-        db = get_mysql_db()
-        
-        all_nodes = {}
-        mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
-        for result in mysql_nodes_result:
-            node_id, hostname, project, description, reverse_ssh_port = result
-            
-            if node_id:
-                node_id = node_id.encode('ascii','replace').lower()
-            else:
-                node_id = 'unknown'
-                
-            if hostname:
-                hostname = hostname.encode('ascii','replace')
-                
-            if description:
-                description = description.encode('ascii','replace')
-                
-            
-            
-            logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
-            all_nodes[node_id] = {  'hostname'          : hostname,
-                                    'project'           : project, 
-                                    'description'       : description ,
-                                    'reverse_ssh_port'  : reverse_ssh_port }
-            
-        
-        
-        nodes_dict = list_node_dates() # lower case
-        
-        for node_id in nodes_dict.keys():
-            if not node_id in all_nodes:
-                all_nodes[node_id]={}
-        
-        #for node_id in all_nodes.keys():
-        #    logger.debug("%s %s" % (node_id, type(node_id)))
-        
-        obj = {}
-        obj['data'] = all_nodes
-        
-        return  json.dumps(obj, indent=4)
-        
-            
-class api_dates:        
-    def GET(self, node_id):
-        logger.debug('GET api_dates')
-        
-        node_id = node_id.lower()
-        
-        query = web.ctx.query
-        
-        nodes_dict = list_node_dates()
-        
-        if not node_id in nodes_dict:
-            logger.debug("node_id not found in nodes_dict: " + node_id)
-            raise web.notfound()
-        
-        dates = nodes_dict[node_id]
-        
-        logger.debug("dates: " + str(dates))
-        
-        obj = {}
-        obj['data'] = sorted(dates, reverse=True)
-        
-        return json.dumps(obj, indent=4)
-        
-        
-        
-                        
-
-class api_nodes_latest:        
-    def GET(self, node_id):
-        logger.debug('GET api_nodes_latest')
-        
-        query = web.ctx.query
-        
-        
-        web.header('Content-type','text/plain')
-        web.header('Transfer-Encoding','chunked')
-        
-        #for row in export_generator(node_id, '', True, ';'):
-        #    yield row+"\n"
-        yield "not implemented"
-
-
-
-class api_export:        
-    def GET(self, node_id):
-        
-        logger.debug('GET api_export')
-        
-        web.header('Content-type','text/plain')
-        web.header('Transfer-Encoding','chunked')
-        
-        query = web.ctx.query.encode('ascii', 'ignore') #get rid of unicode
-        if query:
-            query = query[1:]
-        #TODO parse query
-        logger.info("query: %s", query)
-        query_dict = urlparse.parse_qs(query)
-        
-        try:
-            date_array = query_dict['date']
-        except KeyError:
-            logger.warning("date key not found")
-            raise web.notfound()
-        
-        if len(date_array) == 0:
-            logger.warning("date_array empty")
-            raise web.notfound()
-        date = date_array[0]
-            
-        logger.info("date: %s", str(date))
-        if date:
-            r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
-            if r.match(date):
-                logger.info("accepted date: %s" %(date))
-    
-                num_lines = 0
-                for row in export_generator(node_id, date, False, ';'):
-                    yield row+"\n"
-                    num_lines += 1
-                
-                if num_lines == 0:
-                    raise web.notfound()
-                else:
-                    yield "# %d results" % (num_lines)
-            else:
-                logger.warning("date format not correct")
-                raise web.notfound()
-        else:
-            logger.warning("date is empty")
-            raise web.notfound()
 
 if __name__ == "__main__":
     

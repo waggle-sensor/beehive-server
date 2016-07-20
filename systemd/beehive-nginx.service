@@ -1,10 +1,10 @@
 [Unit]
-Description=beehive-web
+Description=beehive-nginx
 Requires=docker.service
 After=docker.service
 
 [Service]
-Environment='CONTAINER=beehive-web'
+Environment='CONTAINER=beehive-nginx'
 Environment='DATA=/mnt'
 
 
@@ -17,11 +17,10 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
 ExecStart=/bin/docker run \
   --rm \
-  --name=${CONTAINER} \
+  --name=${CONTAINER}  \
   --net beehive \
-  waggle/beehive-web bash -c 'cd /usr/lib/waggle/beehive-server ; git pull ; cd waggle_protocol ; git pull origin master ; python -u /usr/lib/waggle/beehive-server/beehive-web/webserver.py'
-
-
+  -p 80:80 \
+  waggle/beehive-nginx /usr/sbin/nginx -g 'daemon off;'
 
 ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
 
