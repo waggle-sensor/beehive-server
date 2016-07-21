@@ -185,7 +185,7 @@ class RegProcess(Process):
                         "r_uniqid"    : header["s_uniqid"],
                         "resp_session": header["snd_session"]
                 }
-                msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue)
+                msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue).encode('iso-8859-1')
                 for packet in pack(resp_header,msg):
                     response = packet
                 self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)

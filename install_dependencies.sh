@@ -33,8 +33,6 @@ cd pika-0.9.14/
 python setup.py install
 
 cd ../../
-pip3 install web.py
-
 cd packages_o/
 pip3 install blist
 pip3 install cassandra-driver
