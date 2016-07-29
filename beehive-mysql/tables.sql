@@ -33,7 +33,7 @@ CREATE TABLE nodes (
     project             INT,
     description         VARCHAR(255),
     reverse_ssh_port    MEDIUMINT,
-    hardware            JSON
+    hardware            JSON,
     name                VARCHAR(64),
     location            VARCHAR(255),
 );
