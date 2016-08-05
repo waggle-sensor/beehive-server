@@ -62,6 +62,7 @@ docker pull waggle/beehive-server:latest
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   waggle/beehive-server:latest ./SSL/create_certificate_authority.sh
 
+ 
 ### mysql
 docker rm -f beehive-mysql
 
@@ -170,12 +171,34 @@ docker exec beehive-server    ls configure Server.py
 docker exec beehive-server    ./configure
 docker exec -d beehive-server    ./Server.py --logging
 
-### systemd  
+
+### nginx and systemd  
 cd ~
 rm -rf git
 mkdir -p git
 cd git
 git clone https://github.com/waggle-sensor/beehive-server.git
+cd ~/git/beehive-server/
+
+### nginx
+docker rm -f beehive-nginx
+docker rmi waggle/beehive-nginx
+docker build -t waggle/beehive-nginx     ~/git/beehive-server/beehive-nginx/
+
+[ ! -z "$DATA" ] && \
+docker run \
+  -d \
+  --name=beehive-nginx \
+  --net beehive \
+  -p 80:80 \
+  waggle/beehive-nginx /usr/sbin/nginx -g 'daemon off;'
+
+### systemd  
+#cd ~
+#rm -rf git
+#mkdir -p git
+#cd git
+#git clone https://github.com/waggle-sensor/beehive-server.git
 cd ~/git/beehive-server/systemd/
   
 for service in *.service ; do

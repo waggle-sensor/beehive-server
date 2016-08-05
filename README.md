@@ -55,6 +55,10 @@ See [SSL/README.md](./SSL/README.md)
 
 See [beehive-cassandra/README.md](./beehive-cassandra/README.md)
 
+### MySQL
+
+See [beehive-mysql/README.md](./beehive-mysql/README.md)
+
 ### RabbitMQ
 
 See [beehive-rabbitmq/README.md](./beehive-rabbitmq/README.md)
