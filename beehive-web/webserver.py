@@ -100,7 +100,7 @@ class index:
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
-            msg = "Could not make request: %s", (str(e))
+            msg = "Could not make request: %s" % (str(e))
             logger.error(msg)
             raise internalerror(msg)
         
@@ -109,7 +109,7 @@ class index:
             logger.error(msg)
             raise internalerror(msg)
         
-        logger.debug("req.json: %s" % ( str(req.json())) )
+        #logger.debug("req.json: %s" % ( str(req.json())) )
         
         
         web.header('Content-type','text/html')
@@ -126,37 +126,64 @@ class index:
             msg = "data field not found"
             logger.error(msg)
             raise internalerror(msg)
-        
+
         all_nodes = req.json()[u'data']
+        print 'all_nodes: ', str(all_nodes)
         
-        
+        yield """
+            <head>
+                <style>
+                    table {    border-collapse: collapse; }
+                    table, td, th { border: 1px solid black; padding: 1px 5px;}
+                </style>
+            </head>
+        """
         yield "<table>\n"
-        for node_id in all_nodes:
-            
-            node_obj = all_nodes[node_id]
-            node_id = node_id.encode('ascii','replace').lower()
-            logger.debug("node_id: %s" % (node_id))
-            logger.debug("node_obj: %s" % (str(node_obj)))
-            
-            description = ''
-            if u'description' in node_obj:
-                if node_obj[u'description']:
-                    description = node_obj[u'description'].encode('ascii','replace')
-           
-                
-            hostname = ''
-            if u'hostname' in node_obj:
-                if node_obj[u'hostname']:
-                    hostname = node_obj[u'hostname'].encode('ascii','replace')
-            
-            #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td></tr>\n' % (web_host, node_id, node_id.upper(), description, hostname)
-            
-            logger.debug("result_line: %s" % (result_line))
-            
-            
-            yield result_line
         
+        # header row
+        headings = ['name', 'node_id', 'description', 'hostname', 'location', 'last_updated']
+        result_line = '<tr>' + ''.join(['<td><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n'
+        #logger.debug("result_line: %s" % (result_line))
+        yield result_line
+       
+        # one row per node
+        if True:
+            for node_id in all_nodes:
+                
+                node_obj = all_nodes[node_id]
+                node_id = node_id.encode('ascii','replace').lower()
+                
+                description = ''
+                if u'description' in node_obj:
+                    if node_obj[u'description']:
+                        description = node_obj[u'description'].encode('ascii','replace')
+                    
+                hostname = ''
+                if u'hostname' in node_obj:
+                    if node_obj[u'hostname']:
+                        hostname = node_obj[u'hostname'].encode('ascii','replace')
+
+                name = ''
+                if u'name' in node_obj:
+                    if node_obj[u'name']:
+                        name = node_obj[u'name'].encode('ascii','replace')
+                        
+                location = ''
+                if u'location' in node_obj:
+                    if node_obj[u'location']:
+                        location = node_obj[u'location'].encode('ascii','replace')
+                
+                last_updated = ''
+                if u'last_updated' in node_obj:
+                    if node_obj[u'last_updated']:
+                        last_updated = node_obj[u'last_updated'].encode('ascii','replace')
+                
+                #&nbsp&nbsp&nbsp&nbsp
+                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n' % \
+                    (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
+                                
+                yield result_line
+
         yield "</table>"
         yield  "<br>\n<br>\n"
         
@@ -170,7 +197,6 @@ class index:
         for i in range(0, len(urls), 2):
             if urls[i].startswith('/api'):
                 yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
-        
         
         yield html_footer()
         

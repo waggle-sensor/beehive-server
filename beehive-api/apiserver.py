@@ -154,16 +154,15 @@ def api_nodes():
     logger.debug('GET api_nodes')
     #query = web.ctx.query
     
-    
     #web.header('Content-type','text/plain')
     #web.header('Transfer-Encoding','chunked')
     
     db = get_mysql_db()
     
     all_nodes = {}
-    mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port FROM nodes;")
+    mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port,name,location,last_updated FROM nodes;")
     for result in mysql_nodes_result:
-        node_id, hostname, project, description, reverse_ssh_port = result
+        node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
         
         # these are strings
         
@@ -177,14 +176,15 @@ def api_nodes():
         logger.debug("reverse_ssh_port type: " + str(type(reverse_ssh_port)))
         
         
-        logger.debug('got from mysql: %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port))
+        logger.debug('got from mysql: %s %s %s %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated))
         all_nodes[node_id] = {  'hostname'          : hostname,
                                 'project'           : project, 
                                 'description'       : description ,
-                                'reverse_ssh_port'  : reverse_ssh_port }
+                                'reverse_ssh_port'  : reverse_ssh_port ,
+                                'name'              : name, 
+                                'location'          : location, 
+                                'last_updated'      : last_updated}
         
-    
-    
     nodes_dict = list_node_dates() # lower case
     
     for node_id in nodes_dict.keys():
