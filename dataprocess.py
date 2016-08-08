@@ -73,7 +73,7 @@ class DataProcess(Process):
     def callback(self,ch,method,props,body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         try:
-            header,data = unpack(body)
+            header, opt, data = unpack(body)
         except Exception as e:    
             logger.error("Error unpacking data: %s" % (str(e)))
             ch.basic_ack(delivery_tag=method.delivery_tag)

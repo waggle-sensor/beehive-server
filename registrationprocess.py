@@ -6,9 +6,9 @@ import os
 sys.path.append("..")
 sys.path.append("/usr/lib/waggle/")
 from multiprocessing import Process, Manager
-from .config import *
+from config import *
 import pika
-from .waggle_protocol.protocol.PacketHandler import *
+from waggle_protocol.protocol.PacketHandler import *
 import logging
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from crcmod.predefined import mkCrcFun
@@ -45,7 +45,7 @@ class RegProcess(Process):
             Each subtype is handled as a apart of an if-elif statement.
         """
         
-        header,msg = unpack(body)
+        header, opt, msg = unpack(body)
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
         major = chr(header["msg_mj_type"])
