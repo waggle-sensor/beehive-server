@@ -145,8 +145,14 @@ class DataProcess(Process):
             if (type(data[i]) == bytes):
                 data[i] = data[i].decode('iso-8859-1')
         
-        tmp = [entity.decode('iso-8859-1') for entity in data[7]]
+        tmp = []
+        for entity in data[7]:
+            if (type(entity) == bytes):
+                tmp.append(entity.decode('iso-8859-1'))
+            else:
+                tmp.append(entity)
         data[7] = tmp
+
         # for entity in data[7]:
         #     if (type(entity) == bytes):
         #         entity = data[i].decode('iso-8859-1')
