@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # utilitiesprocess.py
 import sys
 sys.path.append("..")
@@ -62,7 +60,7 @@ class UtilProcess(Process):
                 "r_uniqid"    : header["s_uniqid"],
                 "resp_session": header["snd_session"]
             }
-            packer = pack(resp_header,"Pong!".encode('iso-8859-1'))
+            packer = pack(resp_header,"Pong!")
             # Need to use a for each loop because packer yields packets, it doesnt return them
             for packet in packer:
                 response = packet
@@ -77,7 +75,7 @@ class UtilProcess(Process):
                 "r_uniqid"    : header["s_uniqid"],
                 "resp_session": header["snd_session"]
             }
-            packer = pack(resp_header,str(time.time()).encode('iso-8859-1')) # Stuff the time in a packet and send it to the router
+            packer = pack(resp_header,str(time.time())) # Stuff the time in a packet and send it to the router
             for packet in packer:
                 response = packet
             self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)

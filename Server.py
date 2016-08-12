@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
     This module sets up and runs the waggle server.
 """
@@ -173,12 +173,12 @@ if __name__ == "__main__":
 
     #Declare all of the appropriate exchanges, queues, and bindings
 
-    for queueName in list(queue_bindings.keys()):
+    for queueName in queue_bindings.keys():
         rabbitChannel.queue_declare(queueName)
 
     for exchName in exchage_list:
         rabbitChannel.exchange_declare(exchName)
-    for key in list(queue_bindings.keys()):
+    for key in queue_bindings.keys():
         bind = queue_bindings[key]
         rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
 

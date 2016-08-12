@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
-import sys, os, io, configparser, logging, pika, ssl, re
+import sys, os, StringIO, ConfigParser, logging, pika, ssl, re
 import time, datetime
 
 
@@ -41,7 +41,7 @@ def read_value(key, defaultval):
     value=None
     try:
         value=my_config.get("root", key)
-    except configparser.NoOptionError:
+    except ConfigParser.NoOptionError:
         value=""
     
     if not value:
@@ -56,8 +56,8 @@ ini_str = '[root]\n'
 if os.path.isfile(CONFIG_FILE):
     ini_str = ini_str + open(CONFIG_FILE, 'r').read()
     
-ini_fp = io.StringIO(ini_str)
-my_config = configparser.RawConfigParser()
+ini_fp = StringIO.StringIO(ini_str)
+my_config = ConfigParser.RawConfigParser()
 my_config.readfp(ini_fp)
 
 RABBITMQ_HOST=read_value("rabbitmq-host", "rabbitmq")
@@ -171,7 +171,7 @@ def unix_time(dt):
     return delta.total_seconds()
 
 def unix_time_millis(dt):
-    return int(unix_time(dt) * 1000.0)
+    return long(unix_time(dt) * 1000.0)
     
     
     

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # registrationprocess.py
 import sys
 import os
@@ -45,7 +43,7 @@ class RegProcess(Process):
             Each subtype is handled as a apart of an if-elif statement.
         """
         
-        header, opt, msg = unpack(body)
+        header,msg = unpack(body)
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
         major = chr(header["msg_mj_type"])
@@ -111,7 +109,7 @@ class RegProcess(Process):
                 # Write the request to a file to be used by the CA for signing
                 replyQueue = msg.split("\n")[0]
                 msg = "\n".join(msg.split("\n")[1:])
-                print(replyQueue)
+                print replyQueue
                 certFile = "/tmp/" + self.name
                 with open(certFile + "_req.pem","w+") as cert:
                     cert.write(msg)
@@ -122,7 +120,7 @@ class RegProcess(Process):
                 cert = ""
                 with open(certFile + "_cert.pem","r") as cert:
                 	cert = cert.read()
-                	print(cert)
+                	print cert
                 ch.basic_publish(exchange='',
                      routing_key=replyQueue,
                      body=cert)
@@ -185,7 +183,7 @@ class RegProcess(Process):
                         "r_uniqid"    : header["s_uniqid"],
                         "resp_session": header["snd_session"]
                 }
-                msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue).encode('iso-8859-1')
+                msg = "Congratulations node {}! You are registered under the queue {}!".format(s_uniqid_str, queue)
                 for packet in pack(resp_header,msg):
                     response = packet
                 self.channel.basic_publish(exchange='waggle_in',routing_key="in",body=response)
