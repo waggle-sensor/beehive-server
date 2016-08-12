@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # WaggleRouter.py
 import sys
 sys.path.append("..")
@@ -106,7 +108,7 @@ class WaggleRouter(Process):
                 recipient = recipient_node['queue']
                 self.channel.basic_publish(exchange='internal', routing_key = recipient, body=body)
             except Exception as e:
-                print str(e)
+                print(str(e))
             finally:
                 ch.basic_ack(delivery_tag =method.delivery_tag)
 

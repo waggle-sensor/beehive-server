@@ -33,6 +33,15 @@ cd pika-0.9.14/
 python setup.py install
 
 cd ../../
+cd packages_o/
+pip3 install blist
+pip3 install cassandra-driver
+pip3 install crcmod
+
+cd pika-0.10.0/
+python3 setup.py install
+
+cd ../../
 
 # cqlshlib for the cassandra client
 cd cassandra-pylib/

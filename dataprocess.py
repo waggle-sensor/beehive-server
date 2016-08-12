@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # dataprocess.py
 
 import sys
@@ -71,7 +73,7 @@ class DataProcess(Process):
     def callback(self,ch,method,props,body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         try:
-            header,data = unpack(body)
+            header, opt, data = unpack(body)
         except Exception as e:    
             logger.error("Error unpacking data: %s" % (str(e)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
@@ -137,8 +139,23 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
         
-       
+        # TODO: Later we will fix this issue
+        idx = [0, 1, 3, 5, 6]
+        for i in idx:
+            if (type(data[i]) == bytes):
+                data[i] = data[i].decode('iso-8859-1')
         
+        tmp = []
+        for entity in data[7]:
+            if (type(entity) == bytes):
+                tmp.append(entity.decode('iso-8859-1'))
+            else:
+                tmp.append(entity)
+        data[7] = tmp
+
+        # for entity in data[7]:
+        #     if (type(entity) == bytes):
+        #         entity = data[i].decode('iso-8859-1')
         
         if not data[3]:
             data[3] = 'default'
