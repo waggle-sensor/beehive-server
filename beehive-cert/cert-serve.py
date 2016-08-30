@@ -279,7 +279,15 @@ if __name__ == "__main__":
     pp.pprint(node_database)
     
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
-    new_authorized_keys_content = []
+    registration_script =\
+      '/usr/lib/waggle/beehive-server/beehive-sshd/register.sh'
+    registration_key_filename =\
+      '/usr/lib/waggle/ssh_keys/id_rsa_waggle_aot_registration.pub'
+    with open(registration_key_filename) as registration_key_file:
+      registration_key = registration_key_file.readline().strip()
+    new_authorized_keys_content =['command="%s",%s %s\n\n' \
+      % (registration_script, auth_options, registration_key)]
+
     for node_id in node_database.keys():
         line=None
         if 'pub' in node_database[node_id]:
