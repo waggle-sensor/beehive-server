@@ -27,6 +27,7 @@ docker rm -f beehive-cert
 [ ! -z "$DATA" ] && \
 docker run -ti \
   -p 24181:80 \
+  -v ${DATA}/ssh_keys/:/usr/lib/waggle/ssh_keys/ \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   --name beehive-cert \
   --net beehive \
