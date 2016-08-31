@@ -12,9 +12,8 @@
 
 Ports
 ```text
-80 : web (world-wide)
+80 : nginx: web (world-wide) and API (world-wide)
 22 : ssh (ANL only)
-8183 : API (world-wide)
 20022 : ssh, reverse ssh tunnel for the nodes (world-wide)
 23181 : RabbitMQ (world-wide)
 24181 : certificate server (ANL only)
