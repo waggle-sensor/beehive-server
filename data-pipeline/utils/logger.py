@@ -18,8 +18,6 @@ result = channel.queue_declare(exclusive=True)
 queue = result.method.queue
 
 for level in sys.argv[1:]:
-    print(level)
-    print(queue)
     channel.queue_bind(queue=queue,
                        exchange='direct-logs',
                        routing_key=level)
