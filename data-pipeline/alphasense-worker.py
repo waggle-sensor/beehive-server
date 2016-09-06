@@ -49,6 +49,9 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 
 channel = connection.channel()
 
+channel.exchange_declare(exchange='direct-logs',
+                         type='direct')
+
 channel.exchange_declare(exchange='plugins.route',
                          type='direct')
 
