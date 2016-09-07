@@ -56,7 +56,7 @@ ini_str = '[root]\n'
 if os.path.isfile(CONFIG_FILE):
     ini_str = ini_str + open(CONFIG_FILE, 'r').read()
     
-ini_fp = io.StringIO(ini_str)
+ini_fp = io.StringIO(unicode(ini_str))
 my_config = configparser.RawConfigParser()
 my_config.readfp(ini_fp)
 
