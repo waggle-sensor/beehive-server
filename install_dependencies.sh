@@ -37,6 +37,7 @@ cd packages_o/
 pip3 install blist
 pip3 install cassandra-driver
 pip3 install crcmod
+pip3 install configparser
 
 cd pika-0.10.0/
 python3 setup.py install
