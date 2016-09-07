@@ -135,7 +135,7 @@ class RegProcess(Process):
                 # convert int to hex_str
                 config_dict = {}
                 try:
-                    config_dict = json.loads(msg)
+                    config_dict = json.loads(msg.decode('utf-8'))
                 except ValueError as e:
                     logger.error("error (ValueError) parsing json (msg=%s): %s" % (msg, str(e)))
                     break
