@@ -28,6 +28,7 @@ cd packages_o/
 pip install blist
 pip install cassandra-driver
 pip install crcmod
+pip install configparser
 
 cd pika-0.9.14/
 python setup.py install
