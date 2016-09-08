@@ -8,6 +8,8 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 
 channel = connection.channel()
 
+channel.exchange_declare('x-plugins-in', type='direct')
+
 for row in get_flat_export_data(sys.argv[1], sys.argv[2]):
     headers = {
         'node': row[0],
@@ -18,7 +20,7 @@ for row in get_flat_export_data(sys.argv[1], sys.argv[2]):
 
     routing_key = '.'.join([row[2], row[3]])
 
-    channel.basic_publish(exchange='plugins.route',
+    channel.basic_publish(exchange='x-plugins-in',
                           routing_key=routing_key,
                           properties=pika.BasicProperties(headers=headers),
                           body=row[7])

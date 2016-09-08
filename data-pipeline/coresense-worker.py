@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-# import pika
+import pika
 from base64 import b64decode
 from coresense import spec as sensorinfo
 import coresense.format
+from datetime import datetime
+import json
 
 
 def decode_coresense_frame(frame):
@@ -19,7 +21,19 @@ def decode_coresense_frame(frame):
 
 
 def decode_coresense_data(data):
-    results = []
+    for sensor_id, sensor_data in get_data_subpackets(data):
+        try:
+            name, fmt, fields = sensorinfo[sensor_id]
+            data = dict(zip(fields, coresense.format.unpack(fmt, sensor_data)))
+            yield name, data
+        except KeyError:
+            channel.basic_publish(exchange='x-logs',
+                                  routing_key='error',
+                                  body='unknown sensor {:02X}'.format(sensor_id))
+
+
+def get_data_subpackets(data):
+    subpackets = []
 
     offset = 0
 
@@ -33,49 +47,46 @@ def decode_coresense_data(data):
         offset += length
 
         if valid:
-            results.append((sensor_id, sensor_data))
+            subpackets.append((sensor_id, sensor_data))
 
     if offset != len(data):
         raise RuntimeError('subpacket lengths do not total to payload length')
 
-    return results
+    return subpackets
 
 
-data = b64decode(b'AIYAABgUzLIBgho4AoQZYyYXBIUbAAGFFAWCA1cGggHXB4gAAAEAAAAAAAmCGmAKhoCmAoYB1guEHQ8hOgyCBIkNggsVDoI1vQ+CIngQgiWHE4IZSyCGAASj4wM8HYQKphUFHoUKxgGHdB+GAhMeYm00FYMAADAagwCmsRyDAA74GYMAlKwYg4AJixeDAAFuG4MAQIQhggpMIoIKfSOCCsAkggr+JYILCSaJgD6Dh4AeAAAAJ4kACAAEAAYAAAA=')
+def callback(ch, method, properties, body):
+    headers = properties.headers
 
-for sensor_id, sensor_data in decode_coresense_data(data):
-    try:
-        name, fmt, fields = sensorinfo[sensor_id]
+    if headers['sensor'] == ['raw', 'data']:
+        for sensor, data in decode_coresense_data(b64decode(body)):
+            payload = {
+                'node_id': '00A',
+                'node_config': '123abc',
+                'datetime': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f'),
+                'sensor': sensor,
+                'data': data
+            }
 
-        print('{}'.format(name))
-
-        for k, v in zip(fields, coresense.format.unpack(fmt, sensor_data)):
-            print('  {} {}'.format(k, v))
-
-        print()
-    except KeyError:
-        print('unknown sensor {:02X}'.format(sensor_id))
+            channel.basic_publish(exchange='x-plugins-out',
+                                  routing_key='',
+                                  # routing_key='envsense.2',
+                                  body=json.dumps(payload))
 
 
-# def callback(ch, method, properties, body):
-#     headers = properties.headers
-#     print(headers)
-#     print(body)
-#     print()
-#
-#
-# connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-#
-# channel = connection.channel()
-#
-# channel.exchange_declare(exchange='plugins.route',
-#                          type='direct')
-#
-# channel.queue_declare(queue='plugins.envsense.2')
-#
-# channel.queue_bind(queue='plugins.envsense.2',
-#                    exchange='plugins.route',
-#                    routing_key='envsense.2')
-#
-# channel.basic_consume(callback, queue='plugins.envsense.2', no_ack=True)
-# channel.start_consuming()
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+
+channel = connection.channel()
+
+channel.exchange_declare(exchange='x-logs', type='direct')
+
+channel.exchange_declare(exchange='x-plugins-in', type='direct')
+channel.exchange_declare(exchange='x-plugins-out', type='fanout')
+
+channel.queue_declare(queue='envsense.2')
+channel.queue_bind(exchange='x-plugins-in',
+                   queue='envsense.2',
+                   routing_key='envsense.2')
+
+channel.basic_consume(callback, queue='envsense.2', no_ack=True)
+channel.start_consuming()

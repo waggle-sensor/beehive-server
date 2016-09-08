@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pika
+import json
 import struct
 
 
@@ -14,7 +15,7 @@ def decode_alphasense(data):
     pmvalues = struct.unpack_from('<3f', data, offset=50)
 
     assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
-    assert (sum(bincounts) & 0xFFFF) == checksum
+    assert sum(bincounts) & 0xFFFF == checksum
 
     values = {
         'bins': bincounts,
@@ -35,12 +36,14 @@ def decode_alphasense(data):
 
 
 def callback(ch, method, properties, body):
-    headers = properties.headers
     try:
         data = decode_alphasense(body)
-        print(headers, data)
+        channel.basic_publish(exchange='x-plugins-out',
+                              routing_key='',
+                              # routing_key='alphasense.1',
+                              body=json.dumps(data))
     except Exception as e:
-        channel.basic_publish(exchange='direct-logs',
+        channel.basic_publish(exchange='x-logs',
                               routing_key='error',
                               body=repr(e))
 
@@ -49,17 +52,15 @@ connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 
 channel = connection.channel()
 
-channel.exchange_declare(exchange='direct-logs',
-                         type='direct')
+channel.exchange_declare(exchange='x-logs', type='direct')
 
-channel.exchange_declare(exchange='plugins.route',
-                         type='direct')
+channel.exchange_declare(exchange='x-plugins-in', type='direct')
+channel.exchange_declare(exchange='x-plugins-out', type='fanout')
 
-channel.queue_declare(queue='plugins.alphasense.1')
-
-channel.queue_bind(queue='plugins.alphasense.1',
-                   exchange='plugins.route',
+channel.queue_declare(queue='alphasense.1')
+channel.queue_bind(exchange='x-plugins-in',
+                   queue='alphasense.1',
                    routing_key='alphasense.1')
 
-channel.basic_consume(callback, queue='plugins.alphasense.1', no_ack=True)
+channel.basic_consume(callback, queue='alphasense.1', no_ack=True)
 channel.start_consuming()

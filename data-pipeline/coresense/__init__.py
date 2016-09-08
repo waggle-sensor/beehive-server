@@ -2,6 +2,11 @@ import re
 
 
 def parse_sensor_table(text):
+    types = {
+        'uint24': '4',
+        'int24': '5',
+    }
+
     spec = {}
 
     for chunk in re.split('\n\n+', text.strip()):
@@ -11,8 +16,8 @@ def parse_sensor_table(text):
         sensor_name = lines[1].strip()
         fields = [tuple(map(str.strip, line.split(':'))) for line in lines[2:]]
 
-        fmts = ''.join(fmt for _, fmt in fields)
-        keys = [key for key, _ in fields]
+        fmts = ''.join(fmt.strip() for _, fmt in fields)
+        keys = [key.strip().lower() for key, _ in fields]
 
         spec[sensor_id] = (sensor_name, fmts, keys)
 
