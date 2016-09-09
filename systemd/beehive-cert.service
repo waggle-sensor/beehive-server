@@ -20,6 +20,7 @@ ExecStartPre=/bin/docker pull waggle/beehive-cert
 ExecStart=/bin/docker run \
   --rm \
   -p 24181:80 \
+  -v ${DATA}/ssh_keys/:/usr/lib/waggle/ssh_keys/ \
   -v ${DATA}/waggle/SSL/:/usr/lib/waggle/SSL/ \
   --name ${CONTAINER} \
   --net beehive \
