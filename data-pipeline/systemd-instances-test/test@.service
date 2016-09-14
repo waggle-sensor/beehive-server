@@ -1,0 +1,8 @@
+[Service]
+ExecStart=-/bin/bash /root/git/beehive-server/data-pipeline/systemd-instances-test/test.bash %I
+ExecStartPre=/bin/bash  -c "echo  ExecStartPre   %I"
+ExecStartPost=/bin/bash -c "echo  ExecStartPost  %I"
+ExecStopPost=/bin/bash  -c "echo  ExecStopPost   %I"
+Restart=always
+RestartSec=1
+#ExecStop=
