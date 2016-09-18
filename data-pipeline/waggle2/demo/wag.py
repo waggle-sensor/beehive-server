@@ -166,13 +166,16 @@ def compute_params(data):
     sensor_names = {}
     for idxRow, row in data.iterrows():
         sensor = row['sensor']
-        params  = row['value'].keys()
-        for param in params:
-            if param in sensor_names:
-                if sensor not in sensor_names[param]:
-                    sensor_names[param].append(sensor)
-            else:
-                sensor_names[param] = [sensor]
+        try:    # a row's value might be None if it was unparseable - skip it
+            params  = row['value'].keys()
+            for param in params:
+                if param in sensor_names:
+                    if sensor not in sensor_names[param]:
+                        sensor_names[param].append(sensor)
+                else:
+                    sensor_names[param] = [sensor]
+        except:
+            pass
     data_types = sorted(sensor_names.keys())
     return sensor_names, data_types
 
