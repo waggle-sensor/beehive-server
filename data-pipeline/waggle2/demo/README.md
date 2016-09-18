@@ -1,81 +1,49 @@
 # How to Use Waggle Data
 Get the program wag.py Using
 ```
-wget github.com/
+wget https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/data-pipeline/waggle2/demo/wag.py
 ```
-Using python3, import the necessary libraries.
+Using pip3, import the necessary libraries for python3:
 ```
 pip3 install pandas
 pip3 install bokeh
 ```
-from terminal 1 - run
+Open a terminal window (in linux) and start the *bokeh* server by typing:
+```
 bokeh serve
-
-We'll leave that terminal.
-Start a new one.
-
-
-    load_csv
-        change pd.read_csv to requests() to get data
-        load_data reads data from beehive1 in old format
-        I'll add a function to convert to the new format
-
-
-To get
-
-# Beehive Server
-
-Waggle cloud software for aggregation, storage and analysis of sensor data from Waggle nodes
-
-## Installation
-
-The recommended installation method for the waggle beehive server is Docker. But it should be easily possible to install everything in a non-virtualized ubuntu environment. In that case we recommend ubuntu trusty (14.04). If you are using Docker, you can use any operating system with a recent Linux kernel that runs Docker.
-
-### Docker
-
-To get the latest version of Docker in Ubuntu use this (simply copy-paste the whole block):
 ```
-apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-export CODENAME=$(lsb_release --codename | grep -o "[a-z]*$" | tr -d '\n')
-echo "deb https://apt.dockerproject.org/repo ubuntu-${CODENAME} main" > /etc/apt/sources.list.d/docker.list
-apt-get update
-apt-get install -y  docker-engine
+Leave that terminal running.  
+Open a browser and navigate to
+http://beehive1.mcs.anl.gov/
+to see the list of all the nodes that ever sent data to the beehive server.
+Click on the id of the node to see which dates the node sent data.
+Choose the node(s) and date(s) whose data you would like to download and/or plot.
+
+## Downloading Data into a CSV File
+To download the data from the specified node(s) and specified date(s), type:
+```
+python3 wag.py -id <node id list> -date <date list> -csv_out <csv filename>
+```
+where ```<node id list>``` is one or more node_id's from the beehive website;
+```<date list>``` is the list of dates;
+and ```csv filename``` is the name of the CSV file that will be created.
+Note that the 1st line of the CSV file will contain a header, which is a
+comma-separated list of columns.
+The following lines will contain the comma-separated data.
+For example, to save the data from the CDOT node named 011, and id
+0000001E061089FA, into a file named ```cdot011.csv```, type:
+```
+python3 wag.py -id 0000001E061089FA -date 2016-09-18 -csv_out cdot011.csv
+```
+An example of multiple nodes and dates is:
+```
+python3 wag.py -id 0000001E061089FA 0000001E06107FF0 -date 2016-09-17 2016-09-18 -csv_out cdot011_012_Sept17_18.csv
 ```
 
-### Data directory
-While services are running in containers, configuration files, SSL certificates and databases have to be stored persistently on the host. This is configured in Docker with the -v option (format: "host:container"). Depending on your system you might want to use a different location to store these files.
 
-```bash
-export DATA="/mnt"
+## Plotting Data
+To plot the data, simply omit the ```--csv_out <csv filename>``` parameter.  
+NOTE: Only the 1st node in the list will have its data plotted,
+due to resource limitations.
 
-# other examples:
-# export DATA="${HOME}/waggle"
-# export DATA="/media/ephemeral/"
-```
-
-It might be helful to set this variable permanently. For example, if you are using bash:
-```bash
-echo "export DATA=/mnt/" >> ~/.bash_profile
-```
-
-### Docker network
-Docker network provides a mechanism for service discovery. To us it create the network "beehive":
-```bash
-docker network create beehive
-```
-
-To verify these command can be used:
-```bash
-docker network ls
-docker network inspect beehive
-```
-
-### SSL certificates
-
-Create certificate authority:
-
-See [SSL/README.md](./SSL/README.md)
-
-### Cassandra
-
-See [beehive-cassandra/README.md](./beehive-cassandra/README.md)
+The plots will appear in a new tab in your browser.  Select the parameter you would like to see plotted (eg. "Concentration").  All sensors that store the selected parameter are plotted on the same graph.  Hide or show each sensor's data by toggling the button above the graph with the sensor's name.  Adjust the view/scope of the plot by using the tool buttons to the right of the plot.

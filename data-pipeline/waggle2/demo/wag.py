@@ -46,7 +46,7 @@ class DataSet:
         nodes plotting.
         """
         for sens in self.sensor_names:
-            filtered = data[(data['sensor'] == sens) & (data['id'] == self.id)].copy()
+            filtered = data[(data['sensor'] == sens) & (data['id'] == self.id.lower())].copy()
 
             #filtered = data[(data['sensor'] == sens) & (data['id'] == self.id) & (data['param'] == self.dtype)].copy()
             df = pd.DataFrame()
@@ -108,21 +108,22 @@ class DataSet:
 
 
 # All data is initially stored as a string, so this function converts anything that needs to be a numeric.
-def format_data(key, val):
+def format_data(val):
     """
     :param key: str
     :param val: str
     :return: either string or float
 
     Since most of our data is numeric with a few things reporting strings, we need to selective convert the data depending on
-    the requisite type. 
-    Data will be converted to a float if it can.  
+    the requisite type.
+    Data will be converted to a float if it can.
     Otherwise it will be converted to a string.
     """
     try:
         result = float(val)
     except:
         result = val.replace(',', ';')
+        #print("# {}".format(result))
     return result
 
 
@@ -135,8 +136,10 @@ def dictify(string):
 
     This function evaluates a string containing a dictionary and converts it to a true dictionary type.
     """
-    d = dict(v.split(':') for v in eval(string))
-    d = {k: format_data(k, d[k]) for k in d.keys()}
+    d0 = eval(string)
+    #print(type(d0), d0)
+    d = dict(v.split(':') for v in d0)
+    d = {k.replace(',', ';') : format_data(d[k]) for k in d.keys()}
     return d
 
 
@@ -203,8 +206,16 @@ def load_data(node_ids, dates):
 
             df = pd.DataFrame([row.split(cdelim) for row in content], columns=labels)
             df = df.iloc[:-2]  # The last two lines are not actually data
-            if True:
+            if False:
                 df.value = df.value.apply(dictify)
+            elif True:
+                for idxRow, row in enumerate(df.value):
+                    try:
+                        df.value[idxRow] = dictify(row)
+                    except:
+                        #skip the problem rows
+                        print("ERROR, skipping row: ", row)
+                        df.value[idxRow] = None
             else:
                 for row in df.value:
                     setMissing = set()
@@ -262,11 +273,13 @@ def store_csv(d, filename):
         # labels = ['id', 'date', 'module', 'num', 'type', 'time', 'sensor', 'file', 'value']
         for index, row in d.iterrows():
             dictValues = row['value']       # dictionary of sensor data (parameter : value)
-            for k in dictValues.keys():     # output 1 line per value
+            try:
+                for k in dictValues.keys():     # output 1 line per value
 
-                fOut.write('{},{},{},{},{},{},{},{},{}\n'.format(
-                    row['id'], 0, 0, row['time'], 0, row['sensor'], k, dictValues[k], 'unit'))
-
+                    fOut.write('{},{},{},{},{},{},{},{},{}\n'.format(
+                        row['id'], 0, 0, row['time'], 0, row['sensor'], k, dictValues[k], 'unit'))
+            except:
+                pass  # skip rows that have values of None
 def main():
     # example input:
     # bokeh serve
@@ -320,4 +333,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
