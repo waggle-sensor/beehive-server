@@ -19,7 +19,7 @@ if True:    # this "if" suggests various configurations are possible
     filenameParameters = 'testparameters.json'
     filenameData   = 'testdata.csv'
     sampleScale = 1.03      # scale normalized signal by >1 to cause out-of-range error
-    NUM_SAMPLES = 100
+    NUM_SAMPLES = 11
     nodes = ['node0']
     # Each sensor description is a dictionary of parameter descriptions.  
     # Each parameter description is a dictionary of 'units', 'minValue', etc.
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     dt = datetime.timedelta(seconds = 1)        # simulated time between samples
 
     with open(filenameData, 'w') as fOut:
-        fOut.write('node_id, ingest_id, meta_id, timestamp, data_set, sensor, parameter, value, unit')   # first line is header
+        fOut.write('node_id,ingest_id,meta_id,timestamp,data_set,sensor,parameter,value,unit')   # first line is header
         idxSignal = 0
         bFirst = True
         for node in nodes:
