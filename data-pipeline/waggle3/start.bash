@@ -4,6 +4,9 @@
 rabbitmqadmin declare exchange type=fanout name=data-pipeline-in
 rabbitmqadmin declare exchange type=fanout name=decoded
 
+# TODO: remove this hack
+cp ../../config.py .
+
 if true; then
     echo 'dockerized'
     python3 queue-print.py   data-pipeline-in   db-raw
