@@ -6,10 +6,7 @@ rabbitmqadmin declare exchange type=fanout name=decoded
 
 if true; then
     echo 'dockerized'
-    docker run
-        -v .:waggle3
-        waggle/beehive-server
-        python3 waggle3/queue-print.py   data-pipeline-in   db-raw
+    python3 queue-print.py   data-pipeline-in   db-raw
 elif false; then
     echo 'branch 1'
     python3 queue-print.py   data-pipeline-in   db-raw  &
