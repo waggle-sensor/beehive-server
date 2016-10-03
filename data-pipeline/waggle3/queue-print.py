@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-import config import *
+from config import *
 import functools
 import pika
 import sys
