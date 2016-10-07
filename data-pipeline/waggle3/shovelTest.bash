@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
-# TODO: delivery mode=2
+# This test illustrates the implementation and behavior of the rabbitmq plugin, shovel.
+# It uses a dynamic shovel, which is created, allowed to run for a time, then deleted.
+# All rabbitmq structures are declared in the beginning, and deleted at the end.
+# NOTE: Must be run by root (or possibly with modified permissions).
 
 #delete test structures
 function delete_all() {
     rabbitmqadmin delete exchange name="x-src"
     rabbitmqadmin delete queue    name="q-src"
     rabbitmqadmin delete queue    name="q-src2"
-    rabbitmqadmin delete exchange name="x-backup"
-    rabbitmqadmin delete queue    name="q-backup"
+    rabbitmqadmin delete exchange name="x-dest"
+    rabbitmqadmin delete queue    name="q-dest"
     rabbitmqctl clear_parameter shovel my-shovel
 }
 
@@ -25,7 +28,7 @@ function print_all_messages() {
     done
 }
 
-trace on
+set -v -x
 
 delete_all
 list_all
@@ -38,8 +41,8 @@ rabbitmqadmin declare binding   source="x-src" destination_type="queue" destinat
 rabbitmqadmin declare binding   source="x-src" destination_type="queue" destination="q-src2" routing_key="q-src"
 
 #create test dest queue
-rabbitmqadmin declare exchange  name="x-backup" type=fanout durable=true
-rabbitmqadmin declare queue     name="q-backup" durable=true
+rabbitmqadmin declare exchange  name="x-dest" type=fanout durable=true
+rabbitmqadmin declare queue     name="q-dest" durable=true
 
 list_all
 
@@ -50,19 +53,19 @@ for i in {1..3}; do
 done
 
 sleep 3
-echo "BEFORE SHOVEL"    
+echo "BEFORE SHOVEL CREATED"    
 print_all_messages
 
 rabbitmqctl set_parameter shovel my-shovel \
     '{"src-uri": "amqp://", \
     "src-queue": "q-src", \
     "dest-uri": "amqp://", \
-    "dest-queue": "q-backup"}'
+    "dest-queue": "q-dest"}'
 
 rabbitmqctl list_parameters
     
 sleep 2
-echo "AFTER SHOVEL"    
+echo "AFTER SHOVEL CREATED"    
 print_all_messages
 
 # clean up shovel    
@@ -71,6 +74,7 @@ rabbitmqctl clear_parameter shovel my-shovel
 rabbitmqctl list_parameters
 rabbitmqadmin publish exchange=x-src routing_key=q-src payload="should NOT be shoveled"
 sleep 3
-rabbitmqadmin list queues vhost name node messages
+echo "AFTER SHOVEL DELETED"    
 print_all_messages
 delete_all
+list_all
