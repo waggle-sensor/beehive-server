@@ -62,17 +62,26 @@ class DataProcess(Process):
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
-        self.channel.queue_declare("data")
+        self.channel.queue_declare("db-raw")
+        
+        channel.queue_bind(exchange = 'data-pipeline-in',
+            queue = 'db-raw')
+        
         try: 
-            self.channel.basic_consume(self.callback, queue='data')
+            self.channel.basic_consume(self.callback, queue='db-raw')
         except KeyboardInterrupt:
            logger.info("exiting.")
            sys.exit(0)
         except Exception as e:
            logger.error("error: %s" % (str(e)))
 
-    def callback(self,ch,method,props,body):
+    def callback(self, ch, method, props, body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
+        print('######################################')
+        print('method = ', method)
+        print('props = ', props)
+        print('body = ', body)
+        
         try:
             header, opt, data = unpack(body)
         except Exception as e:    
@@ -90,27 +99,28 @@ class DataProcess(Process):
             #time.sleep(1)
             #self.cassandra_connect()#TODO I don't know if this is neccessary
             return
-            
-        try:
-            #print "Data: ", data
-            # Send the data off to Cassandra
-            self.cassandra_insert(header,data)
-        except Exception as e:    
-            logger.error("QueueToRawDb: Error inserting data: %s" % (str(e)))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            #time.sleep(1)
-            #self.cassandra_connect()#TODO I don't know if this is neccessary
-            return
-    
-            
-            
+
+        if True:
+            print("Data: ", data)
+        else
+            try:
+                print("Data: ", data)
+                # Send the data off to Cassandra
+                self.cassandra_insert(header,data)
+            except Exception as e:    
+                logger.error("QueueToRawDb: Error inserting data: %s" % (str(e)))
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+                #time.sleep(1)
+                #self.cassandra_connect()#TODO I don't know if this is neccessary
+                return
+
         ch.basic_ack(delivery_tag=method.delivery_tag)
         self.numInserted += 1
-        if self.numInserted % 1000 == 0:
+        if self.numInserted % 10 == 0:
             logger.debug('  inserted {}'.format(self.numInserted))
         logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
 
-    def cassandra_insert(self,header,data):
+    def cassandra_insert(self, header, data):
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
         try:
@@ -134,7 +144,7 @@ class DataProcess(Process):
         if not self.session:
             self.cassandra_connect()
         
-        statement = "INSERT INTO sensor_data (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO sensor_data_raw (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
@@ -171,10 +181,7 @@ class DataProcess(Process):
         except Exception as e:
             logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
-    
-        
-    
-        
+
         connection_retry_delay = 1
         while True :
             # this is long term storage    
@@ -199,23 +206,26 @@ class DataProcess(Process):
         
 
     def cassandra_connect(self):
-        if self.cluster:
-            try:
-                self.cluster.shutdown()
-            except:
-                pass
-                
-        self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
-        self.session = None
-        
-        while not self.session:
-            try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-                self.session = self.cluster.connect('waggle')
-            except:
-                logger.warning("QueueToRawDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-                logger.warning("QueueToRawDb: The process will attempt to re-connect at a later time.")
-            if not self.session:
-                 time.sleep(3)
+        for iTry in range(5):
+            if self.cluster:
+                try:
+                    self.cluster.shutdown()
+                except:
+                    pass
+                    
+            self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
+            self.session = None
+            
+            iTry2 = 0
+            while not self.session and iTry2 < 5:
+                iTry2 += 1
+                try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
+                    self.session = self.cluster.connect('waggle')
+                except:
+                    logger.warning("QueueToRawDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
+                    logger.warning("QueueToRawDb: The process will attempt to re-connect at a later time.")
+                if not self.session:
+                     time.sleep(3)
 
 
     def run(self):
