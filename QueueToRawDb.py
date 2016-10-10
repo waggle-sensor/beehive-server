@@ -102,7 +102,7 @@ class DataProcess(Process):
 
         if True:
             print("Data: ", data)
-        else
+        else:
             try:
                 print("Data: ", data)
                 # Send the data off to Cassandra
