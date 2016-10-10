@@ -228,3 +228,10 @@ class DataProcess(Process):
             
 if __name__ == '__main__':
     p = DataProcess()
+    
+    while p.is_alive():
+        time.sleep(10)
+        
+    print(__name__ + ': process is dead, time to die')
+    p.join()
+    
