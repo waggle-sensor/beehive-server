@@ -33,6 +33,7 @@ class DataProcess(Process):
         """
             Starts up the Data handling Process
         """
+        print('Queue: __init__()...ENTER...')
         super(DataProcess,self).__init__()
         
         logger.info("Initializing DataProcess")
@@ -69,8 +70,10 @@ class DataProcess(Process):
            sys.exit(0)
         except Exception as e:
            logger.error("error: %s" % (str(e)))
-        
+        print('Queue: __init__()...EXITING...')
+
     def callback(self,ch,method,props,body):
+        print('Queue: callback()...ENTER...')
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         try:
             header, opt, data = unpack(body)
@@ -107,8 +110,10 @@ class DataProcess(Process):
         
         logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
         time.sleep(10)
+        print('Queue: callback()...EXITING...')
 
     def cassandra_insert(self,header,data):
+        print('Queue: cassandra_insert()...ENTER...')
         s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
         
         try:
@@ -194,9 +199,11 @@ class DataProcess(Process):
                 continue
             
             break
+        print('Queue: cassandra_insert()...EXITING...')
         
 
     def cassandra_connect(self):
+        print('Queue: cassandra_connect()...ENTER...')
         if self.cluster:
             try:
                 self.cluster.shutdown()
@@ -214,22 +221,28 @@ class DataProcess(Process):
                 logger.warning("QueueToRawDb: The process will attempt to re-connect at a later time.")
             if not self.session:
                  time.sleep(3)
+        print('Queue: cassandra_connect()...EXITING...')
+
 
     def run(self):
+        print('Queue: run()...ENTER...')
         self.cassandra_connect()
         self.channel.start_consuming()
+        print('Queue: run()...EXITING...')
 
     def join(self):
+        print('Queue: join()...ENTER...')
         super(DataProcess,self).terminate()
         self.connection.close(0)
         if self.cluster:
             self.cluster.shutdown()
+        print('Queue: join()...EXITING...')
 
             
 if __name__ == '__main__':
     p = DataProcess()
     print(__name__ + ': created process ', p)
-    time.sleep(10)    
+    time.sleep(120)    
     while p.is_alive():
         time.sleep(10)
         
