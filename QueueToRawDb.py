@@ -228,7 +228,8 @@ class DataProcess(Process):
             
 if __name__ == '__main__':
     p = DataProcess()
-    
+    print(__name__ + ': created process ', p)
+    time.sleep(10)    
     while p.is_alive():
         time.sleep(10)
         
