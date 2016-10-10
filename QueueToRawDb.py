@@ -44,7 +44,7 @@ class DataProcess(Process):
             try:
                 self.connection = pika.BlockingConnection(pika_params)
             except Exception as e:
-                logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+                logger.error("QueueToRawDb: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
                 time.sleep(1)
                 continue
             break
@@ -75,7 +75,7 @@ class DataProcess(Process):
         try:
             header, opt, data = unpack(body)
         except Exception as e:    
-            logger.error("Error unpacking data: %s" % (str(e)))
+            logger.error("QueueToRawDb: Error unpacking data: %s" % (str(e)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
             #time.sleep(1)
             #self.cassandra_connect()#TODO I don't know if this is neccessary
@@ -84,7 +84,7 @@ class DataProcess(Process):
         try:    
             data = un_gPickle(data)
         except Exception as e:    
-            logger.error("Error un_gPickle data: %s" % (str(e)))
+            logger.error("QueueToRawDb: Error un_gPickle data: %s" % (str(e)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
             #time.sleep(1)
             #self.cassandra_connect()#TODO I don't know if this is neccessary
@@ -95,7 +95,7 @@ class DataProcess(Process):
             # Send the data off to Cassandra
             self.cassandra_insert(header,data)
         except Exception as e:    
-            logger.error("Error inserting data: %s" % (str(e)))
+            logger.error("QueueToRawDb: Error inserting data: %s" % (str(e)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
             #time.sleep(1)
             #self.cassandra_connect()#TODO I don't know if this is neccessary
@@ -114,19 +114,19 @@ class DataProcess(Process):
         try:
             timestamp_int = int(data[4])
         except ValueError as e:
-            logger.error("(ValueError) Error converting timestamp (%s, type: %s) into int: %s (sender: %s plugin: %s)" % (data[4], str(type(data[4])), str(e), s_uniqid_str, data[1]))
+            logger.error("QueueToRawDb: (ValueError) Error converting timestamp (%s, type: %s) into int: %s (sender: %s plugin: %s)" % (data[4], str(type(data[4])), str(e), s_uniqid_str, data[1]))
             raise
         except Exception as e:
-            logger.error("(Exception) Error converting timestamp (%s) into int: %s (sender: %s plugin: %s)" % (data[4], str(e), s_uniqid_str, data[1]))
+            logger.error("QueueToRawDb: (Exception) Error converting timestamp (%s) into int: %s (sender: %s plugin: %s)" % (data[4], str(e), s_uniqid_str, data[1]))
             raise
         
         try:
             plugin_version_int = int(data[2])
         except ValueError as e:
-            logger.error("(ValueError) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
+            logger.error("QueueToRawDb: (ValueError) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
             raise
         except Exception as e:
-            logger.error("(Exception) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
+            logger.error("QueueToRawDb: (Exception) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
             raise
         
         if not self.session:
@@ -167,7 +167,7 @@ class DataProcess(Process):
         try:
             bound_statement = self.prepared_statement.bind(value_array)
         except Exception as e:
-            logger.error("Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
+            logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
             raise
     
         
@@ -179,10 +179,10 @@ class DataProcess(Process):
             try:
                 self.session.execute(bound_statement)
             except TypeError as e:    
-                 logger.error("(TypeError) Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                 logger.error("QueueToRawDb: (TypeError) Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
                  break
             except Exception as e:
-                logger.error("Error (type: %s) executing cassandra cql statement: %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
+                logger.error("QueueToRawDb: Error (type: %s) executing cassandra cql statement: %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
                 if "TypeError" in str(e):
                     logger.debug("detected TypeError, will ignore this message")
                     break
@@ -210,8 +210,8 @@ class DataProcess(Process):
             try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                 self.session = self.cluster.connect('waggle')
             except:
-                logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-                logger.warning("The process will attempt to re-connect at a later time.")
+                logger.warning("QueueToRawDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
+                logger.warning("QueueToRawDb: The process will attempt to re-connect at a later time.")
             if not self.session:
                  time.sleep(3)
 
