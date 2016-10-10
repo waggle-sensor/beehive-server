@@ -64,7 +64,7 @@ class DataProcess(Process):
         # Declare this process's queue
         self.channel.queue_declare("db-raw")
         
-        channel.queue_bind(exchange = 'data-pipeline-in',
+        self.channel.queue_bind(exchange = 'data-pipeline-in',
             queue = 'db-raw')
         
         try: 
