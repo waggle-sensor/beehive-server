@@ -230,18 +230,22 @@ if __name__ == "__main__":
             for i in range(0,len(router_procs)):
                 if not router_procs[i].is_alive():
                     router_procs[i] = WaggleRouter(node_table)
+                    router_procs[i].start()
 
             for i in range(0,len(data_procs)):
                 if not data_procs[i].is_alive():
                     data_procs[i] = DataProcess()
+                    data_procs[i].start()
 
             for i in range(0,len(reg_procs)):
                 if not reg_procs[i].is_alive():
                     reg_procs[i] = RegProcess(node_table)
+                    reg_procs[i].start()
 
             for i in range(0,len(util_procs)):
                 if not util_procs[i].is_alive():
                     util_procs[i] = UtilProcess()
+                    util_procs[i].start()
 
             time.sleep(3)
             
