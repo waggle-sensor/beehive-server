@@ -81,6 +81,37 @@ class DataProcess(Process):
         print('method = ', method)
         print('props = ', props)
         print('body = ', body)
+        try:
+            # if a field is mandatory, directly try to reference it - which will cause an exception
+            # and prevent insertion if it fails;  Otherwise, use "get" with a default value.
+            '''props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
+            '''
+            versionStrings  = props.app_id.split(':')
+            sampleDatetime  = datetime.utcfromtimestamp(props.timestamp)
+            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+            node_id         = props.reply_to
+
+            ingest_id       = props.get('ingest_id', 0)
+            plugin_name     = versionStrings[0]
+            plugin_version  = versionStrings[1]
+            plugin_instance = 0 if len(versionStrings < 3) else versionStrings[2]
+            timestamp       = int(props.timestamp)
+            parameter       = props.type
+            data            = body
+
+            print('   node_id = ',          node_id         )
+            print('   date = ',             sampleDate      )
+            print('   ingest_id = ',        ingest_id       )
+            print('   plugin_name = ',      plugin_name     )
+            print('   plugin_version = ',   plugin_version  )
+            print('   plugin_instance = ',  plugin_instance )
+            print('   timestamp = ',        timestamp       )
+            print('   parameter = ',        parameter       )
+            print('   data = ',             data            )
+        except:
+            print('ERROR computing data for insertion into database')
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+
         
         try:
             header, opt, data = unpack(body)
