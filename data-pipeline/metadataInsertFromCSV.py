@@ -50,6 +50,10 @@ if __name__ == '__main__':
                 print('TRUNCATE TABLE {};'.format(tableName))
             elif iRow == iRowTable + 1:     # get the headers
                 headers = row
+                if headers[0] == 'id' or headers[0] == 'node_config_id':
+                    print('BEFORE delete:', headers)
+                    del headers[0]
+                    print('AFTER  delete:', headers)
                 nColumns = len(headers)
             elif iRow == iRowTable + 2:     # skip
                 pass
