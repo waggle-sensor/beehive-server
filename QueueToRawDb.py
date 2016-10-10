@@ -111,7 +111,7 @@ class DataProcess(Process):
         except:
             print('ERROR computing data for insertion into database')
             ch.basic_ack(delivery_tag=method.delivery_tag)
-
+            return
         
         try:
             header, opt, data = unpack(body)
@@ -273,13 +273,13 @@ class DataProcess(Process):
 if __name__ == '__main__':
     p = DataProcess()
     p.start()
-    p.join()
-    '''
+    
     print(__name__ + ': created process ', p)
-    time.sleep(120)    
+    time.sleep(120)   
+    
     while p.is_alive():
         time.sleep(10)
         
     print(__name__ + ': process is dead, time to die')
+    p.join()
     
-    '''
