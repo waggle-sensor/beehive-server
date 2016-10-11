@@ -91,7 +91,7 @@ class DataProcess(Process):
             sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
             node_id         = props.reply_to
 
-            ingest_id       = props.get('ingest_id', 0)
+            ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
             plugin_name     = versionStrings[0]
             plugin_version  = versionStrings[1]
             plugin_instance = 0 if len(versionStrings < 3) else versionStrings[2]
