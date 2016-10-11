@@ -93,7 +93,7 @@ class DataProcess(Process):
         #print('ingest_id: ', ingest_id)
         plugin_name     = versionStrings[0]
         plugin_version  = versionStrings[1]
-        plugin_instance = 0 if len(versionStrings < 3) else versionStrings[2]
+        plugin_instance = 0 if len(versionStrings) < 3 else versionStrings[2]
         timestamp       = int(props.timestamp)
         parameter       = props.type
         data            = body
