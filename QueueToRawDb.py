@@ -87,37 +87,28 @@ class DataProcess(Process):
             '''props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
             '''
             versionStrings  = props.app_id.split(':')
-            print('versionStrings: ', versionStrings)
-            sampleDatetime  = datetime.utcfromtimestamp(props.timestamp)
-            print('sampleDatetime: ', sampleDatetime)
-
+            sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp)/1000.0)
             sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-            print('sampleDate: ', sampleDate)
-
             node_id         = props.reply_to
-            print('node_id: ', node_id)
-
             #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
-            print('ingest_id: ', ingest_id)
+            #print('ingest_id: ', ingest_id)
             plugin_name     = versionStrings[0]
             plugin_version  = versionStrings[1]
             plugin_instance = 0 if len(versionStrings < 3) else versionStrings[2]
-            print('plugin_name, plugin_version, plugin_instance : ', plugin_name, plugin_version, plugin_instance)
             timestamp       = int(props.timestamp)
-            print('timestamp: ', timestamp)
             parameter       = props.type
-            print('parameter: ', parameter)
             data            = body
 
-            print('   node_id = ',          node_id         )
-            print('   date = ',             sampleDate      )
-            print('   ingest_id = ',        ingest_id       )
-            print('   plugin_name = ',      plugin_name     )
-            print('   plugin_version = ',   plugin_version  )
-            print('   plugin_instance = ',  plugin_instance )
-            print('   timestamp = ',        timestamp       )
-            print('   parameter = ',        parameter       )
-            print('   data = ',             data            )
+            if True:
+                print('   node_id = ',          node_id         )
+                print('   date = ',             sampleDate      )
+                #print('   ingest_id = ',        ingest_id       )
+                print('   plugin_name = ',      plugin_name     )
+                print('   plugin_version = ',   plugin_version  )
+                print('   plugin_instance = ',  plugin_instance )
+                print('   timestamp = ',        timestamp       )
+                print('   parameter = ',        parameter       )
+                print('   data = ',             data            )
         except:
             print('ERROR computing data for insertion into database')
             ch.basic_ack(delivery_tag=method.delivery_tag)
