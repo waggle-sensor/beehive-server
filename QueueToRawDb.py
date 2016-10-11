@@ -10,7 +10,7 @@ from config import *
 import pika
 from waggle_protocol.protocol.PacketHandler import *
 from waggle_protocol.utilities.gPickler import *
-import logging, time
+import logging, datetime, time
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement
