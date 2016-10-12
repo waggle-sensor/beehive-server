@@ -224,13 +224,21 @@ def Test1():
 
     node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
     
-    statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    if False:
+        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
-    prepared_statement = session.prepare(statement)
-    
-    bound_statement = prepared_statement.bind(values)
-    
-    session.execute(bound_statement)
+        prepared_statement = session.prepare(statement)
+        
+        bound_statement = prepared_statement.bind(values)
+        
+        session.execute(bound_statement)
+    else:
+        statement = "SELECT * FROM sensor_data_raw;"
+
+        prepared_statement = session.prepare(statement)
+        
+        session.execute(prepared_statement)
+
     
     
     
