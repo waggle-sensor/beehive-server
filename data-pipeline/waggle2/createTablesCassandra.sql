@@ -10,7 +10,7 @@ CREATE TABLE sensor_data_raw (
     timestamp       TIMESTAMP,      -- milliseconds from epoch, integer
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
     data            ascii,          -- data from sensor, encoded to hex
-    PRIMARY KEY (node_id, date)
+    PRIMARY KEY  ((node_id, date), plugin_name, plugin_version, plugin_instance, timestamp, parameter)
 );
 
 CREATE TABLE sensor_data_decoded (
@@ -24,7 +24,7 @@ CREATE TABLE sensor_data_decoded (
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
     data            ascii,          -- data from sensor, encoded to hex
     unit            ascii,
-    PRIMARY KEY (node_id, date)
+    PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
 
 CREATE TABLE admin_messages (
@@ -38,5 +38,5 @@ CREATE TABLE admin_messages (
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
     data            ascii,          -- data from sensor, encoded to hex
     unit            ascii,
-    PRIMARY KEY (node_id, date)
+    PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
