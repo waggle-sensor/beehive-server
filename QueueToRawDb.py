@@ -213,18 +213,39 @@ class DataProcess(Process):
         self.connection.close(0)
         if self.cluster:
             self.cluster.shutdown()
-
             
+###################################################################################################            
+###################################################################################################            
+def Test1():
+    cluster = Cluster(contact_points=[CASSANDRA_HOST])
+    session = cluster.connect('waggle')
+    
+    values = ('001e06107d97', '2016-10-12', 'coresense', '3', 0, 1476299325616, 'frame', b'aa10bf008600001814d0d501821b2b02841a3d273904851b0a01819d058203630682003d0788000000000000000009821b5f0a8600bb0127007a0b841e3f21170c8200fd0d8200960e8205250f8204131082250d13821a3e20860004a3e2ae931d840b0613dd1e8500000000001f8602131e626d3415830004a11a830066941c830023b31983004724188380044417830005551b83001c6b21820ab722820af423820b3a24820b6c25820bab2689806d000c04130000002789000000000000000000ea55')
+
+    node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
+    
+    statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+
+    prepared_statement = session.prepare(statement)
+    
+    bound_statement = prepared_statement.bind(values)
+    
+    session.execute(bound_statement)
+    
+    
+    
 if __name__ == '__main__':
-    p = DataProcess()
-    p.start()
-    
-    print(__name__ + ': created process ', p)
-    time.sleep(120)   
-    
-    while p.is_alive():
-        time.sleep(10)
+    if True:
+        Test1()
+    else:
+        p = DataProcess()
+        p.start()
         
-    print(__name__ + ': process is dead, time to die')
-    p.join()
-    
+        print(__name__ + ': created process ', p)
+        time.sleep(120)   
+        
+        while p.is_alive():
+            time.sleep(10)
+            
+        print(__name__ + ': process is dead, time to die')
+        p.join()    
