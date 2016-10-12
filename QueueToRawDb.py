@@ -94,10 +94,10 @@ class DataProcess(Process):
             #print('ingest_id: ', ingest_id)
             plugin_name     = versionStrings[0]
             plugin_version  = versionStrings[1]
-            plugin_instance = 0 if (len(versionStrings) < 3) else versionStrings[2]
+            plugin_instance = '0' if (len(versionStrings) < 3) else versionStrings[2]
             timestamp       = int(props.timestamp)
             parameter       = props.type
-            data            = binascii.hexlify(body)
+            data            = str(binascii.hexlify(body))
             values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
             if False:
@@ -249,7 +249,7 @@ def Test1():
     
     
 if __name__ == '__main__':
-    if True:
+    if False:
         Test1()
     else:
         p = DataProcess()
