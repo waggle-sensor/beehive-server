@@ -154,6 +154,7 @@ class DataProcess(Process):
         logger.debug("inserting: %s" % (str(values)))
         try:
             bound_statement = self.prepared_statement.bind(values)
+            logger.debug('bound statement:', bound_statement)
         except Exception as e:
             logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
             raise
@@ -175,11 +176,11 @@ class DataProcess(Process):
                 self.cassandra_connect()
                 time.sleep(connection_retry_delay)
                 if connection_retry_delay < 10:
-                    connection_retry_delay = connection_retry_delay + 1
+                    connection_retry_delay += 1
                 continue
             
             break
-        
+        logger.debug('cassandra_insert() exiting...')
 
     def cassandra_connect(self):
         for iTry in range(5):
