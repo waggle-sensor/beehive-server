@@ -154,7 +154,6 @@ class DataProcess(Process):
         logger.debug("inserting: %s" % (str(values)))
         try:
             bound_statement = self.prepared_statement.bind(values)
-            logger.debug('bound statement:', bound_statement)
         except Exception as e:
             logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
             raise
