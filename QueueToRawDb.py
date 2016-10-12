@@ -77,107 +77,73 @@ class DataProcess(Process):
 
     def callback(self, ch, method, props, body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
-        print('######################################')
-        print('method = ', method)
-        print('props = ', props)
-        print('body = ', body)
-        # if a field is mandatory, directly try to reference it - which will cause an exception
-        # and prevent insertion if it fails;  Otherwise, use "get" with a default value.
-        '''props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
+        if False:
+            print('######################################')
+            print('method = ', method)
+            print('props = ', props)
+            print('body = ', body)
+        '''EXAMPLE: 
+            props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
-        versionStrings  = props.app_id.split(':')
-        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp)/1000.0)
-        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-        node_id         = props.reply_to
-        #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
-        #print('ingest_id: ', ingest_id)
-        plugin_name     = versionStrings[0]
-        plugin_version  = versionStrings[1]
-        plugin_instance = 0 if len(versionStrings) < 3 else versionStrings[2]
-        timestamp       = int(props.timestamp)
-        parameter       = props.type
-        data            = body
-
-        if True:
-            print('   node_id = ',          node_id         )
-            print('   date = ',             sampleDate      )
-            #print('   ingest_id = ',        ingest_id       )
-            print('   plugin_name = ',      plugin_name     )
-            print('   plugin_version = ',   plugin_version  )
-            print('   plugin_instance = ',  plugin_instance )
-            print('   timestamp = ',        timestamp       )
-            print('   parameter = ',        parameter       )
-            print('   data = ',             data            )
         try:
-            print('converted')
-        except:
-            print('ERROR computing data for insertion into database')
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            return
-        
-        try:
-            header, opt, data = unpack(body)
-        except Exception as e:    
-            logger.error("QueueToRawDb: Error unpacking data: %s" % (str(e)))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            #time.sleep(1)
-            #self.cassandra_connect()#TODO I don't know if this is neccessary
-            return
-            
-        try:    
-            data = un_gPickle(data)
-        except Exception as e:    
-            logger.error("QueueToRawDb: Error un_gPickle data: %s" % (str(e)))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            #time.sleep(1)
-            #self.cassandra_connect()#TODO I don't know if this is neccessary
-            return
+            versionStrings  = props.app_id.split(':')
+            sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+            node_id         = props.reply_to
+            #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
+            #print('ingest_id: ', ingest_id)
+            plugin_name     = versionStrings[0]
+            plugin_version  = versionStrings[1]
+            plugin_instance = 0 if (len(versionStrings) < 3) else versionStrings[2]
+            timestamp       = int(props.timestamp)
+            parameter       = props.type
+            data            = binascii.hexlify(body)
+            values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
-        if True:
-            print("Data: ", data)
-        else:
-            try:
-                print("Data: ", data)
-                # Send the data off to Cassandra
-                self.cassandra_insert(header,data)
-            except Exception as e:    
-                logger.error("QueueToRawDb: Error inserting data: %s" % (str(e)))
-                ch.basic_ack(delivery_tag=method.delivery_tag)
-                #time.sleep(1)
-                #self.cassandra_connect()#TODO I don't know if this is neccessary
-                return
+            if False:
+                print('   node_id = ',          node_id         )
+                print('   date = ',             sampleDate      )
+                #print('   ingest_id = ',        ingest_id       )
+                print('   plugin_name = ',      plugin_name     )
+                print('   plugin_version = ',   plugin_version  )
+                print('   plugin_instance = ',  plugin_instance )
+                print('   timestamp = ',        timestamp       )
+                print('   parameter = ',        parameter       )
+                print('   data = ',             data            )
+           
 
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-        self.numInserted += 1
-        if self.numInserted % 10 == 0:
-            logger.debug('  inserted {}'.format(self.numInserted))
-        logger.debug("message from %d for %d" % (header['s_uniqid'], header['r_uniqid']) )
-
-    def cassandra_insert(self, header, data):
-        s_uniqid_str = nodeid_int2hexstr(header["s_uniqid"])
-        
-        try:
-            timestamp_int = int(data[4])
-        except ValueError as e:
-            logger.error("QueueToRawDb: (ValueError) Error converting timestamp (%s, type: %s) into int: %s (sender: %s plugin: %s)" % (data[4], str(type(data[4])), str(e), s_uniqid_str, data[1]))
-            raise
         except Exception as e:
-            logger.error("QueueToRawDb: (Exception) Error converting timestamp (%s) into int: %s (sender: %s plugin: %s)" % (data[4], str(e), s_uniqid_str, data[1]))
-            raise
-        
+            values = None
+            logger.error('ERROR computing data for insertion into database: %s' % (str(e)))
+            logger.error(' method = {}'.format(repr(method)))
+            logger.error(' props  = {}'.format(repr(props)))
+            logger.error(' body   = {}'.format(repr(body)))
+
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
         try:
-            plugin_version_int = int(data[2])
-        except ValueError as e:
-            logger.error("QueueToRawDb: (ValueError) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
-            raise
-        except Exception as e:
-            logger.error("QueueToRawDb: (Exception) Error converting plugin_version (%s) into int: %s (sender: %s)" % (data[2], str(e), s_uniqid_str))
-            raise
-        
+            # Send the data off to Cassandra
+            self.cassandra_insert(values)
+        except Exception as e:    
+            logger.error("Error inserting data: %s" % (str(e)))
+            return
+
+        ch.basic_ack(delivery_tag = method.delivery_tag)
+        if values:
+            self.numInserted += 1
+            if self.numInserted % 2 == 0:
+                logger.debug('  inserted {}'.format(self.numInserted))
+
+    def cassandra_insert(self, values):
+    
         if not self.session:
             self.cassandra_connect()
+            
+        # unpack data from tuple into individual variables 
+        node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
         
-        statement = "INSERT INTO sensor_data_raw (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
@@ -185,34 +151,11 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
         
-        # TODO: Later we will fix this issue
-        idx = [0, 1, 3, 5, 6]
-        for i in idx:
-            if (type(data[i]) == bytes):
-                data[i] = data[i].decode('iso-8859-1')
-        
-        tmp = []
-        for entity in data[7]:
-            if (type(entity) == bytes):
-                tmp.append(entity.decode('iso-8859-1'))
-            else:
-                tmp.append(entity)
-        data[7] = tmp
-
-        # for entity in data[7]:
-        #     if (type(entity) == bytes):
-        #         entity = data[i].decode('iso-8859-1')
-        
-        if not data[3]:
-            data[3] = 'default'
-        
-        #                              date    plugin                      instance                sensor sensor_meta  data
-        value_array = [ s_uniqid_str, data[0], data[1], plugin_version_int, data[3], timestamp_int, data[5], data[6], data[7]]
-        logger.debug("inserting: %s" % (str(value_array)))
+        logger.debug("inserting: %s" % (str(values)))
         try:
-            bound_statement = self.prepared_statement.bind(value_array)
+            bound_statement = self.prepared_statement.bind(values)
         except Exception as e:
-            logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
+            logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
             raise
 
         connection_retry_delay = 1
@@ -221,10 +164,10 @@ class DataProcess(Process):
             try:
                 self.session.execute(bound_statement)
             except TypeError as e:    
-                 logger.error("QueueToRawDb: (TypeError) Error executing cassandra cql statement: %s -- value_array was: %s" % (str(e), str(value_array)) )
+                 logger.error("QueueToRawDb: (TypeError) Error executing cassandra cql statement: %s -- values was: %s" % (str(e), str(values)) )
                  break
             except Exception as e:
-                logger.error("QueueToRawDb: Error (type: %s) executing cassandra cql statement: %s -- value_array was: %s" % (type(e).__name__, str(e), str(value_array)) )
+                logger.error("QueueToRawDb: Error (type: %s) executing cassandra cql statement: %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
                 if "TypeError" in str(e):
                     logger.debug("detected TypeError, will ignore this message")
                     break
