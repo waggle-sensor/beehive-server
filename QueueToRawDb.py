@@ -143,7 +143,7 @@ class DataProcess(Process):
         # unpack data from tuple into individual variables 
         node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
         
-        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
                 self.prepared_statement = self.session.prepare(statement)
