@@ -125,7 +125,7 @@ class DataProcess(Process):
                 logger.debug('  inserted {}'.format(self.numInserted))
 
     # Parse a message of sensor data and convert to the values to be inserted into a row in the db
-    def ExtractValuesFromMessage_raw(props, body):
+    def ExtractValuesFromMessage_raw(self, props, body):
         versionStrings  = props.app_id.split(':')
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
@@ -153,7 +153,7 @@ class DataProcess(Process):
             print('   data = ',             data            )
         return values
                 
-    def ExtractValuesFromMessage_decoded(props, body):
+    def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
         versionStrings  = props.app_id.split(':')
