@@ -229,7 +229,7 @@ class DataProcess(Process):
     def cassandra_connect(self):
         bDone = False
         iTry = 0
-        while !bDone and (iTry < 5):
+        while not bDone and (iTry < 5):
             if self.cluster:
                 try:
                     self.cluster.shutdown()
@@ -240,7 +240,7 @@ class DataProcess(Process):
             self.session = None
             
             iTry2 = 0
-            while !bDone and (iTry2 < 5):
+            while not bDone and (iTry2 < 5):
                 iTry2 += 1
                 try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                     self.session = self.cluster.connect('waggle')
@@ -249,7 +249,7 @@ class DataProcess(Process):
                 except:
                     logger.warning("QueueToDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
                     logger.warning("QueueToDb: The process will attempt to re-connect at a later time.")
-                if !bDone:
+                if not bDone:
                      time.sleep(3)
 
     def run(self):
