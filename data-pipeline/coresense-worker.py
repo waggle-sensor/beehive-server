@@ -1,92 +1,62 @@
-#!/usr/bin/env python3
+import os.path
 import pika
-from base64 import b64decode
-from coresense import spec as sensorinfo
-import coresense.format
-from datetime import datetime
+import ssl
+from waggle.coresense.utils import decode_frame
+from urllib.parse import urlencode
 import json
 
 
-def decode_coresense_frame(frame):
-    if frame[0] != 0xAA:
-        raise RuntimeError('invalid frame start {:02X}'.format(frame[0]))
+plugin = 'coresense:3'
 
-    if frame[-1] != 0x55:
-        raise RuntimeError('invalid frame end {:02X}'.format(frame[-1]))
+url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+    'ssl': 't',
+    'ssl_options': {
+        'certfile': os.path.abspath('SSL/node/cert.pem'),
+        'keyfile': os.path.abspath('SSL/node/key.pem'),
+        'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+        'cert_reqs': ssl.CERT_REQUIRED
+    }
+}))
 
-    if frame[2] + 5 != len(frame):
-        raise RuntimeError('inconsistent frame length')
-
-    return decode_coresense_data(frame[3:-3])
-
-
-def decode_coresense_data(data):
-    for sensor_id, sensor_data in get_data_subpackets(data):
-        try:
-            name, fmt, fields = sensorinfo[sensor_id]
-            data = dict(zip(fields, coresense.format.unpack(fmt, sensor_data)))
-            yield name, data
-        except KeyError:
-            channel.basic_publish(exchange='x-logs',
-                                  routing_key='error',
-                                  body='unknown sensor {:02X}'.format(sensor_id))
-
-
-def get_data_subpackets(data):
-    subpackets = []
-
-    offset = 0
-
-    while offset < len(data):
-        sensor_id = data[offset + 0]
-        length = data[offset + 1] & 0x7F
-        valid = data[offset + 1] & 0x80 == 0x80
-        offset += 2
-
-        sensor_data = data[offset:offset + length]
-        offset += length
-
-        if valid:
-            subpackets.append((sensor_id, sensor_data))
-
-    if offset != len(data):
-        raise RuntimeError('subpacket lengths do not total to payload length')
-
-    return subpackets
-
-
-def callback(ch, method, properties, body):
-    headers = properties.headers
-
-    if headers['sensor'] == ['raw', 'data']:
-        for sensor, data in decode_coresense_data(b64decode(body)):
-            payload = {
-                'node_id': '00A',
-                'node_config': '123abc',
-                'datetime': datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f'),
-                'sensor': sensor,
-                'data': data
-            }
-
-            channel.basic_publish(exchange='x-plugins-out',
-                                  routing_key='',
-                                  # routing_key='envsense.2',
-                                  body=json.dumps(payload))
-
-
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.URLParameters(url))
 
 channel = connection.channel()
 
-channel.exchange_declare(exchange='x-logs', type='direct')
+channel.exchange_declare(exchange='plugins-in',
+                         exchange_type='direct')
 
-channel.exchange_declare(exchange='x-plugins-in', type='direct')
-channel.exchange_declare(exchange='x-plugins-out', type='fanout')
+channel.exchange_bind(source='data-pipeline-in',
+                      destination='plugins-in')
 
-channel.queue_declare(queue='envsense.2')
-channel.queue_bind(exchange='x-plugins-in',
-                   queue='envsense.2',
-                   routing_key='envsense.2')
+channel.queue_declare(queue=plugin,
+                      durable=True)
 
-channel.basic_consume(callback, queue='envsense.2', no_ack=True)
+channel.queue_bind(queue=plugin,
+                   exchange='plugins-in',
+                   routing_key=plugin)
+
+channel.exchange_declare(exchange='plugins-out',
+                         exchange_type='fanout')
+
+
+def callback(ch, method, properties, body):
+    for sensor, values in decode_frame(body).items():
+        props = pika.BasicProperties(
+            app_id=properties.app_id,
+            timestamp=properties.timestamp,
+            reply_to=properties.reply_to,
+            type=sensor,
+            content_type='text/json',
+        )
+
+        channel.basic_publish(properties=props,
+                              exchange='plugins-out',
+                              routing_key=method.routing_key,
+                              body=json.dumps(values))
+
+
+channel.basic_consume(callback,
+                      queue=plugin,
+                      no_ack=True)
+
 channel.start_consuming()
