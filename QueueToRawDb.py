@@ -19,7 +19,6 @@ from cassandra.cqlengine.columns import Ascii
 from cassandra.cqlengine.usertype import UserType
 
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -27,14 +26,26 @@ logger.setLevel(logging.DEBUG)
 class DataProcess(Process):
     """
         This process handles all data submissions
+        is_database_raw is a bool, if True, will write data to raw-db, else to decoded-db)
     """
 
-    def __init__(self):
+    def __init__(self, is_database_raw):
         """
             Starts up the Data handling Process
         """
         super(DataProcess,self).__init__()
         
+        if is_database_raw:
+            self.input_exchange = 'data-pipeline-in'
+            self.queue          = 'db-raw'
+            self.statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_raw
+        else:  
+            self.input_exchange = 'plugins-out'
+            self.queue          = 'db-decoded'
+            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
+            
         logger.info("Initializing DataProcess")
         
         # Set up the Rabbit connection
@@ -62,13 +73,13 @@ class DataProcess(Process):
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
-        self.channel.queue_declare("db-raw")
+        self.channel.queue_declare(self.queue)
         
-        self.channel.queue_bind(exchange = 'data-pipeline-in',
-            queue = 'db-raw')
+        self.channel.queue_bind(exchange = self.input_exchange,
+            queue = self.queue)
         
         try: 
-            self.channel.basic_consume(self.callback, queue='db-raw')
+            self.channel.basic_consume(self.callback, queue=self.queue)
         except KeyboardInterrupt:
            logger.info("exiting.")
            sys.exit(0)
@@ -86,39 +97,13 @@ class DataProcess(Process):
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
-            versionStrings  = props.app_id.split(':')
-            sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
-            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-            node_id         = props.reply_to
-            #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
-            #print('ingest_id: ', ingest_id)
-            plugin_name     = versionStrings[0]
-            plugin_version  = versionStrings[1]
-            plugin_instance = '0' if (len(versionStrings) < 3) else versionStrings[2]
-            timestamp       = int(props.timestamp)
-            parameter       = props.type
-            data            = str(binascii.hexlify(body))
-            values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
-
-            if False:
-                print('   node_id = ',          node_id         )
-                print('   date = ',             sampleDate      )
-                #print('   ingest_id = ',        ingest_id       )
-                print('   plugin_name = ',      plugin_name     )
-                print('   plugin_version = ',   plugin_version  )
-                print('   plugin_instance = ',  plugin_instance )
-                print('   timestamp = ',        timestamp       )
-                print('   parameter = ',        parameter       )
-                print('   data = ',             data            )
-           
-
+            values = self.function_ExtractValuesFromMessage(props, body)
         except Exception as e:
             values = None
             logger.error('ERROR computing data for insertion into database: %s' % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
-
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
@@ -135,18 +120,74 @@ class DataProcess(Process):
             if self.numInserted % 2 == 0:
                 logger.debug('  inserted {}'.format(self.numInserted))
 
+    # Parse a message of sensor data and convert to the values to be inserted into a row in the db
+    def ExtractValuesFromMessage_raw(props, body):
+        versionStrings  = props.app_id.split(':')
+        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+        node_id         = props.reply_to
+        #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
+        #print('ingest_id: ', ingest_id)
+        plugin_name     = versionStrings[0]
+        plugin_version  = versionStrings[1]
+        plugin_instance = '0' if (len(versionStrings) < 3) else versionStrings[2]
+        timestamp       = int(props.timestamp)
+        parameter       = props.type
+        data            = str(binascii.hexlify(body))
+
+        values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
+
+        if False:
+            print('   node_id = ',          node_id         )
+            print('   date = ',             sampleDate      )
+            #print('   ingest_id = ',        ingest_id       )
+            print('   plugin_name = ',      plugin_name     )
+            print('   plugin_version = ',   plugin_version  )
+            print('   plugin_instance = ',  plugin_instance )
+            print('   timestamp = ',        timestamp       )
+            print('   parameter = ',        parameter       )
+            print('   data = ',             data            )
+        return values
+                
+    def ExtractValuesFromMessage_decoded(props, body):
+        #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
+        versionStrings  = props.app_id.split(':')
+        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+        node_id         = props.reply_to
+        #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
+        #print('ingest_id: ', ingest_id)
+        meta_id         = props.meta_id
+        timestamp       = int(props.timestamp)
+        data_set        = props.data_set
+        sensor          = props.sensor
+        parameter       = props.parameter
+        data            = str(binascii.hexlify(body))
+        unit            = props.unit
+
+        values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
+
+        if False:
+            print('   node_id = ',          node_id     )
+            print('   date = ',             sampleDate  )
+            #print('   ingest_id = ',        ingest_id   )
+            print('   meta_id = ',          meta_id     )
+            print('   timestamp = ',        timestamp   )
+            print('   data_set = ',         data_set    )
+            print('   sensor = ',           sensor      )
+            print('   parameter = ',        parameter   )
+            print('   data = ',             data        )
+            print('   unit = ',             unit        )
+                
     def cassandra_insert(self, values):
     
         if not self.session:
             self.cassandra_connect()
             
-        # unpack data from tuple into individual variables 
-        node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
-        
-        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
         if not self.prepared_statement:
             try: 
-                self.prepared_statement = self.session.prepare(statement)
+                self.prepared_statement = self.session.prepare(self.statement)
             except Exception as e:
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
@@ -203,7 +244,6 @@ class DataProcess(Process):
                 if not self.session:
                      time.sleep(3)
 
-
     def run(self):
         self.cassandra_connect()
         self.channel.start_consuming()
@@ -214,52 +254,22 @@ class DataProcess(Process):
         if self.cluster:
             self.cluster.shutdown()
             
-###################################################################################################            
-###################################################################################################            
-def Test1():
-    cluster = Cluster(contact_points=[CASSANDRA_HOST])
-    session = cluster.connect('waggle')
-    
-    values = ('001e06107d97', '2016-10-12', 'coresense', '3', '0', 1476299325616, 'frame', 'aa10bf008600001814d0d501821b2b02841a3d273904851b0a01819d058203630682003d0788000000000000000009821b5f0a8600bb0127007a0b841e3f21170c8200fd0d8200960e8205250f8204131082250d13821a3e20860004a3e2ae931d840b0613dd1e8500000000001f8602131e626d3415830004a11a830066941c830023b31983004724188380044417830005551b83001c6b21820ab722820af423820b3a24820b6c25820bab2689806d000c04130000002789000000000000000000ea55')
-
-    node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data = values
-    
-    if True:
-        statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-
-        prepared_statement = session.prepare(statement)
-        
-        bound_statement = prepared_statement.bind(values)
-        
-        session.execute(bound_statement)
-    else:
-        statement = "SELECT * FROM sensor_data_raw;"
-
-        prepared_statement = session.prepare(statement)
-        
-        print('#############################################')
-        print('#############################################')
-
-        for row in session.execute(prepared_statement):
-            print(row)
-
-        print('#############################################')
-
-    
-    
-    
+   
 if __name__ == '__main__':
-    if False:
-        Test1()
-    else:
-        p = DataProcess()
-        p.start()
+    argParser = argparse.ArgumentParser()
+    argParser.add_argument('database', choices = ['raw', 'decoded'], 
+        help = 'which database the data is flowing to')
+    args = argParser.parse_args()
+    is_database_raw = args.database == 'raw'
+    
+    p = DataProcess(is_database_raw)
+    p.start()
+    
+    print(__name__ + ': created process ', p)
+    time.sleep(10)   
+    
+    while p.is_alive():
+        time.sleep(10)
         
-        print(__name__ + ': created process ', p)
-        time.sleep(120)   
-        
-        while p.is_alive():
-            time.sleep(10)
-            
-        print(__name__ + ': process is dead, time to die')
-        p.join()    
+    print(__name__ + ': process is dead, time to die')
+    p.join()    
