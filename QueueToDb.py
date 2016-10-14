@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# dataprocess.py
+# QueueToDb.py
 
 import argparse
 import binascii
@@ -59,7 +59,7 @@ class DataProcess(Process):
             try:
                 self.connection = pika.BlockingConnection(pika_params)
             except Exception as e:
-                logger.error("QueueToRawDb: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+                logger.error("QueueToDb: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
                 time.sleep(1)
                 continue
             break
@@ -200,7 +200,7 @@ class DataProcess(Process):
         try:
             bound_statement = self.prepared_statement.bind(values)
         except Exception as e:
-            logger.error("QueueToRawDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
+            logger.error("QueueToDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
             raise
 
         connection_retry_delay = 1
@@ -209,10 +209,10 @@ class DataProcess(Process):
             try:
                 self.session.execute(bound_statement)
             except TypeError as e:    
-                 logger.error("QueueToRawDb: (TypeError) Error executing cassandra cql statement: %s -- values was: %s" % (str(e), str(values)) )
+                 logger.error("QueueToDb: (TypeError) Error executing cassandra cql statement: %s -- values was: %s" % (str(e), str(values)) )
                  break
             except Exception as e:
-                logger.error("QueueToRawDb: Error (type: %s) executing cassandra cql statement: %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
+                logger.error("QueueToDb: Error (type: %s) executing cassandra cql statement: %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
                 if "TypeError" in str(e):
                     logger.debug("detected TypeError, will ignore this message")
                     break
@@ -227,7 +227,9 @@ class DataProcess(Process):
         logger.debug('cassandra_insert() exiting...')
 
     def cassandra_connect(self):
-        for iTry in range(5):
+        bDone = False
+        iTry = 0
+        while !bDone and (iTry < 5):
             if self.cluster:
                 try:
                     self.cluster.shutdown()
@@ -238,14 +240,16 @@ class DataProcess(Process):
             self.session = None
             
             iTry2 = 0
-            while not self.session and iTry2 < 5:
+            while !bDone and (iTry2 < 5):
                 iTry2 += 1
                 try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
                     self.session = self.cluster.connect('waggle')
+                    if self.session:
+                        bDone = True
                 except:
-                    logger.warning("QueueToRawDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-                    logger.warning("QueueToRawDb: The process will attempt to re-connect at a later time.")
-                if not self.session:
+                    logger.warning("QueueToDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
+                    logger.warning("QueueToDb: The process will attempt to re-connect at a later time.")
+                if !bDone:
                      time.sleep(3)
 
     def run(self):
