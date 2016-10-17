@@ -157,6 +157,7 @@ class DataProcess(Process):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
         data = json.loads(body.decode())
+        print(' DATA items = ', data.items())
         for ik, k in enumerate(data.keys()):
             sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
             node_id         = props.reply_to
