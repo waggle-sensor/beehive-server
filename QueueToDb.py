@@ -160,19 +160,23 @@ class DataProcess(Process):
         print(' DATA items = ', data.items())
         theKeys = list(data.keys())
         print(' KEYS = ', theKeys)
+        
+        # same for each parameter:value pair
+        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+        node_id         = props.reply_to
+        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+        ingest_id       = 0 # props.ingest_id ##props.get('ingest_id', 0)
+        #print('ingest_id: ', ingest_id)
+        meta_id         = 0 #props.meta_id
+        timestamp       = int(props.timestamp)
+        data_set        = props.app_id
+        sensor          = props.type
+        unit            = 'NO_UNIT' #props.unit
+        
         for ik, k in enumerate(theKeys):
-            sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
-            node_id         = props.reply_to
-            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-            ingest_id       = 0 # props.ingest_id ##props.get('ingest_id', 0)
-            #print('ingest_id: ', ingest_id)
-            meta_id         = 0 #props.meta_id
-            timestamp       = int(props.timestamp)
-            data_set        = props.app_id
-            sensor          = props.type
+
             parameter       = k
             data            = str(data[k])
-            unit            = 'NO_UNIT' #props.unit
 
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
