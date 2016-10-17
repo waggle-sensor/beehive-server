@@ -4,6 +4,8 @@ import ssl
 from urllib.parse import urlencode
 
 
+plugin = 'example:1'
+
 url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
     'ssl': 't',
     'ssl_options': {
@@ -23,8 +25,8 @@ channel = connection.channel()
 channel.exchange_declare(exchange='plugins.in', exchange_type='direct')
 channel.exchange_bind(source='data-pipeline-in', destination='plugins.in')
 
-channel.queue_declare(queue='example:1', durable=True)
-channel.queue_bind(queue='example:1', exchange='plugins.in', routing_key='example:1')
+channel.queue_declare(queue='plugin', durable=True)
+channel.queue_bind(queue=plugin, exchange='plugins.in', routing_key=plugin)
 
 
 def callback(ch, method, properties, body):
@@ -36,7 +38,7 @@ def callback(ch, method, properties, body):
 
 
 channel.basic_consume(callback,
-                      queue='example:1',
+                      queue=plugin,
                       no_ack=True)
 
 channel.start_consuming()
