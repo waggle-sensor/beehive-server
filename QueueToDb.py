@@ -175,9 +175,14 @@ class DataProcess(Process):
         for ik, k in enumerate(theKeys):
 
             print(' ik={}'.format(ik), ' KEYS = ', theKeys)
+            print('   k=', k)
+            print('   type(k)=', type(k))
+            print('   type(data) = ', type(data))
+            print('   data[k]=', data[k])
+            print('   str(data[k])=', str(data[k]))
 
             parameter       = k
-            data            = str(data[k])
+            datum           = str(data[k])
 
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
@@ -191,7 +196,7 @@ class DataProcess(Process):
                 print('   data_set = ',         data_set    )
                 print('   sensor = ',           sensor      )
                 print('   parameter = ',        parameter   )
-                print('   data = ',             data        )
+                print('   data = ',             datum       )
                 print('   unit = ',             unit        )
             yield values
             
