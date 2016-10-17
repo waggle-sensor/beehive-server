@@ -103,8 +103,10 @@ class DataProcess(Process):
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
-            for values in self.function_ExtractValuesFromMessage(props, body):
+            for iValues, values in enumerate(self.function_ExtractValuesFromMessage(props, body)):
                 # Send the data off to Cassandra
+                print('iValues =', iValues)
+                print(' values =',  values)
                 self.cassandra_insert(values)
         except Exception as e:
             values = None
