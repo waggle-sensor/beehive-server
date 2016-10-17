@@ -177,7 +177,6 @@ class DataProcess(Process):
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
             if self.verbosity > 0:
-                print('  key #{}'.format(ik))
                 print('   node_id = ',          node_id     )
                 print('   date = ',             sampleDate  )
                 print('   ingest_id = ',        ingest_id   )
