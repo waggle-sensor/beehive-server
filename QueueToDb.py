@@ -159,7 +159,6 @@ class DataProcess(Process):
         data = json.loads(body.decode())
         print(' DATA items = ', data.items())
         theKeys = list(data.keys())
-        print(' KEYS = ', theKeys)
         
         # same for each parameter:value pair
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
@@ -174,6 +173,8 @@ class DataProcess(Process):
         unit            = 'NO_UNIT' #props.unit
         
         for ik, k in enumerate(theKeys):
+
+            print(' ik={}'.format(ik), ' KEYS = ', theKeys)
 
             parameter       = k
             data            = str(data[k])
