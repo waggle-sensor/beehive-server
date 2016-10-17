@@ -33,7 +33,7 @@ class DataProcess(Process):
         is_database_raw is a bool, if True, will write data to raw-db, else to decoded-db)
     """
 
-    def __init__(self, is_database_raw):
+    def __init__(self, is_database_raw, verbosity = 0):
         """
             Starts up the Data handling Process
         """
@@ -66,6 +66,7 @@ class DataProcess(Process):
             
     
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
+        self.verbosity = verbosity
         self.numInserted = 0
         self.session = None
         self.cluster = None
@@ -92,7 +93,7 @@ class DataProcess(Process):
 
     def callback(self, ch, method, props, body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
-        if False:
+        if self.verbosity > 1:
             print('######################################')
             print('method = ', method)
             print('props = ', props)
@@ -141,7 +142,8 @@ class DataProcess(Process):
 
         values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
-        if False:
+        if self.verbosity > 0:
+:
             print('   node_id = ',          node_id         )
             print('   date = ',             sampleDate      )
             #print('   ingest_id = ',        ingest_id       )
@@ -172,7 +174,7 @@ class DataProcess(Process):
 
         values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
-        if False:
+        if self.verbosity > 0:
             print('   node_id = ',          node_id     )
             print('   date = ',             sampleDate  )
             #print('   ingest_id = ',        ingest_id   )
@@ -267,10 +269,11 @@ if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
     argParser.add_argument('database', choices = ['raw', 'decoded'], 
         help = 'which database the data is flowing to')
+    argParser.add_argument('--verbose', '-v', action='count')
     args = argParser.parse_args()
     is_database_raw = args.database == 'raw'
     
-    p = DataProcess(is_database_raw)
+    p = DataProcess(is_database_raw, verbosity = args.verbose)
     p.start()
     
     print(__name__ + ': created process ', p)
