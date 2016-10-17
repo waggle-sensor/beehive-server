@@ -158,8 +158,9 @@ class DataProcess(Process):
 
         data = json.loads(body.decode())
         print(' DATA items = ', data.items())
-        print(' KEYS = ', data.keys())
-        for ik, k in enumerate(data.keys()):
+        theKeys = list(data.keys())
+        print(' KEYS = ', theKeys)
+        for ik, k in enumerate(theKeys):
             sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
             node_id         = props.reply_to
             sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
