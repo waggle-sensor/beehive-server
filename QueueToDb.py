@@ -48,7 +48,7 @@ class DataProcess(Process):
         else:  
             self.input_exchange = 'plugins-out'
             self.queue          = 'db-decoded'
-            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
             
         logger.info("Initializing DataProcess")
@@ -154,11 +154,11 @@ class DataProcess(Process):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
         data = json.loads(body.decode())
-        for k in data.keys():
+        for ik, k in enumerate(data.keys()):
             sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
-            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
             node_id         = props.reply_to
-            #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
+            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+            ingest_id       = 0 # props.ingest_id ##props.get('ingest_id', 0)
             #print('ingest_id: ', ingest_id)
             meta_id         = 0 #props.meta_id
             timestamp       = int(props.timestamp)
@@ -168,12 +168,13 @@ class DataProcess(Process):
             data            = str(data[k])
             unit            = 'NO_UNIT' #props.unit
 
-            values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
+            values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
             if self.verbosity > 0:
+                print('  key #{}'.format(ik))
                 print('   node_id = ',          node_id     )
                 print('   date = ',             sampleDate  )
-                #print('   ingest_id = ',        ingest_id   )
+                print('   ingest_id = ',        ingest_id   )
                 print('   meta_id = ',          meta_id     )
                 print('   timestamp = ',        timestamp   )
                 print('   data_set = ',         data_set    )
