@@ -157,19 +157,18 @@ class DataProcess(Process):
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-        versionStrings  = props.app_id.split(':')
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
         node_id         = props.reply_to
         #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
         #print('ingest_id: ', ingest_id)
-        meta_id         = props.meta_id
+        meta_id         = 0 #props.meta_id
         timestamp       = int(props.timestamp)
-        data_set        = props.data_set
+        data_set        = props.app_id
         sensor          = props.sensor
         parameter       = props.parameter
         data            = str(binascii.hexlify(body))
-        unit            = props.unit
+        unit            = 'NO_UNIT' #props.unit
 
         values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
