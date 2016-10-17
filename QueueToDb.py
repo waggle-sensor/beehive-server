@@ -170,7 +170,7 @@ class DataProcess(Process):
         sensor          = props.type
         unit            = 'NO_UNIT' #props.unit
         
-        for k in enumerate(dictData.keys()):
+        for k in dictData.keys():
             parameter      = k
             data           = str(dictData[k])
 
