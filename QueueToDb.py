@@ -11,6 +11,7 @@ from cassandra.cqlengine.columns import Ascii
 from cassandra.cqlengine.usertype import UserType
 from config import *
 import datetime
+import json
 import logging 
 from multiprocessing import Process, Manager
 import pika
