@@ -143,7 +143,6 @@ class DataProcess(Process):
         values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
         if self.verbosity > 0:
-:
             print('   node_id = ',          node_id         )
             print('   date = ',             sampleDate      )
             #print('   ingest_id = ',        ingest_id       )
