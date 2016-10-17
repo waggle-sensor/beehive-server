@@ -5,6 +5,13 @@ import os
 from urllib.parse import urlencode
 import ssl
 import re
+import json
+from datetime import datetime
+from pprint import pprint
+
+
+def parse_node_list(table):
+    return set(map(str.strip, table.strip().splitlines()))
 
 
 def parse_mapping(table):
@@ -115,42 +122,44 @@ intensity
 intensity
 
 BMI160
-accel_x
-accel_y
-accel_z
-orient_x
-orient_y
-orient_z
+acceleration.x > accel_x
+acceleration.y > accel_y
+acceleration.z > accel_z
+orientation.x > orient_x
+orientation.y > orient_y
+orientation.z > orient_z
 ''')
 
-allowed_nodes = set([
-    '001e06107d97',
-])
+# do same kind of mapping as above node_id > external_id
+
+allowed_nodes = parse_node_list('''
+001e06107d97
+''')
 
 # setup rabbitmq client
-# url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-#     'ssl': 't',
-#     'ssl_options': {
-#         'certfile': os.path.abspath('SSL/node/cert.pem'),
-#         'keyfile': os.path.abspath('SSL/node/key.pem'),
-#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-#         'cert_reqs': ssl.CERT_REQUIRED
-#     }
-# }))
-#
-# connection = pika.BlockingConnection(pika.URLParameters(url))
-#
-# channel = connection.channel()
-#
-# channel.exchange_declare(exchange='plugins-out',
-#                          exchange_type='fanout',
-#                          durable=True)
-#
-# channel.queue_declare(queue='plenario',
-#                       durable=True)
-#
-# channel.queue_bind(queue='plenario',
-#                    exchange='plugins-out')
+url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+    'ssl': 't',
+    'ssl_options': {
+        'certfile': os.path.abspath('SSL/node/cert.pem'),
+        'keyfile': os.path.abspath('SSL/node/key.pem'),
+        'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+        'cert_reqs': ssl.CERT_REQUIRED
+    }
+}))
+
+connection = pika.BlockingConnection(pika.URLParameters(url))
+
+channel = connection.channel()
+
+channel.exchange_declare(exchange='plugins-out',
+                         exchange_type='fanout',
+                         durable=True)
+
+channel.queue_declare(queue='plenario',
+                      durable=True)
+
+channel.queue_bind(queue='plenario',
+                   exchange='plugins-out')
 
 # setup kinesis client
 # kinesis_client = boto3.client(
@@ -160,22 +169,35 @@ allowed_nodes = set([
 #     region_name='us-east-1',
 # )
 
-#
-# def callback(ch, method, properties, body):
-#     node_id = properties.reply_to
-#     sensor = properties.type
-#
-#     if node_id in allowed_nodes:
-#         print(sensor)
-#         print(body.decode())
-#         print()
-#
-#     # kinesis_client.put_record(**{
-#     #     'StreamName': 'ObservationStream',
-#     #     'PartitionKey': 'arbitrary',
-#     #     'Data': body.decode()
-#     # })
-#
-#
-# channel.basic_consume(callback, queue='plenario', no_ack=True)
-# channel.start_consuming()
+
+def map_values(sensor, values):
+    for key, value in values.items():
+        if key in mapping[sensor]:
+            yield mapping[sensor][key], value
+
+
+def callback(ch, method, properties, body):
+    node_id = properties.reply_to
+    sensor = properties.type
+    timestamp = datetime.fromtimestamp(properties.timestamp / 1000)
+
+    if node_id in allowed_nodes and sensor in mapping:
+        payload = {
+            'meta_id': 'irrelevant',
+            'node_id': node_id,
+            'sensor': sensor,
+            'data': dict(map_values(sensor, json.loads(body.decode()))),
+            'datetime': timestamp.strftime('%Y-%m-%dT%H:%M:%S'),
+        }
+        pprint(payload)
+        print()
+
+    # kinesis_client.put_record(**{
+    #     'StreamName': 'ObservationStream',
+    #     'PartitionKey': 'arbitrary',
+    #     'Data': body.decode()
+    # })
+
+
+channel.basic_consume(callback, queue='plenario', no_ack=True)
+channel.start_consuming()
