@@ -36,7 +36,8 @@ channel.queue_bind(queue=plugin,
                    routing_key=plugin)
 
 channel.exchange_declare(exchange='plugins-out',
-                         exchange_type='fanout')
+                         exchange_type='fanout',
+                         durable=True)
 
 
 def callback(ch, method, properties, body):
