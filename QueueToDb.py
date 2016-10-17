@@ -102,30 +102,25 @@ class DataProcess(Process):
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
-            values = self.function_ExtractValuesFromMessage(props, body)
+            for values in self.function_ExtractValuesFromMessage(props, body):
+                # Send the data off to Cassandra
+                self.cassandra_insert(values)
         except Exception as e:
             values = None
-            logger.error('ERROR computing data for insertion into database: %s' % (str(e)))
+            logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
-        try:
-            # Send the data off to Cassandra
-            self.cassandra_insert(values)
-        except Exception as e:    
-            logger.error("Error inserting data: %s" % (str(e)))
-            return
-
         ch.basic_ack(delivery_tag = method.delivery_tag)
         if values:
             self.numInserted += 1
             if self.numInserted % 2 == 0:
-                logger.debug('  inserted {}'.format(self.numInserted))
+                logger.debug('  inserted {} raw samples of data'.format(self.numInserted))
 
-    # Parse a message of sensor data and convert to the values to be inserted into a row in the db
+    # Parse a message of sensor data and convert to the values to be inserted into a row in the db.  NOTE: this is a generator - because the decoded messages produce multiple rows of data.
     def ExtractValuesFromMessage_raw(self, props, body):
         versionStrings  = props.app_id.split(':')
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
@@ -152,38 +147,41 @@ class DataProcess(Process):
             print('   timestamp = ',        timestamp       )
             print('   parameter = ',        parameter       )
             print('   data = ',             data            )
-        return values
+        yield values
                 
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
-        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-        node_id         = props.reply_to
-        #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
-        #print('ingest_id: ', ingest_id)
-        meta_id         = 0 #props.meta_id
-        timestamp       = int(props.timestamp)
-        data_set        = props.app_id
-        sensor          = props.sensor
-        parameter       = props.parameter
-        data            = str(binascii.hexlify(body))
-        unit            = 'NO_UNIT' #props.unit
+        data = json.loads(body.decode())
+        for k in data.keys():
+            sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+            sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+            node_id         = props.reply_to
+            #ingest_id       = props.ingest_id ##props.get('ingest_id', 0)
+            #print('ingest_id: ', ingest_id)
+            meta_id         = 0 #props.meta_id
+            timestamp       = int(props.timestamp)
+            data_set        = props.app_id
+            sensor          = props.type
+            parameter       = k
+            data            = str(data[k])
+            unit            = 'NO_UNIT' #props.unit
 
-        values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
+            values = (node_id, sampleDate, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
-        if self.verbosity > 0:
-            print('   node_id = ',          node_id     )
-            print('   date = ',             sampleDate  )
-            #print('   ingest_id = ',        ingest_id   )
-            print('   meta_id = ',          meta_id     )
-            print('   timestamp = ',        timestamp   )
-            print('   data_set = ',         data_set    )
-            print('   sensor = ',           sensor      )
-            print('   parameter = ',        parameter   )
-            print('   data = ',             data        )
-            print('   unit = ',             unit        )
-                
+            if self.verbosity > 0:
+                print('   node_id = ',          node_id     )
+                print('   date = ',             sampleDate  )
+                #print('   ingest_id = ',        ingest_id   )
+                print('   meta_id = ',          meta_id     )
+                print('   timestamp = ',        timestamp   )
+                print('   data_set = ',         data_set    )
+                print('   sensor = ',           sensor      )
+                print('   parameter = ',        parameter   )
+                print('   data = ',             data        )
+                print('   unit = ',             unit        )
+            yield values
+            
     def cassandra_insert(self, values):
     
         if not self.session:
