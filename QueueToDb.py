@@ -108,6 +108,7 @@ class DataProcess(Process):
                 print('iValues =', iValues)
                 print(' values =',  values)
                 self.cassandra_insert(values)
+                print('-------AFTER inserting--------')
         except Exception as e:
             values = None
             logger.error("Error inserting data: %s" % (str(e)))
