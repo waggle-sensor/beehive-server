@@ -196,7 +196,7 @@ class DataProcess(Process):
                 print('   data_set = ',         data_set    )
                 print('   sensor = ',           sensor      )
                 print('   parameter = ',        parameter   )
-                print('   data = ',             datum       )
+                print('   data = ',             data        )
                 print('   unit = ',             unit        )
             yield values
             
