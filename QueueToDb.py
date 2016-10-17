@@ -156,9 +156,9 @@ class DataProcess(Process):
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-        data = json.loads(body.decode())
-        print(' DATA items = ', data.items())
-        theKeys = list(data.keys())
+        dictData = json.loads(body.decode())
+        print(' DATA items = ', dictData.items())
+        theKeys = list(dictData.keys())
         
         # same for each parameter:value pair
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
@@ -177,12 +177,12 @@ class DataProcess(Process):
             print(' ik={}'.format(ik), ' KEYS = ', theKeys)
             print('   k=', k)
             print('   type(k)=', type(k))
-            print('   type(data) = ', type(data))
-            print('   data[k]=', data[k])
-            print('   str(data[k])=', str(data[k]))
+            print('   type(dictData) = ', type(dictData))
+            print('   dictData[k]=', dictData[k])
+            print('   str(dictData[k])=', str(dictData[k]))
 
             parameter       = k
-            datum           = str(data[k])
+            data           = str(dictData[k])
 
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
