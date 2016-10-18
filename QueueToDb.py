@@ -126,6 +126,7 @@ class DataProcess(Process):
 
     # Parse a message of sensor data and convert to the values to be inserted into a row in the db.  NOTE: this is a generator - because the decoded messages produce multiple rows of data.
     def ExtractValuesFromMessage_raw(self, props, body):
+        print('props.app_id =', props.app_id)
         versionStrings  = props.app_id.split(':')
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
