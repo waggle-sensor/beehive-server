@@ -48,7 +48,7 @@ class DataProcess(Process):
         else:  
             self.input_exchange = 'plugins-out'
             self.queue          = 'db-decoded'
-            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?,   ?, ?, ?, ?, ?)"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
             
         logger.info("Initializing DataProcess")
@@ -158,6 +158,7 @@ class DataProcess(Process):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
         dictData = json.loads(body.decode())
+        print('dictData =', dictData)
         
         # same for each parameter:value pair
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
@@ -173,7 +174,9 @@ class DataProcess(Process):
         
         for k in dictData.keys():
             parameter      = k
+            print('k = ', k)
             data           = str(dictData[k])
+            print('data = ', data)
 
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
