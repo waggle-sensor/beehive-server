@@ -102,14 +102,14 @@ class DataProcess(Process):
         '''EXAMPLE: 
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
-        try:
-            for iValues, values in enumerate(self.function_ExtractValuesFromMessage(props, body)):
-                # Send the data off to Cassandra
-                print('iValues =', iValues)
-                print(' values =',  values)
-                self.cassandra_insert(values)
-                print('-------AFTER inserting--------')
-        except Exception as e:
+        #try:
+        for iValues, values in enumerate(self.function_ExtractValuesFromMessage(props, body)):
+            # Send the data off to Cassandra
+            print('iValues =', iValues)
+            print(' values =',  values)
+            self.cassandra_insert(values)
+            print('-------AFTER inserting--------')
+        '''except Exception as e:
             values = None
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -117,7 +117,7 @@ class DataProcess(Process):
             logger.error(' body   = {}'.format(repr(body)))
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
-
+        '''
         ch.basic_ack(delivery_tag = method.delivery_tag)
         if values:
             self.numInserted += 1
