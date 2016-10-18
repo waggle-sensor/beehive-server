@@ -34,7 +34,7 @@ if __name__ == '__main__':
         if args.exchange == 'data-pipeline-in':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
-                    timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                    #timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
                     app_id      = 'testsensor:v1:0',
                     type        = 'param'
             )
