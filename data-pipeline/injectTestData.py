@@ -52,6 +52,7 @@ if __name__ == '__main__':
             data = '["test":"{}"]'.format(nMessages)
                 
         channel.basic_publish(exchange = args.exchange,
+                          properties=pika.BasicProperties(headers=headers),
                           routing_key = '',
                           body = data)
         nMessages += 1
