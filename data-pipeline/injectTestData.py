@@ -32,26 +32,25 @@ if __name__ == '__main__':
     nMessages = 0
     while args.num_messages == 0 or nMessages < args.num_messages:
         if args.exchange == 'data-pipeline-in':
-            myHeaders = {
-                'reply_to' : '0000000000000000',
-                'timestamp': str(int(datetime.datetime.utcnow().timestamp() * 1000)),
-                'app_id'   : 'testsensor:v1:0',
-                'type'     : 'param'
-            }
+            myProperties = pika.BasicProperties(
+                    reply_to    = '0000000000000000',
+                    timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                    app_id      = 'testsensor:v1:0',
+                    type        = 'param'
+            )
             data = '["test":"{}"]'.format(nMessages)
         else:    #args.exchange == 'plugins-out':
-            myHeaders = {
-                'reply_to'  : '0000000000000000',
-                'timestamp' : str(int(datetime.datetime.utcnow().timestamp() * 1000)),
-                'meta_id'   : '0',
-                'data_set'  : 'testsensor:v1:0',
-                'type'      : 'sensor0',
-                'parameter' : 'param0',
-                'unit'      : 'unit0'
-            }
+            myProperties = pika.BasicProperties(
+                    reply_to    = '0000000000000000',
+                    timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                    meta_id     = '0',
+                    data_set    = 'testsensor:v1:0',
+                    type        = 'sensor0',
+                    parameter   = 'param0',
+                    unit        = 'unit0'
+            )
             data = '["test":"{}"]'.format(nMessages)
 
-        myProperties = pika.BasicProperties(headers = myHeaders)
         channel.basic_publish(exchange = args.exchange, 
                                 properties = myProperties, 
                                 routing_key = '', 
