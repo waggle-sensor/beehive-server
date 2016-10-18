@@ -32,7 +32,7 @@ if __name__ == '__main__':
     nMessages = 0
     while args.num_messages == 0 or nMessages < args.num_messages:
         if args.exchange == 'data-pipeline-in':
-            headers = {
+            myHeaders = {
                 'reply_to': '0000000000000000',
                 'timestamp': int(datetime.datetime.utcnow().timestamp() * 1000),
                 'app_id': 'testsensor:v1:0',
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             }
             data = '["test":"{}"]'.format(nMessages)
         else:    #args.exchange == 'plugins-out':
-            headers = {
+            myHeaders = {
                 'reply_to': '0000000000000000',
                 'timestamp': int(datetime.datetime.utcnow().timestamp() * 1000),
                 'meta_id' : 0,
@@ -51,8 +51,8 @@ if __name__ == '__main__':
             }
             data = '["test":"{}"]'.format(nMessages)
                 
+        #                  properties = pika.BasicProperties(headers = myHeaders),
         channel.basic_publish(exchange = args.exchange,
-                          properties=pika.BasicProperties(headers=headers),
                           routing_key = '',
                           body = data)
         nMessages += 1
