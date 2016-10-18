@@ -36,7 +36,7 @@ if __name__ == '__main__':
                 'reply_to': '0000000000000000',
                 'timestamp': int(datetime.datetime.utcnow().timestamp() * 1000),
                 'app_id': 'testsensor:v1:0',
-                'type': 'param',
+                'type': 'param'
             }
             data = '["test":"{}"]'.format(nMessages)
         else:    #args.exchange == 'plugins-out':
