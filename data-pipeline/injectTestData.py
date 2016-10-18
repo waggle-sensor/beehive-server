@@ -15,9 +15,9 @@ if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
     argParser.add_argument('exchange', choices = ['data-pipeline-in', 'plugins-out'], 
         help = 'the name of the exchange into which the data is injected')
-    argParser.add_argument('period', default = 3, 
+    argParser.add_argument('--period', default = 3, 
         help = 'number of seconds between messages')
-    argParser.add_argument('num_messages', default = 10, 
+    argParser.add_argument('--num_messages', default = 10, 
         help = 'number of messages to send')
     args = argParser.parse_args()
     print('args = ', args)
