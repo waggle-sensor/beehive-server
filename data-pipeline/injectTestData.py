@@ -13,11 +13,16 @@ import time
 if __name__ == '__main__':
     # parse the command line arguments
     argParser = argparse.ArgumentParser()
-    argParser.add_argument('exchange', choices = ['data-pipeline-in', 'plugins-out'], 
+    argParser.add_argument('exchange', 
+        choices = ['data-pipeline-in', 'plugins-out'], 
         help = 'the name of the exchange into which the data is injected')
-    argParser.add_argument('--period', default = 3, type = float,
+    argParser.add_argument('--period', 
+        default = 3, 
+        type = float,
         help = 'number of seconds between messages')
-    argParser.add_argument('--num_messages', default = 10, type = int,
+    argParser.add_argument('--num_messages', 
+        default = 10, 
+        type = int,
         help = 'number of messages to send')
     args = argParser.parse_args()
     print('args = ', args)
@@ -27,11 +32,11 @@ if __name__ == '__main__':
     channel = connection.channel()
     channel.basic_qos(prefetch_count=1)
 
-
     # loop through messages
     nMessages = 0
     while args.num_messages == 0 or nMessages < args.num_messages:
     
+        print('injecting sample #', nMessages)
         ts = int(datetime.datetime.utcnow().timestamp() * 1000)
         
         if args.exchange == 'data-pipeline-in':
@@ -41,7 +46,6 @@ if __name__ == '__main__':
                     app_id      = 'testsensor:v1:0',
                     type        = 'param'
             )
-            data = '["test":"{}"]'.format(nMessages)
         else:    #args.exchange == 'plugins-out':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
@@ -52,9 +56,8 @@ if __name__ == '__main__':
                     parameter   = 'param0',
                     unit        = 'unit0'
             )
-            data = '["test":"{}"]'.format(nMessages)
-            
-        print('properties = ', myProperties)
+        #print('properties = ', myProperties)
+        data = '["test":"{}"]'.format(nMessages)
 
         channel.basic_publish(exchange = args.exchange, 
                                 properties = myProperties, 
@@ -64,5 +67,5 @@ if __name__ == '__main__':
         nMessages += 1
         time.sleep(args.period)
 
-    print('DONE injecting test data...')
+    print('DONE injecting {} samples of test data...'.format(nMessages))
     
