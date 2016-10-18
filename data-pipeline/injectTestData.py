@@ -52,10 +52,10 @@ if __name__ == '__main__':
                     timestamp   = ts,
                     type        = 'sensor0',
                     headers     = { 
-                                    meta_id     : '0',
-                                    data_set    : 'testsensor:v1:0',
-                                    unit        : 'unit0',
-                                    parameter   : 'param0'
+                                    'meta_id'    : '0',
+                                    'data_set'   : 'testsensor:v1:0',
+                                    'unit'       : 'unit0',
+                                    'parameter'  : 'param0'
                     }
             )
         print('properties = ', myProperties)
