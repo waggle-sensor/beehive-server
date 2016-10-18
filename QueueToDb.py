@@ -157,6 +157,7 @@ class DataProcess(Process):
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
+        print('before loads...')
         dictData = json.loads(body.decode())
         print('dictData =', dictData)
         
