@@ -50,13 +50,13 @@ if __name__ == '__main__':
                     unit        = 'unit0'
             )
             data = '["test":"{}"]'.format(nMessages)
+            
+        print('properties = ', myProperties)
 
         channel.basic_publish(exchange = args.exchange, 
                                 properties = myProperties, 
                                 routing_key = '', 
                                 body = data)
-        print('headers = ', myHeaders)
-        print('properties = ', myProperties)
         
         nMessages += 1
         time.sleep(args.period)
