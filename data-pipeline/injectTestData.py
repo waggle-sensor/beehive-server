@@ -59,7 +59,7 @@ if __name__ == '__main__':
                     }
             )
         print('properties = ', myProperties)
-        data = '["test":"{}"]'.format(nMessages)
+        data = '["test":"{}", "test2" : 0 ]'.format(nMessages)
         print('data = ', data)
 
         channel.basic_publish(exchange = args.exchange, 
