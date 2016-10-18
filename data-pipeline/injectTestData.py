@@ -32,7 +32,7 @@ if __name__ == '__main__':
     nMessages = 0
     while args.num_messages == 0 or nMessages < args.num_messages:
     
-        ts = str(int(datetime.datetime.utcnow().timestamp() * 1000))
+        ts = int(datetime.datetime.utcnow().timestamp() * 1000)
         
         if args.exchange == 'data-pipeline-in':
             myProperties = pika.BasicProperties(
