@@ -31,10 +31,13 @@ if __name__ == '__main__':
     # loop through messages
     nMessages = 0
     while args.num_messages == 0 or nMessages < args.num_messages:
+    
+        ts = str(int(datetime.datetime.utcnow().timestamp() * 1000))
+        
         if args.exchange == 'data-pipeline-in':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
-                    #timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                    timestamp   = ts,
                     app_id      = 'testsensor:v1:0',
                     type        = 'param'
             )
@@ -42,7 +45,7 @@ if __name__ == '__main__':
         else:    #args.exchange == 'plugins-out':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
-                    timestamp   = str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                    timestamp   = ts,
                     meta_id     = '0',
                     data_set    = 'testsensor:v1:0',
                     type        = 'sensor0',
