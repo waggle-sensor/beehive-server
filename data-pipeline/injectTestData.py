@@ -38,20 +38,22 @@ if __name__ == '__main__':
                 'app_id': 'testsensor:v1:0',
                 'type': 'param',
             }
+            data = '["test":"{}"]'.format(nMessages)
         else:    #args.exchange == 'plugins-out':
             headers = {
                 'reply_to': '0000000000000000',
                 'timestamp': int(datetime.datetime.utcnow() * 1000),
-                'meta_id' : 1,
-                'data_set' : 0,
-                'sensor' :  'sensor0',
+                'meta_id' : 0,
+                'data_set' : 'testsensor:v1:0',
+                'type' :  'sensor0',
                 'parameter' : 'param0',
                 'unit' : 'unit0'
             }
+            data = '["test":"{}"]'.format(nMessages)
                 
         channel.basic_publish(exchange = args.exchange,
                           routing_key = '',
-                          body = message)
+                          body = data)
         nMessages += 1
         time.sleep(args.period)
 
