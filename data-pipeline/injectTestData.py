@@ -51,10 +51,7 @@ if __name__ == '__main__':
             }
             data = '["test":"{}"]'.format(nMessages)
                 
-        #                  properties = pika.BasicProperties(headers = myHeaders),
-        channel.basic_publish(exchange = args.exchange,
-                          routing_key = '',
-                          body = data)
+        channel.basic_publish(exchange = args.exchange, properties = pika.BasicProperties(headers = myHeaders), routing_key = '', body = data)
         nMessages += 1
         time.sleep(args.period)
 
