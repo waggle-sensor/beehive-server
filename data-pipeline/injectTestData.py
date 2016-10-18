@@ -50,13 +50,15 @@ if __name__ == '__main__':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
                     timestamp   = ts,
-                    meta_id     = '0',
-                    data_set    = 'testsensor:v1:0',
                     type        = 'sensor0',
-                    parameter   = 'param0',
-                    unit        = 'unit0'
+                    headers     = { 
+                                    meta_id     : '0',
+                                    data_set    : 'testsensor:v1:0',
+                                    unit        : 'unit0'
+                                    parameter   : 'param0',
+                    }
             )
-        #print('properties = ', myProperties)
+        print('properties = ', myProperties)
         data = '["test":"{}"]'.format(nMessages)
 
         channel.basic_publish(exchange = args.exchange, 
