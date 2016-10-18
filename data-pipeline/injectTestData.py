@@ -34,7 +34,7 @@ if __name__ == '__main__':
         if args.exchange == 'data-pipeline-in':
             myHeaders = {
                 'reply_to': '0000000000000000',
-                'timestamp': int(datetime.datetime.utcnow().timestamp() * 1000),
+                'timestamp': str(int(datetime.datetime.utcnow().timestamp() * 1000)),
                 'app_id': 'testsensor:v1:0',
                 'type': 'param'
             }
@@ -42,8 +42,8 @@ if __name__ == '__main__':
         else:    #args.exchange == 'plugins-out':
             myHeaders = {
                 'reply_to': '0000000000000000',
-                'timestamp': int(datetime.datetime.utcnow().timestamp() * 1000),
-                'meta_id' : 0,
+                'timestamp': str(int(datetime.datetime.utcnow().timestamp() * 1000)),
+                'meta_id' : '0',
                 'data_set' : 'testsensor:v1:0',
                 'type' :  'sensor0',
                 'parameter' : 'param0',
