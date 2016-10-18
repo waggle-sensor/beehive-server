@@ -275,8 +275,9 @@ if __name__ == '__main__':
     argParser.add_argument('--verbose', '-v', action='count')
     args = argParser.parse_args()
     is_database_raw = args.database == 'raw'
+    verbosity = 0 if not args.verbose else args.verbose
     
-    p = DataProcess(is_database_raw, verbosity = args.verbose)
+    p = DataProcess(is_database_raw, verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
