@@ -59,13 +59,15 @@ if __name__ == '__main__':
                     }
             )
         print('properties = ', myProperties)
-        data = "{'test_number':'{}', 'value2':10}".format(nMessages)
+        data = "{'k1':'{}', 'k2':10}".format(nMessages)
+        print('data = ', data)
 
         channel.basic_publish(exchange = args.exchange, 
                                 properties = myProperties, 
                                 routing_key = '', 
                                 body = data)
-        
+        print('after publish...')
+
         nMessages += 1
         time.sleep(args.period)
 
