@@ -224,7 +224,7 @@ def api_dates(node_id):
     
         
         
-@app.route('/api/1/nodes_last_update')
+@app.route('/api/1/nodes_last_update/')
 def api_nodes_last_update():        
 
     logger.debug('GET api_nodes_last_update')
