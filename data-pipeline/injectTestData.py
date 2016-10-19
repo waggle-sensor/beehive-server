@@ -50,6 +50,7 @@ if __name__ == '__main__':
             myProperties = pika.BasicProperties(
                     reply_to    = '0000000000000000',
                     timestamp   = ts,
+                    app_id      = 'testsensor:v1:0',
                     type        = 'sensor0',
                     headers     = { 
                                     'meta_id'    : '0',
