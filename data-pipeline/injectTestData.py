@@ -24,6 +24,10 @@ if __name__ == '__main__':
         default = 10, 
         type = int,
         help = 'number of messages to send')
+    argParser.add_argument('--num_params', 
+        default = 1, 
+        type = int,
+        help = 'number of parameters to send with each message')
     args = argParser.parse_args()
     print('args = ', args)
     
@@ -58,7 +62,10 @@ if __name__ == '__main__':
                     }
             )
         print('properties = ', myProperties)
-        data = '{{"test_param":"{}"}}'.format(nMessages)
+        dataList = []
+        for iParam in range(num_params):
+            dataList.append('"test_param{}":"{}"'.format(iParam, nMessages)
+        data = '{{' + ','.join(dataList) + '}}'
         print('data = ', data)
 
         channel.basic_publish(exchange = args.exchange, 
