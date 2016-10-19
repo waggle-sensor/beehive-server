@@ -20,7 +20,7 @@ CREATE TABLE sensor_data_decoded (
     meta_id         int,            -- foreign key into node_meta table
     timestamp       TIMESTAMP,      -- milliseconds from epoch, integer
     data_set        ascii,          -- distinguish between identical sensors on same node
-    sensor          ascii,    
+    sensor          ascii,          -- eg. TMP112
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
     data            ascii,          -- data from sensor, encoded to hex
     unit            ascii,
@@ -39,4 +39,10 @@ CREATE TABLE admin_messages (
     data            ascii,          -- data from sensor, encoded to hex
     unit            ascii,
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
+);
+
+CREATE TABLE node_last_update (
+    node_id         ascii,
+    timestamp       TIMESTAMP,      -- milliseconds from epoch, integer
+    PRIMARY KEY     (node_id)
 );

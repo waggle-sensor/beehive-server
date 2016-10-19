@@ -109,6 +109,25 @@ def list_node_dates():
     logger.info("Found %d node_ids." % (count))   
     return nodes
 
+def get_nodes_last_update_dict():
+    """
+    Returns dictionary that maps node_id to last_update.
+    """
+    statement = "SELECT node_id, last_update FROM node_last_update;"
+    
+    try:
+        cluster, rows = query(statement)
+    except:
+        raise
+    
+    d = {}
+    for (node_id, timestamp) in rows:
+        d[node_id.lower()] = timestamp
+    
+    cluster.shutdown()
+    
+    return d
+
 
 if __name__ == "__main__":
     node_id=None

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import os.path, logging, re, sys, json, time
-from export import export_generator, list_node_dates
+from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
 
@@ -224,6 +224,14 @@ def api_dates(node_id):
     
         
         
+@app.route('/api/1/nodes_last_update')
+def api_nodes_last_update():        
+
+    logger.debug('GET api_nodes_last_update')
+    
+    nodes_last_update_dict = get_nodes_last_update_dict()
+        
+    return jsonify(nodes_last_update_dict)
                         
 
 
