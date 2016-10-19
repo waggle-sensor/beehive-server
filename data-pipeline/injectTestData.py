@@ -63,7 +63,7 @@ if __name__ == '__main__':
             )
         print('properties = ', myProperties)
         dataList = []
-        for iParam in range(num_params):
+        for iParam in range(args.num_params):
             dataList.append('"test_param{}":"{}"'.format(iParam, nMessages))
         data = '{{' + ','.join(dataList) + '}}'
         print('data = ', data)
