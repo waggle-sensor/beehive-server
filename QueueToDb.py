@@ -165,9 +165,9 @@ class DataProcess(Process):
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         node_id         = props.reply_to
         sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
-        ingest_id       = '0' # props.ingest_id ##props.get('ingest_id', 0)
+        ingest_id       = 0 # props.ingest_id ##props.get('ingest_id', 0)
         #print('ingest_id: ', ingest_id)
-        meta_id         = '0' #props.meta_id
+        meta_id         = 0 #props.meta_id
         timestamp       = int(props.timestamp)
         data_set        = props.app_id
         sensor          = props.type
