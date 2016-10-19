@@ -43,6 +43,6 @@ CREATE TABLE admin_messages (
 
 CREATE TABLE node_last_update (
     node_id         ascii,
-    timestamp       TIMESTAMP,      -- milliseconds from epoch, integer
+    last_update     TIMESTAMP,      -- milliseconds from epoch, integer
     PRIMARY KEY     (node_id)
 );

@@ -96,6 +96,7 @@ class index:
         
         api_call = api_url+'1/nodes/'
         api_call_internal = api_url_internal+'1/nodes/'
+        api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
@@ -110,7 +111,21 @@ class index:
             raise internalerror(msg)
         
         #logger.debug("req.json: %s" % ( str(req.json())) )
+
+        # request last_update
+        try:
+            req_last_update = requests.get( api_call_last_update ) # , auth=('user', 'password')
+        except Exception as e:
+            msg = "Could not make request: %s: %s" % (api_call_last_update, str(e))
+            logger.error(msg)
+            raise internalerror(msg)
         
+        if req_last_update.status_code != 200:
+            msg = "status code: %d" % (req_last_update.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        dictLastUpdate = req_last_update.json()
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
@@ -173,13 +188,14 @@ class index:
                     if node_obj[u'location']:
                         location = node_obj[u'location'].encode('ascii','replace')
                 
-                last_updated = ''
-                if u'last_updated' in node_obj:
-                    if node_obj[u'last_updated']:
-                        last_updated = node_obj[u'last_updated'].encode('ascii','replace')
+                # last_updated contains its own <td> and </td> because it modifies them for color
+                # eg. <td style="background-color:#FF0000">
+                last_updated = '<td>%s</td>'
+                if node_id in dictLastUpdate:
+                    last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
                 
                 #&nbsp&nbsp&nbsp&nbsp
-                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n' % \
+                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
                     (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
                                 
                 yield result_line

@@ -113,7 +113,7 @@ def get_nodes_last_update_dict():
     """
     Returns dictionary that maps node_id to last_update.
     """
-    statement = "SELECT node_id, last_update FROM node_last_update;"
+    statement = "SELECT node_id, last_update FROM nodes_last_update;"
     
     try:
         cluster, rows = query(statement)
