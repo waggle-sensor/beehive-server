@@ -51,7 +51,7 @@ def read_file( str ):
 
 urls = (
     '/nodes/(.+)/?',                'web_node_page',
-    '/',                            'index'
+    '/',                            'index',
     '/wcc/',                        'index_WCC'
 
 )
