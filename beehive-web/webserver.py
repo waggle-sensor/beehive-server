@@ -52,6 +52,8 @@ def read_file( str ):
 urls = (
     '/nodes/(.+)/?',                'web_node_page',
     '/',                            'index'
+    '/wcc/',                        'index_WCC'
+
 )
 
 app = web.application(urls, globals())
@@ -190,7 +192,7 @@ class index:
                 
                 # last_updated contains its own <td> and </td> because it modifies them for color
                 # eg. <td style="background-color:#FF0000">
-                last_updated = '<td>%s</td>'
+                last_updated = '<td></td>'
                 if node_id in dictLastUpdate:
                     last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
                 
@@ -215,6 +217,137 @@ class index:
                 yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
         yield html_footer()
+
+
+class index_WCC:        
+    def GET(self):
+        logger.debug('GET index_WCC')
+        
+        
+        api_call = api_url+'1/nodes/'
+        api_call_internal = api_url_internal+'1/nodes/'
+        api_call_last_update = api_url_internal+'1/nodes_last_update/'
+        
+        try:
+            req = requests.get( api_call_internal ) # , auth=('user', 'password')
+        except Exception as e:
+            msg = "Could not make request: %s" % (str(e))
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        if req.status_code != 200:
+            msg = "status code: %d" % (req.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        #logger.debug("req.json: %s" % ( str(req.json())) )
+
+        # request last_update
+        try:
+            req_last_update = requests.get( api_call_last_update ) # , auth=('user', 'password')
+        except Exception as e:
+            msg = "Could not make request: %s: %s" % (api_call_last_update, str(e))
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        if req_last_update.status_code != 200:
+            msg = "status code: %d" % (req_last_update.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        dictLastUpdate = req_last_update.json()
+        
+        web.header('Content-type','text/html')
+        web.header('Transfer-Encoding','chunked')
+        
+        yield html_header('Beehive web server')
+        
+        yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
+        
+        yield "<h3>Public nodes:</h3>\n"
+        
+        
+        if not u'data' in req.json():
+            msg = "data field not found"
+            logger.error(msg)
+            raise internalerror(msg)
+
+        all_nodes = req.json()[u'data']
+        print 'all_nodes: ', str(all_nodes)
+        
+        yield """
+            <head>
+                <style>
+                    table {    border-collapse: collapse; }
+                    table, td, th { border: 1px solid black; padding: 1px 5px;}
+                </style>
+            </head>
+        """
+        yield "<table>\n"
+        
+        # header row
+        headings = ['name', 'node_id', 'description', 'hostname', 'location', 'last_updated']
+        result_line = '<tr>' + ''.join(['<td><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n'
+        #logger.debug("result_line: %s" % (result_line))
+        yield result_line
+       
+        # one row per node
+        if True:
+            for node_id in all_nodes:
+                
+                node_obj = all_nodes[node_id]
+                node_id = node_id.encode('ascii','replace').lower()
+                
+                description = ''
+                if u'description' in node_obj:
+                    if node_obj[u'description']:
+                        description = node_obj[u'description'].encode('ascii','replace')
+                    
+                hostname = ''
+                if u'hostname' in node_obj:
+                    if node_obj[u'hostname']:
+                        hostname = node_obj[u'hostname'].encode('ascii','replace')
+
+                name = ''
+                if u'name' in node_obj:
+                    if node_obj[u'name']:
+                        name = node_obj[u'name'].encode('ascii','replace')
+                        
+                location = ''
+                if u'location' in node_obj:
+                    if node_obj[u'location']:
+                        location = node_obj[u'location'].encode('ascii','replace')
+                
+                # last_updated contains its own <td> and </td> because it modifies them for color
+                # eg. <td style="background-color:#FF0000">
+                last_updated = '<td></td>'
+                if node_id in dictLastUpdate:
+                    last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
+                
+                #&nbsp&nbsp&nbsp&nbsp
+                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
+                    (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
+                                
+                yield result_line
+
+        yield "</table>"
+        yield  "<br>\n<br>\n"
+        
+        yield "Corresponding API call to get list of nodes:<br>\n<pre>curl %s</pre>" % (api_call)
+        
+        yield  "<br>\n<br>\n"
+        
+        yield "<br><br><h3>API resources:</h3><br>\n\n"
+        
+        
+        for i in range(0, len(urls), 2):
+            if urls[i].startswith('/api'):
+                yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
+        
+        yield html_footer()
+        
+
+
         
 class web_node_page:
     def GET(self, node_id):
