@@ -113,21 +113,6 @@ class index:
             raise internalerror(msg)
         
         #logger.debug("req.json: %s" % ( str(req.json())) )
-
-        # request last_update
-        try:
-            req_last_update = requests.get( api_call_last_update ) # , auth=('user', 'password')
-        except Exception as e:
-            msg = "Could not make request: %s: %s" % (api_call_last_update, str(e))
-            logger.error(msg)
-            raise internalerror(msg)
-        
-        if req_last_update.status_code != 200:
-            msg = "status code: %d" % (req_last_update.status_code)
-            logger.error(msg)
-            raise internalerror(msg)
-        
-        dictLastUpdate = req_last_update.json()
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
@@ -193,7 +178,7 @@ class index:
                 # last_updated contains its own <td> and </td> because it modifies them for color
                 # eg. <td style="background-color:#FF0000">
                 last_updated = '<td></td>'
-                if node_id in dictLastUpdate:
+                if False: #node_id in dictLastUpdate:
                     last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
                 
                 #&nbsp&nbsp&nbsp&nbsp
@@ -322,7 +307,7 @@ class index_WCC:
                 # eg. <td style="background-color:#FF0000">
                 last_updated = '<td></td>'
                 if node_id in dictLastUpdate:
-                    last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
+                    last_updated = '<td>{}</td>'.format(dictLastUpdate[node_id])   #.encode('ascii','replace').)
                 
                 #&nbsp&nbsp&nbsp&nbsp
                 result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
