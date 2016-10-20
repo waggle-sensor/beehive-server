@@ -287,16 +287,14 @@ class index_WCC:
         yield result_line
        
         # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
-        # find the first timedelta that is smaller than the data's timestamp 
-
-        timeToColorsUnsorted = [    
+        # find the first timedelta that is smaller than the data's timestamp's 
+        timeToColors = [    
             (datetime.timedelta(days = 1), '#dfdfd0'),      # dead = gray
             (datetime.timedelta(hours = 2), '#ff0000'),     # dying = red
             (datetime.timedelta(minutes = 5), '#ffbf00'),   # just starting to die = yellow/orange
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
-        timeToColors = sorted(timeToColorsUnsorted, key = lambda x : x[1], reverse = True)
         dtUtcNow = datetime.datetime.utcnow()
         # one row per node
         for node_id in all_nodes:
@@ -328,16 +326,15 @@ class index_WCC:
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
             if node_id in dictLastUpdate:
-                t = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
-                s = t.isoformat(sep = ' ')
-                delta = tUtcNow - t
+                dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
+                s = dt.isoformat(sep = ' ')
+                delta = dtUtcNow - dt
                 color = timeToColors[-1][1] # negative time - should correspond to last value
                 for tuple in timeToColors:
                     if delta > tuple[0]:
                         color = tuple[1]
                         break
                 last_updated = '<td style="background-color:{}>{}</td>'.format(color, s)
-            
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
                 (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
