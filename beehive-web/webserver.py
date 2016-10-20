@@ -286,45 +286,63 @@ class index_WCC:
         #logger.debug("result_line: %s" % (result_line))
         yield result_line
        
-        # one row per node
-        if True:
-            for node_id in all_nodes:
-                
-                node_obj = all_nodes[node_id]
-                node_id = node_id.encode('ascii','replace').lower()
-                
-                description = ''
-                if u'description' in node_obj:
-                    if node_obj[u'description']:
-                        description = node_obj[u'description'].encode('ascii','replace')
-                    
-                hostname = ''
-                if u'hostname' in node_obj:
-                    if node_obj[u'hostname']:
-                        hostname = node_obj[u'hostname'].encode('ascii','replace')
+        # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
+        # find the first timedelta that is smaller than the data's timestamp 
 
-                name = ''
-                if u'name' in node_obj:
-                    if node_obj[u'name']:
-                        name = node_obj[u'name'].encode('ascii','replace')
-                        
-                location = ''
-                if u'location' in node_obj:
-                    if node_obj[u'location']:
-                        location = node_obj[u'location'].encode('ascii','replace')
+        timeToColorsUnsorted = [    
+            (datetime.timedelta(days = 1), '#dfdfd0'),      # dead = gray
+            (datetime.timedelta(hours = 2), '#ff0000'),     # dying = red
+            (datetime.timedelta(minutes = 5), '#ffbf00'),   # just starting to die = yellow/orange
+            (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
+            (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
+        ]
+        timeToColors = sorted(timeToColorsUnsorted, key = lambda x : x[1], reverse = True)
+        dtUtcNow = datetime.datetime.utcnow()
+        # one row per node
+        for node_id in all_nodes:
+            
+            node_obj = all_nodes[node_id]
+            node_id = node_id.encode('ascii','replace').lower()
+            
+            description = ''
+            if u'description' in node_obj:
+                if node_obj[u'description']:
+                    description = node_obj[u'description'].encode('ascii','replace')
                 
-                # last_updated contains its own <td> and </td> because it modifies them for color
-                # eg. <td style="background-color:#FF0000">
-                last_updated = '<td></td>'
-                if node_id in dictLastUpdate:
-                    s = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0).isoformat(sep = ' ')
-                    last_updated = '<td>{}</td>'.format(s)
-                
-                #&nbsp&nbsp&nbsp&nbsp
-                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
-                    (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
-                                
-                yield result_line
+            hostname = ''
+            if u'hostname' in node_obj:
+                if node_obj[u'hostname']:
+                    hostname = node_obj[u'hostname'].encode('ascii','replace')
+
+            name = ''
+            if u'name' in node_obj:
+                if node_obj[u'name']:
+                    name = node_obj[u'name'].encode('ascii','replace')
+                    
+            location = ''
+            if u'location' in node_obj:
+                if node_obj[u'location']:
+                    location = node_obj[u'location'].encode('ascii','replace')
+            
+            # last_updated contains its own <td> and </td> because it modifies them for color
+            # eg. <td style="background-color:#FF0000">
+            last_updated = '<td></td>'
+            if node_id in dictLastUpdate:
+                t = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
+                s = t.isoformat(sep = ' ')
+                delta = tUtcNow - t
+                color = timeToColors[-1][1] # negative time - should correspond to last value
+                for tuple in timeToColors:
+                    if delta > tuple[0]:
+                        color = tuple[1]
+                        break
+                last_updated = '<td style="background-color:{}>{}</td>'.format(color, s)
+            
+            #&nbsp&nbsp&nbsp&nbsp
+            result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
+                (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
+                            
+            yield result_line
 
         yield "</table>"
         yield  "<br>\n<br>\n"
