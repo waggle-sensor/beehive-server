@@ -41,7 +41,7 @@ CREATE TABLE admin_messages (
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
 
-CREATE TABLE node_last_update (
+CREATE TABLE nodes_last_update (
     node_id         ascii,
     last_update     TIMESTAMP,      -- milliseconds from epoch, integer
     PRIMARY KEY     (node_id)
