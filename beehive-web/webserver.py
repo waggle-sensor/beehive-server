@@ -307,7 +307,8 @@ class index_WCC:
                 # eg. <td style="background-color:#FF0000">
                 last_updated = '<td></td>'
                 if node_id in dictLastUpdate:
-                    last_updated = '<td>{}</td>'.format(dictLastUpdate[node_id])   #.encode('ascii','replace').)
+                    s = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0).isoformat(sep = ' ')
+                    last_updated = '<td>{}</td>'.format(s)
                 
                 #&nbsp&nbsp&nbsp&nbsp
                 result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
