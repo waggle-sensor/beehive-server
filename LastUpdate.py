@@ -96,7 +96,7 @@ class LastUpdateProcess(Process):
         try:
             node_id     = props.reply_to
             self.q.put(node_id)
-            print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
+            if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -204,11 +204,11 @@ if __name__ == '__main__':
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
         while not q.empty():
             setUpdated.add(q.get())
-        print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
+        if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             p.cassandra_insert(values)
-            print('  writing:  ', node_id)
+            if verbosity > 1: print('  writing:  ', node_id)
         setUpdated.clear()
         time.sleep(30)
         
