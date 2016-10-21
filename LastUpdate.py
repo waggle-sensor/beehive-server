@@ -96,7 +96,8 @@ class LastUpdateProcess(Process):
         try:
             node_id     = props.reply_to
             timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-            self.cassandra_insert((node_id, timestamp))
+            values = (node_id, timestamp)
+            self.cassandra_insert(values)
         except Exception as e:
             values = None
             logger.error("Error inserting data: %s" % (str(e)))
