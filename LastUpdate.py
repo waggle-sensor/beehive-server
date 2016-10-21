@@ -27,6 +27,7 @@ sys.path.append("/usr/lib/waggle/")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+setUpdated = set()
 
 class LastUpdateProcess(Process):
     """
@@ -95,9 +96,8 @@ class LastUpdateProcess(Process):
         '''
         try:
             node_id     = props.reply_to
-            timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-            values = (node_id, timestamp)
-            self.cassandra_insert(values)
+            setUpdated.add(node_id)
+            print('  caching:  ', node_id)
         except Exception as e:
             values = None
             logger.error("Error inserting data: %s" % (str(e)))
@@ -205,7 +205,13 @@ if __name__ == '__main__':
     time.sleep(10)   
     
     while p.is_alive():
-        time.sleep(10)
+        timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
+        for node_id in setUpdated:
+            values = (node_id, timestamp)
+            self.cassandra_insert(values)
+            print('  writing:  ', node_id)
+        setUpdated.clear()
+        time.sleep(5)
         
     print(__name__ + ': process is dead, time to die')
     p.join()    
