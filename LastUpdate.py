@@ -207,7 +207,7 @@ if __name__ == '__main__':
         print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
-            self.cassandra_insert(values)
+            p.cassandra_insert(values)
             print('  writing:  ', node_id)
         setUpdated.clear()
         time.sleep(5)
