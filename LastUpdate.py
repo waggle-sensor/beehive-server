@@ -98,7 +98,7 @@ class LastUpdateProcess(Process):
             global setUpdated
             node_id     = props.reply_to
             setUpdated.add(node_id)
-            print('  caching:  ', node_id)
+            print('  caching:  ', node_id,  'len(setUpdated) = ', len(setUpdated))
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -203,7 +203,7 @@ if __name__ == '__main__':
     global setUpdated
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        print('timestamp = ', timestamp)
+        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
