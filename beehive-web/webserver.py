@@ -291,7 +291,7 @@ class index_WCC:
         timeToColors = [    
             (datetime.timedelta(days = 1), '#dfdfd0'),      # dead = gray
             (datetime.timedelta(hours = 2), '#ff0000'),     # dying = red
-            (datetime.timedelta(minutes = 5), '#ffbf00'),   # just starting to die = yellow/orange
+            (datetime.timedelta(minutes = 5), '#ffee00'),   # just starting to die = yellow/orange
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
@@ -327,7 +327,8 @@ class index_WCC:
             last_updated = '<td></td>'
             if node_id in dictLastUpdate:
                 dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
-                s = dt.isoformat(sep = ' ')
+                #s = dt.isoformat(sep = ' ')
+                s = dt.strftime("%Y-%m-%d %H:%M:%S")
                 delta = dtUtcNow - dt
                 color = timeToColors[-1][1] # negative time - should correspond to last value
                 for tuple in timeToColors:
