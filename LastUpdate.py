@@ -37,7 +37,7 @@ class LastUpdateProcess(Process):
         """
             Starts up the Data handling Process
         """
-        super(DataProcess,self).__init__()
+        super(LastUpdateProcess, self).__init__()
         
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
