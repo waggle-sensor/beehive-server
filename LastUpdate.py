@@ -197,7 +197,7 @@ if __name__ == '__main__':
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
     
-    p = DataProcess(verbosity)
+    p = LastUpdateProcess(verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
