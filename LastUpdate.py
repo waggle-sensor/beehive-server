@@ -95,6 +95,7 @@ class LastUpdateProcess(Process):
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
+            global setUpdated
             node_id     = props.reply_to
             setUpdated.add(node_id)
             print('  caching:  ', node_id)
@@ -199,6 +200,7 @@ if __name__ == '__main__':
     print(__name__ + ': created process ', p)
     time.sleep(10)   
     
+    global setUpdated
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
         for node_id in setUpdated:
