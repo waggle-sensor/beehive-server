@@ -99,7 +99,6 @@ class LastUpdateProcess(Process):
             setUpdated.add(node_id)
             print('  caching:  ', node_id)
         except Exception as e:
-            values = None
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
@@ -108,10 +107,6 @@ class LastUpdateProcess(Process):
             return
 
         ch.basic_ack(delivery_tag = method.delivery_tag)
-        if values:
-            self.numInserted += 1
-            if self.numInserted % 2 == 0:
-                logger.debug('  inserted {} raw samples of data'.format(self.numInserted))
 
     def cassandra_insert(self, values):
     
