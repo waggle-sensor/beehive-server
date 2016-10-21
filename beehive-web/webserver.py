@@ -223,6 +223,8 @@ class index_WCC:
         api_call_internal = api_url_internal+'1/nodes/'
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
+        dtUtcNow = datetime.datetime.utcnow()
+
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
@@ -260,7 +262,9 @@ class index_WCC:
         yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
         yield "<h3>Public nodes:</h3>\n"
-        
+        yield "<p><i> UTC of last update of this page:</i></p> {}\n".format(
+            dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"))
+
         
         if not u'data' in req.json():
             msg = "data field not found"
@@ -295,7 +299,6 @@ class index_WCC:
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
-        dtUtcNow = datetime.datetime.utcnow()
         # one row per node
         for node_id in all_nodes:
             
