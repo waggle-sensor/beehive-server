@@ -27,8 +27,6 @@ sys.path.append("/usr/lib/waggle/")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-setUpdated = set()
-
 class LastUpdateProcess(Process):
     """
         This process writes the most recent date of each node's incoming raw sample
@@ -40,6 +38,8 @@ class LastUpdateProcess(Process):
         """
         super(LastUpdateProcess, self).__init__()
         
+        self.setUpdated = set()
+
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
         self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
@@ -95,10 +95,9 @@ class LastUpdateProcess(Process):
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
-            global setUpdated
             node_id     = props.reply_to
-            setUpdated.add(node_id)
-            print('  caching:  ', node_id,  'len(setUpdated) = ', len(setUpdated))
+            self.setUpdated.add(node_id)
+            print('  caching:  ', node_id,  'len(setUpdated) = ', len(self.setUpdated))
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -200,15 +199,14 @@ if __name__ == '__main__':
     print(__name__ + ': created process ', p)
     time.sleep(10)   
     
-    global setUpdated
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(setUpdated))
-        for node_id in setUpdated:
+        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(p.setUpdated))
+        for node_id in p.setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
             print('  writing:  ', node_id)
-        setUpdated.clear()
+        p.setUpdated.clear()
         time.sleep(5)
         
     print(__name__ + ': process is dead, time to die')
