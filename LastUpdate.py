@@ -42,7 +42,7 @@ class LastUpdateProcess(Process):
         self.queue          = 'last-update'
         self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
             
-        logger.info("Initializing DataProcess")
+        logger.info("Initializing LastUpdateProcess")
         
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
@@ -95,7 +95,7 @@ class LastUpdateProcess(Process):
         try:
             node_id     = props.reply_to
             q.put(node_id)
-            print('  caching:  ', node_id,  'len(q) = ', len(q))
+            print('  caching:  ', node_id,  'q.qsize() = ', q.qsize())
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -179,7 +179,7 @@ class LastUpdateProcess(Process):
         self.channel.start_consuming()
 
     def join(self):
-        super(DataProcess,self).terminate()
+        super(LastUpdateProcess,self).terminate()
         self.connection.close(0)
         if self.cluster:
             self.cluster.shutdown()
@@ -201,9 +201,9 @@ if __name__ == '__main__':
     
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        while not q.Empty():
+        while not q.empty():
             setUpdated.add(q.get())
-        print('timestamp = ', timestamp, 'len(q) = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
+        print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
