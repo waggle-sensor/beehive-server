@@ -41,7 +41,7 @@ class LastUpdateProcess(Process):
         
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
-        self.statement = "INSERT INTO    nodes_last_update   (node_id, timestamp) VALUES (?, ?)"
+        self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
             
         logger.info("Initializing DataProcess")
         
