@@ -203,6 +203,7 @@ if __name__ == '__main__':
     global setUpdated
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
+        print('timestamp = ', timestamp)
         for node_id in setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
