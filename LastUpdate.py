@@ -13,7 +13,7 @@ from config import *
 import datetime
 import json
 import logging 
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Manager, Queue
 import pika
 import sys
 import time
