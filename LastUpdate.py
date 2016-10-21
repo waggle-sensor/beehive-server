@@ -32,14 +32,12 @@ class LastUpdateProcess(Process):
         This process writes the most recent date of each node's incoming raw sample
     """
 
-    def __init__(self, theSetOfUpdatedNodes, verbosity = 0):
+    def __init__(self, q, verbosity = 0):
         """
             Starts up the Data handling Process
         """
         super(LastUpdateProcess, self).__init__()
         
-        self.setUpdated = theSetOfUpdatedNodes
-
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
         self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
@@ -96,8 +94,8 @@ class LastUpdateProcess(Process):
         '''
         try:
             node_id     = props.reply_to
-            self.setUpdated.add(node_id)
-            print('  caching:  ', node_id,  'len(setUpdated) = ', len(self.setUpdated))
+            q.put(node_id)
+            print('  caching:  ', node_id,  'len(q) = ', len(q))
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
@@ -194,7 +192,8 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    p = LastUpdateProcess(setUpdated, verbosity)
+    q = multiprocessing.Queue(1000)
+    p = LastUpdateProcess(q, verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
@@ -202,7 +201,9 @@ if __name__ == '__main__':
     
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(setUpdated))
+        while not q.Empty():
+            setUpdated.add(q.get())
+        print('timestamp = ', timestamp, 'len(q) = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
