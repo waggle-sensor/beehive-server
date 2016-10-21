@@ -193,7 +193,7 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    q = Queue(1000)
+    q = Queue(2000)
     p = LastUpdateProcess(q, verbosity)
     p.start()
     
@@ -210,7 +210,7 @@ if __name__ == '__main__':
             p.cassandra_insert(values)
             print('  writing:  ', node_id)
         setUpdated.clear()
-        time.sleep(5)
+        time.sleep(30)
         
     print(__name__ + ': process is dead, time to die')
     p.join()    
