@@ -110,6 +110,8 @@ class index:
         api_call_internal = api_url_internal+'1/nodes/'
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
+        dtUtcNow = datetime.datetime.utcnow()
+
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
@@ -123,6 +125,21 @@ class index:
             raise internalerror(msg)
         
         #logger.debug("req.json: %s" % ( str(req.json())) )
+
+        # request last_update
+        try:
+            req_last_update = requests.get( api_call_last_update ) # , auth=('user', 'password')
+        except Exception as e:
+            msg = "Could not make request: %s: %s" % (api_call_last_update, str(e))
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        if req_last_update.status_code != 200:
+            msg = "status code: %d" % (req_last_update.status_code)
+            logger.error(msg)
+            raise internalerror(msg)
+        
+        dictLastUpdate = req_last_update.json()
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
@@ -132,7 +149,8 @@ class index:
         yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
         yield "<h3>Public nodes:</h3>\n"
-        
+        yield "<p><i> UTC of last update of this page:</i> {}</p>\n".format(
+            dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"))
         
         if not u'data' in req.json():
             msg = "data field not found"
@@ -158,44 +176,60 @@ class index:
         #logger.debug("result_line: %s" % (result_line))
         yield result_line
        
+        # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
+        # find the first timedelta that is smaller than the data's timestamp's 
+        timeToColors = [    
+            (datetime.timedelta(days = 1), '#dfdfd0'),      # dead = gray
+            (datetime.timedelta(hours = 2), '#ff0000'),     # dying = red
+            (datetime.timedelta(minutes = 5), '#ffee00'),   # just starting to die = yellow/orange
+            (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
+            (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
+        ]
         # one row per node
-        if True:
-            for node_id in all_nodes:
+        for node_id in all_nodes:
+            
+            node_obj = all_nodes[node_id]
+            node_id = node_id.encode('ascii','replace').lower()
+            
+            description = ''
+            if u'description' in node_obj:
+                if node_obj[u'description']:
+                    description = node_obj[u'description'].encode('ascii','replace')
                 
-                node_obj = all_nodes[node_id]
-                node_id = node_id.encode('ascii','replace').lower()
-                
-                description = ''
-                if u'description' in node_obj:
-                    if node_obj[u'description']:
-                        description = node_obj[u'description'].encode('ascii','replace')
-                    
-                hostname = ''
-                if u'hostname' in node_obj:
-                    if node_obj[u'hostname']:
-                        hostname = node_obj[u'hostname'].encode('ascii','replace')
+            hostname = ''
+            if u'hostname' in node_obj:
+                if node_obj[u'hostname']:
+                    hostname = node_obj[u'hostname'].encode('ascii','replace')
 
-                name = ''
-                if u'name' in node_obj:
-                    if node_obj[u'name']:
-                        name = node_obj[u'name'].encode('ascii','replace')
-                        
-                location = ''
-                if u'location' in node_obj:
-                    if node_obj[u'location']:
-                        location = node_obj[u'location'].encode('ascii','replace')
-                
-                # last_updated contains its own <td> and </td> because it modifies them for color
-                # eg. <td style="background-color:#FF0000">
-                last_updated = '<td></td>'
-                if False: #node_id in dictLastUpdate:
-                    last_updated = '<td>%s</td>' % dictLastUpdate[node_id].encode('ascii','replace')
-                
-                #&nbsp&nbsp&nbsp&nbsp
-                result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
-                    (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
-                                
-                yield result_line
+            name = ''
+            if u'name' in node_obj:
+                if node_obj[u'name']:
+                    name = node_obj[u'name'].encode('ascii','replace')
+                    
+            location = ''
+            if u'location' in node_obj:
+                if node_obj[u'location']:
+                    location = node_obj[u'location'].encode('ascii','replace')
+            
+            # last_updated contains its own <td> and </td> because it modifies them for color
+            # eg. <td style="background-color:#FF0000">
+            last_updated = '<td></td>'
+            if node_id in dictLastUpdate:
+                dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
+                #s = dt.isoformat(sep = ' ')
+                s = dt.strftime("%Y-%m-%d %H:%M:%S")
+                delta = dtUtcNow - dt
+                color = timeToColors[-1][1] # negative time - should correspond to last value
+                for tuple in timeToColors:
+                    if delta > tuple[0]:
+                        color = tuple[1]
+                        break
+                last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
+            #&nbsp&nbsp&nbsp&nbsp
+            result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
+                (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
+                            
+            yield result_line
 
         yield "</table>"
         yield  "<br>\n<br>\n"
