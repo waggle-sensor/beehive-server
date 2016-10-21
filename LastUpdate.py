@@ -32,13 +32,13 @@ class LastUpdateProcess(Process):
         This process writes the most recent date of each node's incoming raw sample
     """
 
-    def __init__(self, verbosity = 0):
+    def __init__(self, theSetOfUpdatedNodes, verbosity = 0):
         """
             Starts up the Data handling Process
         """
         super(LastUpdateProcess, self).__init__()
         
-        self.setUpdated = set()
+        self.setUpdated = theSetOfUpdatedNodes
 
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
@@ -193,7 +193,8 @@ if __name__ == '__main__':
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
     
-    p = LastUpdateProcess(verbosity)
+    setUpdated = set()
+    p = LastUpdateProcess(setUpdated, verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
@@ -201,12 +202,12 @@ if __name__ == '__main__':
     
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(p.setUpdated))
-        for node_id in p.setUpdated:
+        print('timestamp = ', timestamp, 'len(setUpdated) = ', len(setUpdated))
+        for node_id in setUpdated:
             values = (node_id, timestamp)
             self.cassandra_insert(values)
             print('  writing:  ', node_id)
-        p.setUpdated.clear()
+        setUpdated.clear()
         time.sleep(5)
         
     print(__name__ + ': process is dead, time to die')
