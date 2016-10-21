@@ -262,9 +262,8 @@ class index_WCC:
         yield "<h2>This is the Waggle Beehive web server.</h2><br><br>\n\n"
         
         yield "<h3>Public nodes:</h3>\n"
-        yield "<p><i> UTC of last update of this page:</i></p> {}\n".format(
+        yield "<p><i> UTC of last update of this page:</i> {}</p>\n".format(
             dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"))
-
         
         if not u'data' in req.json():
             msg = "data field not found"
