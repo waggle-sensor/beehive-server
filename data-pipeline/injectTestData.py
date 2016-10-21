@@ -30,7 +30,6 @@ if __name__ == '__main__':
         help = 'number of parameters to send with each message')
     argParser.add_argument('--node_id', 
         default = '0000000000000000', 
-        type = string,
         help = 'node id ')
     args = argParser.parse_args()
     print('args = ', args)
