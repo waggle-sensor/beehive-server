@@ -192,7 +192,7 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    q = multiprocessing.Queue(1000)
+    q = Queue(1000)
     p = LastUpdateProcess(q, verbosity)
     p.start()
     
