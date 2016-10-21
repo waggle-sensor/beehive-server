@@ -38,6 +38,7 @@ class LastUpdateProcess(Process):
         """
         super(LastUpdateProcess, self).__init__()
         
+        self.q = q
         self.input_exchange = 'data-pipeline-in'
         self.queue          = 'last-update'
         self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
@@ -94,8 +95,8 @@ class LastUpdateProcess(Process):
         '''
         try:
             node_id     = props.reply_to
-            q.put(node_id)
-            print('  caching:  ', node_id,  'q.qsize() = ', q.qsize())
+            self.q.put(node_id)
+            print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
