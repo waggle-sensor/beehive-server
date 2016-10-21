@@ -334,7 +334,7 @@ class index_WCC:
                     if delta > tuple[0]:
                         color = tuple[1]
                         break
-                last_updated = '<td style="background-color:{}>{}</td>'.format(color, s)
+                last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
                 (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
