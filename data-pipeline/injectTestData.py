@@ -28,6 +28,10 @@ if __name__ == '__main__':
         default = 1, 
         type = int,
         help = 'number of parameters to send with each message')
+    argParser.add_argument('--node_id', 
+        default = '0000000000000000', 
+        type = string,
+        help = 'node id ')
     args = argParser.parse_args()
     print('args = ', args)
     
@@ -45,14 +49,14 @@ if __name__ == '__main__':
         
         if args.exchange == 'data-pipeline-in':
             myProperties = pika.BasicProperties(
-                    reply_to    = '0000000000000000',
+                    reply_to    = args.node_id,
                     timestamp   = ts,
                     app_id      = 'testsensor:v1:0',
                     type        = 'param'
             )
         else:    #args.exchange == 'plugins-out':
             myProperties = pika.BasicProperties(
-                    reply_to    = '0000000000000000',
+                    reply_to    = args.node_id,
                     timestamp   = ts,
                     app_id      = 'testsensor:v1:0',
                     type        = 'sensor0',
