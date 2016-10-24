@@ -1,4 +1,6 @@
-use waggle;
+CREATE DATABASE IF NOT EXISTS waggle;
+
+USE waggle;
 
 # data that has 1 value at a time per node_id
 CREATE TABLE node_management (
