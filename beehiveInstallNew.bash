@@ -36,7 +36,9 @@ if true; then
     #####################################################################
     #########   INSTALL
     #####################################################################
-    apt-get install curl
+    apt-get install -y curl
+    apt-get install -y git
+    apt update
     
     cd ~
     rm -rf git
@@ -62,6 +64,17 @@ if true; then
     docker network ls
     docker network inspect beehive
 
+    apt-get install -y python-webpy
+
+    docker pull waggle/beehive-cert:latest
+    docker pull waggle/beehive-sshd:latest
+    docker pull waggle/beehive-server:latest
+    docker pull waggle/beehive-api:latest
+    docker pull waggle/beehive-web:latest
+    docker pull cassandra:3.2
+    docker pull mysql:5.7.10
+    docker pull rabbitmq:3.5.6
+    
     ### SSL
     docker pull waggle/beehive-server:latest
 
@@ -211,11 +224,6 @@ if true; then
       waggle/beehive-nginx /usr/sbin/nginx -g 'daemon off;'
 
     ### systemd  
-    #cd ~
-    #rm -rf git
-    #mkdir -p git
-    #cd git
-    #git clone https://github.com/waggle-sensor/beehive-server.git
     cd ~/git/beehive-server/systemd/
       
     for service in *.service ; do
