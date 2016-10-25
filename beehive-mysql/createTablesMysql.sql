@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS waggle;
 USE waggle;
 
 # data that has 1 value at a time per node_id
-CREATE TABLE node_management (
+CREATE TABLE IF NOT EXISTS node_management (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             VARCHAR(32),
     rssh_port           INT,
@@ -12,11 +12,11 @@ CREATE TABLE node_management (
     sim_iccid           VARCHAR(64),  # 3G/4G
     modem_imei          VARCHAR(64),  # modem
     time_created        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_node (node_id)
 );
-ALTER TABLE node_management ADD INDEX idx_node (node_id);
 
-CREATE TABLE calibration (
+CREATE TABLE IF NOT EXISTS calibration (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     part_number         TEXT,
     mac_address         TEXT,
@@ -27,7 +27,7 @@ CREATE TABLE calibration (
 );
 
 
-CREATE TABLE node_config (
+CREATE TABLE IF NOT EXISTS node_config (
     node_config_id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name                    TEXT,
     node_id                 VARCHAR(32),
@@ -40,12 +40,12 @@ CREATE TABLE node_config (
     location_orientation    FLOAT,    # relative to true North, degrees cw ???
     config                  JSON,    # hardware, software, and relationships
     time_created            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    time_last_updated       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    time_last_updated       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX   idx_node_time (node_id, time_started)
 );
-ALTER TABLE node_config ADD INDEX idx_node_time (node_id, time_started);
 
 
-CREATE TABLE node_meta (
+CREATE TABLE IF NOT EXISTS node_meta (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     config_id           INT NOT NULL,
     calibration_ids     JSON DEFAULT NULL,
@@ -53,16 +53,16 @@ CREATE TABLE node_meta (
     time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE node_notes (
+CREATE TABLE IF NOT EXISTS node_notes (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             INT,
     note                TEXT,
     time_created        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_node (node_id)
 );
-ALTER TABLE node_notes ADD INDEX idx_node (node_id);
 
-CREATE TABLE hardware (
+CREATE TABLE IF NOT EXISTS hardware (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     vendor              TEXT,
     part_number         TEXT,
@@ -73,7 +73,7 @@ CREATE TABLE hardware (
     time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE software (
+CREATE TABLE IF NOT EXISTS software (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name                TEXT,
     description         TEXT,
