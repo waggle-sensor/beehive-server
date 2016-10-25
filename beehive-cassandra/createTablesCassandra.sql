@@ -3,7 +3,7 @@ CREATE KEYSPACE IF NOT EXISTS waggle
 
 USE waggle;
 
-CREATE TABLE sensor_data_raw (
+CREATE TABLE IF NOT EXISTS sensor_data_raw (
     node_id         ascii,    
     date            ascii,    
     ingest_id       int,
@@ -16,7 +16,7 @@ CREATE TABLE sensor_data_raw (
     PRIMARY KEY  ((node_id, date), plugin_name, plugin_version, plugin_instance, timestamp, parameter)
 );
 
-CREATE TABLE sensor_data_decoded (
+CREATE TABLE IF NOT EXISTS sensor_data_decoded (
     node_id         ascii,
     date            ascii,
     ingest_id       int,
@@ -30,7 +30,7 @@ CREATE TABLE sensor_data_decoded (
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
 
-CREATE TABLE admin_messages (
+CREATE TABLE IF NOT EXISTS admin_messages (
     node_id         ascii,
     date            ascii,
     ingest_id       int,
@@ -44,7 +44,7 @@ CREATE TABLE admin_messages (
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
 
-CREATE TABLE nodes_last_update (
+CREATE TABLE IF NOT EXISTS nodes_last_update (
     node_id         ascii,
     last_update     TIMESTAMP,      -- milliseconds from epoch, integer
     PRIMARY KEY     (node_id)
