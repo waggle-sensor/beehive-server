@@ -283,7 +283,7 @@ def api_export(node_id, version = 1):
     return Response(stream_with_context(generate()), mimetype='text/csv')
     
 @app.route('/api/1/nodes/<node_id>/export')
-def api_export_v2(node_id):        
+def api_export_v1(node_id):        
     return api_export(node_id, version = 1)       
 
 @app.route('/api/2/nodes/<node_id>/export')
