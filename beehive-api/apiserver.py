@@ -214,7 +214,7 @@ def api_dates(node_id, version = 1):
     node_id = node_id.lower()
     
     
-    nodes_dict = list_node_dates(version = 1)
+    nodes_dict = list_node_dates(version)
     
     if not node_id in nodes_dict:
         logger.debug("nodes_dict: " + json.dumps(nodes_dict))
