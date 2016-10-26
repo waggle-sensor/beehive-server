@@ -513,11 +513,11 @@ class web_node_page_v2:
         web.header('Transfer-Encoding','chunked')
         
         #TODO check that node_id exists!
-        yield html_header('Node '+node_id.upper())
+        yield html_header('Node '+node_id.upper()+'   v2')
         yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
         
         
-        yield "<h3>Available data</h3>\n"
+        yield "<h3>Available data - v2</h3>\n"
         # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug(str(req.json()))
