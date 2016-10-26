@@ -227,8 +227,16 @@ class index:
                         break
                 last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td>%s</td><td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
-                (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
+            result_line = '''<tr>
+                <td>%s</td>
+                <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
+                <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                %s
+                </tr>\n'''                \
+                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
 
