@@ -200,11 +200,11 @@ def api_nodes(version = 1):
 
 @app.route('/api/1/nodes/')
 def api_nodes_v1():
-    return api_nodes(1)
+    return api_nodes(version = 1)
 
 @app.route('/api/2/nodes/')
 def api_nodes_v2():
-    return api_nodes(2)
+    return api_nodes(version = 2)
 
     
 def api_dates(node_id, version = 1):        
@@ -231,11 +231,11 @@ def api_dates(node_id, version = 1):
     
 @app.route('/api/1/nodes/<node_id>/dates')
 def api_dates_v1(node_id):
-    return api_dates_v1(node_id, version = 1)
+    return api_dates(node_id, version = 1)
     
 @app.route('/api/2/nodes/<node_id>/dates')
 def api_dates_v2(node_id):        
-    return api_dates_v1(node_id, version = 2)
+    return api_dates(node_id, version = 2)
         
         
 @app.route('/api/1/nodes_last_update/')
