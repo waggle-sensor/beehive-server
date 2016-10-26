@@ -284,11 +284,11 @@ def api_export(node_id, version = 1):
     
 @app.route('/api/1/nodes/<node_id>/export')
 def api_export_v2(node_id):        
-    return api_export(node_id, version = 1):        
+    return api_export(node_id, version = 1)       
 
 @app.route('/api/2/nodes/<node_id>/export')
 def api_export_v2(node_id):        
-    return api_export(node_id, version = 2):        
+    return api_export(node_id, version = 2)      
 
     
 if __name__ == "__main__":
