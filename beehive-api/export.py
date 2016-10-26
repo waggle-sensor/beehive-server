@@ -89,7 +89,7 @@ def export_generator(node_id, date, ttl, delimiter, version = 1):
         for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
             count +=1
             #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
-            yield delimiter.join((node_id, date, str(ingest_id), str(meta_id), timestamp, data_set, sensor, parameter, data, unit))
+            yield delimiter.join((node_id, date, str(ingest_id), str(meta_id), str(timestamp), data_set, sensor, parameter, data, unit))
     
     cluster.shutdown()
     logger.info("Retrieved %d rows" % (count))
