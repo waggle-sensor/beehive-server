@@ -148,8 +148,7 @@ def api_epoch():
     #return jsonify(obj)
 
 
-@app.route('/api/1/nodes/')
-def api_nodes():        
+def api_nodes(version = 1):        
 
     logger.debug('GET api_nodes')
     #query = web.ctx.query
@@ -198,16 +197,24 @@ def api_nodes():
     obj['data'] = all_nodes
     return jsonify(obj)
     #return  json.dumps(obj, indent=4)
+
+@app.route('/api/1/nodes/')
+def api_nodes_v1():
+    return api_nodes(1)
+
+@app.route('/api/2/nodes/')
+def api_nodes_v2():
+    return api_nodes(2)
+
     
-@app.route('/api/1/nodes/<node_id>/dates')
-def api_dates(node_id):        
+def api_dates(node_id, version = 1):        
 
     logger.debug('GET api_dates')
     
     node_id = node_id.lower()
     
     
-    nodes_dict = list_node_dates()
+    nodes_dict = list_node_dates(version = 1)
     
     if not node_id in nodes_dict:
         logger.debug("nodes_dict: " + json.dumps(nodes_dict))
@@ -222,6 +229,13 @@ def api_dates(node_id):
     
     return jsonify(obj)
     
+@app.route('/api/1/nodes/<node_id>/dates')
+def api_dates_v1(node_id):
+    return api_dates_v1(node_id, version = 1)
+    
+@app.route('/api/2/nodes/<node_id>/dates')
+def api_dates_v2(node_id):        
+    return api_dates_v1(node_id, version = 2)
         
         
 @app.route('/api/1/nodes_last_update/')
@@ -235,9 +249,7 @@ def api_nodes_last_update():
                         
 
 
-
-@app.route('/api/1/nodes/<node_id>/export')
-def api_export(node_id):        
+def api_export(node_id, version = 1):        
    
     logger.debug('GET api_export')
     
@@ -259,7 +271,7 @@ def api_export(node_id):
     
     def generate():
         num_lines = 0
-        for row in export_generator(node_id, date, False, ';'):
+        for row in export_generator(node_id, date, False, ';', version = version):
             yield row+"\n"
             num_lines += 1
 
@@ -270,12 +282,16 @@ def api_export(node_id):
             
     return Response(stream_with_context(generate()), mimetype='text/csv')
     
-   
+@app.route('/api/1/nodes/<node_id>/export')
+def api_export_v2(node_id):        
+    return api_export(node_id, version = 1):        
 
+@app.route('/api/2/nodes/<node_id>/export')
+def api_export_v2(node_id):        
+    return api_export(node_id, version = 2):        
+
+    
 if __name__ == "__main__":
-    
-    
-    
     #web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     #app.internalerror = internalerror
     #app.run()

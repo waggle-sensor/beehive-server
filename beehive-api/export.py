@@ -53,18 +53,23 @@ def query(statement):
     
     return cluster, rows
 
-def export_generator(node_id, date, ttl, delimiter):
+def export_generator(node_id, date, ttl, delimiter, version = 1):
     """
     Python generator to export sensor data from Cassandra
+    version = 1 or 2, indicates which database/dataset is being queried
     """
 
     node_id = node_id.lower()
     # TODO check if node exists
 
-    statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
-                "FROM waggle.sensor_data "+ \
-                "WHERE node_id='%s' AND date='%s'" %(node_id, date)
-
+    if version == 1:
+        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
+                    "FROM waggle.sensor_data "+ \
+                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+    else:   # version == 2
+        statement = "SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit "+ \
+                    "FROM waggle.sensor_data_decoded "+ \
+                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
     
     try:
         cluster, rows = query(statement)
@@ -75,20 +80,30 @@ def export_generator(node_id, date, ttl, delimiter):
         delimiter = ';'
     
     count = 0
-    for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
-        count +=1
-        #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
-        yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
+    if version == 1:
+        for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
+            count +=1
+            #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
+            yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
+    else:  # version == 2
+        for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
+            count +=1
+            #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
+            yield delimiter.join((node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit))
     
     cluster.shutdown()
     logger.info("Retrieved %d rows" % (count))
 
 
-def list_node_dates():
+def list_node_dates(version = 1):
     """
     Returns hash of nodes with dates.
+    version = 1 or 2, indicates which database/dataset is being queried
     """
-    statement = "SELECT DISTINCT node_id,date FROM sensor_data"
+    if version == 1:
+        statement = "SELECT DISTINCT node_id,date FROM sensor_data"
+    else:
+        statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
     
     try:
         cluster, rows = query(statement)
@@ -108,10 +123,11 @@ def list_node_dates():
     cluster.shutdown()
     logger.info("Found %d node_ids." % (count))   
     return nodes
-
+    
 def get_nodes_last_update_dict():
     """
     Returns dictionary that maps node_id to last_update.
+    Only works for version 2 data.
     """
     statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update;"
     
