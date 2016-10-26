@@ -488,6 +488,7 @@ class web_node_page_v2:
         api_call_internal   = '%s2/nodes/%s/dates' % (api_url_internal, node_id)
         
         try:
+            logger.debug('api_call_internal = ' + api_call_internal)
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
         except Exception as e:
             msg = "Could not make request: %s", (str(e))
@@ -522,7 +523,7 @@ class web_node_page_v2:
         
         logger.debug(str(req.json()))
         for date in req.json()['data']:
-            yield '<br>\n<a href="%s1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
+            yield '<br>\n<a href="%s2/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
 
 
         yield  "<br>\n<br>\n"
@@ -535,14 +536,14 @@ class web_node_page_v2:
 <pre>
 # get data from two specific days
 for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}2/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 
 # get all data of one node
-DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
+DATES=$(curl {1}2/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}2/nodes/{0}/export?date=${{date}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 </pre>
