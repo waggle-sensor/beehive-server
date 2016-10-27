@@ -4,6 +4,7 @@ import json
 import os.path
 import ssl
 from urllib.parse import urlencode
+import re
 
 
 plugin = 'gps:1'
@@ -40,11 +41,41 @@ channel.exchange_declare(exchange='plugins-out',
                          durable=True)
 
 
+pattern = re.compile("(.+)\*(.+)\'(.+)")
+
+
 def callback(ch, method, properties, body):
-        channel.basic_publish(properties=properties,
-                              exchange='plugins-out',
-                              routing_key=method.routing_key,
-                              body=body)
+    lat, lon, alt = body.decode().split(',')
+
+    m = pattern.match(lat)
+
+    lat_deg = float(m.group(1))
+    lat_min = float(m.group(2))
+    lat_dir = m.group(3)
+
+    lon_deg = float(m.group(1))
+    lon_min = float(m.group(2))
+    lon_dir = m.group(3)
+
+    alt_val = float(alt[:-1])
+    # alt_unit = alt[-1]
+
+    data = json.dumps({
+        'lat_deg': lat_deg,
+        'lat_min': lat_min,
+        'lat_dir': lat_dir,
+        'lon_deg': lon_deg,
+        'lon_min': lon_min,
+        'lon_dir': lon_dir,
+        'alt': alt_val
+    })
+
+    properties.content_type = 'text/json'
+
+    channel.basic_publish(properties=properties,
+                          exchange='plugins-out',
+                          routing_key=method.routing_key,
+                          body=data)
 
 
 channel.basic_consume(callback,
