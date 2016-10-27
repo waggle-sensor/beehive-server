@@ -1,12 +1,12 @@
-import os.path
+#!/usr/bin/env python3
 import pika
-import ssl
-from waggle.coresense.utils import decode_frame
-from urllib.parse import urlencode
 import json
+import os.path
+import ssl
+from urllib.parse import urlencode
 
 
-plugin = 'coresense:3'
+plugin = 'gps:1'
 
 url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
     'ssl': 't',
@@ -41,19 +41,10 @@ channel.exchange_declare(exchange='plugins-out',
 
 
 def callback(ch, method, properties, body):
-    for sensor, values in decode_frame(body).items():
-        props = pika.BasicProperties(
-            app_id=properties.app_id,
-            timestamp=properties.timestamp,
-            reply_to=properties.reply_to,
-            type=sensor,
-            content_type='text/json',
-        )
-
-        channel.basic_publish(properties=props,
+        channel.basic_publish(properties=properties,
                               exchange='plugins-out',
                               routing_key=method.routing_key,
-                              body=json.dumps(values))
+                              body=body)
 
 
 channel.basic_consume(callback,
