@@ -71,7 +71,7 @@ def html_header(title):
 <body>
 '''
     return header.format(title)
- 
+
 def html_footer():
     return '''
 </body>
@@ -98,7 +98,7 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
-        
+
 
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
@@ -109,16 +109,16 @@ def handle_invalid_usage(error):
 
 
 def internalerror(e):
-    
+
     message = html_header("Error") + "Sorry, there was an error:<br>\n<pre>\n"+str(e) +"</pre>\n"+ html_footer()
-    
+
     return message
-    
+
 
 def get_mysql_db():
-    return Mysql( host="beehive-mysql",    
-                    user="waggle",       
-                    passwd="waggle",  
+    return Mysql( host="beehive-mysql",
+                    user="waggle",
+                    passwd="waggle",
                     db="waggle")
 
 @app.route('/api/')
@@ -128,7 +128,7 @@ def api_root():
 @app.route('/api/1/')
 def api_version():
     return 'This is the beehive API server.'
-    
+
 @app.route('/api/1/epoch')
 def api_epoch():
     """
@@ -141,58 +141,58 @@ def api_epoch():
         epoch= int(time.time())
     except:
         raise InvalidUsage('error getting server time', status_code=STATUS_Server_Error)
-        
-        
+
+
     return '{"epoch": %d}' % (epoch)
     # jsonify might brake trivial parser on the node.
     #return jsonify(obj)
 
 
-def api_nodes(version = 1):        
+def api_nodes(version = 1):
 
     logger.debug('GET api_nodes')
     #query = web.ctx.query
-    
+
     #web.header('Content-type','text/plain')
     #web.header('Transfer-Encoding','chunked')
-    
+
     db = get_mysql_db()
-    
+
     all_nodes = {}
     mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port,name,location,last_updated FROM nodes;")
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
-        
+
         # these are strings
-        
+
         if node_id:
             node_id = node_id.lower()
         else:
             node_id = 'unknown'
-    
-        
-        
+
+
+
         logger.debug("reverse_ssh_port type: " + str(type(reverse_ssh_port)))
-        
-        
+
+
         logger.debug('got from mysql: %s %s %s %s %s %s %s %s' % (node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated))
         all_nodes[node_id] = {  'hostname'          : hostname,
-                                'project'           : project, 
+                                'project'           : project,
                                 'description'       : description ,
                                 'reverse_ssh_port'  : reverse_ssh_port ,
-                                'name'              : name, 
-                                'location'          : location, 
+                                'name'              : name,
+                                'location'          : location,
                                 'last_updated'      : last_updated}
-        
+
     nodes_dict = list_node_dates() # lower case
-    
+
     for node_id in nodes_dict.keys():
         if not node_id in all_nodes:
             all_nodes[node_id]={}
-    
+
     #for node_id in all_nodes.keys():
     #    logger.debug("%s %s" % (node_id, type(node_id)))
-    
+
     obj = {}
     obj['data'] = all_nodes
     return jsonify(obj)
@@ -206,97 +206,93 @@ def api_nodes_v1():
 def api_nodes_v2():
     return api_nodes(version = 2)
 
-    
-def api_dates(node_id, version = 1):        
+
+def api_dates(node_id, version = 1):
 
     logger.debug('GET api_dates')
-    
+
     node_id = node_id.lower()
-    
-    
+
+
     nodes_dict = list_node_dates(version)
-    
+
     if not node_id in nodes_dict:
         logger.debug("nodes_dict: " + json.dumps(nodes_dict))
         raise InvalidUsage("node_id not found in nodes_dict: " + node_id,  status_code=STATUS_Bad_Request )
-    
+
     dates = nodes_dict[node_id]
-    
+
     logger.debug("dates: " + str(dates))
-    
+
     obj = {}
     obj['data'] = sorted(dates, reverse=True)
-    
+
     return jsonify(obj)
-    
+
 @app.route('/api/1/nodes/<node_id>/dates')
 def api_dates_v1(node_id):
     return api_dates(node_id, version = 1)
-    
+
 @app.route('/api/2/nodes/<node_id>/dates')
-def api_dates_v2(node_id):        
+def api_dates_v2(node_id):
     return api_dates(node_id, version = 2)
-        
-        
+
+
 @app.route('/api/1/nodes_last_update/')
-def api_nodes_last_update():        
+def api_nodes_last_update():
 
     logger.debug('GET api_nodes_last_update')
-    
+
     nodes_last_update_dict = get_nodes_last_update_dict()
-        
+
     return jsonify(nodes_last_update_dict)
-                        
 
 
-def api_export(node_id, version = 1):        
-   
+
+def api_export(node_id, version = 1):
+
     logger.debug('GET api_export')
-    
+
     date = request.args.get('date')
 
     logger.info("date: %s", str(date))
-   
+
     if not date:
         raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
-    
-    
+
+
     r = re.compile('\d{4}-\d{1,2}-\d{1,2}')
-    
+
     if not r.match(date):
         raise InvalidUsage("date format not correct", status_code=STATUS_Not_Found)
-        
-    
+
+
     logger.info("accepted date: %s" %(date))
-    
+
     def generate():
         num_lines = 0
-        for row in export_generator(node_id, date, False, ';', version = version):
+        for row in export_generator(node_id, date, False, ';', version=version):
             yield row+"\n"
             num_lines += 1
 
-        if num_lines == 0:
-            raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
-        else:
-            yield "# %d results\n" % (num_lines)
-            
+        # if num_lines == 0:
+        #     raise InvalidUsage("num_lines == 0", status_code=STATUS_Server_Error)
+        # else:
+        #     yield "# %d results\n" % (num_lines)
+
     return Response(stream_with_context(generate()), mimetype='text/csv')
-    
+
 @app.route('/api/1/nodes/<node_id>/export')
-def api_export_v1(node_id):        
-    return api_export(node_id, version = 1)       
+def api_export_v1(node_id):
+    return api_export(node_id, version = 1)
 
 @app.route('/api/2/nodes/<node_id>/export')
-def api_export_v2(node_id):        
-    return api_export(node_id, version = 2)      
+def api_export_v2(node_id):
+    return api_export(node_id, version = 2)
 
-    
+
 if __name__ == "__main__":
     #web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", port))
     #app.internalerror = internalerror
     #app.run()
     app.run(debug=True,host='0.0.0.0')
-
-
-
-
