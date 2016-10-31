@@ -406,20 +406,20 @@ class index_WCC:
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
         durations = [
-            ('year', datetime.timedelta(days = 365).total_seconds),
-            ('month', datetime.timedelta(days = 30).total_seconds),
-            ('week', datetime.timedelta(days = 7).total_seconds),
-            ('day', datetime.timedelta(days = 1).total_seconds),
-            ('hour', datetime.timedelta(seconds = 3600).total_seconds),
-            ('minute', datetime.timedelta(seconds = 60).total_seconds),
+            ('year', datetime.timedelta(days = 365).total_seconds()),
+            ('month', datetime.timedelta(days = 30).total_seconds()),
+            ('week', datetime.timedelta(days = 7).total_seconds()),
+            ('day', datetime.timedelta(days = 1).total_seconds()),
+            ('hour', datetime.timedelta(seconds = 3600).total_seconds()),
+            ('minute', datetime.timedelta(seconds = 60).total_seconds()),
         ]
         
         logger.debug('WCC 2: {}'.format(durations))
         
         logger.debug('WCC 2a')
-        td0 = datetime.timedelta(days = 365).total_seconds 
+        td0 = datetime.timedelta(days = 365).total_seconds()
         
-        td1 = datetime.timedelta(days = 1).total_seconds
+        td1 = datetime.timedelta(days = 1).total_seconds()
         logger.debug('WCC sys.version_info = {}'.format(str(sys.version_info)))
 
         logger.debug('WCC 2b, td0 = {}'.format(str(td0)))
@@ -428,7 +428,7 @@ class index_WCC:
         
         
         logger.debug('WCC 2d: {}'.format(durations))
-        #logger.debug('WCC 3: {}'.format(nDays))
+        logger.debug('WCC 3: {}'.format(nDays))
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
@@ -452,10 +452,11 @@ class index_WCC:
 
                 # human-readable duration
                 duration_string = '1 minute ago'
+                delta_seconds = delta.total_seconds()
                 for dur in durations:
-                    if delta > dur[1]:
-                        logger.debug('{}  {}'.format(delta, str(dur)))
-                        num = int(delta / dur[1])
+                    if delta_seconds > dur[1]:
+                        logger.debug('{}  {}'.format(delta_seconds, str(dur)))
+                        num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
             #&nbsp&nbsp&nbsp&nbsp
