@@ -373,12 +373,12 @@ class index_WCC:
                         
         # sort the list
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
-        logger.debug('len(node_tuple) = ', len(node_tuple))
+        logger.debug('len(node_tuple) = {}'.format(len(node_tuple)))
         
         for node_tuple in nodes_sorted:
-            logger.debug('node_tuple = ', node_tuple)
+            logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
-            logger.debug('====', node_id, name, description, location, hostname)
+            logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
