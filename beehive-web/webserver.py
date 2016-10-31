@@ -411,12 +411,13 @@ class index_WCC:
             ('week', datetime.timedelta(days = 7)),
             ('day', datetime.timedelta(days = 1)),
             ('hour', datetime.timedelta(seconds = 3600)),
-            ('minute', datetime.timedelta(seconds = 60))
+            ('minute', datetime.timedelta(seconds = 60)),
         ]
         
         logger.debug('WCC 2: {}'.format(durations))
         nDays = datetime.timedelta(days = 365) / datetime.timedelta(days = 1)
-        logger.debug('WCC 3: {}'.format(nDays))
+        logger.debug('WCC 2b: {}'.format(durations))
+        logger.debug('WCC 3: {}'.format(nDays)))
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
