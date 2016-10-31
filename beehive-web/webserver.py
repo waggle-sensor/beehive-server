@@ -420,15 +420,15 @@ class index_WCC:
         td0 = datetime.timedelta(days = 365) 
         
         td1 = datetime.timedelta(days = 1)
-        
+        logger.debug('WCC sys.version_info = {}'.format(str(sys.version_info)))
+
         logger.debug('WCC 2b, td0 = {}'.format(str(td0)))
         logger.debug('WCC 2c, td1 = {}'.format(str(td1)))
-                
-        nDays = td1 // td0
+        #nDays = td1 / td0
         
         
         logger.debug('WCC 2d: {}'.format(durations))
-        logger.debug('WCC 3: {}'.format(nDays))
+        #logger.debug('WCC 3: {}'.format(nDays))
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
