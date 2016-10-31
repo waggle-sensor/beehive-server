@@ -375,8 +375,9 @@ class index_WCC:
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
                         
         for node_tuple in nodes_sorted:
+            logger.debug('node_tuple = ', node_tuple)
             node_id, name, description, location, hostname = node_tuple
-            
+            logger.debug('====', node_id, name, description, location, hostname)
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
