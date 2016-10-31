@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import datetime
+import itertools
 import json
 import logging
 import operator
@@ -384,7 +385,7 @@ class index_WCC:
         nodes_unnamed.sort(key = operator.itemgetter(1,2,3))
         nodes_named.sort(key = operator.itemgetter(1,2,3))
         
-        for node_tuple in itertools.cat(nodes_named, nodes_unnamed):
+        for node_tuple in itertools.chain(nodes_named, nodes_unnamed):
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
             logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
