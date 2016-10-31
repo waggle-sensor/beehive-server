@@ -261,7 +261,7 @@ class index_WCC:
     def GET(self):
         logger.debug('GET index_WCC')
         
-        
+        logger.debug('test')
 
         api_call = api_url+'1/nodes/'
         api_call_internal = api_url_internal+'1/nodes/'
