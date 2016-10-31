@@ -421,6 +421,7 @@ class index_WCC:
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
+            duration_string = ''
             if node_id in dictLastUpdate:
                 dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
                 #s = dt.isoformat(sep = ' ')
