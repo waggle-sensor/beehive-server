@@ -348,8 +348,7 @@ class index_WCC:
         # one row per node
         
 
-        nodes_named = list()
-        nodes_unnamed = list()
+        nodes_sorted = list()
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -374,16 +373,16 @@ class index_WCC:
             if u'location' in node_obj:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
-            if name == '':
-                nodes_unnamed.append((node_id, name, description, location, hostname))
-            else:
-                nodes_named.append((node_id, name, description, location, hostname))
 
+            nodes_sorted.append((node_id, name, description, location, hostname))
                         
         # sort the list
-        
-        nodes_unnamed.sort(key = operator.itemgetter(1,2,3))
-        nodes_named.sort(key = operator.itemgetter(1,2,3))
+        def EmptyStringsLast(v):
+            return v if v != '' else 'ZZZZZZ'
+        def MyKey(x):
+            return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]))
+            
+        nodes_sorted.sort(key = lambda x: MyKey(x))
         
         for node_tuple in itertools.chain(nodes_named, nodes_unnamed):
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
