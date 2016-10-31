@@ -261,7 +261,6 @@ class index_WCC:
     def GET(self):
         logger.debug('GET index_WCC')
         
-        logger.debug('test')
 
         api_call = api_url+'1/nodes/'
         api_call_internal = api_url_internal+'1/nodes/'
@@ -297,6 +296,8 @@ class index_WCC:
             raise internalerror(msg)
         
         dictLastUpdate = req_last_update.json()
+        
+        logger.debug('len(dictLastUpdate) = {}'.format(len(dictLastUpdate)))
         
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
