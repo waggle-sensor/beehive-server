@@ -144,8 +144,6 @@ class index:
         
         dictLastUpdate = req_last_update.json()
         
-        logger.debug('len(dictLastUpdate) = {}'.format(len(dictLastUpdate)))
-        
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         
@@ -239,9 +237,7 @@ class index:
         ]
                     
         for node_tuple in nodes_sorted:
-            logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
-            logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
@@ -260,11 +256,9 @@ class index:
                 # human-readable duration
                 duration_string = '1 minute ago'
                 delta_seconds = delta.total_seconds()
-                logger.debug('delta_seconds = {}'.format(delta_seconds))
 
                 for dur in durations:
                     if delta_seconds > dur[1]:
-                        logger.debug('{}  {}'.format(delta_seconds, str(dur)))
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
@@ -326,8 +320,6 @@ class index_WCC:
         
         dictLastUpdate = req_last_update.json()
         
-        logger.debug('len(dictLastUpdate) = {}'.format(len(dictLastUpdate)))
-        
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         
@@ -421,9 +413,7 @@ class index_WCC:
         ]
                     
         for node_tuple in nodes_sorted:
-            logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
-            logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
