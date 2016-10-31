@@ -384,7 +384,7 @@ class index_WCC:
             
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
-        for node_tuple in itertools.chain(nodes_named, nodes_unnamed):
+        for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
             logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
