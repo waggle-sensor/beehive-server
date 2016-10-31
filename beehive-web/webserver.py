@@ -406,25 +406,25 @@ class index_WCC:
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
         durations = [
-            ('year', datetime.timedelta(days = 365)),
-            ('month', datetime.timedelta(days = 30)),
-            ('week', datetime.timedelta(days = 7)),
-            ('day', datetime.timedelta(days = 1)),
-            ('hour', datetime.timedelta(seconds = 3600)),
-            ('minute', datetime.timedelta(seconds = 60)),
+            ('year', datetime.timedelta(days = 365).total_seconds),
+            ('month', datetime.timedelta(days = 30).total_seconds),
+            ('week', datetime.timedelta(days = 7).total_seconds),
+            ('day', datetime.timedelta(days = 1).total_seconds),
+            ('hour', datetime.timedelta(seconds = 3600).total_seconds),
+            ('minute', datetime.timedelta(seconds = 60).total_seconds),
         ]
         
         logger.debug('WCC 2: {}'.format(durations))
         
         logger.debug('WCC 2a')
-        td0 = datetime.timedelta(days = 365) 
+        td0 = datetime.timedelta(days = 365).total_seconds 
         
-        td1 = datetime.timedelta(days = 1)
+        td1 = datetime.timedelta(days = 1).total_seconds
         logger.debug('WCC sys.version_info = {}'.format(str(sys.version_info)))
 
         logger.debug('WCC 2b, td0 = {}'.format(str(td0)))
         logger.debug('WCC 2c, td1 = {}'.format(str(td1)))
-        #nDays = td1 / td0
+        nDays = td0 / td1
         
         
         logger.debug('WCC 2d: {}'.format(durations))
