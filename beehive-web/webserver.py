@@ -347,7 +347,8 @@ class index_WCC:
         # one row per node
         
 
-        nodes_sorted = list()
+        nodes_named = list()
+        nodes_unnamed = list()
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -372,19 +373,18 @@ class index_WCC:
             if u'location' in node_obj:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
-                    
-            nodes_sorted.append((node_id, name, description, location, hostname))
-            logger.debug('WCC 4   {}'.format(len(nodes_sorted)))
+            if name == '':
+                nodes_unnamed.append((node_id, name, description, location, hostname))
+            else:
+                nodes_named.append((node_id, name, description, location, hostname))
+
                         
         # sort the list
-        logger.debug('WCC 5   {}'.format(len(nodes_sorted)))
-        logger.debug('WCC 6   {}'.format(str(nodes_sorted)))
         
-        nodes_sorted.sort(key = operator.itemgetter(1,2,3))
+        nodes_unnamed.sort(key = operator.itemgetter(1,2,3))
+        nodes_named.sort(key = operator.itemgetter(1,2,3))
         
-        logger.debug('WCC 7   {}'.format(str(nodes_sorted)))
-        
-        for node_tuple in nodes_sorted:
+        for node_tuple in itertools.cat(nodes_named, nodes_unnamed):
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
             logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
