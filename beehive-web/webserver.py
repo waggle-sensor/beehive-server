@@ -380,7 +380,7 @@ class index_WCC:
         def EmptyStringsLast(v):
             return v if v != '' else 'ZZZZZZ'
         def MyKey(x):
-            return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]))
+            return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]), EmptyStringsLast(x[0]))
             
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
