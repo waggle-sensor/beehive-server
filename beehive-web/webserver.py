@@ -373,7 +373,8 @@ class index_WCC:
                         
         # sort the list
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
-                        
+        logger.debug('len(node_tuple) = ', len(node_tuple))
+        
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = ', node_tuple)
             node_id, name, description, location, hostname = node_tuple
