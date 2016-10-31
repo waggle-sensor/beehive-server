@@ -405,7 +405,7 @@ class index_WCC:
                 
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
-                <td>%s</td>
+                <td align="right"><tt>%s</tt></td>
                 <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
                 <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
                 <td>%s</td>
