@@ -413,23 +413,7 @@ class index_WCC:
             ('hour', datetime.timedelta(seconds = 3600).total_seconds()),
             ('minute', datetime.timedelta(seconds = 60).total_seconds()),
         ]
-        
-        logger.debug('WCC 2: {}'.format(durations))
-        
-        logger.debug('WCC 2a')
-        td0 = datetime.timedelta(days = 365).total_seconds()
-        
-        td1 = datetime.timedelta(days = 1).total_seconds()
-        logger.debug('WCC sys.version_info = {}'.format(str(sys.version_info)))
-
-        logger.debug('WCC 2b, td0 = {}'.format(str(td0)))
-        logger.debug('WCC 2c, td1 = {}'.format(str(td1)))
-        nDays = td0 / td1
-        
-        
-        logger.debug('WCC 2d: {}'.format(durations))
-        logger.debug('WCC 3: {}'.format(nDays))
-            
+                    
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
@@ -453,6 +437,8 @@ class index_WCC:
                 # human-readable duration
                 duration_string = '1 minute ago'
                 delta_seconds = delta.total_seconds()
+                logger.debug('delta_seconds = {}'.format(delta_seconds))
+
                 for dur in durations:
                     if delta_seconds > dur[1]:
                         logger.debug('{}  {}'.format(delta_seconds, str(dur)))
