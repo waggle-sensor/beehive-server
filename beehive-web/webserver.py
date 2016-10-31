@@ -352,7 +352,7 @@ class index_WCC:
         yield "<table>\n"
         
         # header row
-        headings = ['name', 'node_id', 'v2 data', 'description', 'hostname', 'location', 'last_updated', 'last updated (ago)']
+        headings = ['name', 'node_id', 'v2 data', 'description', 'hostname', 'location', 'last_updated']
         result_line = '<tr>' + ''.join(['<td><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n'
         #logger.debug("result_line: %s" % (result_line))
         yield result_line
@@ -360,7 +360,7 @@ class index_WCC:
         # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
         # find the first timedelta that is smaller than the data's timestamp's 
         timeToColors = [    
-            (datetime.timedelta(days = 1), '#ff0000'),      # dead = red
+            (datetime.timedelta(days = 1), '#ff3333'),      # dead = red
             (datetime.timedelta(hours = 2), '#ff8000'),     # dying = orange
             (datetime.timedelta(minutes = 5), '#ffff00'),   # just starting to die = yellow
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
@@ -432,8 +432,6 @@ class index_WCC:
                     if delta > tuple[0]:
                         color = tuple[1]
                         break
-                last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
-                
 
                 # human-readable duration
                 duration_string = '1 minute ago'
@@ -446,6 +444,8 @@ class index_WCC:
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
+                last_updated = '<td style="background-color:{}"><tt>{} ({})</tt></td>'.format(color, s, duration_string)
+                        
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
@@ -455,9 +455,8 @@ class index_WCC:
                 <td>%s</td>
                 <td>%s</td>
                 %s
-                <td>%s</td>
                 </tr>\n'''                \
-                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated, duration_string)
+                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
 
