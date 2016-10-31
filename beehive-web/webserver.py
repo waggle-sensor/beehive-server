@@ -344,7 +344,11 @@ class index_WCC:
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
         # one row per node
+        
+        logger.debug('WCC 1')
+
         nodes_sorted = list()
+        logger.debug('WCC 2')
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -369,8 +373,10 @@ class index_WCC:
             if u'location' in node_obj:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
-            
+                    
+            logger.debug('WCC 3')
             nodes_sorted.append((node_id, name, description, location, hostname))
+            logger.debug('WCC 4   {}'.format(len(nodes_sorted)))
                         
         # sort the list
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
