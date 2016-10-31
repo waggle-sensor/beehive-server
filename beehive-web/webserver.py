@@ -2,6 +2,7 @@
 import datetime
 import json
 import logging
+import operator
 import os.path
 import re
 import requests
@@ -345,10 +346,8 @@ class index_WCC:
         ]
         # one row per node
         
-        logger.debug('WCC 1')
 
         nodes_sorted = list()
-        logger.debug('WCC 2')
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -374,11 +373,11 @@ class index_WCC:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
                     
-            logger.debug('WCC 3')
             nodes_sorted.append((node_id, name, description, location, hostname))
             logger.debug('WCC 4   {}'.format(len(nodes_sorted)))
                         
         # sort the list
+        logger.debug('WCC 5   {}'.format(len(nodes_sorted)))
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
         logger.debug('len(node_tuple) = {}'.format(len(node_tuple)))
         
