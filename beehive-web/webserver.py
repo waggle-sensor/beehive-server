@@ -437,6 +437,7 @@ class index_WCC:
                 duration_string = '1 minute ago'
                 for dur in durations:
                     if delta > dur[1]:
+                        logger.debug('{}  {}'.format(delta, str(dur)))
                         num = int(delta / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
