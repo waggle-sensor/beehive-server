@@ -48,17 +48,16 @@ def callback(ch, method, properties, body):
     lat, lon, alt = body.decode().split(',')
 
     m = pattern.match(lat)
-
     lat_deg = float(m.group(1))
     lat_min = float(m.group(2))
     lat_dir = m.group(3)
 
+    m = pattern.match(lon)
     lon_deg = float(m.group(1))
     lon_min = float(m.group(2))
     lon_dir = m.group(3)
 
     alt_val = float(alt[:-1])
-    # alt_unit = alt[-1]
 
     data = json.dumps({
         'lat_deg': lat_deg,
