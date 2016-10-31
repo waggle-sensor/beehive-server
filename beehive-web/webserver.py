@@ -424,7 +424,7 @@ class index_WCC:
         logger.debug('WCC 2b, td0 = {}'.format(str(td0)))
         logger.debug('WCC 2c, td1 = {}'.format(str(td1)))
                 
-        nDays = td1 / td0
+        nDays = td1 // td0
         
         
         logger.debug('WCC 2d: {}'.format(durations))
