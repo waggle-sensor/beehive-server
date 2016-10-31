@@ -378,6 +378,8 @@ class index_WCC:
                         
         # sort the list
         logger.debug('WCC 5   {}'.format(len(nodes_sorted)))
+        logger.debug('WCC 6   {}'.format(str(nodes_sorted[0])))
+        
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
         logger.debug('len(node_tuple) = {}'.format(len(node_tuple)))
         
