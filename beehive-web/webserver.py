@@ -352,7 +352,7 @@ class index_WCC:
         yield "<table>\n"
         
         # header row
-        headings = ['name', 'node_id', 'v2 data', 'description', 'hostname', 'location', 'last_updated']
+        headings = ['name', 'node_id', 'v2 data', 'description', 'hostname', 'location', 'last_updated', 'last updated (ago)']
         result_line = '<tr>' + ''.join(['<td><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n'
         #logger.debug("result_line: %s" % (result_line))
         yield result_line
@@ -405,6 +405,15 @@ class index_WCC:
             
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
+        durations = [
+            ('year', datetime.timedelta(days = 365)),
+            ('month', datetime.timedelta(days = 30)),
+            ('week', datetime.timedelta(days = 7)),
+            ('day', datetime.timedelta(days = 1)),
+            ('hour', datetime.timedelta(seconds = 3600)),
+            ('minute', datetime.timedelta(seconds = 60))
+        ]
+            
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
@@ -424,6 +433,13 @@ class index_WCC:
                         break
                 last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
                 
+                # human-readable duration
+                duration_string = '1 minute ago'
+                for dur in durations:
+                    if delta > dur[1]:
+                        num = int(delta / dur[1])
+                        duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
+                        break
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
@@ -433,8 +449,9 @@ class index_WCC:
                 <td>%s</td>
                 <td>%s</td>
                 %s
+                <td>%s</td>
                 </tr>\n'''                \
-                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
+                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated, duration_string)
                             
             yield result_line
 
