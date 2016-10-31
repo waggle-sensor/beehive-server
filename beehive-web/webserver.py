@@ -315,7 +315,7 @@ class index_WCC:
             raise internalerror(msg)
 
         all_nodes = req.json()[u'data']
-        print 'all_nodes: ', str(all_nodes)
+        #print 'all_nodes: ', str(all_nodes)
         
         yield """
             <head>
@@ -328,7 +328,7 @@ class index_WCC:
         yield "<table>\n"
         
         # header row
-        headings = ['name', 'node_id', 'description', 'hostname', 'location', 'last_updated']
+        headings = ['name', 'node_id', 'v2 data', 'description', 'hostname', 'location', 'last_updated']
         result_line = '<tr>' + ''.join(['<td><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n'
         #logger.debug("result_line: %s" % (result_line))
         yield result_line
@@ -343,6 +343,7 @@ class index_WCC:
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
         # one row per node
+        nodes_sorted = list()
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -368,6 +369,14 @@ class index_WCC:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
             
+            nodes_sorted.append(node_id, name, description, location, hostname)
+                        
+        # sort the list
+        nodes_sorted.sort(key = operator.itemgetter(1,2,3))
+                        
+        for node_tuple in nodes_sorted:
+            node_id, name, description, location, hostname = node_tuple
+            
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
@@ -382,9 +391,18 @@ class index_WCC:
                         color = tuple[1]
                         break
                 last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
+                
             #&nbsp&nbsp&nbsp&nbsp
-            result_line = '<tr><td>%s</td><td><a href="%s/nodes/%s"><tt>%s</tt></a></td><td>%s</td><td>%s</td><td>%s</td>%s</tr>\n' % \
-                (name, web_host, node_id, node_id.upper(), description, hostname, location, last_updated)
+            result_line = '''<tr>
+                <td>%s</td>
+                <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
+                <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                %s
+                </tr>\n'''                \
+                % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
 
@@ -402,7 +420,7 @@ class index_WCC:
             if urls[i].startswith('/api'):
                 yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
-        yield html_footer()        
+        yield html_footer()
 
 
         
