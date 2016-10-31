@@ -144,6 +144,8 @@ class index:
         
         dictLastUpdate = req_last_update.json()
         
+        logger.debug('len(dictLastUpdate) = {}'.format(len(dictLastUpdate)))
+        
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
         
@@ -161,7 +163,7 @@ class index:
             raise internalerror(msg)
 
         all_nodes = req.json()[u'data']
-        print 'all_nodes: ', str(all_nodes)
+        #print 'all_nodes: ', str(all_nodes)
         
         yield """
             <head>
@@ -189,6 +191,9 @@ class index:
             (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
         ]
         # one row per node
+        
+
+        nodes_sorted = list()
         for node_id in all_nodes:
             
             node_obj = all_nodes[node_id]
@@ -213,7 +218,21 @@ class index:
             if u'location' in node_obj:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
+
+            nodes_sorted.append((node_id, name, description, location, hostname))
+                        
+        # sort the list
+        def EmptyStringsLast(v):
+            return v if v != '' else 'ZZZZZZ'
+        def MyKey(x):
+            return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]), EmptyStringsLast(x[0]))
             
+        nodes_sorted.sort(key = lambda x: MyKey(x))
+        
+        for node_tuple in nodes_sorted:
+            logger.debug('node_tuple = {}'.format(str(node_tuple)))
+            node_id, name, description, location, hostname = node_tuple
+            logger.debug('===={} {} {} {} {}'.format(node_id, name, description, location, hostname))
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
@@ -228,9 +247,10 @@ class index:
                         color = tuple[1]
                         break
                 last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
+                
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
-                <td>%s</td>
+                <td align="right"><tt>%s</tt></td>
                 <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
                 <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
                 <td>%s</td>
@@ -257,6 +277,7 @@ class index:
                 yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
         
         yield html_footer()
+
 
 
 class index_WCC:        
