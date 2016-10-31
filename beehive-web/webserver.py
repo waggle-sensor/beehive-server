@@ -413,6 +413,9 @@ class index_WCC:
             ('hour', datetime.timedelta(seconds = 3600)),
             ('minute', datetime.timedelta(seconds = 60))
         ]
+        
+        
+        logger.debug('WCC: {}'.format(durations)
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
@@ -433,6 +436,7 @@ class index_WCC:
                         break
                 last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
                 
+
                 # human-readable duration
                 duration_string = '1 minute ago'
                 for dur in durations:
