@@ -415,7 +415,7 @@ class index_WCC:
         ]
         
         
-        logger.debug('WCC: {}'.format(durations)
+        logger.debug('WCC: {}'.format(durations))
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
