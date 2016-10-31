@@ -184,7 +184,7 @@ class index:
         # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
         # find the first timedelta that is smaller than the data's timestamp's 
         timeToColors = [    
-            (datetime.timedelta(days = 1), '#ff0000'),      # dead = red
+            (datetime.timedelta(days = 1), '#ff3333'),      # dead = red
             (datetime.timedelta(hours = 2), '#ff8000'),     # dying = orange
             (datetime.timedelta(minutes = 5), '#ffff00'),   # just starting to die = yellow
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
@@ -229,6 +229,15 @@ class index:
             
         nodes_sorted.sort(key = lambda x: MyKey(x))
         
+        durations = [
+            ('year', datetime.timedelta(days = 365).total_seconds()),
+            ('month', datetime.timedelta(days = 30).total_seconds()),
+            ('week', datetime.timedelta(days = 7).total_seconds()),
+            ('day', datetime.timedelta(days = 1).total_seconds()),
+            ('hour', datetime.timedelta(seconds = 3600).total_seconds()),
+            ('minute', datetime.timedelta(seconds = 60).total_seconds()),
+        ]
+                    
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
             node_id, name, description, location, hostname = node_tuple
@@ -236,6 +245,7 @@ class index:
             # last_updated contains its own <td> and </td> because it modifies them for color
             # eg. <td style="background-color:#FF0000">
             last_updated = '<td></td>'
+            duration_string = ''
             if node_id in dictLastUpdate:
                 dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
                 #s = dt.isoformat(sep = ' ')
@@ -246,8 +256,20 @@ class index:
                     if delta > tuple[0]:
                         color = tuple[1]
                         break
-                last_updated = '<td style="background-color:{}">{}</td>'.format(color, s)
-                
+
+                # human-readable duration
+                duration_string = '1 minute ago'
+                delta_seconds = delta.total_seconds()
+                logger.debug('delta_seconds = {}'.format(delta_seconds))
+
+                for dur in durations:
+                    if delta_seconds > dur[1]:
+                        logger.debug('{}  {}'.format(delta_seconds, str(dur)))
+                        num = int(delta_seconds / dur[1])
+                        duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
+                        break
+                last_updated = '<td style="background-color:{}"><tt>{}</tt> <b>({})</b></td>'.format(color, s, duration_string)
+                        
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
@@ -261,22 +283,6 @@ class index:
                 % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
-
-        yield "</table>"
-        yield  "<br>\n<br>\n"
-        
-        yield "Corresponding API call to get list of nodes:<br>\n<pre>curl %s</pre>" % (api_call)
-        
-        yield  "<br>\n<br>\n"
-        
-        yield "<br><br><h3>API resources:</h3><br>\n\n"
-        
-        
-        for i in range(0, len(urls), 2):
-            if urls[i].startswith('/api'):
-                yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
-        
-        yield html_footer()
 
 
 
