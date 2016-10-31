@@ -369,7 +369,7 @@ class index_WCC:
                 if node_obj[u'location']:
                     location = node_obj[u'location'].encode('ascii','replace')
             
-            nodes_sorted.append(node_id, name, description, location, hostname)
+            nodes_sorted.append((node_id, name, description, location, hostname))
                         
         # sort the list
         nodes_sorted.sort(key = operator.itemgetter(1,2,3))
