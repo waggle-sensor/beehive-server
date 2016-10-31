@@ -414,8 +414,8 @@ class index_WCC:
             ('minute', datetime.timedelta(seconds = 60))
         ]
         
-        
-        logger.debug('WCC: {}'.format(durations))
+        logger.debug('WCC 2: {}'.format(durations))
+        logger.debug('WCC 3: {}'.format(datetime.timedelta(days = 365) /datetime.timedelta(days = 1)))
             
         for node_tuple in nodes_sorted:
             logger.debug('node_tuple = {}'.format(str(node_tuple)))
