@@ -440,7 +440,7 @@ class index_WCC:
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
-                last_updated = '<td style="background-color:{}"><tt>{}</tt> <b>({})</b></td>'.format(color, s, duration_string)
+                last_updated = '<td style="background-color:{}"><tt>{}</tt>  <b>({})</b></td>'.format(color, s, duration_string)
                         
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
