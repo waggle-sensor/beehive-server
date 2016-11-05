@@ -48,14 +48,14 @@ class DataSet:
         """
         for sens in self.sensor_names:
             filtered = data[(data['sensor'] == sens) & (data['id'] == self.id.lower())].copy()
-
+            if bDebug: print('filtered = ', filtered)
             #filtered = data[(data['sensor'] == sens) & (data['id'] == self.id) & (data['param'] == self.dtype)].copy()
             df = pd.DataFrame()
             df['t'] = filtered.time
 
             def GetValue(dictionary):
                 if self.dtype in dictionary:
-                    #print(self.dtype, dictionary[self.dtype])
+                    if bDebug: print('    GetValue: self.dtype = ', self.dtype, 'dictionary = ', dictionary)
                     return dictionary[self.dtype]
                 else:
                     #print(self.dtype)
@@ -70,8 +70,8 @@ class DataSet:
                         setFound.add(','.join(list(x.keys())))
                     else:
                         setMissing.add(','.join(list(x.keys())))
-                print('setFound =                                 ', setFound)
-                print('setMissing = ', setMissing)
+                #print('setFound =                                 ', setFound)
+                #print('setMissing = ', setMissing)
 
             df['x'] = filtered.value.map(GetValue)
             # df['x'] = filtered.value
@@ -82,7 +82,6 @@ class DataSet:
                 print("       df.iloc[:,:] = ", df.iloc[:,:])
                 print("       self.sources.keys() : ", [x for x in self.sources.keys()])
                 print("       self.sources[sens]= ", self.sources[sens])
-
 
             # This is a dumb workaround I found to get bokeh to let me toggle plots. It basically just creates a
             # ColumnDataSource of NaNs and plots that.
@@ -130,7 +129,7 @@ def format_data(val):
         result = float(val)
     except:
         result = val.replace(',', ';')
-        #print("# {}".format(result))
+        print("# {}".format(result))
     return result
 
 
@@ -143,8 +142,9 @@ def dictify(string):
 
     This function evaluates a string containing a dictionary and converts it to a true dictionary type.
     """
+    print('  dictify("{}"):'.format(string))
     d0 = eval(string)
-    #print(type(d0), d0)
+    print('  type(d0), d0:  ', type(d0), d0)
     d = dict(v.split(':') for v in d0)
     d = {k.replace(',', ';') : format_data(d[k]) for k in d.keys()}
     return d
@@ -202,23 +202,36 @@ def load_data(node_ids, dates, row0, row1):
     cdelim = ';'  # column delimiter
     data = pd.DataFrame()
     for date in dates:
-        for node_id in node_ids:
-            print(node_id)
-            print(date)
-            req = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/' + node_id + '/export?date=' + date)
+        for node_id in [x.lower() for x in node_ids]:
+            #print(node_id)
+            #print(date)
+            req = requests.get('http://beehive1.mcs.anl.gov/api/2/nodes/' + node_id + '/export?date=' + date)
             content = str(req.content, 'utf-8')
-            # print(content)
+            #print('len(content) = ', len(content))
             content = content.split(rdelim)
+            #print('content has ', len(content), ' rows')
             content = content[row0:row1]
-
+            #print('content:', content)
+            
+            #print('split rows: ', [row.split(cdelim) for row in content])
+            
             # id, date, time, sensor, value, time is a datetime,
-            labels = ['id', 'date', 'module', 'num', 'type', 'time', 'sensor', 'file', 'value']
-            string_data = ['MAC Address', 'data', 'config', 'firmware']
+            labels = ['id', 'date', 'time', 'plugin', 'sensor', 'parameter', 'value', 'units']
+            #string_data = ['MAC Address', 'data', 'config', 'firmware']
 
-            df = pd.DataFrame([row.split(cdelim) for row in content], columns=labels)
+            df = pd.DataFrame([[node_id, date] + row.split(cdelim) for row in content], columns=labels)
             df = df.iloc[:-2]  # The last two lines are not actually data
-            if False:
-                df.value = df.value.apply(dictify)
+            
+            if bDebug: print('df: ', df)
+            if True:
+                for idxRow, row in enumerate(df.value):
+                    try:
+                        #print('  ', idxRow, df.iloc[idxRow, :])
+                        df.value[idxRow] = {df.parameter[idxRow] : df.value[idxRow]}
+                    except:
+                        #skip the problem rows
+                        print("ERROR, skipping row: ", row)
+                        df.value[idxRow] = None
             elif True:
                 for idxRow, row in enumerate(df.value):
                     try:
@@ -227,6 +240,8 @@ def load_data(node_ids, dates, row0, row1):
                         #skip the problem rows
                         print("ERROR, skipping row: ", row)
                         df.value[idxRow] = None
+            elif False:
+                df.value = df.value.apply(dictify)
             else:
                 for row in df.value:
                     setMissing = set()
@@ -242,6 +257,9 @@ def load_data(node_ids, dates, row0, row1):
 
             df['relative_time'] = df.time.apply(time_to_float)
             df.time = df.time.apply(pd.to_datetime)
+            if bDebug:
+                print("df['relative_time']: ", df['relative_time'])
+                print("df['time']: ", df['time'])
             data = data.append(df, ignore_index=True)
 
     return data
@@ -265,6 +283,14 @@ def time_to_float(time, tz_shift=-5):
 
 def init_panels(data, sensor_names, data_types, dates, node_id):
     data_sets = {dtype: DataSet(node_id, dtype, sensor_names[dtype], dates) for dtype in data_types}
+    if bDebug:
+        print('  init_panels:        data:', data)
+        print('              sensor_names:', sensor_names)
+        print('                data_types:', data_types)
+        print('                     dates:', dates)
+        print('                   node_id:', node_id)
+        print('      data_sets:', data_sets)
+    
     panels = {}
     for dset in data_sets.values():
         dset.get_sources(data)
@@ -302,7 +328,7 @@ def main():
                         help='The node IDs')
     parser.add_argument('-row_first', metavar='row_first', type=int, nargs='?', default = 0,
                         help='maximum number of rows of data to load')
-    parser.add_argument('-row_last', metavar='row_last', type=int, nargs='?', default = -1,
+    parser.add_argument('-row_last', metavar='row_last', type=int, nargs='?', default = None,
                         help='maximum number of rows of data to load')
     parser.add_argument('-csv_out', type=str, nargs='?',
                         help='the csv file to which the data is saved.')
@@ -321,11 +347,15 @@ def main():
     print('row_first = ', args.row_first)
     print('row_last = ', args.row_last)
     data = load_data(node_ids, dates, row0 = args.row_first, row1 = args.row_last)
-    if bDebug: print('data: ', data)
+        
     if (args.csv_out):
         store_csv(data, args.csv_out)
     else:
         sensor_names, data_types = compute_params(data)
+        if bDebug:
+            print('sensor_names: ', sensor_names)
+            print('data_types: ', data_types)
+            print('data: ', data)
         if False:
             sensor_names = {'Temperature': ['TSYS01', 'TMP112', 'BMP180', 'TMP421', 'HIH6130', 'HTU21D'],
                             'Humidity': ['HTU21D', 'HIH6130'],
