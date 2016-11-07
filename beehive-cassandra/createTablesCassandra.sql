@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS sensor_data_decoded (
     data_set        ascii,          -- distinguish between identical sensors on same node
     sensor          ascii,          -- eg. TMP112
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
-    data            ascii,          -- data from sensor, encoded to hex
+    data            ascii,          -- data from sensor, decoded / human-readable
     unit            ascii,
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
