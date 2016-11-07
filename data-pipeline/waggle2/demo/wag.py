@@ -297,7 +297,7 @@ def main():
     # python3 waggle_dash/main.py --date 2016-07-29 --id ub_3 ub_4
     parser = argparse.ArgumentParser(description='Plot Beehive data using Bokeh')
     parser.add_argument('-dates', metavar='dates', type=str, nargs='+',
-                        help='The datesa for which the data will be retrieved')
+                        help='The dates for which the data will be retrieved')
     parser.add_argument('-id', metavar='id', type=str, nargs='+',
                         help='The node IDs')
     parser.add_argument('-row_first', metavar='row_first', type=int, nargs='?', default = 0,

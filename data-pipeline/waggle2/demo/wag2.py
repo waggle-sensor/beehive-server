@@ -101,17 +101,20 @@ class DataSet:
         """
         Bokeh callback that updates this DataSet's plots.
         """
-        active_sens = [self.sensor_names[ind] for ind in self.cbg.active]
-        print(active_sens)
-        for sens in self.sensor_names:
+        try:
+            active_sens = [self.sensor_names[ind] for ind in self.cbg.active]
+            print(active_sens)
+            for sens in self.sensor_names:
 
-            if sens in active_sens:
-                print(sens + ' is on')
-                self.used_sources[sens].data.update(self.sources[sens].data)
-            else:
-                print(sens + ' is off')
-                self.used_sources[sens].data.update(self.null_sources[sens].data)
-
+                if sens in active_sens:
+                    print(sens + ' is on')
+                    self.used_sources[sens].data.update(self.sources[sens].data)
+                else:
+                    print(sens + ' is off')
+                    self.used_sources[sens].data.update(self.null_sources[sens].data)
+        except Exception as e:
+            print('update_plot() ERROR!!!!!!!!!!!')
+            print(str(e))
 
 # All data is initially stored as a string, so this function converts anything that needs to be a numeric.
 def format_data(val):
@@ -323,9 +326,9 @@ def main():
     # python3 waggle_dash/main.py --date 2016-07-29 --id ub_3 ub_4
     parser = argparse.ArgumentParser(description='Plot Beehive data using Bokeh')
     parser.add_argument('-dates', metavar='dates', type=str, nargs='+',
-                        help='The datesa for which the data will be retrieved')
+                        help='The dates for which the data will be retrieved')
     parser.add_argument('-id', metavar='id', type=str, nargs='+',
-                        help='The node IDs')
+                        help='The node ID(s)')
     parser.add_argument('-row_first', metavar='row_first', type=int, nargs='?', default = 0,
                         help='maximum number of rows of data to load')
     parser.add_argument('-row_last', metavar='row_last', type=int, nargs='?', default = None,
