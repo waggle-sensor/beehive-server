@@ -1,8 +1,15 @@
 # How to Use Waggle Data
-Get the program wag.py Using
+Get the programs wag.py and wag2.py Using
 ```
 wget https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/data-pipeline/waggle2/demo/wag.py
+wget https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/data-pipeline/waggle2/demo/wag2.py
+
 ```
+wag.py works with data in version 1 format - and will soon be deprecated.
+wag2.py works with data in version 2 ("v2") format.
+
+The documentation below will assume the user wants to work with v2 data.  To work with v1 data, simply substitute wag2.py with wag.py.
+
 Using pip3, import the necessary libraries for python3:
 ```
 pip3 install pandas
@@ -22,7 +29,7 @@ Choose the node(s) and date(s) whose data you would like to download and/or plot
 ## Downloading Data into a CSV File
 To download the data from the specified node(s) and specified date(s), type:
 ```
-python3 wag.py -id <node id list> -date <date list> -csv_out <csv filename>
+python3 wag2.py -id <node id list> -date <date list> -csv_out <csv filename>
 ```
 where ```<node id list>``` is one or more node_id's from the beehive website;
 ```<date list>``` is the list of dates;
@@ -33,11 +40,11 @@ The following lines will contain the comma-separated data.
 For example, to save the data from the CDOT node named 011, and id
 0000001E061089FA, into a file named ```cdot011.csv```, type:
 ```
-python3 wag.py -id 0000001E061089FA -date 2016-09-18 -csv_out cdot011.csv
+python3 wag2.py -id 0000001E061089FA -date 2016-09-18 -csv_out cdot011.csv
 ```
 An example of multiple nodes and dates is:
 ```
-python3 wag.py -id 0000001E061089FA 0000001E06107FF0 -date 2016-09-17 2016-09-18 -csv_out cdot011_012_Sept17_18.csv
+python3 wag2.py -id 0000001E061089FA 0000001E06107FF0 -date 2016-09-17 2016-09-18 -csv_out cdot011_012_Sept17_18.csv
 ```
 
 
