@@ -186,12 +186,12 @@ def nodes_csv():
 
     def stream():
         for row in results:
-            node_id = row[0].lower()[4:]
+            node = row[0].lower()[4:]
             name = row[1] or ''
             description = row[2] or ''
             location = row[3] or ''
             ssh_port = row[4] or ''
-            yield '!'.join(map(str, row)) + '\n'
+            yield '{},"{}","{}","{}",{}'.format(node, name, description, location, ssh_port)
 
     return Response(stream(), mimetype='text/csv')
 
