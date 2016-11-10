@@ -191,7 +191,7 @@ def nodes_csv():
             description = row[2] or ''
             location = row[3] or ''
             ssh_port = row[4] or ''
-            yield '{},"{}","{}","{}",{}'.format(node, name, description, location, ssh_port)
+            yield '{},"{}","{}","{}",{}\n'.format(node, name, description, location, ssh_port)
 
     return Response(stream(), mimetype='text/csv')
 
