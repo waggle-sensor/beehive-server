@@ -181,6 +181,7 @@ def api_nodes_v2():
 
 @app.route('/api/2/nodes.csv')
 def nodes_csv():
+    db = get_mysql_db()
     results = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
     def stream():
