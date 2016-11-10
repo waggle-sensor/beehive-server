@@ -199,10 +199,8 @@ def nodes_json():
             'name': row[1] or '',
             'description': row[2] or '',
             'location': row[3] or '',
+            'port': row[4] or 0,
         }
-
-        if row[4] is not None:
-            result['port'] = row[4]
 
         if all(pattern.search(result[field]) for field, pattern in filters):
             results.append(result)
