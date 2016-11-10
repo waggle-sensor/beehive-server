@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-import os.path, logging, re, sys, json, time
+import os.path
+import logging
+import re
+import sys
+import json
+import time
 from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
@@ -186,6 +191,8 @@ def nodes_json():
 
     results = []
 
+    filters = [(field, re.compile(pattern)) for field, pattern in request.args.items()]
+
     for row in rows:
         result = {
             'id': row[0].lower()[4:] or '',
@@ -197,7 +204,8 @@ def nodes_json():
         if row[4] is not None:
             result['port'] = row[4]
 
-        results.append(result)
+        if all(pattern.search(result[field]) for field, pattern in filters):
+            results.append(result)
 
     return jsonify(results)
 
