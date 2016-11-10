@@ -175,6 +175,7 @@ def api_nodes_v1():
 
 
 @app.route('/api/2/nodes/')
+@app.route('/api/2/nodes.json')
 def api_nodes_v2():
     return api_nodes(version=2)
 
