@@ -191,7 +191,7 @@ def nodes_json():
 
     results = []
 
-    filters = [(field, re.compile(pattern)) for field, pattern in request.args.items()]
+    filters = [(field, re.compile(pattern, re.I)) for field, pattern in request.args.items()]
 
     for row in rows:
         result = {
