@@ -195,7 +195,7 @@ def nodes_json():
         }
 
         if row[4] is not None:
-            results['port'] = row[4]
+            result['port'] = row[4]
 
         results.append(result)
 
