@@ -186,7 +186,8 @@ def nodes_csv():
 
     def stream():
         for row in results:
-            yield ','.join(row) + '\n'
+
+            yield ','.join(map(str, row)) + '\n'
 
     return Response(stream(), mimetype='text/csv')
 
