@@ -175,18 +175,40 @@ def api_nodes_v1():
 
 
 @app.route('/api/2/nodes/')
-@app.route('/api/2/nodes.json')
 def api_nodes_v2():
     return api_nodes(version=2)
+
+
+@app.route('/api/2/nodes.json')
+def nodes_json():
+    db = get_mysql_db()
+    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
+
+    results = []
+
+    for row in rows:
+        result = {
+            'id': row[0].lower()[4:] or '',
+            'name': row[1] or '',
+            'description': row[2] or '',
+            'location': row[3] or '',
+        }
+
+        if row[4] is not None:
+            results['port'] = row[4]
+
+        results.append(result)
+
+    return jsonify(results)
 
 
 @app.route('/api/2/nodes.csv')
 def nodes_csv():
     db = get_mysql_db()
-    results = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
+    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
     def stream():
-        for row in results:
+        for row in rows:
             node = row[0].lower()[4:]
             name = row[1] or ''
             description = row[2] or ''
