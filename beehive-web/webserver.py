@@ -106,7 +106,7 @@ def get_mysql_db():
 
 
 class test:        
-    def GET(self):
+    def GET(self, debug = 'false'):
         logger.debug('GET test')
         
         message = '''
@@ -119,12 +119,13 @@ class test:
 <body>
 <h1>Beehive Web-Server Test Page</h1>
 <br></\br>
-UTC timestamp = {}
+UTC timestamp = {0}\n
+debug = {1}
 </body>
 </html>
 '''
         dtUtcNow = datetime.datetime.utcnow()
-        yield message.format(dtUtcNow)
+        yield message.format(dtUtcNow, debug)
 
                     
                     
