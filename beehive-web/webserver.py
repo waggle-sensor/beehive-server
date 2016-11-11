@@ -112,7 +112,7 @@ class test:
         yield html_header("Waggle Beehive web server - test page.")
         dtUtcNow = datetime.datetime.utcnow()
 
-        yield('UTC now is: {}   =   {} '.format(dtUtcNow))
+        yield 'UTC now is: {}   =   {} \n\n'.format(dtUtcNow)
         yield html_footer()
 
                     
