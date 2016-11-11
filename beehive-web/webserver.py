@@ -65,7 +65,7 @@ urls = (
     '/nodes/(.+)/?',                'web_node_page',
     '/nodes_v2/(.+)/?',             'web_node_page_v2',
     '/',                            'index',
-    '/wcc/',                        'index_WCC'
+    '/wcc/',                        'index_WCC',
     '/test/',                       'test'
 
 )
