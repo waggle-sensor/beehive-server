@@ -66,8 +66,7 @@ urls = (
     '/nodes_v2/(.+)/?',             'web_node_page_v2',
     '/',                            'index',
     '/wcc/',                        'index_WCC',
-    '/test/',                       'test'
-
+    '/test_wcc/',                   'test_wcc'
 )
 
 app = web.application(urls, globals())
@@ -105,15 +104,11 @@ def get_mysql_db():
                     db="waggle")
 
 
-class test:        
+class test_wcc:        
     def GET(self):
-        logger.debug('GET test')
+        logger.debug('GET test_wcc')
         
-        yield html_header("Waggle Beehive web server - test page.")
-        dtUtcNow = datetime.datetime.utcnow()
-
-        yield 'UTC now is: {}   =   {} \n\n'.format(dtUtcNow)
-        yield html_footer()
+        yield html_header("Waggle Beehive web server - test page.") + 'Test text here. \n\n' + html_footer()
 
                     
                     
