@@ -109,7 +109,7 @@ class test:
     def GET(self):
         logger.debug('GET test')
         
-        yield "<h2>This is the Waggle Beehive web server test page.</h2><br><br>\n\n"
+        yield html_header("Waggle Beehive web server - test page.")
 
                     
                     
