@@ -110,6 +110,7 @@ class test:
         logger.debug('GET test')
         
         yield html_header("Waggle Beehive web server - test page.")
+        yield html_footer()
 
                     
                     
