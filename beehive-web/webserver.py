@@ -119,7 +119,8 @@ class test:
 <body>
 <h1>Beehive Web-Server Test Page</h1>
 <br></\br>
-UTC timestamp = {0}\n
+UTC timestamp = {0}
+<br></br>
 debug = {1}
 </body>
 </html>
