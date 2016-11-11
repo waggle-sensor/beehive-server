@@ -1,0 +1,12 @@
+[Unit]
+Description=HTTP Monitor
+Requires=systemd-journald.service
+After=systemd-journald.service
+
+[Service]
+Restart=always
+RestartSec=1s
+ExecStart=/root/monitor-http
+
+[Install]
+WantedBy=multi-user.target

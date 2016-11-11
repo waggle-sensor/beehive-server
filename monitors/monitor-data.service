@@ -1,0 +1,13 @@
+[Unit]
+Description=Data Monitor
+Requires=systemd-journald.service
+After=systemd-journald.service
+
+[Service]
+Restart=always
+RestartSec=1s
+ExecStart=/root/monitor-data
+WorkingDirectory=/root
+
+[Install]
+WantedBy=multi-user.target
