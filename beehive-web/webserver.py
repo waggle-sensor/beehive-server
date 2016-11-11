@@ -66,6 +66,7 @@ urls = (
     '/nodes_v2/(.+)/?',             'web_node_page_v2',
     '/',                            'index',
     '/wcc/',                        'index_WCC'
+    '/test/',                       'test'
 
 )
 
@@ -104,6 +105,14 @@ def get_mysql_db():
                     db="waggle")
 
 
+class test:        
+    def GET(self):
+        logger.debug('GET test')
+        
+         yield "<h2>This is the Waggle Beehive web server test page.</h2><br><br>\n\n"
+
+                    
+                    
 class index:        
     def GET(self):
         logger.debug('GET index')
