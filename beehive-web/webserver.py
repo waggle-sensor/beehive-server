@@ -106,8 +106,11 @@ def get_mysql_db():
 
 
 class test:        
-    def GET(self, debug = 'false'):
+    def GET(self):
         logger.debug('GET test')
+        
+        
+        form = web.input(debug = 'false')
         
         message = '''
 <!DOCTYPE html>
@@ -126,7 +129,7 @@ debug = {1}
 </html>
 '''
         dtUtcNow = datetime.datetime.utcnow()
-        yield message.format(dtUtcNow, debug)
+        yield message.format(dtUtcNow, form.debug)
 
                     
                     
