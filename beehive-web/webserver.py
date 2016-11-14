@@ -468,7 +468,7 @@ class index_WCC:
                 logger.debug('delta_seconds = {}'.format(delta_seconds))
 
                 for dur in durations:
-                    if delta_seconds > dur[1]:
+                    if delta_seconds >= dur[1]:
                         logger.debug('{}  {}'.format(delta_seconds, str(dur)))
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
