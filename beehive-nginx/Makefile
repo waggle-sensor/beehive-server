@@ -1,5 +1,8 @@
+IMAGE = beehive-nginx-tls
+CONTAINER = beehive-nginx
+
 build:
-	docker build -t beehive-nginx-tls .
+	docker build -t $(IMAGE) .
 
 run:
-	docker run --rm --name=beehive-nginx --net beehive -p 80:80 -p 443:443 -v /mnt/waggle/SSL/nginx/:/ssl beehive-nginx-tls /usr/sbin/nginx -g 'daemon off;'
+	docker run --rm --name=$(CONTAINER) --net beehive -p 80:80 -p 443:443 -v /mnt/waggle/SSL/nginx/:/ssl $(IMAGE) /usr/sbin/nginx -g 'daemon off;'
