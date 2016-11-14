@@ -166,11 +166,12 @@ def api_nodes(version=1, debug = False):
             'last_updated': last_updated
         }
 
-    nodes_dict = list_node_dates()
+    if False:           # WCC: commenting this out
+        nodes_dict = list_node_dates()
 
-    for node_id in nodes_dict.keys():
-        if not node_id in all_nodes:
-            all_nodes[node_id]={}
+        for node_id in nodes_dict.keys():
+            if not node_id in all_nodes:
+                all_nodes[node_id]={}
 
     #for node_id in all_nodes.keys():
     #    logger.debug("%s %s" % (node_id, type(node_id)))
