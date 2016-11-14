@@ -16,4 +16,4 @@ run:
 	-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 	-p 23181:23181 \
 	-p 15672:15672 \
-	rabbitmq:3.5.6
+	$(IMAGE)
