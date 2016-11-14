@@ -289,7 +289,7 @@ class index:
                 delta_seconds = delta.total_seconds()
 
                 for dur in durations:
-                    if delta_seconds > dur[1]:
+                    if delta_seconds >= dur[1]:
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
@@ -316,7 +316,7 @@ class index_WCC:
         logger.debug('GET index_WCC')
         
         user_data = web.input(debug="false")
-        debug_arg = '?debug=true' if user_data.debug else ''
+        debug_arg = '?debug=true' if user_data.debug.lower() == 'true' else ''
         
         logger.debug('user_data       = ' + str(user_data))
         logger.debug('user_data.debug = ' + str(user_data.debug))
@@ -469,11 +469,11 @@ class index_WCC:
                 # human-readable duration
                 duration_string = '1 minute ago'
                 delta_seconds = delta.total_seconds()
-                logger.debug('delta_seconds = {}'.format(delta_seconds))
+                #logger.debug('delta_seconds = {}'.format(delta_seconds))
 
                 for dur in durations:
                     if delta_seconds >= dur[1]:
-                        logger.debug('{}  {}'.format(delta_seconds, str(dur)))
+                        #logger.debug('{}  {}'.format(delta_seconds, str(dur)))
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
