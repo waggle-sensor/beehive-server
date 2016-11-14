@@ -141,9 +141,13 @@ def api_nodes(version=1, debug = False):
 
     # limit the output with a WHERE clause if debug is false
     whereClause = " " if debug else " WHERE opmode = 'active' " 
-    
-    mysql_nodes_result = db.query_all("SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause))
 
+    query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
+    
+    logger.debug(' query = ' + query)   
+    
+    mysql_nodes_result = db.query_all(query)
+    
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
 
