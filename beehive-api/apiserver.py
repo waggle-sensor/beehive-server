@@ -134,12 +134,15 @@ def api_epoch():
     })
 
 
-def api_nodes(version=1):
+def api_nodes(version=1, debug = False):
     db = get_mysql_db()
 
     all_nodes = {}
 
-    mysql_nodes_result = db.query_all("SELECT node_id,hostname,project,description,reverse_ssh_port,name,location,last_updated FROM nodes;")
+    # limit the output with a WHERE clause if debug is false
+    whereClause = " " if debug else " WHERE opmode = 'active' " 
+    
+    mysql_nodes_result = db.query_all("SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause))
 
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
@@ -176,12 +179,14 @@ def api_nodes(version=1):
 
 @app.route('/api/1/nodes/')
 def api_nodes_v1():
-    return api_nodes(version=1)
+    debug =  request.args.get('debug', 'false').lower() == 'true'
+    return api_nodes(version = 1, debug = debug)
 
 
 @app.route('/api/2/nodes/')
 def api_nodes_v2():
-    return api_nodes(version=2)
+    debug =  request.args.get('debug', 'false').lower() == 'true'
+    return api_nodes(version = 2, debug = debug)
 
 
 @app.route('/api/2/nodes.json')

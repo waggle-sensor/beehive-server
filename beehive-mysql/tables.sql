@@ -36,6 +36,7 @@ CREATE TABLE nodes (
     hardware            JSON,
     name                VARCHAR(64),
     location            VARCHAR(255),
+    opmode              VARCHAR(64) DEFAULT 'inactive',
     last_updated        TIMESTAMP
 );
 ALTER TABLE nodes ADD INDEX (project);

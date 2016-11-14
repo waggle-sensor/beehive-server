@@ -137,9 +137,11 @@ class index:
     def GET(self):
         logger.debug('GET index')
         
-        
-        api_call = api_url+'1/nodes/'
-        api_call_internal = api_url_internal+'1/nodes/'
+        user_data = web.input(debug="false")
+        debug_arg = '?debug=true' # if user_data.debug else ''
+
+        api_call = api_url + '1/nodes/' + debug_arg
+        api_call_internal = api_url_internal + '1/nodes/' + debug_arg
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
         dtUtcNow = datetime.datetime.utcnow()
@@ -313,9 +315,11 @@ class index_WCC:
     def GET(self):
         logger.debug('GET index_WCC')
         
+        user_data = web.input(debug="false")
+        debug_arg = '?debug=true' if user_data.debug else ''
 
-        api_call = api_url+'1/nodes/'
-        api_call_internal = api_url_internal+'1/nodes/'
+        api_call = api_url+'1/nodes/' + debug_arg
+        api_call_internal = api_url_internal+'1/nodes/' + debug_arg
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
         dtUtcNow = datetime.datetime.utcnow()
