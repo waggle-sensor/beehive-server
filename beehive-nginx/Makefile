@@ -1,4 +1,4 @@
-IMAGE = beehive-nginx-tls
+IMAGE = waggle/beehive-nginx
 CONTAINER = beehive-nginx
 
 build:
