@@ -317,7 +317,11 @@ class index_WCC:
         
         user_data = web.input(debug="false")
         debug_arg = '?debug=true' if user_data.debug else ''
-
+        
+        logger.debug('user_data       = ' + str(user_data))
+        logger.debug('user_data.debug = ' + str(user_data.debug))
+        logger.debug('debug_arg       = ' + debug_arg)
+        
         api_call = api_url+'1/nodes/' + debug_arg
         api_call_internal = api_url_internal+'1/nodes/' + debug_arg
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
