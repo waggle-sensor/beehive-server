@@ -570,6 +570,9 @@ class web_node_page_WCC:
     def GET(self, node_id):
         logger.debug('GET web_node_page_WCC')
         
+        web.header('Content-type','text/html')
+        web.header('Transfer-Encoding','chunked')
+
         versions = ['1', '2', '2.1']
         data = {}
         datesUnion = set()
@@ -612,8 +615,6 @@ class web_node_page_WCC:
             datesUnion.update(dates)     # union of all dates
 
         datesUnionSorted = sorted(list(datesUnion))
-        web.header('Content-type','text/html')
-        web.header('Transfer-Encoding','chunked')
         
         #TODO check that node_id exists!
         yield html_header('Node '+node_id.upper())
