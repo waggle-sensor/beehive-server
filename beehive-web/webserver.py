@@ -532,10 +532,9 @@ class web_node_page:
         
         yield str(req.json())
         
-        '''
+        
         for date in req.json()['data']:
             yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, date, version)
-        '''
 
         yield  "<br>\n<br>\n"
         
@@ -559,7 +558,7 @@ for date in ${{DATES}} ; do
 done
 </pre>
 '''
-        yield examples.format(node_id, api_url, version)
+        #yield examples.format(node_id, api_url, version)
         
         yield "<br>\n<br>\n"
 
