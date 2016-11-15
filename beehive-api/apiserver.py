@@ -235,7 +235,7 @@ def api_dates(node_id):
     node_id = node_id.lower()
     version = request.args.get('version', '1')
 
-    logger.info("__ api_dates()  version = {}".format(version)
+    logger.info("__ api_dates()  version = {}".format(version))
     
     nodes_dict = list_node_dates(version)
 
@@ -262,7 +262,7 @@ def api_export(node_id):
     date = request.args.get('date')
     version = request.args.get('version', '1')
 
-    logger.info("__ api_export()  date = {}, version = {}".format(str(date), str(version))
+    logger.info("__ api_export()  date = {}, version = {}".format(str(date), str(version)))
 
     if not date:
         raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
