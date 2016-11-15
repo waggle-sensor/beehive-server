@@ -617,7 +617,7 @@ class web_node_page_v2:
         yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
         
         yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
-        
+
         examples='''
 <pre>
 # get data from two specific days
@@ -634,7 +634,7 @@ for date in ${{DATES}} ; do
 done
 </pre>
 '''
-        yield examples.format(node_id, api_url)
+        #yield examples.format(node_id, api_url)
         
         yield "<br>\n<br>\n"
 
