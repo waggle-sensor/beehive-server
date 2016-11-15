@@ -580,7 +580,7 @@ class web_node_page_WCC:
         
         versions = ['1', '2', '2.1']
         data = {}
-        dataUnion = set()
+        datesUnion = set()
         
         for version in versions:
             try:
