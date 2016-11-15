@@ -559,89 +559,11 @@ for date in ${{DATES}} ; do
 done
 </pre>
 '''
-        yield examples.format(node_id, api_url, version)
+        #yield examples.format(node_id, api_url, version)
         
         yield "<br>\n<br>\n"
 
         yield html_footer()
-
-
-class web_node_page_v2:
-    def GET(self, node_id):
-        logger.debug('GET web_node_page_v2')
-        
-        api_call            = '%s2/nodes/%s/dates' % (api_url, node_id)
-        api_call_internal   = '%s2/nodes/%s/dates' % (api_url_internal, node_id)
-        
-        try:
-            logger.debug('api_call_internal = ' + api_call_internal)
-            req = requests.get( api_call_internal ) # , auth=('user', 'password')
-        except Exception as e:
-            msg = "Could not make request: %s", (str(e))
-            logger.error(msg)
-            raise internalerror(msg)
-        
-        if req.status_code != 200:
-            msg = "status code: %d" % (req.status_code)
-            logger.error(msg)
-            raise internalerror(msg)
-            
-        try:
-            dates = req.json()
-        except ValueError:
-            logger.debug("Not json: " + str(req))
-            raise internalerror("not found")
-           
-        if not 'data' in dates:
-            logger.debug("data field not found")
-            raise internalerror("not found")
-        
-        web.header('Content-type','text/html')
-        web.header('Transfer-Encoding','chunked')
-        
-        #TODO check that node_id exists!
-        yield html_header('Node '+node_id.upper()+'   v2')
-        yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
-        
-        
-        yield "<h3>Available data - v2</h3>\n"
-        # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
-        
-        logger.debug(str(req.json()))
-        for date in req.json()['data']:
-            yield '<br>\n<a href="%s2/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
-
-
-        yield  "<br>\n<br>\n"
-        
-        yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
-        
-        yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
-
-        examples='''
-<pre>
-# get data from two specific days
-for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}2/nodes/{0}/export?date=${{date}}
-&nbsp&nbsp&nbsp&nbsp sleep 3
-done
-
-# get all data of one node
-DATES=$(curl {1}2/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
-for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}2/nodes/{0}/export?date=${{date}}
-&nbsp&nbsp&nbsp&nbsp sleep 3
-done
-</pre>
-'''
-        #yield examples.format(node_id, api_url)
-        
-        yield "<br>\n<br>\n"
-
-        yield html_footer()
-        
-        
-        
         
 
 if __name__ == "__main__":
