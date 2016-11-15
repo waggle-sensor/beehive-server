@@ -473,8 +473,8 @@ class index_WCC:
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
-                <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
-                <td><a href="%s/nodes/%s"><tt>v2</tt></a></td>
+                <td><a href="%s/nodes/%s?version=1"><tt>%s</tt></a></td>
+                <td><a href="%s/nodes/%s?version=2"><tt>v2</tt></a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
@@ -528,7 +528,7 @@ class web_node_page:
         yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
         
         
-        yield "<h3>Available data</h3>\n"
+        yield "<h3>Available data - version %s </h3>\n" % version
         # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug('__web_node_page():  DATES FOUND:  ' + str(req.json()))
