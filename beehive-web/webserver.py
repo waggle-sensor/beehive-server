@@ -491,6 +491,9 @@ class web_node_page:
         logger.debug('GET web_node_page')
         
         user_data = web.input(version = '1')
+        version = user_data.version
+        
+        logger.debug('#######     web_node_page.... version = ' + version)
 
         api_call            = '%s1/nodes/%s/dates' % (api_url, node_id)
         api_call_internal   = '%s1/nodes/%s/dates' % (api_url_internal, node_id)
@@ -534,8 +537,8 @@ class web_node_page:
         
         
         for date in req.json()['data']:
-            yield date + '<br>\n'
-            #yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, version, date)
+            #yield date + '<br>\n'
+            yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, version, date)
 
         yield  "<br>\n<br>\n"
         
@@ -559,7 +562,7 @@ for date in ${{DATES}} ; do
 done
 </pre>
 '''
-        #yield examples.format(node_id, api_url, version)
+        yield examples.format(node_id, api_url, version)
         
         yield "<br>\n<br>\n"
 
