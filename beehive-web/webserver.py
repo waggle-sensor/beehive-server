@@ -570,19 +570,16 @@ class web_node_page_WCC:
     def GET(self, node_id):
         logger.debug('GET web_node_page_WCC')
         
-        user_data = web.input(version = '1')
-        version = user_data.version
-        
-        logger.debug('#######     web_node_page.... version = ' + version)
-
-        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
-        
         versions = ['1', '2', '2.1']
         data = {}
         datesUnion = set()
         
         for version in versions:
+            yield ' VERSION ' + version
+
+            api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+            api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+            
             try:
                 req = requests.get( api_call_internal ) # , auth=('user', 'password')
             except Exception as e:
@@ -610,7 +607,9 @@ class web_node_page_WCC:
                 #raise internalerror("not found")
             
             data[version] = dates
-            datesUnion.update(data)     # union of all dates
+            yield ' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)
+            
+            datesUnion.update(dates)     # union of all dates
 
         datesUnionSorted = sorted(list(datesUnion))
         web.header('Content-type','text/html')
