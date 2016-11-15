@@ -296,8 +296,8 @@ class index:
             #&nbsp&nbsp&nbsp&nbsp
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
-                <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
-                <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
+                <td><a href="%s/nodes/%s?version=1"><tt>%s</tt></a></td>
+                <td><a href="%s/nodes/%s?version=2"><tt>v2</tt></a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
