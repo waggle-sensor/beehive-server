@@ -529,9 +529,13 @@ class web_node_page:
         # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
         
         logger.debug('__web_node_page():  DATES FOUND:  ' + str(req.json()))
+        
+        yield str(req.json())
+        
+        '''
         for date in req.json()['data']:
             yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, date, version)
-
+        '''
 
         yield  "<br>\n<br>\n"
         
