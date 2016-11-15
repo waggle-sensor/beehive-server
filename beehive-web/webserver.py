@@ -573,7 +573,7 @@ class web_node_page_WCC:
         web.header('Content-type','text/html')
         web.header('Transfer-Encoding','chunked')
 
-        versions = ['1', '2', '2.1']
+        versions = ['2', '2.1', '1']
         data = {}
         datesUnion = set()
         
@@ -614,7 +614,7 @@ class web_node_page_WCC:
             
             datesUnion.update(data[version])     # union of all dates
 
-        datesUnionSorted = sorted(list(datesUnion))
+        datesUnionSorted = sorted(list(datesUnion), reverse=True)
         
         #TODO check that node_id exists!
         yield html_header('Node '+node_id.upper())
