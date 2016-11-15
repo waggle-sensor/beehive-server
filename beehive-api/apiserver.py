@@ -138,7 +138,7 @@ def api_nodes():
 
     version = request.args.get('version', '1')
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
-    bAllNodes = request.args.get('all', 'false').lower() == true
+    bAllNodes = request.args.get('all', 'false').lower() == 'true'
     
     logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
         version, str(bAllNodes)))
