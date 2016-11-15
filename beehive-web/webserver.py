@@ -609,7 +609,7 @@ class web_node_page_WCC:
                 continue
                 #raise internalerror("not found")
             
-            data[version] = dates
+            data[version] = dates['data']
             yield ' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n'
             
             datesUnion.update(dates)     # union of all dates
