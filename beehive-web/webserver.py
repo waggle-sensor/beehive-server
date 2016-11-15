@@ -495,8 +495,8 @@ class web_node_page:
         
         logger.debug('#######     web_node_page.... version = ' + version)
 
-        api_call            = '%s1/nodes/%s/dates' % (api_url, node_id)
-        api_call_internal   = '%s1/nodes/%s/dates' % (api_url_internal, node_id)
+        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
