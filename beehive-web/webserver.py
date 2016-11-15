@@ -575,7 +575,7 @@ class web_node_page_WCC:
         datesUnion = set()
         
         for version in versions:
-            yield ' VERSION ' + version
+            yield ' VERSION ' + version + '<br>\n'
 
             api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
             api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
@@ -607,7 +607,7 @@ class web_node_page_WCC:
                 #raise internalerror("not found")
             
             data[version] = dates
-            yield ' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)
+            yield ' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n'
             
             datesUnion.update(dates)     # union of all dates
 
