@@ -547,19 +547,19 @@ class web_node_page:
 <pre>
 # get data from two specific days
 for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version=${{version}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 
 # get all data of one node
 DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version=${{version}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 </pre>
 '''
-        #yield examples.format(node_id, api_url, version)
+        yield examples.format(node_id, api_url, version)
         
         yield "<br>\n<br>\n"
 
