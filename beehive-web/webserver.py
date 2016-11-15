@@ -612,7 +612,7 @@ class web_node_page_WCC:
             data[version] = dates['data']
             yield ' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n'
             
-            datesUnion.update(dates)     # union of all dates
+            datesUnion.update(data[version])     # union of all dates
 
         datesUnionSorted = sorted(list(datesUnion))
         
