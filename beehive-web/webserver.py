@@ -474,7 +474,7 @@ class index_WCC:
             result_line = '''<tr>
                 <td align="right"><tt>%s</tt></td>
                 <td><a href="%s/nodes/%s"><tt>%s</tt></a></td>
-                <td><a href="%s/nodes_v2/%s"><tt>v2</tt></a></td>
+                <td><a href="%s/nodes/%s"><tt>v2</tt></a></td>
                 <td>%s</td>
                 <td>%s</td>
                 <td>%s</td>
@@ -492,8 +492,8 @@ class web_node_page:
         
         user_data = web.input(version = '1')
 
-        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+        api_call            = '%s1/nodes/%s/dates' % (api_url, node_id)
+        api_call_internal   = '%s1/nodes/%s/dates' % (api_url_internal, node_id)
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
