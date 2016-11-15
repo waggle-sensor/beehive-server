@@ -141,7 +141,7 @@ def api_nodes():
     bAllNodes = request.args.get('all', 'false').lower() == true
     
     logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
-        version, str(bAllNodes))
+        version, str(bAllNodes)))
 
     db = get_mysql_db()
 
