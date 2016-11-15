@@ -53,7 +53,7 @@ def query(statement):
 
     return cluster, rows
 
-def export_generator(node_id, date, ttl, delimiter, version = 1):
+def export_generator(node_id, date, ttl, delimiter, version = '1'):
     """
     Python generator to export sensor data from Cassandra
     version = 1 or 2, indicates which database/dataset is being queried
@@ -62,9 +62,13 @@ def export_generator(node_id, date, ttl, delimiter, version = 1):
     node_id = node_id.lower()
     # TODO check if node exists
 
-    if version == 1:
+    if version == '1':
         statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
                     "FROM waggle.sensor_data "+ \
+                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+    elif version == '2.1':  # 2 raw
+        statement = "SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data "+ \
+                    "FROM waggle.sensor_data_raw "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
     else:   # version == 2
         statement = "SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit "+ \
@@ -80,11 +84,16 @@ def export_generator(node_id, date, ttl, delimiter, version = 1):
         delimiter = ';'
 
     count = 0
-    if version == 1:
+    if version == '1':
         for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
             count +=1
             #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
             yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
+    elif version == '2.1':  # 2 raw
+        for (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) in rows:
+            count += 1
+            # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
+            yield delimiter.join((str(timestamp), ingest_id, plugin_name, plugin_version, plugin_instance, parameter, data))
     else:  # version == 2
         for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
             count += 1
@@ -95,14 +104,16 @@ def export_generator(node_id, date, ttl, delimiter, version = 1):
     logger.info("Retrieved %d rows" % (count))
 
 
-def list_node_dates(version = 1):
+def list_node_dates(version = '1'):
     """
     Returns hash of nodes with dates.
     version = 1 or 2, indicates which database/dataset is being queried
     """
-    if version == 1:
+    if version == '1':
         statement = "SELECT DISTINCT node_id,date FROM sensor_data"
-    else:
+    elif version == '2.1':
+        statement = "SELECT DISTINCT node_id,date FROM sensor_data_raw"
+    else:  # 2.0
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
 
     try:

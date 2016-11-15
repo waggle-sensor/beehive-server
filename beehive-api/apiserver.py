@@ -133,14 +133,22 @@ def api_epoch():
         'epoch': int(time.time())
     })
 
+@app.route('/api/1/nodes/')
+def api_nodes():
 
-def api_nodes(version=1, debug = False):
+    version = request.args.get('version', '1')
+    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
+    bAllNodes = request.args.get('all', 'false')).lower() == true
+    
+    logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
+        version, str(bAllNodes))
+
     db = get_mysql_db()
 
     all_nodes = {}
 
-    # limit the output with a WHERE clause if debug is false
-    whereClause = " " if debug else " WHERE opmode = 'active' " 
+    # limit the output with a WHERE clause if bAllNodes is false
+    whereClause = " " if bAllNodes else " WHERE opmode = 'active' " 
 
     query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
     
@@ -166,7 +174,7 @@ def api_nodes(version=1, debug = False):
             'last_updated': last_updated
         }
 
-    if False:           # WCC: commenting this out
+    if bAllNodes:           # WCC: commenting this out
         nodes_dict = list_node_dates()
 
         for node_id in nodes_dict.keys():
@@ -180,18 +188,6 @@ def api_nodes(version=1, debug = False):
     obj['data'] = all_nodes
     return jsonify(obj)
     #return  json.dumps(obj, indent=4)
-
-
-@app.route('/api/1/nodes/')
-def api_nodes_v1():
-    debug =  request.args.get('debug', 'false').lower() == 'true'
-    return api_nodes(version = 1, debug = debug)
-
-
-@app.route('/api/2/nodes/')
-def api_nodes_v2():
-    debug =  request.args.get('debug', 'false').lower() == 'true'
-    return api_nodes(version = 2, debug = debug)
 
 
 @app.route('/api/2/nodes.json')
@@ -234,10 +230,13 @@ def nodes_csv():
 
     return Response(stream(), mimetype='text/csv')
 
-
-def api_dates(node_id, version=1):
+@app.route('/api/1/nodes/<node_id>/dates')
+def api_dates(node_id):
     node_id = node_id.lower()
+    version = request.args.get('version', '1')
 
+    logger.info("__ api_dates()  version = {}".format(version)
+    
     nodes_dict = list_node_dates(version)
 
     if not node_id in nodes_dict:
@@ -253,27 +252,17 @@ def api_dates(node_id, version=1):
 
     return jsonify(obj)
 
-
-@app.route('/api/1/nodes/<node_id>/dates')
-def api_dates_v1(node_id):
-    return api_dates(node_id, version=1)
-
-
-@app.route('/api/2/nodes/<node_id>/dates')
-def api_dates_v2(node_id):
-    return api_dates(node_id, version=2)
-
-
 @app.route('/api/1/nodes_last_update/')
 def api_nodes_last_update():
     nodes_last_update_dict = get_nodes_last_update_dict()
     return jsonify(nodes_last_update_dict)
 
-
-def api_export(node_id, version=1):
+@app.route('/api/1/nodes/<node_id>/export')
+def api_export(node_id):
     date = request.args.get('date')
+    version = request.args.get('version', '1')
 
-    logger.info("date: %s", str(date))
+    logger.info("__ api_export()  date = {}, version = {}".format(str(date), str(version))
 
     if not date:
         raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
@@ -290,16 +279,6 @@ def api_export(node_id, version=1):
             yield row + '\n'
 
     return Response(stream_with_context(generate()), mimetype='text/csv')
-
-
-@app.route('/api/1/nodes/<node_id>/export')
-def api_export_v1(node_id):
-    return api_export(node_id, version=1)
-
-
-@app.route('/api/2/nodes/<node_id>/export')
-def api_export_v2(node_id):
-    return api_export(node_id, version=2)
 
 
 if __name__ == '__main__':

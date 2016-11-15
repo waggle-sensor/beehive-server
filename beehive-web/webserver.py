@@ -11,7 +11,6 @@ import sys
 import time
 import urlparse
 import web
-from export import export_generator, list_node_dates
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
 
@@ -63,7 +62,6 @@ def read_file( str ):
 
 urls = (
     '/nodes/(.+)/?',                'web_node_page',
-    '/nodes_v2/(.+)/?',             'web_node_page_v2',
     '/',                            'index',
     '/wcc/',                        'index_WCC',
     '/test/',                       'test'
@@ -137,11 +135,11 @@ class index:
     def GET(self):
         logger.debug('GET index')
         
-        user_data = web.input(debug="false")
-        debug_arg = '?debug=true' # if user_data.debug else ''
+        user_data = web.input(all="false")
+        allNodes_arg = '?all=true' # if user_data.all else ''
 
-        api_call = api_url + '1/nodes/' + debug_arg
-        api_call_internal = api_url_internal + '1/nodes/' + debug_arg
+        api_call = api_url + '1/nodes/' + allNodes_arg
+        api_call_internal = api_url_internal + '1/nodes/' + allNodes_arg
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
         dtUtcNow = datetime.datetime.utcnow()
@@ -308,22 +306,17 @@ class index:
                 % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
-
 
 
 class index_WCC:        
     def GET(self):
         logger.debug('GET index_WCC')
         
-        user_data = web.input(debug="false")
-        debug_arg = '?debug=true' if user_data.debug.lower() == 'true' else ''
-        
-        logger.debug('user_data       = ' + str(user_data))
-        logger.debug('user_data.debug = ' + str(user_data.debug))
-        logger.debug('debug_arg       = ' + debug_arg)
-        
-        api_call = api_url+'1/nodes/' + debug_arg
-        api_call_internal = api_url_internal+'1/nodes/' + debug_arg
+        user_data = web.input(all="false")
+        allNodes_arg = '?all=true' if user_data.all else ''
+
+        api_call = api_url + '1/nodes/' + allNodes_arg
+        api_call_internal = api_url_internal + '1/nodes/' + allNodes_arg
         api_call_last_update = api_url_internal+'1/nodes_last_update/'
         
         dtUtcNow = datetime.datetime.utcnow()
@@ -469,11 +462,9 @@ class index_WCC:
                 # human-readable duration
                 duration_string = '1 minute ago'
                 delta_seconds = delta.total_seconds()
-                #logger.debug('delta_seconds = {}'.format(delta_seconds))
 
                 for dur in durations:
                     if delta_seconds >= dur[1]:
-                        #logger.debug('{}  {}'.format(delta_seconds, str(dur)))
                         num = int(delta_seconds / dur[1])
                         duration_string = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
                         break
@@ -492,22 +483,6 @@ class index_WCC:
                 % (name, web_host, node_id, node_id.upper(), web_host, node_id, description, hostname, location, last_updated)
                             
             yield result_line
-
-        yield "</table>"
-        yield  "<br>\n<br>\n"
-        
-        yield "Corresponding API call to get list of nodes:<br>\n<pre>curl %s</pre>" % (api_call)
-        
-        yield  "<br>\n<br>\n"
-        
-        yield "<br><br><h3>API resources:</h3><br>\n\n"
-        
-        
-        for i in range(0, len(urls), 2):
-            if urls[i].startswith('/api'):
-                yield  "&nbsp&nbsp&nbsp&nbsp" +  urls[i] + "<br>\n"
-        
-        yield html_footer()
 
 
         
@@ -515,8 +490,10 @@ class web_node_page:
     def GET(self, node_id):
         logger.debug('GET web_node_page')
         
-        api_call            = '%s1/nodes/%s/dates' % (api_url, node_id)
-        api_call_internal   = '%s1/nodes/%s/dates' % (api_url_internal, node_id)
+        user_data = web.input(version = '1')
+
+        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         
         try:
             req = requests.get( api_call_internal ) # , auth=('user', 'password')
@@ -553,7 +530,7 @@ class web_node_page:
         
         logger.debug(str(req.json()))
         for date in req.json()['data']:
-            yield '<br>\n<a href="%s1/nodes/%s/export?date=%s">%s</a>' % (api_url, node_id, date, date)
+            yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, date, version)
 
 
         yield  "<br>\n<br>\n"
@@ -566,19 +543,19 @@ class web_node_page:
 <pre>
 # get data from two specific days
 for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version=${{version}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 
 # get all data of one node
 DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
 for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version=${{version}}
 &nbsp&nbsp&nbsp&nbsp sleep 3
 done
 </pre>
 '''
-        yield examples.format(node_id, api_url)
+        yield examples.format(node_id, api_url, version)
         
         yield "<br>\n<br>\n"
 
