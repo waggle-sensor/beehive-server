@@ -50,7 +50,7 @@ class StreamToLogger(object):
         self.log_level = log_level
         self.linebuf = ''
         self.prefix = prefix
- 
+
     def write(self, buf):
         for line in buf.rstrip().splitlines():
             self.logger.log(self.log_level, self.prefix+line.rstrip())
@@ -65,8 +65,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--logging', dest='enable_logging', help='write to log files instead of stdout', action='store_true')
     args = parser.parse_args()
-    
-        
+
+
     if args.enable_logging:
         # 5 times 10MB
         sys.stdout.write('logging to '+LOG_FILENAME+'\n')
@@ -74,15 +74,15 @@ if __name__ == "__main__":
         if not os.path.isdir(log_dir):
             os.makedirs(log_dir)
         handler = logging.handlers.RotatingFileHandler(LOG_FILENAME, maxBytes=10485760, backupCount=5)
-        
+
         #stdout_logger = logging.getLogger('STDOUT')
         sl = StreamToLogger(logger, logging.INFO, 'STDOUT: ')
         sys.stdout = sl
- 
+
         #stderr_logger = logging.getLogger('STDERR')
         sl = StreamToLogger(logger, logging.ERROR, 'STDERR: ')
         sys.stderr = sl
-        
+
         handler.setFormatter(formatter)
         root_logger.handlers = []
         root_logger.addHandler(handler)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     # DEPRECATED
     # Add node queue bindings that are already registered
-    #if os.path.isfile('registrations/nodes.txt'): 
+    #if os.path.isfile('registrations/nodes.txt'):
     #    with open('registrations/nodes.txt') as file_:
     #       for line in file_:
     #            if line and line != '\n':
@@ -108,57 +108,57 @@ if __name__ == "__main__":
 
     logger.info("connecting to cassandra...")
     cassandra_session = None
-    while cassandra_session == None:     
-        try:    
+    while cassandra_session == None:
+        try:
             cassandra_cluster = Cluster(contact_points=[CASSANDRA_HOST])
         except Exception as e:
             logger.error("Connecting to cassandra failed (%s): %s" % ( CASSANDRA_HOST ,str(e) ) )
             time.sleep(1)
             continue
-            
+
         try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
             cassandra_session = cassandra_cluster.connect()
         except Exception as e:
             logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
             time.sleep(3)
             continue
-    
-    
+
+
     logger.info("setting up cassandra types and tables...")
     for statement in [ keyspace_cql, type_plugin_sql, nodes_cql, registration_log_cql, sensor_data_cql]:
-        try: 
+        try:
             cassandra_session.execute(statement)
         except Exception as e:
             logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
-            sys.exit(1)      
-                  
-                  
+            sys.exit(1)
+
+
     logger.info("getting list of registered nodes...")
     waggle_nodes = []
-   
+
     statement = "select node_id, timestamp, queue, name from waggle.nodes"
-    try:     
+    try:
         waggle_nodes = cassandra_session.execute(statement)
     except Exception as e:
         logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
         sys.exit(1)
 
-    num_nodes=0   
+    num_nodes=0
     for node in waggle_nodes:
         num_nodes+=1
         node_table[node.node_id] = {'node_id': node.node_id,
                                     'queue' : node.queue,
                                     'name': node.name}
                     #'device_dict' : node.device_dict,
-                    #'priority_order' : node.priority_order} 
+                    #'priority_order' : node.priority_order}
         queue_bindings[node.queue] = ("internal",node.queue)
         logger.debug("loading node information for node %s" % (node.node_id) )
-    
-    logger.debug("number of nodes: %d" % (num_nodes)) 
+
+    logger.debug("number of nodes: %d" % (num_nodes))
 
 
     cassandra_cluster.shutdown()
-    
+
     logger.info("connecting to RabbitMQ...")
     #Connect to rabbitMQ
     try:
@@ -166,18 +166,18 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, str(e)))
         sys.exit(1)
-    
+
     logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
-    
+
     rabbitChannel = rabbitConn.channel()
 
     #Declare all of the appropriate exchanges, queues, and bindings
 
     for queueName in list(queue_bindings.keys()):
-        rabbitChannel.queue_declare(queueName)
+        rabbitChannel.queue_declare(queueName, durable=True)
 
     for exchName in exchage_list:
-        rabbitChannel.exchange_declare(exchName)
+        rabbitChannel.exchange_declare(exchName, durable=True)
     for key in list(queue_bindings.keys()):
         bind = queue_bindings[key]
         rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
@@ -248,7 +248,7 @@ if __name__ == "__main__":
                     util_procs[i].start()
 
             time.sleep(3)
-            
+
     except KeyboardInterrupt:
        logger.info("exiting.")
        sys.exit(0)
