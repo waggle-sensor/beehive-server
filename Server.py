@@ -106,25 +106,13 @@ if __name__ == "__main__":
     #                queue_bindings[info[1]] = ("internal",info[1])
     #                routing_table[int(info[0])] = info[1]
 
-    logger.info("connecting to cassandra...")
-    cassandra_session = None
-    while cassandra_session == None:
-        try:
-            cassandra_cluster = Cluster(contact_points=[CASSANDRA_HOST])
-        except Exception as e:
-            logger.error("Connecting to cassandra failed (%s): %s" % ( CASSANDRA_HOST ,str(e) ) )
-            time.sleep(1)
-            continue
+    print('<5>Connecting to Cassandra: {}'.format(CASSANDRA_HOST) flush=True)
+    cassandra_cluster = Cluster(contact_points=[CASSANDRA_HOST])
 
-        try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            cassandra_session = cassandra_cluster.connect()
-        except Exception as e:
-            logger.error("(self.cluster.connect): Cassandra connection to " + CASSANDRA_HOST + " failed: " + str(e))
-            time.sleep(3)
-            continue
+    print('<7>Getting Cassandra session', flush=True)
+    cassandra_session = cassandra_cluster.connect()
 
-
-    logger.info("setting up cassandra types and tables...")
+    print('<5>Setting up Cassandra tables', flush=True)
     for statement in [ keyspace_cql, type_plugin_sql, nodes_cql, registration_log_cql, sensor_data_cql]:
         try:
             cassandra_session.execute(statement)
@@ -133,7 +121,8 @@ if __name__ == "__main__":
             sys.exit(1)
 
 
-    logger.info("getting list of registered nodes...")
+    print('<5>Getting registered nodes', flush=True)
+
     waggle_nodes = []
 
     statement = "select node_id, timestamp, queue, name from waggle.nodes"
@@ -143,9 +132,7 @@ if __name__ == "__main__":
         logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
         sys.exit(1)
 
-    num_nodes=0
     for node in waggle_nodes:
-        num_nodes+=1
         node_table[node.node_id] = {'node_id': node.node_id,
                                     'queue' : node.queue,
                                     'name': node.name}
@@ -154,72 +141,69 @@ if __name__ == "__main__":
         queue_bindings[node.queue] = ("internal",node.queue)
         logger.debug("loading node information for node %s" % (node.node_id) )
 
-    logger.debug("number of nodes: %d" % (num_nodes))
+    print('<7>Got {} nodes'.format(len(waggle_nodes)), flush=True)
 
-
+    print('<5>Disconnecting from Cassandra', flush=True)
     cassandra_cluster.shutdown()
 
-    logger.info("connecting to RabbitMQ...")
-    #Connect to rabbitMQ
-    try:
-        rabbitConn = pika.BlockingConnection(pika_params)
-    except Exception as e:
-        logger.error("Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, str(e)))
-        sys.exit(1)
-
-    logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
-
+    print('<5>Connecting to RabbitMQ: {}'.format(pika_params.host), flush=True)
+    rabbitConn = pika.BlockingConnection(pika_params)
     rabbitChannel = rabbitConn.channel()
 
-    #Declare all of the appropriate exchanges, queues, and bindings
-
     for queueName in list(queue_bindings.keys()):
+        print('<5>Declaring queue: {}'.format(queueName), flush=True)
         rabbitChannel.queue_declare(queueName)
 
     for exchName in exchage_list:
+        print('<5>Declaring exchange: {}'.format(exchName), flush=True)
         rabbitChannel.exchange_declare(exchName)
 
     for key in list(queue_bindings.keys()):
         bind = queue_bindings[key]
+        print('<5>Binding queue to exchange: {} - {} -> {}'.format(key, bind[1], bind[0]), flush=True)
         rabbitChannel.queue_bind(exchange=bind[0], queue=key, routing_key=bind[1])
 
-
-    logger.info("start the processes...")
-
     router_procs = []
-    for i in range (0,NUM_ROUTER_PROCS):
+
+    print('<5>Starting router processes', flush=True)
+
+    for i in range(NUM_ROUTER_PROCS):
+        print('<7>Starting router process {}'.format(i), flush=True)
         new_router = WaggleRouter(node_table)
         new_router.start()
         router_procs.append(new_router)
-    logger.info("%d routing processes online." % (NUM_ROUTER_PROCS))
 
     util_procs = []
-    for i in range (0,NUM_UTIL_PROCS):
+
+    print('<5>Starting utility processes', flush=True)
+
+    for i in range(NUM_UTIL_PROCS):
+        print('<7>Starting utililty process {}'.format(i), flush=True)
         new_util = UtilProcess()
         new_util.start()
         util_procs.append(new_util)
-    logger.info("Utility processes online.")
 
     reg_procs = []
-    for i in range (0,NUM_REGISTRATION_PROCS):
+
+    print('<5>Starting registration processes', flush=True)
+
+    for i in range(NUM_REGISTRATION_PROCS):
+        print('<7>Starting registration process {}'.format(i), flush=True)
         new_reg = RegProcess(node_table)
         new_reg.start()
         reg_procs.append(new_reg)
-    logger.info("Registration processes online.")
 
     data_procs = []
-    for i in range (0,NUM_DATA_PROCS):
+
+    print('<5>Starting data processes', flush=True)
+
+    for i in range(NUM_DATA_PROCS):
+        print('<7>Starting data processes {}'.format(i), flush=True)
         new_data = DataProcess()
         new_data.start()
         data_procs.append(new_data)
-    logger.info("Data forwarding processes online.")
 
-
-
-
-    logger.info("All processes online. Server is fully operational.")
-
-
+    print('<5>Server ready', flush=True)
 
     # Future work: This is where server commands should be processed.
     # This could be accomplished by reading from something like a multiprocessing queue
@@ -251,7 +235,5 @@ if __name__ == "__main__":
             time.sleep(3)
 
     except KeyboardInterrupt:
-       logger.info("exiting.")
+       print('<5>Stopping server', flush=True)
        sys.exit(0)
-    except Exception as e:
-       logger.error("error: %s" % (str(e)))
