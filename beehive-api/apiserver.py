@@ -284,7 +284,7 @@ def api_export(node_id):
 @app.route('/api/1/WCC_node/<node_id>/')
 class WCC_web_node_page:
     def GET(self, node_id):
-        logger.debug('GET WCC_web_node_page')
+        logger.debug('GET WCC_web_node_page()  node_id = '.format(node_id))
         
         versions = ['2', '2.1', '1']
         data = {}
@@ -296,6 +296,7 @@ class WCC_web_node_page:
 
             api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
             api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+            logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
             
             try:
                 req = requests.get( api_call_internal ) # , auth=('user', 'password')
@@ -327,6 +328,8 @@ class WCC_web_node_page:
             listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
             datesUnion.update(data[version])     # union of all dates
 
+        logger.debug('  DEBUG: ' + '\n'.join(listDebug))
+        
         datesUnionSorted = sorted(list(datesUnion), reverse=True)
         
         dateDict = {}
