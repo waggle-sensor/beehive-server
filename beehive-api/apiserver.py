@@ -325,8 +325,6 @@ def WCC_web_node_page(node_id):
                 continue
                 #raise internalerror("not found")
         else:
-            logger.debug('   PRE ///////////// nodes_dict')
-
             nodes_dict = list_node_dates(version)
             logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
             dates = {'data' : nodes_dict.get(node_id, list())}
@@ -334,8 +332,6 @@ def WCC_web_node_page(node_id):
         data[version] = dates['data']
         listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
         datesUnion.update(data[version])     # union of all dates
-
-    logger.debug('  DEBUG: ' + '\n'.join(listDebug))
     
     datesUnionSorted = sorted(list(datesUnion), reverse=True)
     
@@ -348,7 +344,10 @@ def WCC_web_node_page(node_id):
             else:
                 l.append('')
         dateDict[date] = l
-        
+    
+    listDebug.append('<br><br>\n\n   {}'.format(str(dateDict))
+    logger.debug('  DEBUG: ' + '\n'.join(listDebug))
+    
     return 'NADA' 
     
     
