@@ -342,7 +342,7 @@ class WCC_web_node_page:
                     l.append('')
             dateDict[date] = l
             
-        return 'NADA ' 
+        return 'NADA' 
         
         if False:
             #TODO check that node_id exists!
