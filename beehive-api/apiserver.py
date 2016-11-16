@@ -282,113 +282,112 @@ def api_export(node_id):
     return Response(stream_with_context(generate()), mimetype='text/csv')
     
 @app.route('/api/1/WCC_node/<node_id>/')
-class WCC_web_node_page:
-    def GET(node_id):
-        logger.debug('GET WCC_web_node_page()  node_id = '.format(node_id))
+def WCC_web_node_page(node_id):
+    logger.debug('GET WCC_web_node_page()  node_id = '.format(node_id))
+    
+    versions = ['2', '2.1', '1']
+    data = {}
+    datesUnion = set()
+    listDebug = []
+    
+    for version in versions:
+        listDebug.append(' VERSION ' + version + '<br>\n')
+
+        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+        logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
-        versions = ['2', '2.1', '1']
-        data = {}
-        datesUnion = set()
-        listDebug = []
+        try:
+            req = requests.get( api_call_internal ) # , auth=('user', 'password')
+        except Exception as e:
+            msg = "Could not make request: %s", (str(e))
+            logger.error(msg)
+            continue
+            #raise internalerror(msg)
         
+        if req.status_code != 200:
+            msg = "status code: %d" % (req.status_code)
+            logger.error(msg)
+            continue
+            #raise internalerror(msg)
+            
+        try:
+            dates = req.json()
+        except ValueError:
+            logger.debug("Not json: " + str(req))
+            continue
+            #raise internalerror("not found")
+           
+        if not 'data' in dates:
+            logger.debug("data field not found")
+            continue
+            #raise internalerror("not found")
+        
+        data[version] = dates['data']
+        listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
+        datesUnion.update(data[version])     # union of all dates
+
+    logger.debug('  DEBUG: ' + '\n'.join(listDebug))
+    
+    datesUnionSorted = sorted(list(datesUnion), reverse=True)
+    
+    dateDict = {}
+    for date in datesUnionSorted:
+        l = list()
         for version in versions:
-            listDebug.append(' VERSION ' + version + '<br>\n')
-
-            api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-            api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
-            logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
-            
-            try:
-                req = requests.get( api_call_internal ) # , auth=('user', 'password')
-            except Exception as e:
-                msg = "Could not make request: %s", (str(e))
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-            
-            if req.status_code != 200:
-                msg = "status code: %d" % (req.status_code)
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-                
-            try:
-                dates = req.json()
-            except ValueError:
-                logger.debug("Not json: " + str(req))
-                continue
-                #raise internalerror("not found")
-               
-            if not 'data' in dates:
-                logger.debug("data field not found")
-                continue
-                #raise internalerror("not found")
-            
-            data[version] = dates['data']
-            listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
-            datesUnion.update(data[version])     # union of all dates
-
-        logger.debug('  DEBUG: ' + '\n'.join(listDebug))
+            if date in data[version]:
+                l.append(date)
+            else:
+                l.append('')
+        dateDict[date] = l
         
-        datesUnionSorted = sorted(list(datesUnion), reverse=True)
+    return 'NADA' 
+    
+    if False:
+        #TODO check that node_id exists!
         
-        dateDict = {}
-        for date in datesUnionSorted:
-            l = list()
-            for version in versions:
-                if date in data[version]:
-                    l.append(date)
-                else:
-                    l.append('')
-            dateDict[date] = l
-            
-        return 'NADA' 
+        yield html_header('Node '+node_id.upper())
+        yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
         
-        if False:
-            #TODO check that node_id exists!
-            
-            yield html_header('Node '+node_id.upper())
-            yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
-            
-            
-            yield "<h3>Available data - version %s </h3>\n" % version
-            # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
-            
-            logger.debug('__web_node_page():  DATES FOUND:  ' + str(req.json()))
-            
-            yield '<br>\n'
-            
-            yield
+        
+        yield "<h3>Available data - version %s </h3>\n" % version
+        # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
+        
+        logger.debug('__web_node_page():  DATES FOUND:  ' + str(req.json()))
+        
+        yield '<br>\n'
+        
+        yield
 
-            #yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, version, date)
+        #yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, version, date)
 
-            yield  "<br>\n<br>\n"
-            
-            yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
-            
-            yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
-            
-            examples='''
-    <pre>
-    # get data from two specific days
-    for date in 2016-01-26 2016-01-27 ; do
-    &nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
-    &nbsp&nbsp&nbsp&nbsp sleep 3
-    done
+        yield  "<br>\n<br>\n"
+        
+        yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
+        
+        yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
+        
+        examples='''
+<pre>
+# get data from two specific days
+for date in 2016-01-26 2016-01-27 ; do
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
+&nbsp&nbsp&nbsp&nbsp sleep 3
+done
 
-    # get all data of one node
-    DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
-    for date in ${{DATES}} ; do
-    &nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
-    &nbsp&nbsp&nbsp&nbsp sleep 3
-    done
-    </pre>
-    '''
-            yield examples.format(node_id, api_url, version)
-            
-            yield "<br>\n<br>\n"
+# get all data of one node
+DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
+for date in ${{DATES}} ; do
+&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
+&nbsp&nbsp&nbsp&nbsp sleep 3
+done
+</pre>
+'''
+        yield examples.format(node_id, api_url, version)
+        
+        yield "<br>\n<br>\n"
 
-            yield html_footer()
+        yield html_footer()
 
 
     
