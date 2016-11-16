@@ -345,7 +345,7 @@ def WCC_web_node_page(node_id):
                 l.append('')
         dateDict[date] = l
     
-    listDebug.append('<br><br>\n\n   {}'.format(str(dateDict))
+    listDebug.append('<br><br>\n\n   {}'.format(str(dateDict)))
     logger.debug('  DEBUG: ' + '\n'.join(listDebug))
     
     return 'NADA' 
