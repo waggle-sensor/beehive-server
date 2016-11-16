@@ -49,11 +49,7 @@ if __name__ == "__main__":
     waggle_nodes = []
 
     statement = "select node_id, timestamp, queue, name from waggle.nodes"
-    try:
-        waggle_nodes = cassandra_session.execute(statement)
-    except Exception as e:
-        logger.error("(self.session.execute(statement)) failed. Statement: %s Error: %s " % (statement, str(e)) )
-        sys.exit(1)
+    waggle_nodes = cassandra_session.execute(statement)
 
     for node in waggle_nodes:
         node_table[node.node_id] = {'node_id': node.node_id,
