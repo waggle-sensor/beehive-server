@@ -64,8 +64,6 @@ if __name__ == "__main__":
         queue_bindings[node.queue] = ("internal",node.queue)
         logger.debug("loading node information for node %s" % (node.node_id) )
 
-    print('<7>Got {} nodes'.format(len(waggle_nodes)), flush=True)
-
     print('<5>Disconnecting from Cassandra', flush=True)
     cassandra_cluster.shutdown()
 
