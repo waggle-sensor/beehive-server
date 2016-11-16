@@ -298,31 +298,36 @@ def WCC_web_node_page(node_id):
         api_call_internal   = '%s/api/1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
-        try:
-            req = requests.get( api_url_internal ) # , auth=('user', 'password')
-        except Exception as e:
-            msg = "Could not make request: %s", (str(e))
-            logger.error(msg)
-            continue
-            #raise internalerror(msg)
         
-        if req.status_code != 200:
-            msg = "status code: %d" % (req.status_code)
-            logger.error(msg)
-            continue
-            #raise internalerror(msg)
+        if False:
+            try:
+                req = requests.get( api_url_internal ) # , auth=('user', 'password')
+            except Exception as e:
+                msg = "Could not make request: %s", (str(e))
+                logger.error(msg)
+                continue
+                #raise internalerror(msg)
             
-        try:
-            dates = req.json()
-        except ValueError:
-            logger.debug("Not json: " + str(req))
-            continue
-            #raise internalerror("not found")
-           
-        if not 'data' in dates:
-            logger.debug("data field not found")
-            continue
-            #raise internalerror("not found")
+            if req.status_code != 200:
+                msg = "status code: %d" % (req.status_code)
+                logger.error(msg)
+                continue
+                #raise internalerror(msg)
+                
+            try:
+                dates = req.json()
+            except ValueError:
+                logger.debug("Not json: " + str(req))
+                continue
+                #raise internalerror("not found")
+               
+            if not 'data' in dates:
+                logger.debug("data field not found")
+                continue
+                #raise internalerror("not found")
+        else:
+            nodes_dict = list_node_dates(version)
+            dates = nodes_dict.get(node_id, {'data' : list()})
         
         data[version] = dates['data']
         listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
