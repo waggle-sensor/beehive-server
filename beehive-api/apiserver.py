@@ -327,6 +327,7 @@ def WCC_web_node_page(node_id):
                 #raise internalerror("not found")
         else:
             nodes_dict = list_node_dates(version)
+            logging.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
             dates = nodes_dict.get(node_id, {'data' : list()})
         
         data[version] = dates['data']
