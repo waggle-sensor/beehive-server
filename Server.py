@@ -64,8 +64,18 @@ if __name__ == "__main__":
     cassandra_cluster.shutdown()
 
     print('<5>Connecting to RabbitMQ: {}'.format(pika_params.host), flush=True)
-    rabbitConn = pika.BlockingConnection(pika_params)
-    rabbitChannel = rabbitConn.channel()
+
+    try:
+        rabbitConn = pika.BlockingConnection(pika_params)
+    except:
+        print('<3>Could not connect to RabbitMQ')
+        sys.exit(1)
+
+    try:
+        rabbitChannel = rabbitConn.channel()
+    except:
+        print('<3>Could not get channel')
+        sys.exit(1)
 
     for queueName in list(queue_bindings.keys()):
         print('<5>Declaring queue: {}'.format(queueName), flush=True)
@@ -90,6 +100,8 @@ if __name__ == "__main__":
         new_router.start()
         router_procs.append(new_router)
 
+    print('<5>Router processes ready', flush=True)
+
     util_procs = []
 
     print('<5>Starting utility processes', flush=True)
@@ -99,6 +111,8 @@ if __name__ == "__main__":
         new_util = UtilProcess()
         new_util.start()
         util_procs.append(new_util)
+
+    print('<5>Utility processes ready', flush=True)
 
     reg_procs = []
 
@@ -110,6 +124,8 @@ if __name__ == "__main__":
         new_reg.start()
         reg_procs.append(new_reg)
 
+    print('<5>Registration processes ready', flush=True)
+
     data_procs = []
 
     print('<5>Starting data processes', flush=True)
@@ -120,7 +136,7 @@ if __name__ == "__main__":
         new_data.start()
         data_procs.append(new_data)
 
-    print('<5>Server ready', flush=True)
+    print('<5>Data processes ready', flush=True)
 
     # Future work: This is where server commands should be processed.
     # This could be accomplished by reading from something like a multiprocessing queue
