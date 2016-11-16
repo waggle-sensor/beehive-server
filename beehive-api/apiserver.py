@@ -294,8 +294,8 @@ def WCC_web_node_page(node_id):
     for version in versions:
         listDebug.append(' VERSION ' + version + '<br>\n')
 
-        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+        api_call            = '%s/api/1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+        api_call_internal   = '%s/api/1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
         try:
