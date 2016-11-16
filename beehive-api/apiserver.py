@@ -328,8 +328,8 @@ def WCC_web_node_page(node_id):
             logger.debug('   PRE ///////////// nodes_dict')
 
             nodes_dict = list_node_dates(version)
-            logging.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
-            dates = nodes_dict.get(node_id, {'data' : list()})
+            logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
+            dates = {'data' : nodes_dict.get(node_id, list())}
         
         data[version] = dates['data']
         listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
