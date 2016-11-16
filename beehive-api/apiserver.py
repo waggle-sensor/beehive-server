@@ -283,7 +283,7 @@ def api_export(node_id):
     
 @app.route('/api/1/WCC_node/<node_id>/')
 class WCC_web_node_page:
-    def GET(self, node_id):
+    def GET(node_id):
         logger.debug('GET WCC_web_node_page()  node_id = '.format(node_id))
         
         versions = ['2', '2.1', '1']
