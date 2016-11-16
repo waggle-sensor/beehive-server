@@ -299,7 +299,7 @@ def WCC_web_node_page(node_id):
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
         try:
-            req = requests.get( api_call_internal ) # , auth=('user', 'password')
+            req = requests.get( api_call ) # , auth=('user', 'password')
         except Exception as e:
             msg = "Could not make request: %s", (str(e))
             logger.error(msg)
