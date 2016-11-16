@@ -1,2 +1,0 @@
-#!/bin/sh
-docker logs -f --tail=0 $CONTAINER | ./forward-logs.py
