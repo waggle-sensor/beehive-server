@@ -298,7 +298,6 @@ def WCC_web_node_page(node_id):
         api_call_internal   = '%s/api/1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
-        
         if False:
             try:
                 req = requests.get( api_url_internal ) # , auth=('user', 'password')
@@ -326,7 +325,7 @@ def WCC_web_node_page(node_id):
                 continue
                 #raise internalerror("not found")
         else:
-            logging.debug('   PRE ///////////// nodes_dict')
+            logger.debug('   PRE ///////////// nodes_dict')
 
             nodes_dict = list_node_dates(version)
             logging.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
