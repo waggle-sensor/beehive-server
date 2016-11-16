@@ -343,53 +343,6 @@ def WCC_web_node_page(node_id):
         
     return 'NADA' 
     
-    if False:
-        #TODO check that node_id exists!
-        
-        yield html_header('Node '+node_id.upper())
-        yield "<h2>Node "+node_id.upper()+"</h2>\n\n\n"
-        
-        
-        yield "<h3>Available data - version %s </h3>\n" % version
-        # not available right now. yield '<br>\n<a href="%s/1/nodes/%s/latest">[last 3 minutes]</a>' % (api_url, node_id)
-        
-        logger.debug('__web_node_page():  DATES FOUND:  ' + str(req.json()))
-        
-        yield '<br>\n'
-        
-        yield
-
-        #yield '<br>\n<a href="%s1/nodes/%s/export?date=%s&version=%s">%s</a>' % (api_url, node_id, date, version, date)
-
-        yield  "<br>\n<br>\n"
-        
-        yield "Corresponding API call to get available dates:<br>\n<pre>curl %s</pre>" % (api_call)
-        
-        yield  "<br>\n<br>\n<h3>Download examples:</h3>\n"
-        
-        examples='''
-<pre>
-# get data from two specific days
-for date in 2016-01-26 2016-01-27 ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
-&nbsp&nbsp&nbsp&nbsp sleep 3
-done
-
-# get all data of one node
-DATES=$(curl {1}1/nodes/{0}/dates | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
-for date in ${{DATES}} ; do
-&nbsp&nbsp&nbsp&nbsp curl -o {0}_${{date}}.csv {1}1/nodes/{0}/export?date=${{date}}&version={2}
-&nbsp&nbsp&nbsp&nbsp sleep 3
-done
-</pre>
-'''
-        yield examples.format(node_id, api_url, version)
-        
-        yield "<br>\n<br>\n"
-
-        yield html_footer()
-
-
     
     
 
