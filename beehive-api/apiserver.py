@@ -140,7 +140,7 @@ def api_nodes():
     version = request.args.get('version', '1')
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
-    
+
     logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
         version, str(bAllNodes)))
 
@@ -149,14 +149,14 @@ def api_nodes():
     all_nodes = {}
 
     # limit the output with a WHERE clause if bAllNodes is false
-    whereClause = " " if bAllNodes else " WHERE opmode = 'active' " 
+    whereClause = " " if bAllNodes else " WHERE opmode = 'active' "
 
     query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
-    
-    logger.debug(' query = ' + query)   
-    
+
+    logger.debug(' query = ' + query)
+
     mysql_nodes_result = db.query_all(query)
-    
+
     for result in mysql_nodes_result:
         node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
 
@@ -237,7 +237,7 @@ def api_dates(node_id):
     version = request.args.get('version', '1')
 
     logger.info("__ api_dates()  version = {}".format(version))
-    
+
     nodes_dict = list_node_dates(version)
 
     if not node_id in nodes_dict:
@@ -253,6 +253,18 @@ def api_dates(node_id):
     obj['data'] = sorted(dates, reverse=True)
 
     return jsonify(obj)
+
+
+@app.route('/api/2/nodes/<nodeid>/dates')
+def api_dates_v2(nodeid):
+    nodeid = nodeid.lower()
+    dates = list_node_dates(version='2')
+
+    try:
+        return jsonify(sorted(dates[nodeid], reverse=True))
+    except KeyError:
+        return 'node not found', 404
+
 
 @app.route('/api/1/nodes_last_update/')
 def api_nodes_last_update():
@@ -281,23 +293,23 @@ def api_export(node_id):
             yield row + '\n'
 
     return Response(stream_with_context(generate()), mimetype='text/csv')
-    
+
 @app.route('/api/1/WCC_node/<node_id>/')
 def WCC_web_node_page(node_id):
     logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
-    
+
     versions = ['2', '2.1', '1']
     data = {}
     datesUnion = set()
     listDebug = []
-    
+
     for version in versions:
         listDebug.append(' VERSION ' + version + '<br>\n')
 
         api_call            = '%s/api/1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
         api_call_internal   = '%s/api/1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
-        
+
         if False:
             try:
                 req = requests.get( api_url_internal ) # , auth=('user', 'password')
@@ -306,20 +318,20 @@ def WCC_web_node_page(node_id):
                 logger.error(msg)
                 continue
                 #raise internalerror(msg)
-            
+
             if req.status_code != 200:
                 msg = "status code: %d" % (req.status_code)
                 logger.error(msg)
                 continue
                 #raise internalerror(msg)
-                
+
             try:
                 dates = req.json()
             except ValueError:
                 logger.debug("Not json: " + str(req))
                 continue
                 #raise internalerror("not found")
-               
+
             if not 'data' in dates:
                 logger.debug("data field not found")
                 continue
@@ -328,13 +340,13 @@ def WCC_web_node_page(node_id):
             nodes_dict = list_node_dates(version)
             logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
             dates = {'data' : nodes_dict.get(node_id, list())}
-        
+
         data[version] = dates['data']
         listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
         datesUnion.update(data[version])     # union of all dates
-    
+
     datesUnionSorted = sorted(list(datesUnion), reverse=True)
-    
+
     dateDict = {}
     for date in datesUnionSorted:
         l = list()
@@ -344,14 +356,14 @@ def WCC_web_node_page(node_id):
             else:
                 l.append('')
         dateDict[date] = l
-    
+
     listDebug.append('<br><br>\n\n   {}'.format(str(dateDict)))
     logger.debug('  DEBUG: ' + '\n'.join(listDebug))
-    
+
     return '<br>\n'.join(listDebug)
-    
-    
-    
+
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
