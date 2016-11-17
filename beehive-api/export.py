@@ -56,7 +56,7 @@ def query(statement):
 def export_generator(node_id, date, ttl, delimiter, version = '1'):
     """
     Python generator to export sensor data from Cassandra
-    version = 1 or 2, indicates which database/dataset is being queried
+    version = 1 or 2 or 2.1, indicates which database/dataset is being queried
     """
 
     node_id = node_id.lower()
