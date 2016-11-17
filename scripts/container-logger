@@ -1,0 +1,2 @@
+#!/bin/sh
+/bin/docker logs -f --tail=0 $CONTAINER | ./container-logger.py
