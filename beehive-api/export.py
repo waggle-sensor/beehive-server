@@ -91,7 +91,7 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1'):
             count += 1
             # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
             # yield delimiter.join((str(timestamp), str(ingest_id), plugin_name, plugin_version, plugin_instance, parameter, data))
-            yield delimiter.join((str(timestamp), plugin_name, plugin_version, plugin_instance, parameter, data.decode()))
+            yield delimiter.join((str(timestamp), plugin_name, plugin_version, plugin_instance, parameter, data[2:-1]))
     else:  # version == 2
         for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
             count += 1
