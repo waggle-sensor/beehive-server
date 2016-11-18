@@ -202,7 +202,7 @@ def nodes_json():
 
     for row in rows:
         result = {
-            'id': row[0].lower()[4:] or '',
+            'id': row[0].lower().rjust(16, '0') or '',
             'name': row[1] or '',
             'description': row[2] or '',
             'location': row[3] or '',
@@ -222,7 +222,7 @@ def nodes_csv():
 
     def stream():
         for row in rows:
-            node = row[0].lower()[4:]
+            node = row[0].lower().rjust(16, '0')
             name = row[1] or ''
             description = row[2] or ''
             location = row[3] or ''
