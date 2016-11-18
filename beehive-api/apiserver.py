@@ -5,11 +5,11 @@ import re
 import sys
 import json
 import time
+from collections import namedtuple
 import requests
 from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
-
 from flask import Flask
 app = Flask(__name__)
 from flask import Response
@@ -51,32 +51,7 @@ STATUS_Not_Found = 404
 STATUS_Server_Error =  500
 
 
-def read_file( str ):
-    logger.debug("read_file: "+str)
-    if not os.path.isfile(str) :
-        return ""
-    with open(str,'r') as file_:
-        return file_.read().strip()
-    return ""
-
-
-def html_header(title):
-    header= '''<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>{0}</title>
-</head>
-<body>
-'''
-    return header.format(title)
-
-def html_footer():
-    return '''
-</body>
-</html>
-'''
-
+Node = namedtuple('Node', ['id', 'name', 'description', 'location', 'port'])
 
 
 class InvalidUsage(Exception):
@@ -104,11 +79,6 @@ def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-
-
-def internalerror(e):
-    message = html_header("Error") + "Sorry, there was an error:<br>\n<pre>\n"+str(e) +"</pre>\n"+ html_footer()
-    return message
 
 
 def get_mysql_db():
@@ -191,34 +161,45 @@ def api_nodes():
     # return  json.dumps(obj, indent=4)
 
 
-@app.route('/api/2/nodes.json')
-def nodes_json():
-    if request.accept_mimetypes.best == 'text/csv':
-        return nodes_csv()
-
+def get_nodes():
     db = get_mysql_db()
     rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
-    results = []
-
-    filters = [(field, re.compile(pattern, re.I)) for field, pattern in request.args.items()]
-
     for row in rows:
-        result = {
-            'id': row[0].lower().rjust(16, '0') or '',
-            'name': row[1] or '',
-            'description': row[2] or '',
-            'location': row[3] or '',
-            'port': row[4] or 0,
-        }
-
-        if all(pattern.search(result[field]) for field, pattern in filters):
-            results.append(result)
-
-    return jsonify(results)
+        yield Node(id=row[0].lower().rjust(16, '0') or '',
+                   name=row[1] or '',
+                   description=row[2] or '',
+                   location=row[3] or '',
+                   port=row[4] or 0)
 
 
-@app.route('/api/2/nodes.csv')
+def filtered_nodes():
+    filters = [(field, re.compile(pattern, re.I))
+               for field, pattern in request.args.items()]
+
+    def filterall(node):
+        return all(pattern.search(getattr(node, field))
+                   for field, pattern in filters)
+
+    return filter(filterall, get_nodes())
+
+
+@app.route('/api/nodes')
+def nodes():
+    if request.accept_mimetypes.best == 'text/csv':
+        return nodes_csv()
+    else:
+        return nodes_json()
+
+
+def nodes_text():
+    pass
+
+
+def nodes_json():
+    return jsonify(list(filtered_nodes()))
+
+
 def nodes_csv():
     db = get_mysql_db()
     rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
