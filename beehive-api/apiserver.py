@@ -196,19 +196,16 @@ def nodes_json():
 
 
 def nodes_csv():
-    db = get_mysql_db()
-    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
-
     def stream():
-        for row in rows:
-            node = row[0].lower().rjust(16, '0')
-            name = row[1] or ''
-            description = row[2] or ''
-            location = row[3] or ''
-            ssh_port = row[4] or ''
-            yield '{},{},{},{},{}\n'.format(node, name, description, location, ssh_port)
+        for node in filtered_nodes():
+            yield '{},{},{},{},{}\n'.format(node.id,
+                                            node.name,
+                                            node.description,
+                                            node.location,
+                                            node.port)
 
     return Response(stream(), mimetype='text/csv')
+
 
 @app.route('/api/1/nodes/<node_id>/dates')
 def api_dates(node_id):
