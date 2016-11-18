@@ -188,11 +188,14 @@ def api_nodes():
     obj = {}
     obj['data'] = all_nodes
     return jsonify(obj)
-    #return  json.dumps(obj, indent=4)
+    # return  json.dumps(obj, indent=4)
 
 
 @app.route('/api/2/nodes.json')
 def nodes_json():
+    if request.accept_mimetypes.best == 'text/csv':
+        return nodes_csv()
+
     db = get_mysql_db()
     rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
