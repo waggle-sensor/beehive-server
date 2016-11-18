@@ -176,12 +176,11 @@ def nodes_csv():
 
 
 def get_nodes():
-    db = get_mysql_db()
-    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
+    rows = get_mysql_db().query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
     for row in rows:
         yield {
-            'id': row[0].lower().rjust(16, '0') or '',
+            'id': row[0].lower().rjust(16, '0'),
             'name': row[1] or '',
             'description': row[2] or '',
             'location': row[3] or '',
@@ -235,8 +234,7 @@ def api_dates_v2(nodeid):
 
 @app.route('/api/1/nodes_last_update/')
 def api_nodes_last_update():
-    nodes_last_update_dict = get_nodes_last_update_dict()
-    return jsonify(nodes_last_update_dict)
+    return jsonify(get_nodes_last_update_dict())
 
 
 @app.route('/api/1/nodes/<node_id>/export')
@@ -330,8 +328,6 @@ def WCC_web_node_page(node_id):
     logger.debug('  DEBUG: ' + '\n'.join(listDebug))
 
     return '<br>\n'.join(listDebug)
-
-
 
 
 if __name__ == '__main__':
