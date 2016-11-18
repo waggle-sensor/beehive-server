@@ -161,27 +161,6 @@ def api_nodes():
     # return  json.dumps(obj, indent=4)
 
 
-def get_nodes():
-    db = get_mysql_db()
-    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
-
-    for row in rows:
-        yield Node(id=row[0].lower().rjust(16, '0') or '',
-                   name=row[1] or '',
-                   description=row[2] or '',
-                   location=row[3] or '',
-                   port=row[4] or 0)
-
-
-def filtered_nodes():
-    filters = [(field, re.compile(pattern, re.I))
-               for field, pattern in request.args.items()]
-
-    return filter(lambda node: all(pattern.search(getattr(node, field))
-                                   for field, pattern in filters),
-                  get_nodes())
-
-
 @app.route('/api/nodes')
 def nodes():
     if request.accept_mimetypes.best == 'text/csv':
@@ -205,6 +184,27 @@ def nodes_csv():
                                             node.port)
 
     return Response(stream(), mimetype='text/csv')
+
+
+def get_nodes():
+    db = get_mysql_db()
+    rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
+
+    for row in rows:
+        yield Node(id=row[0].lower().rjust(16, '0') or '',
+                   name=row[1] or '',
+                   description=row[2] or '',
+                   location=row[3] or '',
+                   port=row[4] or 0)
+
+
+def filtered_nodes():
+    filters = [(field, re.compile(pattern, re.I))
+               for field, pattern in request.args.items()]
+
+    return filter(lambda node: all(pattern.search(getattr(node, field))
+                                   for field, pattern in filters),
+                  get_nodes())
 
 
 @app.route('/api/1/nodes/<node_id>/dates')
