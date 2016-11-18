@@ -208,7 +208,7 @@ def load_data(node_ids, dates, row0, row1):
         for node_id in [x.lower() for x in node_ids]:
             #print(node_id)
             #print(date)
-            req = requests.get('http://beehive1.mcs.anl.gov/api/2/nodes/' + node_id + '/export?date=' + date)
+            req = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/' + node_id + '/export?date=' + date + '?version=2')
             content = str(req.content, 'utf-8')
             #print('len(content) = ', len(content))
             content = content.split(rdelim)
