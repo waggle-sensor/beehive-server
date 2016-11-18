@@ -53,7 +53,7 @@ def query(statement):
 
     return cluster, rows
 
-def export_generator(node_id, date, ttl, delimiter, version = '1'):
+def export_generator(node_id, date, ttl, delimiter=';', version='1'):
     """
     Python generator to export sensor data from Cassandra
     version = 1 or 2 or 2.1, indicates which database/dataset is being queried
@@ -80,9 +80,6 @@ def export_generator(node_id, date, ttl, delimiter, version = '1'):
     except:
         raise
 
-    if not delimiter:
-        delimiter = ';'
-
     count = 0
     if version == '1':
         for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
@@ -93,7 +90,8 @@ def export_generator(node_id, date, ttl, delimiter, version = '1'):
         for (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) in rows:
             count += 1
             # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
-            yield delimiter.join((str(timestamp), str(ingest_id), plugin_name, plugin_version, plugin_instance, parameter, data))
+            # yield delimiter.join((str(timestamp), str(ingest_id), plugin_name, plugin_version, plugin_instance, parameter, data))
+            yield delimiter.join((str(timestamp), plugin_name, plugin_version, plugin_instance, parameter, data[2:-1]))
     else:  # version == 2
         for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
             count += 1
