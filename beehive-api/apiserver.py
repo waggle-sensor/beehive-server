@@ -177,11 +177,9 @@ def filtered_nodes():
     filters = [(field, re.compile(pattern, re.I))
                for field, pattern in request.args.items()]
 
-    def filterall(node):
-        return all(pattern.search(getattr(node, field))
-                   for field, pattern in filters)
-
-    return filter(filterall, get_nodes())
+    return filter(lambda node: all(pattern.search(getattr(node, field))
+                                   for field, pattern in filters),
+                  get_nodes())
 
 
 @app.route('/api/nodes')
@@ -192,12 +190,9 @@ def nodes():
         return nodes_json()
 
 
-def nodes_text():
-    pass
-
-
 def nodes_json():
-    return jsonify(list(filtered_nodes()))
+    return jsonify(list(map(Node._asdict,
+                            filtered_nodes())))
 
 
 def nodes_csv():
