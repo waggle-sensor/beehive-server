@@ -5,7 +5,6 @@ import re
 import sys
 import json
 import time
-from collections import namedtuple
 import requests
 from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
@@ -45,13 +44,10 @@ api_url_internal = 'http://localhost'
 api_url = 'http://beehive1.mcs.anl.gov'
 
 # modify /etc/hosts/: 127.0.0.1	localhost beehive1.mcs.anl.gov
-STATUS_Bad_Request = 400 # A client error
+STATUS_Bad_Request = 400  # A client error
 STATUS_Unauthorized = 401
 STATUS_Not_Found = 404
-STATUS_Server_Error =  500
-
-
-Node = namedtuple('Node', ['id', 'name', 'description', 'location', 'port'])
+STATUS_Server_Error = 500
 
 
 class InvalidUsage(Exception):
@@ -152,8 +148,8 @@ def api_nodes():
             if not node_id in all_nodes:
                 all_nodes[node_id]={}
 
-    #for node_id in all_nodes.keys():
-    #    logger.debug("%s %s" % (node_id, type(node_id)))
+    # for node_id in all_nodes.keys():
+    #     logger.debug("%s %s" % (node_id, type(node_id)))
 
     obj = {}
     obj['data'] = all_nodes
@@ -170,20 +166,13 @@ def nodes():
 
 
 def nodes_json():
-    return jsonify(list(map(Node._asdict,
-                            filtered_nodes())))
+    return jsonify(list(filtered_nodes()))
 
 
 def nodes_csv():
-    def stream():
-        for node in filtered_nodes():
-            yield '{},{},{},{},{}\n'.format(node.id,
-                                            node.name,
-                                            node.description,
-                                            node.location,
-                                            node.port)
-
-    return Response(stream(), mimetype='text/csv')
+    fmt = '{id},{name},{description},{location},{port}\n'
+    return Response((fmt.format(**node) for node in filtered_nodes()),
+                    mimetype='text/csv')
 
 
 def get_nodes():
@@ -191,18 +180,20 @@ def get_nodes():
     rows = db.query_all('SELECT node_id, name, description, location, reverse_ssh_port FROM nodes')
 
     for row in rows:
-        yield Node(id=row[0].lower().rjust(16, '0') or '',
-                   name=row[1] or '',
-                   description=row[2] or '',
-                   location=row[3] or '',
-                   port=row[4] or 0)
+        yield {
+            'id': row[0].lower().rjust(16, '0') or '',
+            'name': row[1] or '',
+            'description': row[2] or '',
+            'location': row[3] or '',
+            'port': row[4] or 0,
+        }
 
 
 def filtered_nodes():
     filters = [(field, re.compile(pattern, re.I))
                for field, pattern in request.args.items()]
 
-    return filter(lambda node: all(pattern.search(getattr(node, field))
+    return filter(lambda node: all(pattern.search(node[field])
                                    for field, pattern in filters),
                   get_nodes())
 
@@ -231,7 +222,7 @@ def api_dates(node_id):
     return jsonify(obj)
 
 
-@app.route('/api/2/nodes/<nodeid>/dates')
+@app.route('/api/nodes/<nodeid>/dates')
 def api_dates_v2(nodeid):
     nodeid = nodeid.lower()
     dates = list_node_dates(version='2')
@@ -246,6 +237,7 @@ def api_dates_v2(nodeid):
 def api_nodes_last_update():
     nodes_last_update_dict = get_nodes_last_update_dict()
     return jsonify(nodes_last_update_dict)
+
 
 @app.route('/api/1/nodes/<node_id>/export')
 def api_export(node_id):
@@ -269,6 +261,7 @@ def api_export(node_id):
             yield row + '\n'
 
     return Response(stream_with_context(generate()), mimetype='text/csv')
+
 
 @app.route('/api/1/WCC_node/<node_id>/')
 def WCC_web_node_page(node_id):
