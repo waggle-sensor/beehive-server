@@ -212,7 +212,7 @@ class index:
         # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
         # find the first timedelta that is smaller than the data's timestamp's 
         timeToColors = [    
-            (datetime.timedelta(days = 1), '#ff3333'),      # dead = red
+            (datetime.timedelta(days = 1),  '#ff3333'),      # dead = red
             (datetime.timedelta(hours = 2), '#ff8000'),     # dying = orange
             (datetime.timedelta(minutes = 5), '#ffff00'),   # just starting to die = yellow
             (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <style>
+        table {    border-collapse: collapse; }
+        table, td, th { border: 1px solid black; padding: 1px 5px; text-align: center;}
+    </style>
+
+    <title>{{ node_id }} node_data</title>
+</head>
+<body>
+    <h1>Node {{ node_id }}</h1>
+    <h2>Available Data</h2>
+    
+    <table>
+        <tr>
+            <td style="background-color:#ccccaa"><b> date </b></td>
+            <td style="background-color:#eeeedd"><b>version 2</b> <br>(decoded data,<br>&nbsp current version)&nbsp </td>
+            <td style="background-color:#eeeedd"><b>&nbsp version 2 raw &nbsp </b></td>
+            <td style="background-color:#eeeedd"><b>&nbsp version 1 &nbsp </b></td>
+        </tr>
+        
+        {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #}
+        {% for row in dateList %}
+            <tr>
+            <td style="background-color:#eeeedd"><tt><b>
+            {{ row[0] }}
+            </b></tt>
+            </td>
+            {% for col in row[1:] %}
+                <td> 
+                &nbsp {{ col }} &nbsp
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+        {% endautoescape %}
+
+    </table>
+    
+    <br><br>
+
+    Corresponding API call to get available dates, for specified node and version:
+    <br>
+
+    <pre>
+    &nbsp&nbsp&nbsp&nbsp curl {{ api_url }}1/nodes/${node_id}/dates?version=${version}
+    </pre>
+
+    
+    <h3>Download examples:</h3>
+            
+    <pre>
+    version='2'
+    node_id='{{ node_id }}'
+    
+    # get data from two specific days
+    for date in 2016-01-26 2016-01-27 ; do
+    &nbsp&nbsp&nbsp&nbsp curl -o ${node_id}_${date}.csv {{ api_url }}1/nodes/${node_id}/export?date=${date}&version=${version}
+    &nbsp&nbsp&nbsp&nbsp sleep 3
+    done
+
+    # get all data of one node
+    DATES=$(curl {{ api_url }}1/nodes/${node_id}/dates?version=${version} | grep -o "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]")
+    for date in ${DATES} ; do
+    &nbsp&nbsp&nbsp&nbsp curl -o ${node_id}_${date}.csv {{ api_url }}1/nodes/${node_id}/export?date=${date}&version=${version}
+    &nbsp&nbsp&nbsp&nbsp sleep 3
+    done
+    </pre>
+    
+</body>
+</html>
