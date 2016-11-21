@@ -4,4 +4,4 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/bin/slack-ops "Service failure: %i"
+ExecStart=/bin/slack-ops ":exclamation: Service failure: %i"
