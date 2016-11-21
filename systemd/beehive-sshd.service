@@ -18,6 +18,7 @@ ExecStartPre=/bin/docker pull waggle/beehive-sshd
 # python -u for unbuffered stdout
 
 ExecStart=/bin/docker run \
+  --log-driver=journald \
   --rm \
   --name ${CONTAINER} \
   --net beehive \

@@ -13,10 +13,10 @@ Environment='DATA=/mnt'
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
-
 ExecStartPre=/bin/docker pull waggle/beehive-cert
 
 ExecStart=/bin/docker run \
+  --log-driver=journald \
   --rm \
   -p 24181:80 \
   -v ${DATA}/ssh_keys/:/usr/lib/waggle/ssh_keys/ \
