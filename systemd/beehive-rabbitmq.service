@@ -1,15 +1,14 @@
 [Unit]
-Description=beehive-rabbitmq
+Description=Beehive RabbitMQ Server
 Requires=docker.service
 After=docker.service
 OnFailure=slack-notify-failure@%i.service
 
 [Service]
+Restart=on-failure
+
 Environment='CONTAINER=beehive-rabbitmq'
 Environment='DATA=/mnt'
-
-Restart=always
-RestartSec=1
 
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"

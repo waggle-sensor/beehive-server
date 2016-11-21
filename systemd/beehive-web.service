@@ -1,15 +1,14 @@
 [Unit]
-Description=beehive-web
+Description=Beehive Web Server
 Requires=docker.service
 After=docker.service
 OnFailure=slack-notify-failure@%i.service
 
 [Service]
+Restart=on-failure
+
 Environment='CONTAINER=beehive-web'
 Environment='DATA=/mnt'
-
-Restart=always
-RestartSec=5
 
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"

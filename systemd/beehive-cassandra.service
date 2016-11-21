@@ -1,27 +1,17 @@
 [Unit]
-Description=Service Failure Slack Notifier
+Description=Beehive Cassandra Server
 Requires=docker.service
 After=docker.service
 OnFailure=slack-notify-failure@%i.service
 
 [Service]
-Type=simple
-ExecStart=/bin/slack-ops "Service failure: %i"
--bash-4.2$ cat beehive-cassandra.service
-[Unit]
-Description=beehive-cassandra
-Requires=docker.service
-After=docker.service
+Restart=on-failure
 
-[Service]
 Environment='CONTAINER=beehive-cassandra'
 Environment='DATA=/mnt'
 
-Restart=always
-
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
-
 
 ExecStart=/bin/docker run \
   --rm \

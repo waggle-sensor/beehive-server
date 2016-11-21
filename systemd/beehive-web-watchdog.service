@@ -1,14 +1,12 @@
 [Unit]
-Description=beehive-web-watchdog
-
+Description=Beehive Web Watchdog
 
 [Service]
 Environment='CONTAINER=beehive-web'
 Environment='DATA=/mnt'
 
-Restart=always
+Restart=on-failure
 RestartSec=5
-
 
 ExecStart=/bin/bash -c ' \
   while [ 1 ] ; do \
