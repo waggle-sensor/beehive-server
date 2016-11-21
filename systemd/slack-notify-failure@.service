@@ -1,0 +1,7 @@
+[Unit]
+Description=Service Failure Slack Notifier
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/bin/slack-ops "Service failure: %i"

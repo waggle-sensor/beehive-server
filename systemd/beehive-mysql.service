@@ -2,6 +2,7 @@
 Description=beehive-mysql
 Requires=docker.service
 After=docker.service
+OnFailure=slack-notify-failure@%i.service
 
 [Service]
 Environment='CONTAINER=beehive-mysql'

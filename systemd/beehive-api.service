@@ -2,11 +2,11 @@
 Description=beehive-api
 Requires=docker.service
 After=docker.service
+OnFailure=slack-notify-failure@%i.service
 
 [Service]
 Environment='CONTAINER=beehive-api'
 Environment='DATA=/mnt'
-
 
 Restart=always
 RestartSec=5
@@ -14,14 +14,13 @@ RestartSec=5
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
-
 ExecStart=/bin/docker run \
+  --log-driver=journald \
   --rm \
   --name=${CONTAINER} \
   --net beehive \
   -p 8183:5000 \
   waggle/beehive-api bash -c 'git pull ; flask run --host=0.0.0.0'
-
 
 ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
 

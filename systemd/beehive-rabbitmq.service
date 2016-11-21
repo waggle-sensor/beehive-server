@@ -2,20 +2,20 @@
 Description=beehive-rabbitmq
 Requires=docker.service
 After=docker.service
+OnFailure=slack-notify-failure@%i.service
 
 [Service]
 Environment='CONTAINER=beehive-rabbitmq'
 Environment='DATA=/mnt'
 
-
 Restart=always
-
+RestartSec=1
 
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
-
 ExecStart=/bin/docker run \
+  --log-driver=journald \
   --rm \
   --hostname ${CONTAINER} \
   --name ${CONTAINER} \
@@ -25,6 +25,7 @@ ExecStart=/bin/docker run \
   -v ${DATA}/waggle/SSL:/usr/lib/waggle/SSL/:ro \
   --expose=23181 \
   -p 23181:23181 \
+  -p 15672:15672 \
   --net beehive \
   rabbitmq:3.5.6
 
