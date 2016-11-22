@@ -17,7 +17,9 @@ from flask import request
 from flask import jsonify
 from flask import stream_with_context
 
+
 app = Flask(__name__)
+app.logger.setLevel(logging.INFO)
 
 logger = logging.getLogger('beehive-api')
 logger.setLevel(logging.INFO)
@@ -27,6 +29,7 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 app.logger.addHandler(handler)
 
+# Publish errors to Slack.
 handler = SlackHandler('https://hooks.slack.com/services/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')
 handler.setLevel(logging.ERROR)
 logger.addHandler(handler)
