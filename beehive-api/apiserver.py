@@ -19,14 +19,10 @@ from flask import stream_with_context
 
 
 logger = logging.getLogger('beehive-api')
-
-# handler = logging.StreamHandler(stream=sys.stdout)
-# handler.setFormatter(formatter)
-# LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
-# formatter = logging.Formatter(LOG_FORMAT)
+logger.setLevel(logging.INFO)
 
 handler = JournalHandler()
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 
