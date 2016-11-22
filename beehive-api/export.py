@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 logger.addHandler(handler)
 
 
+# NOTE This is ok, but it may be nicer to move this to an application /
+# per-route / level decorator.
 def retry(attempts=3, delay=1):
     def wrap(f):
         def wrapped(*args, **kwargs):
@@ -21,7 +23,7 @@ def retry(attempts=3, delay=1):
                     return f(*args, **kwargs)
                 except Exception as e:
                     exception = e
-                    time.sleep(delay)
+                    time.sleep(delay * 2 ** min(attempt, 3))
             else:
                 raise exception
         return wrapped
