@@ -1,5 +1,9 @@
+import logging
 from cassandra.cluster import Cluster
 import time
+
+
+logger = logging.getLogger('beehive-api')
 
 
 # NOTE This is ok, but it may be nicer to move this to an application /
@@ -24,13 +28,13 @@ def retry(attempts=3, delay=1):
 # parameters into query.
 @retry(attempts=5, delay=3)
 def query(statement):
-    print('<5>Connecting to Cassandra cluster.')
+    logger.info('Connecting to Cassandra cluster.')
     cluster = Cluster(['beehive-cassandra'])
 
-    print('<5>Connecting to Cassandra database.')
+    logger.info('Connecting to Cassandra database.')
     session = cluster.connect('waggle')
 
-    print('<5>Executing Cassandra query.')
+    logger.info('Executing Cassandra query.')
     rows = session.execute(statement)
 
     return cluster, rows
@@ -107,6 +111,7 @@ def list_node_dates(version='1'):
         nodes[node_id].append(date)
 
     return nodes
+
 
 def get_nodes_last_update_dict():
     """

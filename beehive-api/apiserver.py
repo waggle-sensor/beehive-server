@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-import os.path
 import logging
+from waggle.logging import JournalHandler
+import os.path
 import re
 import sys
 import json
@@ -17,26 +18,16 @@ from flask import jsonify
 from flask import stream_with_context
 
 
-# a production container
-# docker run -it --name=beehive-api --net beehive --rm -p 8183:5000 waggle/beehive-api
+logger = logging.getLogger('beehive-api')
 
+# handler = logging.StreamHandler(stream=sys.stdout)
+# handler.setFormatter(formatter)
+# LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
+# formatter = logging.Formatter(LOG_FORMAT)
 
-# testing setup
-# docker run -it --rm --name=beehive-api-test --net beehive -p 8184:5000 waggle/beehive-api-test
-
-
-LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
-formatter = logging.Formatter(LOG_FORMAT)
-
-handler = logging.StreamHandler(stream=sys.stdout)
-handler.setFormatter(formatter)
-
-logger = logging.getLogger(__name__)
-
+handler = JournalHandler()
+handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
-
-logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 port = 80
@@ -99,6 +90,7 @@ def api_epoch():
     return jsonify({
         'epoch': int(time.time())
     })
+
 
 @app.route('/api/1/nodes/')
 def api_nodes():
@@ -209,7 +201,7 @@ def api_dates(node_id):
     if not node_id in nodes_dict:
         logger.debug("nodes_dict.keys(): " + ','.join([x for x in nodes_dict]))
         #logger.debug("nodes_dict: " + json.dumps(nodes_dict))
-        raise InvalidUsage("node_id not found in nodes_dict: " + node_id,  status_code=STATUS_Bad_Request )
+        raise InvalidUsage("node_id not found in nodes_dict: " + node_id, status_code=STATUS_Bad_Request)
 
     dates = nodes_dict[node_id]
 
