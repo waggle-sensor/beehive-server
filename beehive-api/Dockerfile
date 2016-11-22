@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install \
     mysqlclient \
     Flask \
-    cassandra-driver
+    cassandra-driver \
+    git+https://github.com/waggle-sensor/pywaggle
 
 
 # Flask needs that
