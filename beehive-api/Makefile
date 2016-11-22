@@ -1,5 +1,5 @@
 build:
-	docker build . -t waggle/beehive-api
+	docker build -t waggle/beehive-api .
 
 start:
 	systemctl start beehive-api
