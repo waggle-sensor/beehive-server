@@ -1,57 +1,46 @@
 #!/usr/bin/env python3
-
-import logging, time, argparse, sys
+import logging, argparse, sys
+import time
 from cassandra.cluster import Cluster
-
-#start container:
-#docker run -it --name=export -v ${DATA}/export:/export --link beehive-cassandra:cassandra --rm waggle/beehive-server /bin/bash
 
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
-
 handler = logging.StreamHandler(stream=sys.stdout)
 handler.setFormatter(formatter)
-
 logger = logging.getLogger(__name__)
-
 logger.addHandler(handler)
 
-CASSANDRA_HOST="beehive-cassandra"
 
-def query(statement):
-    """
-    Generic query function for Cassandra.
-    Returns:
-    cluster opbject. it is the callers responsibility to call cluster.shutdown()
-    rows: result of the query
-    """
-    cluster = Cluster(contact_points=[CASSANDRA_HOST])
-    session = None
-
-    try_connect = 0
-    while not session:
-        try_connect += 1
-        logger.info("try to connect to %s" % (CASSANDRA_HOST))
-        try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-            session = cluster.connect('waggle')
-        except:
-            logger.warning("WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-            if try_connect >= 3:
-                raise Exception("Error: 3 failed attempts to connect to cassandra.")
+def retry(attempts=3, delay=1):
+    def wrap(f):
+        def wrapped(*args, **kwargs):
+            exception = None
+            for attempt in range(attempts):
+                try:
+                    return f(*args, **kwargs)
+                except Exception as e:
+                    exception = e
+                    time.sleep(delay)
             else:
-                logger.warning("The process will attempt to re-connect at a later time.")
-        if not session:
-            time.sleep(3)
+                raise exception
+        return wrapped
+    return wrap
 
-    logger.debug("statement: %s" % (statement))
-    try:
-        rows = session.execute(statement)
-    except Exception as e:
-        logger.error("Could not execute statement: %s" % (str(e)))
-        raise
+
+@retry(attempts=5, delay=3)
+def query(statement):
+    print('<5>Connecting to Cassandra cluster.')
+    cluster = Cluster(['beehive-cassandra'])
+
+    print('<5>Connecting to Cassandra database.')
+    session = cluster.connect('waggle')
+
+    print('<5>Executing Cassandra query.')
+    rows = session.execute(statement)
 
     return cluster, rows
+
 
 def export_generator(node_id, date, ttl, delimiter=';', version='1'):
     """
