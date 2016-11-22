@@ -12,12 +12,12 @@ from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
 from flask import Flask
-app = Flask(__name__)
 from flask import Response
 from flask import request
 from flask import jsonify
 from flask import stream_with_context
 
+app = Flask(__name__)
 
 logger = logging.getLogger('beehive-api')
 logger.setLevel(logging.INFO)
@@ -25,10 +25,12 @@ logger.setLevel(logging.INFO)
 handler = JournalHandler()
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
+app.logger.addHandler(handler)
 
 handler = SlackHandler('https://hooks.slack.com/services/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')
 handler.setLevel(logging.ERROR)
 logger.addHandler(handler)
+app.logger.addHandler(handler)
 
 port = 80
 api_url_internal = 'http://localhost'
