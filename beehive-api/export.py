@@ -1,15 +1,5 @@
-#!/usr/bin/env python3
-import logging, argparse, sys
-import time
 from cassandra.cluster import Cluster
-
-
-LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
-formatter = logging.Formatter(LOG_FORMAT)
-handler = logging.StreamHandler(stream=sys.stdout)
-handler.setFormatter(formatter)
-logger = logging.getLogger(__name__)
-logger.addHandler(handler)
+import time
 
 
 # NOTE This is ok, but it may be nicer to move this to an application /
@@ -30,6 +20,8 @@ def retry(attempts=3, delay=1):
     return wrap
 
 
+# NOTE Probably want connection to be cached and then more safely insert
+# parameters into query.
 @retry(attempts=5, delay=3)
 def query(statement):
     print('<5>Connecting to Cassandra cluster.')
@@ -49,7 +41,6 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1'):
     Python generator to export sensor data from Cassandra
     version = 1 or 2 or 2.1, indicates which database/dataset is being queried
     """
-
     node_id = node_id.lower()
     # TODO check if node exists
 
@@ -66,12 +57,10 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1'):
                     "FROM waggle.sensor_data_decoded "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
 
-    try:
-        cluster, rows = query(statement)
-    except:
-        raise
+    cluster, rows = query(statement)
 
     count = 0
+
     if version == '1':
         for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
             count +=1
@@ -89,11 +78,8 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1'):
             # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
             yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
 
-    cluster.shutdown()
-    logger.info("Retrieved %d rows" % (count))
 
-
-def list_node_dates(version = '1'):
+def list_node_dates(version='1'):
     """
     Returns hash of nodes with dates.
     version = 1 or 2, indicates which database/dataset is being queried
@@ -110,8 +96,8 @@ def list_node_dates(version = '1'):
     except:
         raise
 
-    nodes={}
-    count = 0;
+    nodes = {}
+    count = 0
     for (node_id, date) in rows:
         node_id = node_id.lower()
 
@@ -120,8 +106,6 @@ def list_node_dates(version = '1'):
             count = count +1
         nodes[node_id].append(date)
 
-    cluster.shutdown()
-    logger.info("Found %d node_ids." % (count))
     return nodes
 
 def get_nodes_last_update_dict():
@@ -129,49 +113,6 @@ def get_nodes_last_update_dict():
     Returns dictionary that maps node_id to last_update.
     Only works for version 2 data.
     """
-    statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update;"
-
-    try:
-        cluster, rows = query(statement)
-        print('cluster =', cluster)
-        print('rows =', rows)
-    except:
-        raise
-
-    d = {}
-    for (node_id, timestamp) in rows:
-        print('   node_id = ', node_id, ',  timestamp = ', timestamp)
-        d[node_id.lower()] = timestamp
-
-    print('d =', d)
-    cluster.shutdown()
-
-    return d
-
-
-if __name__ == "__main__":
-    node_id=None
-    date=None
-
-    parser = argparse.ArgumentParser()
-    #parser.add_argument('--logging', dest='enable_logging', help='write to log files instead of stdout', action='store_true')
-    parser.add_argument('--ttl', dest='ttl', help='export only ttl data (latest sensor data)', action='store_true')
-    parser.add_argument('--node_id', dest='node_id', help='node_id')
-    parser.add_argument('--date', dest='date', help='date (not needed with ttl), format: YYYY-MM-DD, e.g. 2016-01-21')
-
-
-    args = parser.parse_args()
-
-    if not args.node_id:
-        logger.error("node_id not defined")
-        parser.print_help()
-        sys.exit(1)
-
-    if (not args.ttl) and (not args.date):
-        logger.error("neither ttl nor date provided")
-        parser.print_help()
-        sys.exit(1)
-
-
-    for row in export_generator(args.node_id, args.date, args.ttl, ';'):
-        print(row)
+    statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update"
+    cluster, rows = query(statement)
+    return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
