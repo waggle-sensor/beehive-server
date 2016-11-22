@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import logging
 from waggle.logging import JournalHandler
+from waggle.logging import SlackHandler
 import os.path
 import re
 import sys
@@ -25,6 +26,9 @@ handler = JournalHandler()
 handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
+handler = SlackHandler('https://hooks.slack.com/services/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')
+handler.setLevel(logging.ERROR)
+logger.addHandler(handler)
 
 port = 80
 api_url_internal = 'http://localhost'
