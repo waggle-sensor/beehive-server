@@ -20,7 +20,7 @@ RUN pip3 install \
 # Flask needs that
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV FLASK_APP=apiserver.py
+ENV FLASK_APP=run.py
 
 
 # pip3 install cassandra-driver
