@@ -231,12 +231,12 @@ def api_dates_v2(nodeid):
         return 'node not found', 404
 
 
-@api.route('/api/1/nodes_last_update/')
+@api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
     return jsonify(get_nodes_last_update_dict())
 
 
-@api.route('/api/1/nodes/<node_id>/export')
+@api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):
     date = request.args.get('date')
     version = request.args.get('version', '1')
@@ -260,7 +260,7 @@ def api_export(node_id):
     return Response(stream_with_context(generate()), mimetype='text/csv')
 
 
-@api.route('/api/1/WCC_node/<node_id>/')
+@api.route('/1/WCC_node/<node_id>/')
 def WCC_web_node_page(node_id):
     logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
 
