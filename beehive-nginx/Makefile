@@ -6,7 +6,15 @@ build:
 	docker build -t $(IMAGE) .
 
 run:
+	docker run --rm -ti --name=$(CONTAINER) --net beehive -p 80:80 -p 443:443 -v $(SSL_PATH):/ssl $(IMAGE) /usr/sbin/nginx -g 'daemon off;'
+
+start:
 	docker run --rm --name=$(CONTAINER) --net beehive -p 80:80 -p 443:443 -v $(SSL_PATH):/ssl $(IMAGE) /usr/sbin/nginx -g 'daemon off;'
+stop:
+	docker rm -f beehive-nginx
+clean:
+	docker rm -f beehive-nginx
+	docker rmi -f waggle/beehive-nginx
 
 .PHONY: ssl
 
