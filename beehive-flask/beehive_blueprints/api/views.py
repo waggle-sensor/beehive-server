@@ -82,24 +82,24 @@ def get_mysql_db():
                  db="waggle")
 
 
-@api.route('/api/')
+@api.route('/')
 def api_root():
     return 'This is the beehive API server.'
 
 
-@api.route('/api/1/')
+@api.route('/1/')
 def api_version():
     return 'This is the beehive API server.'
 
 
-@api.route('/api/1/epoch')
+@api.route('/1/epoch')
 def api_epoch():
     return jsonify({
         'epoch': int(time.time())
     })
 
 
-@api.route('/api/1/nodes/')
+@api.route('/1/nodes/')
 def api_nodes():
 
     version = request.args.get('version', '1')
@@ -156,7 +156,7 @@ def api_nodes():
     # return  json.dumps(obj, indent=4)
 
 
-@api.route('/api/nodes')
+@api.route('/nodes')
 def nodes():
     if request.accept_mimetypes.best == 'text/csv':
         return nodes_csv()
@@ -196,7 +196,7 @@ def filtered_nodes():
                   get_nodes())
 
 
-@api.route('/api/1/nodes/<node_id>/dates')
+@api.route('/1/nodes/<node_id>/dates')
 def api_dates(node_id):
     node_id = node_id.lower()
     version = request.args.get('version', '1')
@@ -220,7 +220,7 @@ def api_dates(node_id):
     return jsonify(obj)
 
 
-@api.route('/api/nodes/<nodeid>/dates')
+@api.route('/nodes/<nodeid>/dates')
 def api_dates_v2(nodeid):
     nodeid = nodeid.lower()
     dates = list_node_dates(version='2')

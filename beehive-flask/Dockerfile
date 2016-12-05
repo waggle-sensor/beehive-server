@@ -31,5 +31,4 @@ WORKDIR /usr/lib/waggle/beehive-server/beehive-flask/
 
 #CMD ["flask", "run", "--host=0.0.0.0"]
 CMD ["python3", "run.py", "--host=0.0.0.0"]
-#CMD ["pwd"]
 
