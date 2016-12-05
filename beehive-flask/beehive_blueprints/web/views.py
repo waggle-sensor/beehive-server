@@ -5,7 +5,7 @@ def web_root():
     return 'You found web!!!'
 
 @web.route("/wcc/test/")
-def hello():
+def web_wcc_test():
     rl = [] # result list
 
     rl.append("<h1 style='color:green'>Hello There!</h1>")
