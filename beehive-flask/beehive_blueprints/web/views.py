@@ -25,11 +25,6 @@ logger.setLevel(logging.DEBUG)
 logging.getLogger('export').setLevel(logging.DEBUG)
 
 
-port = 80
-
-
-
-
 web_host = 'http://beehive1.mcs.anl.gov'
 
 api_url_internal = 'http://beehive-api:5000/api/'
@@ -45,31 +40,31 @@ STATUS_Unauthorized = 401
 STATUS_Not_Found = 404
 STATUS_Server_Error = 500
 
+if False:
+    class InvalidUsage(Exception):
+        status_code = 400
 
-class InvalidUsage(Exception):
-    status_code = 400
+        def __init__(self, message, status_code=None, payload=None):
+            Exception.__init__(self)
+            self.message = message
+            if status_code and status_code==STATUS_Server_Error:
+                logger.warning(message)
+            else:
+                logger.debug(message)
+            if status_code is not None:
+                self.status_code = status_code
+            self.payload = payload
 
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code and status_code==STATUS_Server_Error:
-            logger.warning(message)
-        else:
-            logger.debug(message)
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
+        def to_dict(self):
+            rv = dict(self.payload or ())
+            rv['message'] = self.message
+            return rv
 
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv
-
-@web.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+    @web.errorhandler(InvalidUsage)
+    def handle_invalid_usage(error):
+        response = jsonify(error.to_dict())
+        response.status_code = error.status_code
+        return response
 
 
 
