@@ -11,6 +11,18 @@ import logging
 import requests
 import sys
 
+
+LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
+formatter = logging.Formatter(LOG_FORMAT)
+handler = logging.StreamHandler(stream=sys.stdout)
+handler.setFormatter(formatter)
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+logging.getLogger('export').setLevel(logging.DEBUG)
+
+
+
 api_url          = 'localhost:'
 api_url_internal = 'localhost:'
 
