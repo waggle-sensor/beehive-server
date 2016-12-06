@@ -23,9 +23,12 @@ then
 	url 0.0.0.0/api/1/WCC_node/0000001e061088c8/
 fi
 
-url 0.0.0.0/web/
+url 0.0.0.0/
 url 0.0.0.0/wcc/test/
+url "0.0.0.0/wcc/test/?dog=cat&tiger=lion"
+url 0.0.0.0/web/
 url 0.0.0.0/web/wcc/test/
+url "0.0.0.0/web/wcc/test/?dog=cat&tiger=lion"
 url 0.0.0.0/web/wcc/
 # url 0.0.0.0/web/wcc/node/0000001e061088c8
 echo " "
