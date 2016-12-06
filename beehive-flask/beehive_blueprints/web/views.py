@@ -23,8 +23,8 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 
-api_url          = 'localhost:'
-api_url_internal = 'localhost:'
+api_url          = 'localhost:/api/'
+api_url_internal = 'localhost:/api/'
 
 @web.route('/')
 def web_root():
@@ -97,13 +97,18 @@ def main_page():
         dictLastUpdate = req_last_update.json()
         
     listRows = []
-        
-    if not u'data' in req.json():
+    
+    all_nodes = {}
+    if req is None:
+        msg = "request failed"
+        logger.error(msg)
+        #raise internalerror(msg)
+    else if not u'data' in req.json():
         msg = "data field not found"
         logger.error(msg)
         #raise internalerror(msg)
-
-    all_nodes = req.json()[u'data']
+    else:
+        all_nodes = req.json()[u'data']
    
     # header row
     headings = ['name', 'node_id', 'description', 'hostname', 'location', 'last_updated']
