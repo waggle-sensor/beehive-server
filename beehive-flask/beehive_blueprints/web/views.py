@@ -93,6 +93,8 @@ def main_page():
         #raise internalerror(msg)
     
     dictLastUpdate = req_last_update.json()
+    if dictLastUpdate is None:
+        dictLastUpdate = {}
     
     listRows = []
         
