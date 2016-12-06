@@ -21,6 +21,12 @@ run:
 	#docker run -ti --rm  --name beehive-flask  -p8183:80 --network=beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
 	docker run -ti --rm  --name beehive-flask  -p5000:5000 --network=beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
 
+run2:
+	#docker rm -f beehive-flask
+	echo 'running...'
+	#docker run -ti --rm  --name beehive-flask  -p8183:80 --network=beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
+	docker run -ti --rm  --name beehive-flask  -p5000:5000 --network=beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
+
 
 bash:
 	echo 'bashing...'
