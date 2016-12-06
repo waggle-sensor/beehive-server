@@ -6,6 +6,9 @@ from flask import render_template
 from flask import stream_with_context
 import requests
 
+api_url          = 'localhost:'
+api_url_internal = 'localhost:'
+
 @web.route('/')
 def web_root():
     return 'You found web!!!'
