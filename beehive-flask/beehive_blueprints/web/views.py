@@ -103,7 +103,7 @@ def main_page():
         msg = "request failed"
         logger.error(msg)
         #raise internalerror(msg)
-    else if not u'data' in req.json():
+    elif not u'data' in req.json():
         msg = "data field not found"
         logger.error(msg)
         #raise internalerror(msg)
