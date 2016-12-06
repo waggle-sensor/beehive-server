@@ -92,10 +92,10 @@ def main_page():
         logger.error(msg)
         #raise internalerror(msg)
     
-    dictLastUpdate = req_last_update.json()
-    if dictLastUpdate is None:
-        dictLastUpdate = {}
-    
+    dictLastUpdate = {}
+    if req_last_update:
+        dictLastUpdate = req_last_update.json()
+        
     listRows = []
         
     if not u'data' in req.json():
