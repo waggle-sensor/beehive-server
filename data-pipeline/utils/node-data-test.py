@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 global verbosity
+#
 
 #_______________________________________________________________________
 # Run a command and capture it's output
