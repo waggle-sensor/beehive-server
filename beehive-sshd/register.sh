@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cert_server_ip=172.18.0.9
+cert_server_ip=beehive-cert
 
 api_call=${SSH_ORIGINAL_COMMAND}
 if [[ $api_call == "" || $api_call == "certca" || $api_call == "node?"* ]]; then
