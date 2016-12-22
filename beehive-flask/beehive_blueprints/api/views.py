@@ -226,7 +226,7 @@ def api_dates(node_id):
     return jsonify(obj)
 
 
-@api.route('/nodes/<nodeid>/dates')
+@api.route('/xnodes/<nodeid>/dates')
 def api_dates_v2(nodeid):
     nodeid = nodeid.lower()
     dates = export.list_node_dates(version='2')
