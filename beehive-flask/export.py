@@ -34,7 +34,7 @@ def query(statement):
     logger.info('Connecting to Cassandra database.')
     session = cluster.connect('waggle')
 
-    logger.info('Executing Cassandra query.')
+    logger.info('Executing Cassandra query.', statement)
     rows = session.execute(statement)
 
     return cluster, rows
