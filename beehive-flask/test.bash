@@ -17,8 +17,17 @@ if true; then
     url 0.0.0.0/api/1/nodes/
     url 0.0.0.0/api/1/nodes/?all=true
     url 0.0.0.0/api/nodes
+    
+    url "0.0.0.0/api/1/nodes/ffffffffffff0001/dates"
+    url "0.0.0.0/api/1/nodes/ffffffffffff0001/dates?version=1"
+    url "0.0.0.0/api/1/nodes/ffffffffffff0001/dates?version=2.1"
     url "0.0.0.0/api/1/nodes/ffffffffffff0001/dates?version=2"
-    url 0.0.0.0/api/nodes/ffffffffffff0001/dates
+    
+    url "0.0.0.0/api/nodes/ffffffffffff0001/dates"
+    url "0.0.0.0/api/nodes/ffffffffffff0001/dates?version=1"
+    url "0.0.0.0/api/nodes/ffffffffffff0001/dates?version=2.1"
+    url "0.0.0.0/api/nodes/ffffffffffff0001/dates?version=2"
+    
     url 0.0.0.0/api/1/nodes_last_update/
     url "0.0.0.0/api/1/nodes/ffffffffffff0001/export?date=2016-01-01"
     url "0.0.0.0/api/1/nodes/ffffffffffff0001/export?date=2016-01-01&version=1"
