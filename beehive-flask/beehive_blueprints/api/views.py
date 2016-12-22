@@ -147,7 +147,7 @@ def api_nodes():
         }
 
     if bAllNodes:           # WCC: commenting this out
-        nodes_dict = list_node_dates()
+        nodes_dict = export.list_node_dates()
 
         for node_id in nodes_dict.keys():
             if not node_id in all_nodes:
@@ -209,7 +209,7 @@ def api_dates(node_id):
 
     logger.info("__ api_dates()  version = {}".format(version))
 
-    nodes_dict = list_node_dates(version)
+    nodes_dict = export.list_node_dates(version)
 
     if not node_id in nodes_dict:
         logger.debug("nodes_dict.keys(): " + ','.join([x for x in nodes_dict]))
@@ -229,7 +229,7 @@ def api_dates(node_id):
 @api.route('/nodes/<nodeid>/dates')
 def api_dates_v2(nodeid):
     nodeid = nodeid.lower()
-    dates = list_node_dates(version='2')
+    dates = export.list_node_dates(version='2')
 
     try:
         return jsonify(sorted(dates[nodeid], reverse=True))
@@ -239,7 +239,7 @@ def api_dates_v2(nodeid):
 
 @api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
-    return jsonify(get_nodes_last_update_dict())
+    return jsonify(export.get_nodes_last_update_dict())
 
 
 @api.route('/1/nodes/<node_id>/export')
@@ -260,7 +260,7 @@ def api_export(node_id):
     logger.info("accepted date: %s" %(date))
 
     def generate():
-        for row in export_generator(node_id, date, False, ';', version=version):
+        for row in export.export_generator(node_id, date, False, ';', version=version):
             yield row + '\n'
 
     return Response(stream_with_context(generate()), mimetype='text/csv')
@@ -309,7 +309,7 @@ def WCC_web_node_page(node_id):
                 continue
                 #raise internalerror("not found")
         else:
-            nodes_dict = list_node_dates(version)
+            nodes_dict = export.list_node_dates(version)
             logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
             dates = {'data' : nodes_dict.get(node_id, list())}
 
