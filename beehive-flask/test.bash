@@ -21,6 +21,7 @@ if true; then
     url 0.0.0.0/api/nodes/ffffffffffff0001/dates/
     url 0.0.0.0/api/1/nodes_last_update/
     url 0.0.0.0/api/1/nodes/ffffffffffff0001/export
+    url 0.0.0.0/api/1/nodes/ffffffffffff0001/export?version=2
     url 0.0.0.0/api/1/WCC_node/ffffffffffff0001/
 fi
 

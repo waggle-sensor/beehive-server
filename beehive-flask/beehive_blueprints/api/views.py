@@ -13,7 +13,8 @@ import requests
 
 #from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("../..")
-from export import export_generator, list_node_dates, get_nodes_last_update_dict
+#from export import export_generator, list_node_dates, get_nodes_last_update_dict
+import export
 sys.path.pop()
 
 sys.path.append("..")
