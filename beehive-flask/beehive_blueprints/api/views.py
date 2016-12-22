@@ -11,7 +11,6 @@ import json
 import time
 import requests
 
-#from export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("../..")
 #from export import export_generator, list_node_dates, get_nodes_last_update_dict
 import export
@@ -226,7 +225,7 @@ def api_dates(node_id):
     return jsonify(obj)
 
 
-@api.route('/xnodes/<nodeid>/dates')
+@api.route('/nodes/<nodeid>/dates')
 def api_dates_v2(nodeid):
     nodeid = nodeid.lower()
     dates = export.list_node_dates(version='2')
