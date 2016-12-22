@@ -10,7 +10,8 @@ import sys
 import json
 import time
 import requests
-from export import export_generator, list_node_dates, get_nodes_last_update_dict
+#from export import export_generator, list_node_dates, get_nodes_last_update_dict
+from ../export import export_generator, list_node_dates, get_nodes_last_update_dict
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
 from flask import Flask
