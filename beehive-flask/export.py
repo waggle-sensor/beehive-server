@@ -28,14 +28,13 @@ def retry(attempts=3, delay=1):
 # parameters into query.
 @retry(attempts=5, delay=3)
 def query(statement):
-    print('### export.query():', statement)
     logger.info('Connecting to Cassandra cluster.')
     cluster = Cluster(['beehive-cassandra'])
 
     logger.info('Connecting to Cassandra database.')
     session = cluster.connect('waggle')
 
-    logger.info('Executing Cassandra query.')
+    logger.info('Executing Cassandra query.  {}'.format(statement))
     rows = session.execute(statement)
 
     return cluster, rows
