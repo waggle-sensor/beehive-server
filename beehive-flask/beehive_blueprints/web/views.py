@@ -24,10 +24,8 @@ logger.addHandler(handler)
 logger.setLevel(logging.DEBUG)
 logging.getLogger('export').setLevel(logging.DEBUG)
 
-
-
-api_url          = 'http://beehive1.mcs.anl.gov/'
-api_url_internal = 'http://beehive1.mcs.anl.gov/'
+web_host = 'http://beehive1.mcs.anl.gov/'
+api_url  = web_host + 'api/'
 
 @web.route("/wcc/test/")
 def web_wcc_test():
@@ -54,10 +52,7 @@ def web_wcc_test():
 @web.route("/")
 def main_page():
 
-    web_host = 'http://beehive1.mcs.anl.gov'  # TODO: replace this with beehive-specific address!!
     api_call = web_host + '/api/1/'
-    api_url = web_host + '/api/1/'
-
     
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
@@ -170,7 +165,6 @@ def main_page():
             % (name, web_host, node_id, node_id, description, hostname, location, last_updated))
     
     return render_template('nodes.html', 
-        api_call = api_call,
         api_url = api_url,
         utc_now = dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"),
         list_rows = listRows)
