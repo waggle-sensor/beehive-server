@@ -242,7 +242,7 @@ def api_export(node_id):
     version = request.args.get('version', '1')
     bSort = request.args.get('sort', 'false').lower() == 'true'
     
-    logger.info("__ api_export()  date = {}, version = {}".format(str(date), str(version)))
+    logger.info("__ api_export()  date = {}, version = {}  sort = {} ".format(str(date), str(version), bSort))
 
     if not date:
         raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
