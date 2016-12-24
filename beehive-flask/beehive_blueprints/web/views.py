@@ -11,6 +11,9 @@ import logging
 import requests
 import sys
 
+sys.path.append("../..")
+import export
+sys.path.pop()
 
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
