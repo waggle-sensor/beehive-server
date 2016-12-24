@@ -258,7 +258,7 @@ def api_export(node_id):
         for row in export.export_generator(node_id, date, False, ';', version=version):
             yield row + '\n'
 
-    if sort_type == ['non', 'fal']:   # 'none', 'false'
+    if sort_type in ['non', 'fal']:   # 'none', 'false'
         return Response(stream_with_context(generate()), mimetype='text/csv')
     else:
         l = list(generate())
