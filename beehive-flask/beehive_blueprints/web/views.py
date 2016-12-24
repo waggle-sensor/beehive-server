@@ -54,7 +54,7 @@ def web_wcc_test():
 @web.route("/")
 def main_page():
 
-    web_host = 'beehive1.mcs.anl.gov/'  # TODO: replace this with beehive-specific address!!
+    web_host = 'http://beehive1.mcs.anl.gov'  # TODO: replace this with beehive-specific address!!
     api_call = web_host + '/api/1/'
     api_url = web_host + '/api/1/'
 
