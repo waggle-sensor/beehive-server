@@ -55,46 +55,17 @@ def web_wcc_test():
 @web.route("/wcc/")
 def main_page():
 
-    allNodes_arg = '?all=true' if (request.args.get('all', 'false').lower() == 'true') else ''
-
-    api_call = api_url + '1/nodes/' + allNodes_arg
-    api_call_internal = api_url_internal + '1/nodes/' + allNodes_arg
-    api_call_last_update = api_url_internal+'1/nodes_last_update/'
+    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
+    bAllNodes = request.args.get('all', 'false').lower() == 'true'
     
     dtUtcNow = datetime.datetime.utcnow()
 
-    req = None
-    try:
-        req = requests.get( api_call_internal ) # , auth=('user', 'password')
-    except Exception as e:
-        msg = "Could not make request: %s" % (str(e))
-        logger.error(msg)
-        #raise internalerror(msg)
-    
-    if req and req.status_code != 200:
-        msg = "status code: %d" % (req.status_code)
-        logger.error(msg)
-        #raise internalerror(msg)
-    
-    #logger.debug("req.json: %s" % ( str(req.json())) )
-
     # request last_update
-    if req_last_update:
-        dictLastUpdate = export.get_nodes_last_update_dict()
+    dictLastUpdate = export.get_nodes_last_update_dict()
         
     listRows = []
     
-    all_nodes = {}
-    if req is None:
-        msg = "request failed"
-        logger.error(msg)
-        #raise internalerror(msg)
-    elif not u'data' in req.json():
-        msg = "data field not found"
-        logger.error(msg)
-        #raise internalerror(msg)
-    else:
-        all_nodes = req.json()[u'data']
+    all_nodes = export.get_nodes(bAllNodes)
    
     # header row
     headings = ['name', 'node_id', 'description', 'hostname', 'location', 'last_updated']
