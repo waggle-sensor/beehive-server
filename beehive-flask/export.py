@@ -1,9 +1,11 @@
-import logging
 from cassandra.cluster import Cluster
+import logging
+import sys
 import time
+
 sys.path.append("..")
 from waggle_protocol.utilities.mysql import *
-
+sys.path.pop()
 
 logger = logging.getLogger('beehive-api')
 
