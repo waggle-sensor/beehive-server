@@ -261,7 +261,7 @@ def api_export(node_id):
     if bSort:
         l = list(generate())
         l.sort(reverse = True)
-        Response(stream_with_context(l), mimetype='text/csv')
+        return Response(stream_with_context(l), mimetype='text/csv')
     else:
         return Response(stream_with_context(generate()), mimetype='text/csv')
 
