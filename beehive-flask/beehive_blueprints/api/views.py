@@ -240,9 +240,9 @@ def api_nodes_last_update():
 def api_export(node_id):
     date = request.args.get('date')
     version = request.args.get('version', '1')
-    bSort = request.args.get('sort', 'false').lower() == 'true'
+    sort_type = request.args.get('sort', 'desc').lower()[:3]
     
-    logger.info("__ api_export()  date = {}, version = {}  sort = {} ".format(str(date), str(version), bSort))
+    logger.info("__ api_export()  date = {}, version = {}  sort_type = {} ".format(str(date), str(version), sort_type))
 
     if not date:
         raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
@@ -258,12 +258,16 @@ def api_export(node_id):
         for row in export.export_generator(node_id, date, False, ';', version=version):
             yield row + '\n'
 
-    if bSort:
+    if sort_type == ['non', 'fal']:   # 'none', 'false'
+        return Response(stream_with_context(generate()), mimetype='text/csv')
+    else:
         l = list(generate())
-        l.sort(reverse = True)
+        if sort_type = 'asc':
+            l.sort()
+        else:
+            l.sort(reverse = True)
         return Response(stream_with_context(l), mimetype='text/csv')
     else:
-        return Response(stream_with_context(generate()), mimetype='text/csv')
 
 
     
