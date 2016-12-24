@@ -192,43 +192,13 @@ def WCC_web_node_page(node_id):
         listDebug.append(' VERSION ' + version + '<br>\n')
 
         api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
             
         logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
         
-        if False:
-            try:
-                if True:
-                    req = requests.get( api_call ) # , auth=('user', 'password')
-                else:
-                    req = requests.get( api_call_internal ) # , auth=('user', 'password')
-            except Exception as e:
-                msg = "Could not make request: %s", (str(e))
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-            
-            if req.status_code != 200:
-                msg = "status code: %d" % (req.status_code)
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-                
-            try:
-                dates = req.json()
-            except ValueError:
-                logger.debug("Not json: " + str(req))
-                continue
-                #raise internalerror("not found")
-               
-            if not 'data' in dates:
-                logger.debug("data field not found")
-                continue
-                #raise internalerror("not found")
-        else:
-            nodes_dict = export.list_node_dates(version)
-            logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
-            dates = {'data' : nodes_dict.get(node_id, list())}
+
+        nodes_dict = export.list_node_dates(version)
+        logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
+        dates = {'data' : nodes_dict.get(node_id, list())}
         
         data[version] = dates['data']
         listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
