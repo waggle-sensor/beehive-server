@@ -240,7 +240,8 @@ def api_nodes_last_update():
 def api_export(node_id):
     date = request.args.get('date')
     version = request.args.get('version', '1')
-
+    bSort = request.args.get('sort', 'false').lower() == 'true'
+    
     logger.info("__ api_export()  date = {}, version = {}".format(str(date), str(version)))
 
     if not date:
@@ -257,7 +258,12 @@ def api_export(node_id):
         for row in export.export_generator(node_id, date, False, ';', version=version):
             yield row + '\n'
 
-    return Response(stream_with_context(generate()), mimetype='text/csv')
+    if bSort:
+        l = list(generate())
+        l.sort(reverse = True)
+        Response(stream_with_context(l), mimetype='text/csv')
+    else:
+        return Response(stream_with_context(generate()), mimetype='text/csv')
 
 
     
