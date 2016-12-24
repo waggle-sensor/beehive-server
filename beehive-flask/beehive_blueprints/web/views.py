@@ -193,9 +193,6 @@ def WCC_web_node_page(node_id):
 
         api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
             
-        logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
-        
-
         nodes_dict = export.list_node_dates(version)
         logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
         dates = {'data' : nodes_dict.get(node_id, list())}
