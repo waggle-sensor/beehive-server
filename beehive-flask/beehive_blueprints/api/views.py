@@ -267,7 +267,7 @@ def WCC_nodes_test():
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
     
-    all_nodes = get_nodes(bAllNodes = False)
+    all_nodes = export.get_nodes(bAllNodes = False)
     
     obj = {}
     obj['data'] = all_nodes
