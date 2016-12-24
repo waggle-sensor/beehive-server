@@ -55,7 +55,7 @@ def web_wcc_test():
     return ''.join(rl)
     
 
-@web.route("/wcc/")
+@web.route("/")
 def main_page():
 
     web_host = 'beehive1.mcs.anl.gov/'  # TODO: replace this with beehive-specific address!!
@@ -181,7 +181,7 @@ def main_page():
 
 
 #@app.route('/api/1/WCC_node/<node_id>/')
-@web.route('/wcc/node/<node_id>/')
+@web.route('/nodes/<node_id>/')
 def WCC_web_node_page(node_id):
     logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
     
