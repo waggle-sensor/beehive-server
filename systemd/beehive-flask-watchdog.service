@@ -8,6 +8,9 @@ Environment='DATA=/mnt'
 Restart=on-failure
 RestartSec=5
 
+# Temporarily substitute this correct URL with a hard-coded value for the server
+# $(docker inspect --format "{{ .NetworkSettings.Networks.beehive.IPAddress }}" beehive-flask)
+
 ExecStart=/bin/bash -c ' \
   while [ 1 ] ; do \
     sleep 2m ; \

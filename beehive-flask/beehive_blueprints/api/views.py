@@ -86,12 +86,12 @@ def get_mysql_db():
 
 @api.route('/')
 def api_root():
-    return 'This is the beehive API server.'
+    return 'This is the Waggle Beehive API Server.\n'
 
 
 @api.route('/1/')
 def api_version():
-    return 'This is the beehive API server.'
+    return 'This is the Waggle Beehive API Server.\n'
 
 
 @api.route('/1/epoch')
