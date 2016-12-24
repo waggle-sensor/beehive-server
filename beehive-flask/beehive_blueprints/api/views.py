@@ -267,9 +267,6 @@ def api_export(node_id):
         else:
             l.sort(reverse = True)
         return Response(stream_with_context(l), mimetype='text/csv')
-    else:
-
-
     
 @api.route('/1/WCC_nodes_test')
 def WCC_nodes_test():
