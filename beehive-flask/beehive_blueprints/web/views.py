@@ -29,10 +29,6 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 api_url          = 'http://beehive1.mcs.anl.gov/'
 api_url_internal = 'http://beehive1.mcs.anl.gov/'
 
-@web.route('/')
-def web_root():
-    return 'You found web!!!'
-
 @web.route("/wcc/test/")
 def web_wcc_test():
     rl = [] # result list
