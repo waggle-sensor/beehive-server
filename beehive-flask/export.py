@@ -174,6 +174,4 @@ def get_nodes(bAllNodes = False):
             if not node_id in all_nodes:
                 all_nodes[node_id]={}
 
-    obj = {}
-    obj['data'] = all_nodes
-    return jsonify(obj)
+    return all_nodes
