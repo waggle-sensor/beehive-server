@@ -179,4 +179,92 @@ def main_page():
         utc_now = dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"),
         list_rows = listRows)
 
+
+#@app.route('/api/1/WCC_node/<node_id>/')
+@web.route('/wcc/node/<node_id>/')
+def WCC_web_node_page(node_id):
+    logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
     
+    versions = ['2', '2.1', '1']
+    data = {}
+    datesUnion = set()
+    listDebug = []
+    
+    listDebug.append('''
+        <head>
+            <style>
+                table {    border-collapse: collapse; }
+                table, td, th { border: 1px solid black; padding: 1px 5px;}
+            </style>
+        </head>''')
+
+    for version in versions:
+        listDebug.append(' VERSION ' + version + '<br>\n')
+
+        api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
+        api_call_internal   = '%s1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
+            
+        logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
+        
+        if False:
+            try:
+                if True:
+                    req = requests.get( api_call ) # , auth=('user', 'password')
+                else:
+                    req = requests.get( api_call_internal ) # , auth=('user', 'password')
+            except Exception as e:
+                msg = "Could not make request: %s", (str(e))
+                logger.error(msg)
+                continue
+                #raise internalerror(msg)
+            
+            if req.status_code != 200:
+                msg = "status code: %d" % (req.status_code)
+                logger.error(msg)
+                continue
+                #raise internalerror(msg)
+                
+            try:
+                dates = req.json()
+            except ValueError:
+                logger.debug("Not json: " + str(req))
+                continue
+                #raise internalerror("not found")
+               
+            if not 'data' in dates:
+                logger.debug("data field not found")
+                continue
+                #raise internalerror("not found")
+        else:
+            nodes_dict = export.list_node_dates(version)
+            logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
+            dates = {'data' : nodes_dict.get(node_id, list())}
+        
+        data[version] = dates['data']
+        listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
+        datesUnion.update(data[version])     # union of all dates
+    
+    datesUnionSorted = sorted(list(datesUnion), reverse=True)
+
+
+    dateList = []
+    for date in datesUnionSorted:
+        l = list()
+        l.append(date)
+        for version in versions:
+            if date in data[version]:
+                l.append('<a href="%s1/nodes/%s/export?date=%s&version=%s">download</a>' % (api_url, node_id, date, version))
+            else:
+                l.append('')
+            
+        dateList.append(l)
+
+    listDebug.append('dateList = ' + '<br><br>\n\n   {}'.format(str(dateList)))
+    logger.debug('  DEBUG: ' + '\n'.join(listDebug))
+    
+    return render_template('node_data.html', 
+        node_id = node_id, 
+        api_call = api_call,
+        api_url = api_url,
+        dateList = dateList)
+        
