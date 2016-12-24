@@ -79,22 +79,8 @@ def main_page():
     #logger.debug("req.json: %s" % ( str(req.json())) )
 
     # request last_update
-    req_last_update = None
-    try:
-        req_last_update = requests.get( api_call_last_update ) # , auth=('user', 'password')
-    except Exception as e:
-        msg = "Could not make request: %s: %s" % (api_call_last_update, str(e))
-        logger.error(msg)
-        #raise internalerror(msg)
-    
-    if req_last_update and req_last_update.status_code != 200:
-        msg = "status code: %d" % (req_last_update.status_code)
-        logger.error(msg)
-        #raise internalerror(msg)
-    
-    dictLastUpdate = {}
     if req_last_update:
-        dictLastUpdate = req_last_update.json()
+        dictLastUpdate = export.get_nodes_last_update_dict()
         
     listRows = []
     

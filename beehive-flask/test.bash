@@ -34,9 +34,12 @@ if true; then
     url "0.0.0.0/api/1/nodes/ffffffffffff0001/export?date=2016-01-01&version=2.1"
     url "0.0.0.0/api/1/nodes/ffffffffffff0001/export?date=2016-01-01&version=2"
     url 0.0.0.0/api/1/WCC_node/ffffffffffff0001/
+    
+    url 0.0.0.0/api/1/WCC_nodes_test
+    url 0.0.0.0/api/1/WCC_nodes_test?all=true
 fi
 
-if false; then
+if true; then
     url 0.0.0.0/
     url 0.0.0.0/wcc/test/
     url "0.0.0.0/wcc/test/?dog=cat&tiger=lion"

@@ -1,6 +1,8 @@
 import logging
 from cassandra.cluster import Cluster
 import time
+sys.path.append("..")
+from waggle_protocol.utilities.mysql import *
 
 
 logger = logging.getLogger('beehive-api')
@@ -39,6 +41,12 @@ def query(statement):
 
     return cluster, rows
 
+
+def get_mysql_db():
+    return Mysql(host="beehive-mysql",
+                 user="waggle",
+                 passwd="waggle",
+                 db="waggle")
 
 def export_generator(node_id, date, ttl, delimiter=';', version='1'):
     """
@@ -121,3 +129,49 @@ def get_nodes_last_update_dict():
     statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update"
     cluster, rows = query(statement)
     return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
+
+    
+
+def get_nodes(bAllNodes = False):
+
+    db = get_mysql_db()
+
+    all_nodes = {}
+
+    # limit the output with a WHERE clause if bAllNodes is false
+    whereClause = " " if bAllNodes else " WHERE opmode = 'active' "
+
+    query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
+
+    logger.debug(' query = ' + query)
+
+    mysql_nodes_result = db.query_all(query)
+
+    for result in mysql_nodes_result:
+        node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
+
+        if not node_id:
+            continue
+
+        # cleanup formatting
+        node_id = node_id.lower()
+
+        all_nodes[node_id] = {
+            'project': project,
+            'description': description,
+            'reverse_ssh_port': reverse_ssh_port,
+            'name': name,
+            'location': location,
+            'last_updated': last_updated
+        }
+
+    if bAllNodes:
+        nodes_dict = list_node_dates()
+
+        for node_id in nodes_dict.keys():
+            if not node_id in all_nodes:
+                all_nodes[node_id]={}
+
+    obj = {}
+    obj['data'] = all_nodes
+    return jsonify(obj)

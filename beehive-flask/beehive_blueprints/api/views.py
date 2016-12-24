@@ -12,7 +12,6 @@ import time
 import requests
 
 sys.path.append("../..")
-#from export import export_generator, list_node_dates, get_nodes_last_update_dict
 import export
 sys.path.pop()
 
@@ -79,13 +78,11 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-
 def get_mysql_db():
     return Mysql(host="beehive-mysql",
                  user="waggle",
                  passwd="waggle",
                  db="waggle")
-
 
 @api.route('/')
 def api_root():
@@ -107,7 +104,6 @@ def api_epoch():
 @api.route('/1/nodes/')
 def api_nodes():
 
-    version = request.args.get('version', '1')
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
 
@@ -264,6 +260,19 @@ def api_export(node_id):
 
     return Response(stream_with_context(generate()), mimetype='text/csv')
 
+
+    
+@api.route('/1/WCC_nodes_test')
+def WCC_nodes_test():
+    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
+    bAllNodes = request.args.get('all', 'false').lower() == 'true'
+    
+    all_nodes = get_nodes(bAllNodes = False):
+    
+    obj = {}
+    obj['data'] = all_nodes
+    
+    return jsonify(obj)
 
 @api.route('/1/WCC_node/<node_id>/')
 def WCC_web_node_page(node_id):
