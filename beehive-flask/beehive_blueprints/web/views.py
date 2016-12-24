@@ -59,6 +59,9 @@ def web_wcc_test():
 def main_page():
 
     web_host = 'beehive1.mcs.anl.gov/'  # TODO: replace this with beehive-specific address!!
+    api_call = web_host + '/api/1/'
+    api_url = web_host + '/api/1/'
+
     
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
