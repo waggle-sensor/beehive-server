@@ -26,8 +26,8 @@ logging.getLogger('export').setLevel(logging.DEBUG)
 
 
 
-api_url          = 'localhost:/api/'
-api_url_internal = 'localhost:/api/'
+api_url          = 'http://beehive1.mcs.anl.gov/'
+api_url_internal = 'http://beehive1.mcs.anl.gov/'
 
 @web.route('/')
 def web_root():

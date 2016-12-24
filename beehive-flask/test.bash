@@ -44,6 +44,6 @@ if true; then
     url 0.0.0.0/wcc/test/
     url "0.0.0.0/wcc/test/?dog=cat&tiger=lion"
     url 0.0.0.0/wcc/
-    url 0.0.0.0/wcc/node/ffffffffffff0001
+    url 0.0.0.0/wcc/node/ffffffffffff0001/
 fi
 echo " "
