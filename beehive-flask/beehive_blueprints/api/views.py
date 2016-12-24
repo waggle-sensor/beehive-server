@@ -107,8 +107,7 @@ def api_nodes():
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
 
-    logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
-        version, str(bAllNodes)))
+    logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
 
     db = get_mysql_db()
 
@@ -141,7 +140,7 @@ def api_nodes():
             'last_updated': last_updated
         }
 
-    if bAllNodes:           # WCC: commenting this out
+    if bAllNodes:
         nodes_dict = export.list_node_dates()
 
         for node_id in nodes_dict.keys():
