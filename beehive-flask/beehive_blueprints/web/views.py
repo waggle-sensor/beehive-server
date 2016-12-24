@@ -156,7 +156,7 @@ def main_page():
                     
         listRows.append('''<tr>
             <td align="right"><tt>%s</tt></td>
-            <td><a href="%s/nodes/%s?version=1"><tt>%s</tt></a></td>
+            <td><a href="%snodes/%s?version=1"><tt>%s</tt></a></td>
             <td>%s</td>
             <td>%s</td>
             <td>%s</td>
