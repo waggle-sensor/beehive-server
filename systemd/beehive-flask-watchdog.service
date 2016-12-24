@@ -1,0 +1,23 @@
+[Unit]
+Description=Beehive Flask Watchdog
+
+[Service]
+Environment='CONTAINER=beehive-flask'
+Environment='DATA=/mnt'
+
+Restart=on-failure
+RestartSec=5
+
+ExecStart=/bin/bash -c ' \
+  while [ 1 ] ; do \
+    sleep 2m ; \
+    if [ $(curl --silent --max-time 10 $(docker inspect --format "{{ .NetworkSettings.Networks.beehive.IPAddress }}" beehive-web) | grep "This is the Waggle Beehive web server." | wc -l) -ne 1 ] ; then \
+      docker rm -f ${CONTAINER} ; \
+      sleep 20 ; \
+      docker rm -f beehive-nginx ; \
+    fi \
+  done'
+
+
+[Install]
+WantedBy=multi-user.target
