@@ -262,7 +262,7 @@ def api_export(node_id):
         return Response(stream_with_context(generate()), mimetype='text/csv')
     else:
         l = list(generate())
-        if sort_type = 'asc':
+        if sort_type == 'asc':
             l.sort()
         else:
             l.sort(reverse = True)
