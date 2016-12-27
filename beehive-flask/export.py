@@ -105,7 +105,7 @@ def list_node_dates(version='1'):
         statement = "SELECT DISTINCT node_id,date FROM sensor_data"
     elif version == '2raw':
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_raw"
-    elif version == '2'
+    elif version == '2':
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
     else:
         statement = None
