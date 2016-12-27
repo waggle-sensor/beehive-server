@@ -44,25 +44,26 @@ if true; then
     url ${IP}/api/1/epoch
     url ${IP}/api/1/nodes/
     url ${IP}/api/1/nodes/?all=true
-fi
-if true; then
     url ${IP}/api/nodes
+    
     url "${IP}/api/1/nodes/${NODE}/dates"
     url "${IP}/api/1/nodes/${NODE}/dates?version=1"
-    url "${IP}/api/1/nodes/${NODE}/dates?version=2.1"
+    url "${IP}/api/1/nodes/${NODE}/dates?version=2raw"
     url "${IP}/api/1/nodes/${NODE}/dates?version=2"
+    url "${IP}/api/1/nodes/${NODE}/dates?version=2.1"
     
     url "${IP}/api/nodes/${NODE}/dates"
     url "${IP}/api/nodes/${NODE}/dates?version=1"
-    url "${IP}/api/nodes/${NODE}/dates?version=2.1"
+    url "${IP}/api/nodes/${NODE}/dates?version=2raw"
     url "${IP}/api/nodes/${NODE}/dates?version=2"
-fi
-if true; then
+    url "${IP}/api/nodes/${NODE}/dates?version=2.1"
+
     url ${IP}/api/1/nodes_last_update/
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=1"
-    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2raw"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1"
     url ${IP}/api/1/WCC_node/${NODE}/
     
     url ${IP}/api/1/WCC_nodes_test
