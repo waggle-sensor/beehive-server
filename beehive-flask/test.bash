@@ -1,10 +1,12 @@
 #!/bin/bash
 
-#IP=${IP}
-IP=http://beehive1.mcs.anl.gov
-
-#NODE='${NODE}'
-NODE='0000001e06108202'
+if true; then
+    IP='0.0.0.0'
+    NODE='ffffffffffff0001'
+else
+    IP=http://beehive1.mcs.anl.gov
+    NODE='0000001e06108202'
+fi
 
 # function to test if a string is contained in another.  Format:
 #      contains aList anItem
