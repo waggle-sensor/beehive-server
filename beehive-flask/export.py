@@ -62,35 +62,38 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1'):
         statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
                     "FROM waggle.sensor_data "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
-    elif version == '2.1':  # 2 raw
+    elif version == '2raw':  # 2 raw
         statement = "SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data "+ \
                     "FROM waggle.sensor_data_raw "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
-    else:   # version == 2
+    elif version == '2':
         statement = "SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit "+ \
                     "FROM waggle.sensor_data_decoded "+ \
                     "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+    else:
+        statement = None
+        
+    if statement:    
+        cluster, rows = query(statement)
 
-    cluster, rows = query(statement)
+        count = 0
 
-    count = 0
-
-    if version == '1':
-        for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
-            count +=1
-            #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
-            yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
-    elif version == '2.1':  # 2 raw
-        for (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) in rows:
-            count += 1
-            # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
-            # yield delimiter.join((str(timestamp), str(ingest_id), plugin_name, plugin_version, plugin_instance, parameter, data))
-            yield delimiter.join((str(timestamp), plugin_name, plugin_version, plugin_instance, parameter, data[2:-1]))
-    else:  # version == 2
-        for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
-            count += 1
-            # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
-            yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
+        if version == '1':
+            for (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data) in rows:
+                count +=1
+                #yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data)
+                yield delimiter.join((node_id, date, plugin_id, str(plugin_version), plugin_instance, str(timestamp), sensor, sensor_meta, str(data)))
+        elif version == '2raw':  # 2 raw
+            for (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) in rows:
+                count += 1
+                # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
+                # yield delimiter.join((str(timestamp), str(ingest_id), plugin_name, plugin_version, plugin_instance, parameter, data))
+                yield delimiter.join((str(timestamp), plugin_name, plugin_version, plugin_instance, parameter, data[2:-1]))
+        else:  # version == 2
+            for (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) in rows:
+                count += 1
+                # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
+                yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
 
 
 def list_node_dates(version='1'):
@@ -100,25 +103,28 @@ def list_node_dates(version='1'):
     """
     if version == '1':
         statement = "SELECT DISTINCT node_id,date FROM sensor_data"
-    elif version == '2.1':
+    elif version == '2raw':
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_raw"
-    else:  # 2.0
+    elif version == '2'
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
-
-    try:
-        cluster, rows = query(statement)
-    except:
-        raise
-
+    else:
+        statement = None
+        
     nodes = {}
-    count = 0
-    for (node_id, date) in rows:
-        node_id = node_id.lower()
+    if statement:
+        try:
+            cluster, rows = query(statement)
+        except:
+            raise
 
-        if not node_id in nodes:
-            nodes[node_id]=[]
-            count = count +1
-        nodes[node_id].append(date)
+        count = 0
+        for (node_id, date) in rows:
+            node_id = node_id.lower()
+
+            if not node_id in nodes:
+                nodes[node_id]=[]
+                count = count +1
+            nodes[node_id].append(date)
 
     return nodes
 

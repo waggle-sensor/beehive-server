@@ -219,22 +219,9 @@ def api_dates(node_id):
 
     return jsonify(obj)
 
-
-@api.route('/nodes/<nodeid>/dates')
-def api_dates_v2(nodeid):
-    nodeid = nodeid.lower()
-    dates = export.list_node_dates(version='2')
-
-    try:
-        return jsonify(sorted(dates[nodeid], reverse=True))
-    except KeyError:
-        return 'node not found', 404
-
-
 @api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
     return jsonify(export.get_nodes_last_update_dict())
-
 
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):
@@ -267,87 +254,6 @@ def api_export(node_id):
         else:
             l.sort(reverse = True)
         return Response(stream_with_context(l), mimetype='text/csv')
-    
-@api.route('/1/WCC_nodes_test')
-def WCC_nodes_test():
-    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
-    bAllNodes = request.args.get('all', 'false').lower() == 'true'
-    
-    all_nodes = export.get_nodes(bAllNodes)
-    
-    obj = {}
-    obj['data'] = all_nodes
-    
-    return jsonify(obj)
-
-@api.route('/1/WCC_node/<node_id>/')
-def WCC_web_node_page(node_id):
-    logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
-
-    versions = ['2', '2.1', '1']
-    data = {}
-    datesUnion = set()
-    listDebug = []
-
-    for version in versions:
-        listDebug.append(' VERSION ' + version + '<br>\n')
-
-        api_call            = '%s/api/1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
-        api_call_internal   = '%s/api/1/nodes/%s/dates?version=%s' % (api_url_internal, node_id, version)
-        logger.debug('     in WCC_web_node_page: api_call_internal = {}'.format(api_call_internal))
-
-        if False:
-            try:
-                req = requests.get( api_url_internal ) # , auth=('user', 'password')
-            except Exception as e:
-                msg = "Could not make request: %s", (str(e))
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-
-            if req.status_code != 200:
-                msg = "status code: %d" % (req.status_code)
-                logger.error(msg)
-                continue
-                #raise internalerror(msg)
-
-            try:
-                dates = req.json()
-            except ValueError:
-                logger.debug("Not json: " + str(req))
-                continue
-                #raise internalerror("not found")
-
-            if not 'data' in dates:
-                logger.debug("data field not found")
-                continue
-                #raise internalerror("not found")
-        else:
-            nodes_dict = export.list_node_dates(version)
-            logger.debug('///////////// nodes_dict(version = {}) = {}'.format(version, str(nodes_dict)))
-            dates = {'data' : nodes_dict.get(node_id, list())}
-
-        data[version] = dates['data']
-        listDebug.append(' >>>>>>>>>VERSION ' + version + ' DATES: ' + str(dates)  + '<br>\n')
-        datesUnion.update(data[version])     # union of all dates
-
-    datesUnionSorted = sorted(list(datesUnion), reverse=True)
-
-    dateDict = {}
-    for date in datesUnionSorted:
-        l = list()
-        for version in versions:
-            if date in data[version]:
-                l.append(date)
-            else:
-                l.append('')
-        dateDict[date] = l
-
-    listDebug.append('<br><br>\n\n   {}'.format(str(dateDict)))
-    logger.debug('  DEBUG: ' + '\n'.join(listDebug))
-
-    return '<br>\n'.join(listDebug)
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

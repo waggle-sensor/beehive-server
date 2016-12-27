@@ -170,12 +170,11 @@ def main_page():
         list_rows = listRows)
 
 
-#@app.route('/api/1/WCC_node/<node_id>/')
 @web.route('/nodes/<node_id>/')
-def WCC_web_node_page(node_id):
-    logger.debug('GET WCC_web_node_page()  node_id = {}'.format(node_id))
+def web_node_page(node_id):
+    logger.debug('GET web_node_page()  node_id = {}'.format(node_id))
     
-    versions = ['2', '2.1', '1']
+    versions = ['2', '2raw', '1']
     data = {}
     datesUnion = set()
     listDebug = []
