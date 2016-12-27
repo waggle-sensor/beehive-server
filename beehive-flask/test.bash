@@ -37,7 +37,6 @@ function url() {
 
 if true; then
     url ${IP}/admin/
-    url ${IP}/admin/search/
 
     url ${IP}/api/
     url ${IP}/api/1/
@@ -52,27 +51,15 @@ if true; then
     url "${IP}/api/1/nodes/${NODE}/dates?version=2"
     url "${IP}/api/1/nodes/${NODE}/dates?version=2.1"
     
-    url "${IP}/api/nodes/${NODE}/dates"
-    url "${IP}/api/nodes/${NODE}/dates?version=1"
-    url "${IP}/api/nodes/${NODE}/dates?version=2raw"
-    url "${IP}/api/nodes/${NODE}/dates?version=2"
-    url "${IP}/api/nodes/${NODE}/dates?version=2.1"
-
     url ${IP}/api/1/nodes_last_update/
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=1"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2raw"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1"
-    url ${IP}/api/1/WCC_node/${NODE}/
-    
-    url ${IP}/api/1/WCC_nodes_test
-    url ${IP}/api/1/WCC_nodes_test?all=true
     
     url ${IP}/
     url ${IP}/wcc/test/
     url "${IP}/wcc/test/?dog=cat&tiger=lion"
-    url ${IP}/wcc/
-    url ${IP}/wcc/node/${NODE}/
 fi
 echo " "
