@@ -208,18 +208,22 @@ def load_data(node_ids, dates, row0, row1):
         for node_id in [x.lower() for x in node_ids]:
             #print(node_id)
             #print(date)
-            req = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/' + node_id + '/export?date=' + date + '?version=2')
+            url = 'http://beehive1.mcs.anl.gov/api/1/nodes/' + node_id + '/export?date=' + date + '&version=2'
+            print('url = ', url)
+            req = requests.get(url)
             content = str(req.content, 'utf-8')
-            #print('len(content) = ', len(content))
+            print('len(content) = ', len(content))
             content = content.split(rdelim)
             #print('content has ', len(content), ' rows')
             content = content[row0:row1]
-            #print('content:', content)
+            print('content:', content[:3])
             
             #print('split rows: ', [row.split(cdelim) for row in content])
             
             # id, date, time, sensor, value, time is a datetime,
-            labels = ['id', 'date', 'time', 'plugin', 'sensor', 'parameter', 'value', 'units']
+            #node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit
+            labels = ['id', 'date', 'time', 
+            'data_set', 'sensor', 'parameter', 'value', 'unit']
             #string_data = ['MAC Address', 'data', 'config', 'firmware']
 
             df = pd.DataFrame([[node_id, date] + row.split(cdelim) for row in content], columns=labels)
