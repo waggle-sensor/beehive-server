@@ -23,8 +23,7 @@ Leave that terminal running.
 Open a browser and navigate to
 http://beehive1.mcs.anl.gov/
 to see the list of all the nodes that ever sent data to the beehive server.
-Click on the id of the node to see which dates the node sent v1 data.
-Click on the "v2" to see which dates the node sent v2 data.
+Click on the id of the node to see all the data that a node ever sent - grouped by date and version.
 Choose the node(s) and date(s) whose data you would like to download and/or plot.
 
 ## Downloading Data into a CSV File
