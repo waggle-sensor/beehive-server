@@ -219,6 +219,24 @@ def api_dates(node_id):
 
     return jsonify(obj)
 
+@api.route('/1/nodes/all_dates')
+def api_all_dates():
+    version = request.args.get('version', '1')
+
+    logger.info("__ api_all_dates()  version = {}".format(version))
+
+    nodes_dict = export.list_node_dates(version)
+    
+    for node_id in nodes_dict:
+        nodes_dict[node_id].sort()
+    
+    obj = {}
+    obj['data'] = nodes_dict
+
+    return jsonify(obj)
+    
+    
+    
 @api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
     return jsonify(export.get_nodes_last_update_dict())
