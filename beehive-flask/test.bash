@@ -62,6 +62,8 @@ if true; then
     url "${IP}/api/1/nodes/all_dates?version=1"
     url "${IP}/api/1/nodes/all_dates?version=2raw"
     url "${IP}/api/1/nodes/all_dates?version=2"
+    url "${IP}/api/1/nodes/all_dates?version=2&sort=asc"
+    url "${IP}/api/1/nodes/all_dates?version=2&sort=desc"
     url "${IP}/api/1/nodes/all_dates?version=2.1"
 
     url ${IP}/

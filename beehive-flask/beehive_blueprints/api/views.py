@@ -222,13 +222,15 @@ def api_dates(node_id):
 @api.route('/1/nodes/all_dates')
 def api_all_dates():
     version = request.args.get('version', '1')
+    sort_type = request.args.get('sort', 'desc').lower()[:3]
 
     logger.info("__ api_all_dates()  version = {}".format(version))
 
     nodes_dict = export.list_node_dates(version)
-    
-    for node_id in nodes_dict:
-        nodes_dict[node_id].sort()
+
+    bSortReverse = False if sort_type == 'asc' else True
+    for node_id in sorted(nodes_dict):
+        nodes_dict[node_id].sort(reverse = bSortReverse)
     
     obj = {}
     obj['data'] = nodes_dict
