@@ -58,6 +58,12 @@ if true; then
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1"
     
+    url "${IP}/api/1/nodes/all_dates"
+    url "${IP}/api/1/nodes/all_dates?version=1"
+    url "${IP}/api/1/nodes/all_dates?version=2raw"
+    url "${IP}/api/1/nodes/all_dates?version=2"
+    url "${IP}/api/1/nodes/all_dates?version=2.1"
+
     url ${IP}/
     url ${IP}/wcc/test/
     url "${IP}/wcc/test/?dog=cat&tiger=lion"
