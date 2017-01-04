@@ -1,4 +1,5 @@
-#! /bin/python3
+#!/usr/bin/env python3
+
 import argparse
 import datetime
 import re
@@ -134,6 +135,7 @@ if __name__ == '__main__':
         
     if True:
         d = {}  # dictionary of gaps
+        dSenseIds = {}  # dictionary of id's of ????sense sensors (coresense, chemsense, airsense)
         tNow = datetime.datetime.utcnow()
         tNow.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         dtOneDay = datetime.timedelta(days = 1)
@@ -169,6 +171,10 @@ if __name__ == '__main__':
                         d[sensor]['gaps'] = []
                         d[sensor]['tStepsTotal'] = datetime.timedelta()
                         d[sensor]['nSteps'] = 0
+                        
+                        # The first time we see a "???sense ID" sensor, latch its value - it is the version of the ID
+                        if 'ID' in sensor:
+                            dSenseIds[sensor] = cols[4]
                     d[sensor]['tLast'] = t
                     
                 except Exception as e:
@@ -201,16 +207,25 @@ if __name__ == '__main__':
             if len(gaps):
                 sensorName = sensor
                 for gap in gaps:
-                    print('{:13s} {:>10.2f}    {}   {}'.format(sensorName, gap[1], gap[0], gap[0] + datetime.timedelta(seconds = gap[1])))
+                    print('{:11s} {:>10.2f}    {}   {}'.format(sensorName, gap[1], gap[0], gap[0] + datetime.timedelta(seconds = gap[1])))
                     sensorName = ' '
         print('----------------------------------------')
+        print(dSenseIds)
+        print('. . . . . . . . . . . . . . . . . . . . .')
+
+        # 1st is name that is displayed, 2nd is name as it appears in the data
+        # This is motivated by the coresense being listed as Metsense and Lightsense
+        for x in [('Metsense', 'Coresense'), ('Lightsense', 'Coresense'), ('Chemsense','Chemsense'), ('Alphasense','Alphasense')]:
+            print('{:15s} : {}'.format(x[0] + '_id', dSenseIds.get(x[1] + ' ID', 'none')))
+        print('----------------------------------------')
+        
             
     if True:
         # get the last sensor-data samples from the node.
         # 'head' gets the 1st appearing url, which should correspond to the latest date
         # 'tail' limits the output to the last lines, the last set of sensor readings
         urlNodePage = 'http://beehive1.mcs.anl.gov/nodes/{node_id}?version=2'.format(node_id = nodeId)
-        urlData = CmdString('''/bin/curl -s {url_node} | grep "nodes/" | head -n 1 | grep -Po '"http.*"' '''.format(url_node = urlNodePage))
+        urlData = CmdString('''/bin/curl -s {url_node} | grep "nodes/" | head -n 1 | grep -Po '"http.*version=2"' '''.format(url_node = urlNodePage))
         print('###################################')
         lines = CmdList('''curl -s {url_data} | sort | tail -n 10'''.format(url_data = urlData))
         for iLine, line in enumerate(lines):
@@ -227,6 +242,7 @@ if __name__ == '__main__':
 
         print('NUMBER OF journalctl       MESSAGES: ', CmdString('journalctl --utc --since=-3h | grep {} | wc -l'.format(nodeId_NoLeadingZeros)))
         print('curl -s {url_data} | sort > {node_id}.txt'.format(url_data = urlData, node_id = nodeId))
+    if True:
         print('###################################')
         print('Node id: {}\n'.format(nodeId))
         print('Cloud Vitals\n')
