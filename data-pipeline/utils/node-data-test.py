@@ -145,7 +145,7 @@ if __name__ == '__main__':
         while tCur <= tNow:
             strDate = DatetimeToDateString(tCur)
             tCur += dtOneDay
-            cmd = 'curl -s "http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version=2" | sort'.format(args.nodeId, strDate)
+            cmd = 'curl -s "http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version=2" | sort'.format(nodeId, strDate)
             print('cmd = ', cmd)
             for iLine, line in enumerate(Cmd1(cmd)):
                 if verbosity: print(iLine, '"' + line.strip() + '"')
