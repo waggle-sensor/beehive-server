@@ -50,26 +50,29 @@ def get_mysql_db():
                  passwd="waggle",
                  db="waggle")
 
-def export_generator(node_id, date, ttl, delimiter=';', version='1'):
+def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = None):
     """
     Python generator to export sensor data from Cassandra
     version = 1 or 2 or 2.1, indicates which database/dataset is being queried
     """
     node_id = node_id.lower()
     # TODO check if node exists
+    limitString = ''
+    if limit:
+        limitString = ' LIMIT ' + limit
 
     if version == '1':
-        statement = "SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data "+ \
-                    "FROM waggle.sensor_data "+ \
-                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+        statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data 
+                    FROM waggle.sensor_data 
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
     elif version == '2raw':  # 2 raw
-        statement = "SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data "+ \
-                    "FROM waggle.sensor_data_raw "+ \
-                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+        statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data 
+                    FROM waggle.sensor_data_raw 
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
     elif version == '2':
-        statement = "SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit "+ \
-                    "FROM waggle.sensor_data_decoded "+ \
-                    "WHERE node_id='%s' AND date='%s'" %(node_id, date)
+        statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit 
+                    FROM waggle.sensor_data_decoded 
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
     else:
         statement = None
         

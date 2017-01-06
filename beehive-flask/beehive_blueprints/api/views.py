@@ -248,6 +248,7 @@ def api_export(node_id):
     date = request.args.get('date')
     version = request.args.get('version', '1')
     sort_type = request.args.get('sort', 'desc').lower()[:3]
+    limit = request.args.get('limit', None)
     
     logger.info("__ api_export()  date = {}, version = {}  sort_type = {} ".format(str(date), str(version), sort_type))
 
@@ -262,7 +263,7 @@ def api_export(node_id):
     logger.info("accepted date: %s" %(date))
 
     def generate():
-        for row in export.export_generator(node_id, date, False, ';', version=version):
+        for row in export.export_generator(node_id, date, False, ';', version=version, limit=limit):
             yield row + '\n'
 
     if sort_type in ['non', 'fal']:   # 'none', 'false'
@@ -277,4 +278,3 @@ def api_export(node_id):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-    

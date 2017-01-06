@@ -52,12 +52,19 @@ if true; then
     url "${IP}/api/1/nodes/${NODE}/dates?version=2.1"
     
     url ${IP}/api/1/nodes_last_update/
+    
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=1"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2raw"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1"
-    
+
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&limit=10"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=1&limit=10"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2raw&limit=10"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2&limit=10"
+    url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=2.1&limit=10"
+
     url "${IP}/api/1/nodes/all_dates"
     url "${IP}/api/1/nodes/all_dates?version=1"
     url "${IP}/api/1/nodes/all_dates?version=2raw"
