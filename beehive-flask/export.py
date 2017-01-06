@@ -64,15 +64,15 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = Non
     if version == '1':
         statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data 
                     FROM waggle.sensor_data 
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     elif version == '2raw':  # 2 raw
         statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data 
                     FROM waggle.sensor_data_raw 
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     elif version == '2':
         statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit 
                     FROM waggle.sensor_data_decoded 
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitStr)
+                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     else:
         statement = None
         
