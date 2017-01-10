@@ -117,7 +117,7 @@ if __name__ == '__main__':
         
         # copy the result to the destination
         cmd0 = 'scp -v {} {}'.format(filenameArchive, destCompletePath)
-        cmd1 = 'ssh {}@{} ls {}'.format(destUsername, destUrl, destDir)
+        cmd1 = 'ssh {}@{} ls -l {}'.format(destUsername, destUrl, destDir)
         cmd = cmd0 + ';' + cmd1
         #print('\nAFTER creating new backup:\n' + '\n\t'.join([DatetimeToNameAndFilename(FilenameToDatetime(x))[0] for x in Cmd(cmd)]))
         print('\nAFTER creating new backup:\n\t' + '\t'.join([x for x in Cmd(cmd)]))
