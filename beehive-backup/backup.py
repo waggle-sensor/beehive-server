@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     #periodically perform a backup
     while True:
-        print('-------- ', datetime.datetime.utcnow())
+        print('###########################\n-------- ', datetime.datetime.utcnow())
         # get the list of existing backups
         filesExisting = Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir))
         existingBackups = []
