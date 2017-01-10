@@ -37,7 +37,7 @@ def FilenameToDatetime(s):
 #_______________________________________________________________________
 if __name__ == '__main__':
     # Read the config file, make sure what we need is there
-    with open('/root/git/beehive-server/beehive-config.json', 'r') as f:
+    with open('/mnt/beehive/beehive-config.json', 'r') as f:
         configAll = json.load(f)
     config = configAll['backup']
     del configAll
