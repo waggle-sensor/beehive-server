@@ -41,7 +41,7 @@ if __name__ == '__main__':
         configAll = json.load(f)
     config = configAll['backup']
     del configAll
-    print('backup config: ', json.dumps(config, indent = 4))
+    print('backup config: \n' + json.dumps(config, indent = 4))
     pathLocal = config['local directory']
     destUsername = config['dest username']
     destUrl = config['dest url']
@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
     #periodically perform a backup
     while True:
-        print(' ')
+        print('-------- ', datetime.datetime.utcnow())
         # get the list of existing backups
         filesExisting = Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir))
         existingBackups = []
@@ -72,6 +72,8 @@ if __name__ == '__main__':
             if t:
                 existingBackups.append(t)
         nExisting = len(existingBackups)
+        print('\nBEFORE:\nExisting backups:\n\t' + '\n\t'.join([DatetimeToNameAndFilename(x)[0] for x in existingBackups]))
+
         if nExisting > 0:
             existingBackups.sort(reverse = True)  # 0th item is latest
             nToDelete = nExisting - nFiles + 1
@@ -82,14 +84,13 @@ if __name__ == '__main__':
                 nToDelete -= 1
                 t = existingBackups.pop()
                 Cmd("ssh {user}@{url} rm {dir}/{fn}".format(user = destUsername, url = destUrl, dir = destDir, fn = DatetimeToNameAndFilename(t)[1]))
-        print('Existing backups:\n\t' + '\n\t'.join([DatetimeToNameAndFilename(x)[0] for x in existingBackups]))
 
         # see if enough time passed since the most recent backup to store a new one
         if len(existingBackups) > 0:
             tUtcNow = datetime.datetime.utcnow()
             tNextBackup = existingBackups[0] + dtBetweenBackups
             if tUtcNow < tNextBackup:
-                sleepRemainderSeconds = min((tNextBackup - tUtcNow).total_seconds(), 300)
+                sleepRemainderSeconds = min((tNextBackup - tUtcNow).total_seconds(), 3600)
                 time.sleep(sleepRemainderSeconds)
                 continue
 
@@ -115,8 +116,11 @@ if __name__ == '__main__':
         print('TEMP dir:  ', [x for x in Cmd('ls ' + pathTemp)])
         
         # copy the result to the destination
-        Cmd('scp -v {} {}'.format(filenameArchive, destCompletePath))
-        print([x for x in Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir))])
+        cmd0 = 'scp -v {} {}'.format(filenameArchive, destCompletePath)
+        cmd1 = 'ssh {}@{} ls {}'.format(destUsername, destUrl, destDir)
+        cmd = cmd0 + ';' + cmd1
+        #print('\nAFTER creating new backup:\n' + '\n\t'.join([DatetimeToNameAndFilename(FilenameToDatetime(x))[0] for x in Cmd(cmd)]))
+        print('\nAFTER creating new backup:\n\t' + '\t'.join([x for x in Cmd(cmd)]))
         
         # sleep until it is time for another backup
         print('sleeping for {} seconds starting at (roughly) {}...'.format(sleepSeconds, name))
