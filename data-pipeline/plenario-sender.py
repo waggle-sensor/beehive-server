@@ -161,7 +161,7 @@ channel.queue_declare(queue='plenario',
 channel.queue_bind(queue='plenario',
                    exchange='plugins-out')
 
-setup kinesis client
+# setup kinesis client
 kinesis_client = boto3.client(
     'kinesis',
     aws_access_key_id='*** SECRET ***',
