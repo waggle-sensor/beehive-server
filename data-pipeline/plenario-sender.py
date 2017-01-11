@@ -133,7 +133,7 @@ orientation.z > orient_z
 # do same kind of mapping as above node_id > external_id
 
 allowed_nodes = parse_node_list('''
-001e06107d97
+0000001e0610ba72
 ''')
 
 # setup rabbitmq client
@@ -161,13 +161,13 @@ channel.queue_declare(queue='plenario',
 channel.queue_bind(queue='plenario',
                    exchange='plugins-out')
 
-# setup kinesis client
-# kinesis_client = boto3.client(
-#     'kinesis',
-#     aws_access_key_id='*** SECRET ***',
-#     aws_secret_access_key='*** PASSWORD ***',
-#     region_name='us-east-1',
-# )
+setup kinesis client
+kinesis_client = boto3.client(
+    'kinesis',
+    aws_access_key_id='*** SECRET ***',
+    aws_secret_access_key='*** PASSWORD ***',
+    region_name='us-east-1',
+)
 
 
 def map_values(sensor, values):
@@ -192,11 +192,11 @@ def callback(ch, method, properties, body):
         pprint(payload)
         print()
 
-    # kinesis_client.put_record(**{
-    #     'StreamName': 'ObservationStream',
-    #     'PartitionKey': 'arbitrary',
-    #     'Data': body.decode()
-    # })
+        kinesis_client.put_record(**{
+            'StreamName': 'ObservationStream',
+            'PartitionKey': 'arbitrary',
+            'Data': json.dumps(payload)  # body.decode()
+        })
 
 
 channel.basic_consume(callback, queue='plenario', no_ack=True)
