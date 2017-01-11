@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
-import pika
-import json
-import struct
+
 import os.path
+import sys
+
+sys.path.append(os.abspath('../'))
+from config import *
+sys.path.pop()
+
+import json
+import pika
 import ssl
+import struct
 from urllib.parse import urlencode
 
 
@@ -40,17 +47,20 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-    'ssl': 't',
-    'ssl_options': {
-        'certfile': os.path.abspath('SSL/node/cert.pem'),
-        'keyfile': os.path.abspath('SSL/node/key.pem'),
-        'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-        'cert_reqs': ssl.CERT_REQUIRED
-    }
-}))
+if False:
+    url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+        'ssl': 't',
+        'ssl_options': {
+            'certfile': os.path.abspath('SSL/node/cert.pem'),
+            'keyfile': os.path.abspath('SSL/node/key.pem'),
+            'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+            'cert_reqs': ssl.CERT_REQUIRED
+        }
+    }))
 
-connection = pika.BlockingConnection(pika.URLParameters(url))
+    connection = pika.BlockingConnection(pika.URLParameters(url))
+else:
+    connection = pika.BlockingConnection(pika_params)
 
 channel = connection.channel()
 
