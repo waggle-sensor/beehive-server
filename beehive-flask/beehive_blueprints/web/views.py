@@ -132,7 +132,9 @@ def main_page():
         # eg. <td style="background-color:#FF0000">
         last_updated = '<td></td>'
         duration_string = ''
-        if node_id in dictLastUpdate:
+        
+        #if node_id in dictLastUpdate:
+        if False:
             dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
             #s = dt.isoformat(sep = ' ')
             s = dt.strftime("%Y-%m-%d %H:%M:%S")
