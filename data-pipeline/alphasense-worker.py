@@ -3,7 +3,7 @@
 import os.path
 import sys
 
-sys.path.append(os.abspath('../'))
+sys.path.append(os.path.abspath('../'))
 from config import *
 sys.path.pop()
 
