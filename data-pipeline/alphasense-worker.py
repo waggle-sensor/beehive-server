@@ -59,8 +59,19 @@ if False:
     }))
 
     connection = pika.BlockingConnection(pika.URLParameters(url))
-else:
+    
+elif False:
     connection = pika.BlockingConnection(pika_params)
+else:
+    #Connect to rabbitMQ
+    while True:
+        try:
+            self.connection = pika.BlockingConnection(pika_params)
+        except Exception as e:
+            print("alphasense:1 : Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+            time.sleep(1)
+            continue
+        break
 
 channel = connection.channel()
 
