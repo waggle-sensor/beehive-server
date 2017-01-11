@@ -1,13 +1,20 @@
 #!/usr/bin/env python
-import pika
+
+import sys
+
+sys.path.append('..')
+from config import *
+sys.path.pop()
+
 # import boto3
-import os
-from urllib.parse import urlencode
-import ssl
-import re
-import json
 from datetime import datetime
+import json
+import os
+import pika
 from pprint import pprint
+import re
+import ssl
+from urllib.parse import urlencode
 
 
 def parse_node_list(table):
@@ -147,7 +154,12 @@ url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
     }
 }))
 
-connection = pika.BlockingConnection(pika.URLParameters(url))
+print('url = ', url)
+
+if False:
+    connection = pika.BlockingConnection(pika.URLParameters(url))
+else:
+    connection = pika.BlockingConnection(pika_params)
 
 channel = connection.channel()
 
