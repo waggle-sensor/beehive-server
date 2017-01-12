@@ -5,7 +5,7 @@ build:
 	docker build -t $(IMAGE) .
 
 run:
-	bin/docker run \
+	docker run \
 	--rm \
 	--net beehive \
 	--hostname $(CONTAINER) \
