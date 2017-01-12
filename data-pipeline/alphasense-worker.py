@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
-
 import os.path
 import sys
-
-sys.path.append(os.path.abspath('../'))
-from config import *
-sys.path.pop()
-
 import json
 import pika
 import ssl
@@ -47,31 +41,8 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-if False:
-    url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-        'ssl': 't',
-        'ssl_options': {
-            'certfile': os.path.abspath('SSL/node/cert.pem'),
-            'keyfile': os.path.abspath('SSL/node/key.pem'),
-            'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-            'cert_reqs': ssl.CERT_REQUIRED
-        }
-    }))
-
-    connection = pika.BlockingConnection(pika.URLParameters(url))
-    
-elif False:
-    connection = pika.BlockingConnection(pika_params)
-else:
-    #Connect to rabbitMQ
-    while True:
-        try:
-            self.connection = pika.BlockingConnection(pika_params)
-        except Exception as e:
-            print("alphasense:1 : Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
-            time.sleep(1)
-            continue
-        break
+url = 'amqp://worker:worker@localhost'
+connection = pika.BlockingConnection(pika.URLParameters(url))
 
 channel = connection.channel()
 
