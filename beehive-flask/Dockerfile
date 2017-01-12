@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /usr/lib/waggle/beehive-server/beehive-flask/
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r beehive-flask/requirements.txt
 
 # Flask needs that
 ENV LC_ALL=C.UTF-8
