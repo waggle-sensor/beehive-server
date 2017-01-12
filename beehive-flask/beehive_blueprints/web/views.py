@@ -133,8 +133,7 @@ def main_page():
         last_updated = '<td></td>'
         duration_string = ''
         
-        #if node_id in dictLastUpdate:
-        if False:
+        if node_id in dictLastUpdate:
             dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdate[node_id])/1000.0) 
             #s = dt.isoformat(sep = ' ')
             s = dt.strftime("%Y-%m-%d %H:%M:%S")
