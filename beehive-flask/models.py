@@ -28,11 +28,10 @@ class User(db.Model, UserMixin):
     https://github.com/flask-admin/flask-admin/blob/master/examples/auth/app.py
     """
 
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(255), unique=True)
+    name = db.Column(db.String(255), primary_key=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
+    #confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
     
