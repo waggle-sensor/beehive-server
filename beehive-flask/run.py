@@ -15,7 +15,8 @@ from database import db
 from models import BeehiveAdminIndexView, BeehiveModelView, Role, User
 
 
-SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.4/waggle"
+#SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.4/waggle"
+SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.6/waggle"
 
 app = Flask(__name__)
 
@@ -56,6 +57,6 @@ if __name__ == "__main__":
             admin.add_view(BeehiveModelView(table, db.session))
     
     # Vamonos!
-    app.run()
+    app.run(host = '0.0.0.0')
 
 
