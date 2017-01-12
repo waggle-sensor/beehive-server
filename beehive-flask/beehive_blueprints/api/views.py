@@ -16,7 +16,7 @@ import export
 sys.path.pop()
 
 sys.path.append("..")
-from waggle_protocol.utilities.mysql import *
+from waggle.protocol.utils.mysql import *
 from flask import Flask
 from flask import Response
 from flask import request

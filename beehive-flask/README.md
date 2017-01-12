@@ -4,6 +4,13 @@
 
 This is the Beehive API server. 
 
+## OS Dependencies
+
+```bash
+libmysqlclient-dev (11MB)
+python3-dev (55MB)
+```
+
 ## Build image:
 ```bash
 docker rm -f beehive-api
