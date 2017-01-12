@@ -9,12 +9,7 @@ RUN apt-get update && apt-get install -y \
 # python modules
 # Note regarding the mysql library (mysqlclient is a replacement for MySQL-python which has some python3 issues)
 
-RUN pip3 install \
-    mysqlclient \
-    Flask \
-    cassandra-driver \
-    git+https://github.com/waggle-sensor/pywaggle
-
+RUN pip3 install -r requirements.txt
 
 # Flask needs that
 ENV LC_ALL=C.UTF-8
