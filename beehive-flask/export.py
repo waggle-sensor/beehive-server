@@ -4,7 +4,7 @@ import sys
 import time
 
 sys.path.append("..")
-from waggle_protocol.utilities.mysql import *
+from waggle.protocol.utils.mysql import *
 sys.path.pop()
 
 logger = logging.getLogger('beehive-api')
