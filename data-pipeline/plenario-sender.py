@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
+import os
+import sys
+
 import base64
 import boto3
+
+sys.path.append(os.abspath('../'))
+from config import beehiveConfig
+sys.path.pop()
+
 import json
-import os
 import pika
 import re
 import ssl
@@ -25,8 +32,14 @@ from urllib.parse import urlencode
 #
 # $ source ~/.bashrc
 
-AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
-AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY']
+if False:
+    AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
+    AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY']
+else:
+    AWS_ACCESS_KEY = beehiveConfig['plenario']['AWS_ACCESS_KEY']
+    AWS_SECRET_KEY = beehiveConfig['plenario']['AWS_SECRET_KEY']
+    print('beehiveConfig', beehiveConfig)
+    print('AWS_ACCESS_KEY', AWS_ACCESS_KEY)
 
 kinesis_client = boto3.client(
     'kinesis',
