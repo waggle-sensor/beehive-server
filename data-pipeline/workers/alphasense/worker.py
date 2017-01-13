@@ -38,7 +38,7 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-url = os.environ.get('RABBITMQ_HOST', 'amqp://worker:worker@localhost')
+url = os.environ.get('RABBITMQ_HOST', 'amqp://worker_alphasense:worker@localhost')
 connection = pika.BlockingConnection(pika.URLParameters(url))
 
 channel = connection.channel()
