@@ -1,8 +1,16 @@
 #!/usr/bin/env python3
 
-import sys, os, io, configparser, logging, pika, ssl, re
-import time, datetime
-
+import configparser
+import datetime
+import io
+import json
+import logging
+import os
+import pika
+import re
+import ssl
+import sys
+import time
 
 CONFIG_FILE="/etc/waggle/beehive-server.cfg"
 
@@ -172,8 +180,9 @@ def unix_time(dt):
 
 def unix_time_millis(dt):
     return int(unix_time(dt) * 1000.0)
-    
-    
+
+with open('/mnt/beehive/beehive-config.json', 'r') as f:
+    beehiveConfig = json.load(f)
     
     
     
