@@ -1,6 +1,6 @@
 build:
-	docker rm -f beehive-plenario-sender  && echo 'rm succeeded'
-	docker rmi -f waggle/beehive-plenario-sender  && echo 'rmi succeeded'
+	docker rm -f beehive-plenario-sender || echo 'rm failed'
+	docker rmi -f waggle/beehive-plenario-sender || echo 'rmi failed'
 	docker build -t waggle/beehive-plenario-sender .
 
 start:
@@ -17,7 +17,7 @@ logs:
 
 run:
 	echo 'running...'
-	docker rm -f beehive-plenario-sender && echo 'rm succeeded'
+	docker rm -f beehive-plenario-sender || echo 'rm failed'
 	docker run -ti --rm  --name beehive-plenario-sender  -p 5000:5000 --net beehive -v  /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender
 
 bash:
