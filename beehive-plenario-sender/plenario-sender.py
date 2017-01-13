@@ -203,7 +203,7 @@ def callback(ch, method, properties, body):
 
     if node_id in allowed_nodes and sensor in mapping:
         payload = {
-            'meta_id': 'irrelevant',
+            'meta_id': 0,
             'node_id': node_id,
             'sensor': sensor,
             'data': dict(map_values(sensor, json.loads(body.decode()))),
