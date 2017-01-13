@@ -1,5 +1,6 @@
-
 FROM waggle/beehive-server
+
+ADD . /usr/lib/waggle/beehive-server/beehive-plenario-sender
 
 RUN apt-get update && apt-get install -y \
     python3-pip 
