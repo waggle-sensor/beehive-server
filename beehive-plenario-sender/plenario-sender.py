@@ -178,7 +178,8 @@ allowed_nodes = parse_node_list('''
 
 # url = 'amqps://jbracho:password@0.0.0.0:23181?{}'.format(urlencode({
 # url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-url = 'amqps://node:waggle@172.18.0.2:23181?{}'.format(urlencode({
+# url = 'amqps://node:waggle@172.18.0.2:23181?{}'.format(urlencode({
+url = 'amqps://node:waggle@beehive-rabbitmq:23181?{}'.format(urlencode({
     'ssl': 't',
     'ssl_options': {
         'certfile': os.path.abspath('/mnt/waggle/SSL/beehive-server/cert.pem'),
@@ -187,7 +188,7 @@ url = 'amqps://node:waggle@172.18.0.2:23181?{}'.format(urlencode({
         'cert_reqs': ssl.CERT_REQUIRED
     }
 }))
-
+print('url = ', url)
 
 def map_values(sensor, values):
     for key, value in values.items():
