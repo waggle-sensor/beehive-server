@@ -18,8 +18,9 @@ logs:
 run:
 	echo 'running...'
 	docker rm -f beehive-plenario-sender || echo 'rm failed'
-	docker run -ti --rm  --name beehive-plenario-sender  -p 5000:5000 --net beehive -v  /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender
+	#docker run -ti --rm  --name beehive-plenario-sender --net beehive -v  /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender bash -c 'pwd; ls -l'
+	docker run -ti --rm  --name beehive-plenario-sender --net beehive -v  /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  -v /mnt/beehive:/mnt/beehive -v /mnt/waggle:/mnt/waggle waggle/beehive-plenario-sender 
 
 bash:
 	echo 'bashing...'
-	docker run -ti --rm  --name beehive-plenario-sender  -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender  bash
+	docker run -ti --rm  --name beehive-plenario-sender --net beehive -v /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender  bash

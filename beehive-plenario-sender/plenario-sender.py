@@ -6,7 +6,7 @@ import sys
 import base64
 import boto3
 
-sys.path.append(os.abspath('../'))
+sys.path.append(os.path.abspath('../'))
 from config import beehiveConfig
 sys.path.pop()
 
@@ -176,8 +176,9 @@ allowed_nodes = parse_node_list('''
 0000001e0610ba72
 ''')
 
+# url = 'amqps://jbracho:password@0.0.0.0:23181?{}'.format(urlencode({
 # url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-url = 'amqps://jbracho:password@0.0.0.0:23181?{}'.format(urlencode({
+url = 'amqps://node:waggle@172.18.0.2:23181?{}'.format(urlencode({
     'ssl': 't',
     'ssl_options': {
         'certfile': os.path.abspath('/mnt/waggle/SSL/beehive-server/cert.pem'),
