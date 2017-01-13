@@ -47,15 +47,30 @@ admin = Admin(
 )
 
 
+def create_default_user():
+
+    db.metadata.create_all(bind = db.engine)
+    existing_user = db.session.query(User).first()
+    if existing_user:
+        return
+    
+    default_user = User(email="admin@waggle.net", password="changeme", id = 0, active = True)
+    db.session.add(default_user)
+    db.session.commit()
+    
+
+
 if __name__ == "__main__":
 
     # Reflects the existing mysql schema and registers each table with admin
     with app.app_context():
+        create_default_user()
+
         base = automap_base()
         base.prepare(db.engine, reflect=True)
         for table in base.classes:
             admin.add_view(BeehiveModelView(table, db.session))
-    
+
     # Vamonos!
     app.run(host = '0.0.0.0')
 
