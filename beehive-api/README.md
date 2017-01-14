@@ -1,5 +1,5 @@
 
-# Beehive API server
+# Beehive API server - DEPRECATED - Replaced by beehive-flask
  
 
 This is the Beehive API server. 
