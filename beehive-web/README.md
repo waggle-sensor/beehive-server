@@ -1,5 +1,5 @@
 
-# Beehive web/API server
+# Beehive web/API server - DEPRECATED - Replaced by beehive-flask
  
 
 This is a webserver and an API server. Those will be split into two scripts in the future.
