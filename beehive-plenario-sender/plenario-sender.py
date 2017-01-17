@@ -10,7 +10,9 @@ sys.path.append(os.path.abspath('../'))
 from config import beehiveConfig
 sys.path.pop()
 
+import datetime
 import json
+import logging
 import pika
 import re
 import ssl
@@ -19,6 +21,8 @@ from datetime import datetime
 from pprint import pprint
 from urllib.parse import urlencode
 
+global nCallbacks
+nCallbacks = 0
 
 # Make sure these environment variables are in your bashrc!
 # Your keys must have NO SPECIAL CHARACTERS like '\' or '$' because amazon.
@@ -47,6 +51,9 @@ kinesis_client = boto3.client(
     aws_secret_access_key=AWS_SECRET_KEY,
     region_name='us-east-1',
 )
+
+# set the logging level - the default prints so many debug messages that it slows things down
+logging.getLogger('botocore').setLevel(logging.WARNING)
 
 
 def parse_node_list(table):
@@ -198,6 +205,8 @@ def map_values(sensor, values):
 
 def callback(ch, method, properties, body):
 
+    global nCallbacks
+
     node_id = properties.reply_to
     sensor = properties.type
     timestamp = datetime.fromtimestamp(properties.timestamp / 1000)
@@ -217,9 +226,11 @@ def callback(ch, method, properties, body):
             'Data': json.dumps(payload)
         })
 
-        print("[plenario-sender] Successfully sent: \n")
-        pprint(payload)
-        print()
+        if nCallbacks % 1000 == 0:
+            print(datetime.utcnow().isoformat(sep=' '), "[plenario-sender] Sent: {}      ".format(nCallbacks))
+        nCallbacks += 1
+        # pprint(payload)
+        # print()
 
 
 if __name__ == "__main__":
