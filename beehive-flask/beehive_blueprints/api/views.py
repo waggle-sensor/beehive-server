@@ -162,7 +162,7 @@ def api_nodes():
 
     logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
 
-    return NodeQuery(bAllNodes = bAllNodes):
+    return NodeQuery(bAllNodes = bAllNodes)
 
     
 @api.route('/1/nodes/<node_id>')
@@ -171,7 +171,7 @@ def api_nodes_single(node_id):
 
     logger.info("__ api_nodes_single()  node_id = {}".format(node_id))
 
-    return NodeQuery(node_id_queried = node_id):
+    return NodeQuery(node_id_queried = node_id)
 
 
 @api.route('/nodes')
