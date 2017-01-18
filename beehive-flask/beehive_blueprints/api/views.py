@@ -150,8 +150,10 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
     # for node_id in all_nodes.keys():
     #     logger.debug("%s %s" % (node_id, type(node_id)))
 
-    obj = {}
-    obj['data'] = all_nodes
+    if node_id_queried:
+        obj = {"data" : all_nodes.get(node_id, {})}
+    else:
+        obj = {"data" : all_nodes}
     return jsonify(obj)
     # return  json.dumps(obj, indent=4)
 
@@ -171,11 +173,7 @@ def api_nodes_single(node_id):
 
     logger.info("__ api_nodes_single()  node_id = {}".format(node_id))
 
-    data = NodeQuery(node_id_queried = node_id)
-    
-    obj = {"data" : data[node_id]}
-    
-    return jsonify(obj)
+    return NodeQuery(node_id_queried = node_id)
 
 
 @api.route('/nodes')
