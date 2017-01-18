@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if true; then
+if false; then
     IP='0.0.0.0'
     NODE='ffffffffffff0001'
 else
@@ -43,6 +43,8 @@ if true; then
     url ${IP}/api/1/epoch
     url ${IP}/api/1/nodes/
     url ${IP}/api/1/nodes/?all=true
+    url ${IP}/api/1/nodes/${NODE}
+    url ${IP}/api/1/nodes/${NODE}?all=true
     url ${IP}/api/nodes
     
     url "${IP}/api/1/nodes/${NODE}/dates"

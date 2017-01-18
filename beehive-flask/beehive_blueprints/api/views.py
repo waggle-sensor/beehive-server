@@ -100,22 +100,22 @@ def api_epoch():
         'epoch': int(time.time())
     })
 
-
-@api.route('/1/nodes/')
-def api_nodes():
-
+def NodeQuery(node_id_queried = None, bAllNodes = False):
+    # if node_id_queried, then filter only that node, otherwise, query all nodes
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
-    bAllNodes = request.args.get('all', 'false').lower() == 'true'
-
-    logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
-
+    
     db = get_mysql_db()
 
     all_nodes = {}
 
-    # limit the output with a WHERE clause if bAllNodes is false
-    whereClause = " " if bAllNodes else " WHERE opmode = 'active' "
-
+    # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
+    if node_id_queried:
+        whereClause = " WHERE node_id = '{}'".format(node_id_queried)
+    elif bAllNodes:
+        whereClause = " WHERE opmode = 'active'"
+    else:
+        whereClause = ""
+        
     query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
 
     logger.debug(' query = ' + query)
@@ -140,7 +140,7 @@ def api_nodes():
             'last_updated': last_updated
         }
 
-    if bAllNodes:
+    if bAllNodes and not node_id_queried:
         nodes_dict = export.list_node_dates()
 
         for node_id in nodes_dict.keys():
@@ -154,6 +154,24 @@ def api_nodes():
     obj['data'] = all_nodes
     return jsonify(obj)
     # return  json.dumps(obj, indent=4)
+
+@api.route('/1/nodes/')
+def api_nodes():
+    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
+    bAllNodes = request.args.get('all', 'false').lower() == 'true'
+
+    logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
+
+    return NodeQuery(bAllNodes = bAllNodes):
+
+    
+@api.route('/1/nodes/<node_id>')
+def api_nodes_single(node_id):
+    node_id = node_id.lower()
+
+    logger.info("__ api_nodes_single()  node_id = {}".format(node_id))
+
+    return NodeQuery(node_id_queried = node_id):
 
 
 @api.route('/nodes')
