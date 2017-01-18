@@ -171,7 +171,11 @@ def api_nodes_single(node_id):
 
     logger.info("__ api_nodes_single()  node_id = {}".format(node_id))
 
-    return NodeQuery(node_id_queried = node_id)
+    data = NodeQuery(node_id_queried = node_id)
+    
+    obj = {"data" : data[node_id]}
+    
+    return jsonify(obj)
 
 
 @api.route('/nodes')
