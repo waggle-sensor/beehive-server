@@ -151,7 +151,7 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
     #     logger.debug("%s %s" % (node_id, type(node_id)))
 
     if node_id_queried:
-        obj = {"data" : all_nodes.get(node_id, {})}
+        obj = {"data" : all_nodes.get(node_id_queried, {})}
     else:
         obj = {"data" : all_nodes}
     return jsonify(obj)
