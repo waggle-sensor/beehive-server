@@ -138,11 +138,14 @@ def main_page():
             #s = dt.isoformat(sep = ' ')
             s = dt.strftime("%Y-%m-%d %H:%M:%S")
             delta = dtUtcNow - dt
-            color = timeToColors[-1][1] # negative time - should correspond to last value
-            for tuple in timeToColors:
-                if delta > tuple[0]:
-                    color = tuple[1]
-                    break
+            if bAllNodes:
+                color = timeToColors[-1][1] # negative time - should correspond to last value
+                for tuple in timeToColors:
+                    if delta > tuple[0]:
+                        color = tuple[1]
+                        break
+            else:
+                color = '#ffffff'
 
             # human-readable duration
             duration_string = '1 minute ago'
