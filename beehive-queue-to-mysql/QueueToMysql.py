@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# QueueToDb.py
-
 import argparse
 import binascii
 from config import *
@@ -9,6 +7,7 @@ import datetime
 import json
 import logging
 from multiprocessing import Process, Manager
+import MySQLdb
 import pika
 import sys
 import time
@@ -29,21 +28,28 @@ class DataProcess(Process):
         is_database_raw is a bool, if True, will write data to raw-db, else to decoded-db)
     """
 
-    def __init__(self, is_database_raw, verbosity = 0):
+    def __init__(self, is_database_raw = False, verbosity = 0):
         """
             Starts up the Data handling Process
         """
         super(DataProcess,self).__init__()
 
+        self._con = None
+        self._cur = None
+        self._host = 'beehive'
+        self._user = 'waggle'
+        self._passwd = 'waggle'
+        self._db = 'waggle'
+        
         if is_database_raw:
             self.input_exchange = 'data-pipeline-in'
             self.queue          = 'db-raw'
-            self.statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            self.statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES ({},{},{},{}, {},{},{},{})"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_raw
         else:
             self.input_exchange = 'plugins-out'
             self.queue          = 'db-decoded'
-            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?,   ?, ?, ?, ?, ?)"
+            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES ({},{},{},{}, {},{},{},{}, {})"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
 
         logger.info("Initializing DataProcess")
@@ -64,12 +70,8 @@ class DataProcess(Process):
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.verbosity = verbosity
         self.numInserted = 0
-        self.session = None
-        self.cluster = None
-        self.prepared_statement = None
 
-        self.cassandra_connect()
-
+        self.db_connect()
 
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
@@ -99,10 +101,10 @@ class DataProcess(Process):
         '''
         try:
             for iValues, values in enumerate(self.function_ExtractValuesFromMessage(props, body)):
-                # Send the data off to Cassandra
+                # Send the data off to MySQL db
                 print('iValues =', iValues)
                 print(' values =',  values)
-                self.cassandra_insert(values)
+                self.db_insert(values)
                 print('-------AFTER inserting--------')
         except Exception as e:
             values = None
@@ -189,76 +191,72 @@ class DataProcess(Process):
                 print('   unit = ',             unit        )
             yield values
 
-    def cassandra_insert(self, values):
+    def db_insert(self, values):
 
-        if not self.session:
-            self.cassandra_connect()
+        if not self._cur:
+            self.db_connect()
 
-        if not self.prepared_statement:
-            try:
-                self.prepared_statement = self.session.prepare(self.statement)
-            except Exception as e:
-                logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
-                raise
-
+        bound_statement = self.statement.format(values)
+        
         logger.debug("inserting: %s" % (str(values)))
-        try:
-            bound_statement = self.prepared_statement.bind(values)
-        except Exception as e:
-            logger.error("QueueToDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
-            raise
-
         connection_retry_delay = 1
         while True :
             # this is long term storage
             try:
-                self.session.execute(bound_statement)
+                self._cur.execute(bound_statement)
+                db._con.commit()
             except TypeError as e:
-                 logger.error("QueueToDb: (TypeError) Error executing cassandra cql statement: %s -- values was: %s" % (str(e), str(values)) )
+                 logger.error("QueueToMysql: (TypeError) Error executing MySQL statement: %s -- values was: %s" % (str(e), str(values)) )
                  break
             except Exception as e:
-                logger.error("QueueToDb: Error (type: %s) executing cassandra cql statement: %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
+                logger.error("QueueToMysql: Error (type: %s) executing MySQL statement: %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
                 if "TypeError" in str(e):
                     logger.debug("detected TypeError, will ignore this message")
                     break
 
-                self.cassandra_connect()
+                self.db_connect()
                 time.sleep(connection_retry_delay)
                 if connection_retry_delay < 10:
                     connection_retry_delay += 1
                 continue
-
             break
-        logger.debug('cassandra_insert() exiting...')
+        logger.debug('db_insert() exiting...')
 
-    def cassandra_connect(self):
+    def db_connect(self):
         bDone = False
         iTry = 0
         while not bDone and (iTry < 5):
-            if self.cluster:
+            if self._con:
                 try:
-                    self.cluster.shutdown()
+                    self._con.close()
                 except:
                     pass
-
-            self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
-            self.session = None
-
+                    
             iTry2 = 0
             while not bDone and (iTry2 < 5):
+                self._con = None
+                self._cur = None
+
                 iTry2 += 1
                 try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-                    self.session = self.cluster.connect('waggle')
-                    if self.session:
+                    self._con =  MySQLdb.connect(  
+                                        host=self._host,    
+                                        user=self._user,       
+                                        passwd=self._passwd,  
+                                        db=self._db)
+                    self._cur = db.cursor()
+                    if self._cur:
                         bDone = True
                 except:
-                    logger.warning("QueueToDb: WARNING: Cassandra connection to " + CASSANDRA_HOST + " failed.")
-                    logger.warning("QueueToDb: The process will attempt to re-connect at a later time.")
+                    logger.warning("QueueToMysql: WARNING: MySQL connection to " + self._host + " failed.")
+                    logger.warning("QueueToMysql: The process will attempt to re-connect at a later time.")
                 if not bDone:
-                     time.sleep(3)
+                    self._con = None
+                    self._cur = None
+                    time.sleep(3)
 
     def run(self):
-        self.cassandra_connect()
+        self.db_connect()
         self.channel.start_consuming()
 
     def join(self):
