@@ -55,7 +55,7 @@ def callback(ch, method, properties, body):
                               routing_key=method.routing_key,
                               body=json.dumps(values))
 
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 channel.basic_consume(callback, queue=plugin, no_ack=False)
