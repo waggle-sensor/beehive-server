@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os.path
 import pika
 import ssl
@@ -8,15 +9,17 @@ import json
 
 plugin = 'coresense:3'
 
-url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-    'ssl': 't',
-    'ssl_options': {
-        'certfile': os.path.abspath('SSL/node/cert.pem'),
-        'keyfile': os.path.abspath('SSL/node/key.pem'),
-        'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-        'cert_reqs': ssl.CERT_REQUIRED
-    }
-}))
+url = 'amqp://worker_coresense:worker@localhost'
+
+# url = 'amqps://worker:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+#     'ssl': 't',
+#     'ssl_options': {
+#         'certfile': os.path.abspath('SSL/node/cert.pem'),
+#         'keyfile': os.path.abspath('SSL/node/key.pem'),
+#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+#         'cert_reqs': ssl.CERT_REQUIRED
+#     }
+# }))
 
 connection = pika.BlockingConnection(pika.URLParameters(url))
 
