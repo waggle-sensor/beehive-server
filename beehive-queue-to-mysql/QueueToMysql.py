@@ -244,7 +244,7 @@ class DataProcess(Process):
 
                 iTry2 += 1
                 try: # Might not immediately connect. That's fine. It'll try again if/when it needs to.
-                    logger.warning("QueueToMysql: Connecting... host = {}, user = {}, passwd = {}, db={}'.format(
+                    logger.warning("QueueToMysql: Connecting... host = {}, user = {}, passwd = {}, db={}".format(
                             self._host, self._user, self._passwd, self._db)
 
                     self._con =  MySQLdb.connect(  
