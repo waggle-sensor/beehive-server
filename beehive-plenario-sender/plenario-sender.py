@@ -213,6 +213,7 @@ def callback(ch, method, properties, body):
 
     if node_id in allowed_nodes and sensor in mapping:
         payload = {
+	    'network': 'array_of_things_chicago',
             'meta_id': 0,
             'node_id': node_id,
             'sensor': sensor,
@@ -226,8 +227,9 @@ def callback(ch, method, properties, body):
             'Data': json.dumps(payload)
         })
 
-        if nCallbacks % 1000 == 0:
-            print(datetime.utcnow().isoformat(sep=' '), "[plenario-sender] Sent: {}      ".format(nCallbacks))
+        if nCallbacks % 100 == 0:
+            # print(datetime.utcnow().isoformat(sep=' '), "[plenario-sender] Sent: {}    sensor={}, data={}".format(nCallbacks, sensor, body.decode()))
+            print(timestamp, "[plenario-sender] Sent: {}    sensor={}, data={}".format(nCallbacks, sensor, body.decode()))
         nCallbacks += 1
         # pprint(payload)
         # print()
