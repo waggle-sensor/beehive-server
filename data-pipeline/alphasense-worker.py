@@ -41,7 +41,18 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-url = 'amqp://worker:worker@localhost'
+url = 'amqp://worker_alphasense:worker@localhost'
+
+# url = 'amqps://worker_alphasense:worker@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+#     'ssl': 't',
+#     'ssl_options': {
+#         'certfile': os.path.abspath('SSL/node/cert.pem'),
+#         'keyfile': os.path.abspath('SSL/node/key.pem'),
+#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+#         'cert_reqs': ssl.CERT_REQUIRED
+#     }
+# }))
+
 connection = pika.BlockingConnection(pika.URLParameters(url))
 
 channel = connection.channel()
