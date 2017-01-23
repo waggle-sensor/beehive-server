@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
+sys.path.append(os.path.abspath('../'))
+from config import *
+from waggle_protocol.protocol.PacketHandler import *
+from waggle_protocol.utilities.gPickler import *
+sys.path.pop()
+
 import argparse
 import binascii
-from config import *
 import datetime
 import json
 import logging
 from multiprocessing import Process, Manager
 import MySQLdb
 import pika
-import sys
 import time
-from waggle_protocol.protocol.PacketHandler import *
-from waggle_protocol.utilities.gPickler import *
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
 sys.path.append("..")

@@ -13,7 +13,7 @@ RUN pip3 install \
     mysqlclient \
     git+https://github.com/waggle-sensor/pywaggle
 
-WORKDIR /usr/lib/waggle/beehive-server/
+WORKDIR /usr/lib/waggle/beehive-server/beehive-queue-to-mysql
 
 #CMD ["flask", "run", "--host=0.0.0.0"]
 #CMD ["python3", "run.py", "--host=0.0.0.0"]
