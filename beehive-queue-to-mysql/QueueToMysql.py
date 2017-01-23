@@ -66,7 +66,7 @@ class DataProcess(Process):
             try:
                 self.connection = pika.BlockingConnection(pika_params)
             except Exception as e:
-                logger.error("QueueToDb: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
+                logger.error("QueueToMysql: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
                 time.sleep(1)
                 continue
             break
