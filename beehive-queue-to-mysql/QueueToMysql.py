@@ -48,12 +48,12 @@ class DataProcess(Process):
         
         if is_database_raw:
             self.input_exchange = 'data-pipeline-in'
-            self.queue          = 'db-raw'
+            self.queue          = 'db-raw-mysql'
             self.statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES ({},{},{},{}, {},{},{},{})"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_raw
         else:
             self.input_exchange = 'plugins-out'
-            self.queue          = 'db-decoded'
+            self.queue          = 'db-decoded-mysql'
             self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES ({},{},{},{}, {},{},{},{}, {})"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
 
