@@ -41,7 +41,7 @@ class DataProcess(Process):
 
         self._con = None
         self._cur = None
-        self._host = 'beehive'
+        self._host = 'beehive-mysql'
         self._user = 'waggle'
         self._passwd = 'waggle'
         self._db = 'waggle'
