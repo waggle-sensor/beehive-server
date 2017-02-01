@@ -15,8 +15,8 @@ from database import db
 from models import BeehiveAdminIndexView, BeehiveModelView, Role, User
 
 
-#SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.4/waggle"
-SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.6/waggle"
+SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.4/waggle"
+#SQLALCHEMY_DATABASE_URI = "mysql://waggle:waggle@172.18.0.6/waggle"
 
 app = Flask(__name__)
 
