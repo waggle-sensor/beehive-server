@@ -41,7 +41,8 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-url = 'amqp://worker_alphasense:worker@localhost'
+#url = 'amqp://worker_alphasense:worker@localhost'
+url = 'amqp://worker_alphasense:worker@beehive-rabbitmq'
 
 # url = 'amqps://worker_alphasense:worker@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
 #     'ssl': 't',
