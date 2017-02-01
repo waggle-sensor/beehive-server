@@ -20,7 +20,6 @@ ExecStart=/bin/docker run \
   --name=${CONTAINER} \
   --net beehive \
   -p 5000:5000 \
-  --net beehive \
   -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  \
   waggle/beehive-flask
   
