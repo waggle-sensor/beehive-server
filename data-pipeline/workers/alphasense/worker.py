@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-import os
+import os.path
+import sys
 import json
 import pika
+import ssl
 import struct
+from urllib.parse import urlencode
 
 
 def decode_alphasense(data):
@@ -15,8 +18,8 @@ def decode_alphasense(data):
     checksum = struct.unpack_from('<H', data, offset=48)[0]
     pmvalues = struct.unpack_from('<3f', data, offset=50)
 
-    assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
-    assert sum(bincounts) & 0xFFFF == checksum
+    #assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
+    #assert sum(bincounts) & 0xFFFF == checksum
 
     values = {
         'bins': ','.join(map(str, bincounts)),
@@ -38,7 +41,18 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-url = os.environ.get('RABBITMQ_HOST')
+url = 'amqp://worker_alphasense:worker@localhost'
+
+# url = 'amqps://worker_alphasense:worker@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
+#     'ssl': 't',
+#     'ssl_options': {
+#         'certfile': os.path.abspath('SSL/node/cert.pem'),
+#         'keyfile': os.path.abspath('SSL/node/key.pem'),
+#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
+#         'cert_reqs': ssl.CERT_REQUIRED
+#     }
+# }))
+
 connection = pika.BlockingConnection(pika.URLParameters(url))
 
 channel = connection.channel()
@@ -78,9 +92,8 @@ def callback(ch, method, properties, body):
                               routing_key=method.routing_key,
                               body=json.dumps(values))
 
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
-channel.basic_consume(callback,
-                      queue=plugin,
-                      no_ack=True)
 
+channel.basic_consume(callback, queue=plugin, no_ack=False)
 channel.start_consuming()
