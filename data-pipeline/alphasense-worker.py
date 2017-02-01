@@ -18,8 +18,8 @@ def decode_alphasense(data):
     checksum = struct.unpack_from('<H', data, offset=48)[0]
     pmvalues = struct.unpack_from('<3f', data, offset=50)
 
-    assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
-    assert sum(bincounts) & 0xFFFF == checksum
+    #assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
+    #assert sum(bincounts) & 0xFFFF == checksum
 
     values = {
         'bins': ','.join(map(str, bincounts)),

@@ -17,7 +17,7 @@ logs:
 
 run:
 	echo 'running...'
-	docker rm -f beehive-flask
+	docker rm -f beehive-flask || echo 'docker rm -f beehive-flask failed'
 	docker run -ti --rm  --name beehive-flask  -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
 
 bash:
