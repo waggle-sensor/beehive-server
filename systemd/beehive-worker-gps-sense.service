@@ -1,0 +1,27 @@
+[Unit]
+Description=Beehive Worker GPS-sense
+Requires=beehive-rabbitmq.service
+After=beehive-rabbitmq.service
+OnFailure=slack-notify-failure@%i.service
+
+[Service]
+Restart=on-failure
+RestartSec=1m
+
+Environment='CONTAINER=beehive-worker-gps-sense'
+Environment='DATA=/mnt'
+
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
+
+ExecStart=/bin/docker run \
+  --log-driver=journald \
+  --rm \
+  --name=${CONTAINER} \
+  --net beehive \
+  waggle/beehive-worker-gps-sense
+  
+ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
+
+[Install]
+WantedBy=multi-user.target
