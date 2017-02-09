@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 # LastUpdate.py
+import os
+import sys
+sys.path.append(os.path.abspath('../'))
+sys.path.append("/usr/lib/waggle/")
+sys.path.append("/usr/lib/waggle/beehive-server")
 
 import argparse
 import binascii
@@ -15,14 +20,10 @@ import json
 import logging 
 from multiprocessing import Process, Manager, Queue
 import pika
-import sys
 import time
 from waggle_protocol.protocol.PacketHandler import *
 from waggle_protocol.utilities.gPickler import *
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
-
-sys.path.append("..")
-sys.path.append("/usr/lib/waggle/")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
