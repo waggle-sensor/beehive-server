@@ -5,6 +5,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('../'))
 sys.path.append("/usr/lib/waggle/")
+sys.path.append("/usr/lib/waggle/beehive-server")
 
 import argparse
 import binascii
