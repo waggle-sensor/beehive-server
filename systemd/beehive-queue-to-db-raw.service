@@ -20,8 +20,11 @@ ExecStart=/bin/docker run \
     --name ${CONTAINER} \
     --net beehive \
     -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
+    -v /root/git/beehive-server/:/usr/lib/waggle/beehive-server/ \
     waggle/beehive-server:latest \
-    bash -c 'git pull ; git submodule update --init ; ./configure && python3 -u ./data-pipeline/QueueToDb.py raw'
+    bash -c './configure && python3 -u ./data-pipeline/QueueToDb.py raw'
+ 
+#    bash -c 'git pull ; git submodule update --init ; ./configure && python3 -u ./data-pipeline/QueueToDb.py raw'
   
 ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
 
