@@ -1,5 +1,5 @@
 [Unit]
-Description=Beehive Queue to DB Raw
+Description=Beehive Queue to DB Decoded
 Requires=beehive-rabbitmq.service beehive-cassandra.service
 After=beehive-rabbitmq.service
 OnFailure=slack-notify-failure@%i.service
@@ -8,7 +8,7 @@ OnFailure=slack-notify-failure@%i.service
 Restart=on-failure
 RestartSec=1m
 
-Environment='CONTAINER=beehive-db-raw'
+Environment='CONTAINER=beehive-db-decoded'
 Environment='DATA=/mnt'
 
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
@@ -23,7 +23,7 @@ ExecStart=/bin/docker run \
     -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
     -v /root/git/beehive-server/:/usr/lib/waggle/beehive-server/ \
     waggle/beehive-server:latest \
-    bash -c './configure && python3 -u ./data-pipeline/QueueToDb.py raw'
+    bash -c './configure && python3 -u ./data-pipeline/QueueToDb.py decoded'
 
 ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
 
