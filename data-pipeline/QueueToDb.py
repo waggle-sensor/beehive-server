@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 # QueueToDb.py
+import sys
+sys.path.append("..")
+sys.path.append("/usr/lib/waggle/")
 
 import argparse
 import binascii
@@ -15,14 +18,11 @@ import json
 import logging 
 from multiprocessing import Process, Manager
 import pika
-import sys
 import time
 from waggle_protocol.protocol.PacketHandler import *
 from waggle_protocol.utilities.gPickler import *
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
-sys.path.append("..")
-sys.path.append("/usr/lib/waggle/")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
