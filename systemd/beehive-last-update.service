@@ -1,5 +1,5 @@
 [Unit]
-Description=Beehive Queue to DB Raw
+Description=Beehive Last Update
 Requires=beehive-rabbitmq.service beehive-cassandra.service
 After=beehive-rabbitmq.service
 OnFailure=slack-notify-failure@%i.service
