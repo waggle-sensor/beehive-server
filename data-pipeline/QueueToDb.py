@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 # QueueToDb.py
+import os
 import sys
-sys.path.append("..")
+sys.path.append(os.path.abspath('../'))
 sys.path.append("/usr/lib/waggle/")
 
 import argparse
