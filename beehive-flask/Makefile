@@ -1,6 +1,4 @@
 build:
-	docker rm -f beehive-flask
-	docker rmi -f waggle/beehive-flask
 	docker build -t waggle/beehive-flask .
 
 start:
@@ -14,6 +12,10 @@ restart:
 
 logs:
 	journalctl -f -u beehive-flask
+
+clean:
+	docker rm -f beehive-flask
+	docker rmi -f waggle/beehive-flask
 
 run:
 	echo 'running...'
