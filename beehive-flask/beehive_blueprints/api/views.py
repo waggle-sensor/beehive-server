@@ -1,27 +1,22 @@
 #!/usr/bin/env python3
 from . import api
-
+from flask import Flask
+from flask import Response
+from flask import request
+from flask import jsonify
+from flask import stream_with_context
 import logging
 from waggle.logging import JournalHandler
 from waggle.logging import SlackHandler
-import os.path
 import re
 import sys
-import json
 import time
-import requests
-
 sys.path.append("../..")
 import export
 sys.path.pop()
 
 sys.path.append("..")
 from waggle.protocol.utils.mysql import *
-from flask import Flask
-from flask import Response
-from flask import request
-from flask import jsonify
-from flask import stream_with_context
 
 
 app = Flask(__name__)
@@ -271,10 +266,10 @@ def api_all_dates():
     return jsonify(obj)
 
 
-
 @api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
     return jsonify(export.get_nodes_last_update_dict())
+
 
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):
