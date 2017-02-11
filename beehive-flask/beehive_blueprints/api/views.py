@@ -109,7 +109,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
 
     db = get_mysql_db()
 
-    all_nodes = {}
+    all_nodes = []
 
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
     if node_id_queried:
@@ -134,7 +134,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
         # cleanup formatting
         node_id = node_id.lower()
 
-        all_nodes[node_id] = {
+        all_nodes.append({
             'node_id': node_id,
             'groups': groups.split(),
             'opmode': opmode,
@@ -143,26 +143,25 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
             'name': name or '',
             'location': location or '',
             'last_updated': last_updated
-        }
+        })
 
     return all_nodes
-
-    if bAllNodes and not node_id_queried:
-        nodes_dict = export.list_node_dates()
-
-        for node_id in nodes_dict.keys():
-            if not node_id in all_nodes:
-                all_nodes[node_id]={}
-
-    # for node_id in all_nodes.keys():
-    #     logger.debug("%s %s" % (node_id, type(node_id)))
-
-    if node_id_queried:
-        obj = {"data": all_nodes.get(node_id_queried, {})}
-    else:
-        obj = {"data": all_nodes}
-
-    return obj
+    # if bAllNodes and not node_id_queried:
+    #     nodes_dict = export.list_node_dates()
+    #
+    #     for node_id in nodes_dict.keys():
+    #         if not node_id in all_nodes:
+    #             all_nodes[node_id]={}
+    #
+    # # for node_id in all_nodes.keys():
+    # #     logger.debug("%s %s" % (node_id, type(node_id)))
+    #
+    # if node_id_queried:
+    #     obj = {"data": all_nodes.get(node_id_queried, {})}
+    # else:
+    #     obj = {"data": all_nodes}
+    #
+    # return obj
 
 
 @api.route('/1/nodes/')
