@@ -41,10 +41,12 @@ class LastUpdateProcess(Process):
         if mode == 'logs':
             self.input_exchange = 'logs'
             self.queue          = 'last-log'
+            self.routing_key    = '#'
             self.statement = "INSERT INTO nodes_last_log  (node_id, last_update) VALUES (?, ?)"
         else:
             self.input_exchange = 'data-pipeline-in'
             self.queue          = 'last-data'
+            self.routing_key    = None
             self.statement = "INSERT INTO nodes_last_data (node_id, last_update) VALUES (?, ?)"
         
         logger.info("Initializing LastUpdateProcess")
@@ -76,8 +78,14 @@ class LastUpdateProcess(Process):
         # Declare this process's queue
         self.channel.queue_declare(self.queue)
         
-        self.channel.queue_bind(exchange = self.input_exchange,
-            queue = self.queue)
+        if self.routing_key:
+            self.channel.queue_bind(exchange = self.input_exchange,
+                queue = self.queue,
+                routing_key = self.routing_key)
+        else:
+            self.channel.queue_bind(exchange = self.input_exchange,
+                queue = self.queue)
+        
         
         try: 
             self.channel.basic_consume(self.callback, queue=self.queue)
