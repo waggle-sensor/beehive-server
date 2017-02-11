@@ -145,7 +145,9 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
             'last_updated': last_updated
         })
 
-    return dict((node['node_id'], node) for node in all_nodes)
+    return {
+        'data': dict((node['node_id'], node) for node in all_nodes)
+    }
 
     # if bAllNodes and not node_id_queried:
     #     nodes_dict = export.list_node_dates()
