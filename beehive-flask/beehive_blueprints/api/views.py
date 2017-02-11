@@ -78,11 +78,18 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+
 def get_mysql_db():
     return Mysql(host="beehive-mysql",
                  user="waggle",
                  passwd="waggle",
                  db="waggle")
+
+
+@api.route('/testing')
+def api_testing():
+    return 'this is a test'
+
 
 @api.route('/')
 def api_root():
