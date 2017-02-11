@@ -103,7 +103,7 @@ def api_epoch():
 def NodeQuery(node_id_queried = None, bAllNodes = False):
     # if node_id_queried, then filter only that node, otherwise, query all nodes
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
-    
+
     db = get_mysql_db()
 
     all_nodes = {}
@@ -115,15 +115,15 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
         whereClause = " WHERE opmode = 'active'"
     else:
         whereClause = ""
-        
-    query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
+
+    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode FROM nodes {};".format(whereClause)
 
     logger.debug(' query = ' + query)
 
     mysql_nodes_result = db.query_all(query)
 
     for result in mysql_nodes_result:
-        node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
+        node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode = result
 
         if not node_id:
             continue
@@ -132,11 +132,12 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
         node_id = node_id.lower()
 
         all_nodes[node_id] = {
-            'project': project,
-            'description': description,
+            'groups': groups.split(),
+            'opmode': opmode,
+            'description': description or '',
             'reverse_ssh_port': reverse_ssh_port,
-            'name': name,
-            'location': location,
+            'name': name or '',
+            'location': location or '',
             'last_updated': last_updated
         }
 
@@ -166,7 +167,7 @@ def api_nodes():
 
     return NodeQuery(bAllNodes = bAllNodes)
 
-    
+
 @api.route('/1/nodes/<node_id>')
 def api_nodes_single(node_id):
     node_id = node_id.lower()
@@ -251,14 +252,14 @@ def api_all_dates():
     bSortReverse = False if sort_type == 'asc' else True
     for node_id in sorted(nodes_dict):
         nodes_dict[node_id].sort(reverse = bSortReverse)
-    
+
     obj = {}
     obj['data'] = nodes_dict
 
     return jsonify(obj)
-    
-    
-    
+
+
+
 @api.route('/1/nodes_last_update/')
 def api_nodes_last_update():
     return jsonify(export.get_nodes_last_update_dict())
@@ -269,7 +270,7 @@ def api_export(node_id):
     version = request.args.get('version', '1')
     sort_type = request.args.get('sort', 'desc').lower()[:3]
     limit = request.args.get('limit', None)
-    
+
     logger.info("__ api_export()  date = {}, version = {}  sort_type = {} ".format(str(date), str(version), sort_type))
 
     if not date:
