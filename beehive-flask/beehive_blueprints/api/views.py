@@ -114,8 +114,6 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
 
     db = get_mysql_db()
 
-    print('!!! this should print !!!', flush=True)
-
     all_nodes = {}
 
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
@@ -152,7 +150,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
             'last_updated': last_updated
         }
 
-    return jsonify(all_nodes)
+    return all_nodes
 
     if bAllNodes and not node_id_queried:
         nodes_dict = export.list_node_dates()
@@ -169,8 +167,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
     else:
         obj = {"data": all_nodes}
 
-    return jsonify(obj)
-    # return  json.dumps(obj, indent=4)
+    return obj
 
 
 @api.route('/1/nodes/')
@@ -180,7 +177,7 @@ def api_nodes():
 
     logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
 
-    return NodeQuery(bAllNodes=bAllNodes)
+    return jsonify(NodeQuery(bAllNodes=bAllNodes))
 
 
 @api.route('/1/nodes/<node_id>')
