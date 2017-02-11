@@ -44,7 +44,19 @@ CREATE TABLE IF NOT EXISTS admin_messages (
     PRIMARY KEY ((node_id, date), meta_id, sensor, parameter, timestamp, data_set, ingest_id, unit)
 );
 
-CREATE TABLE IF NOT EXISTS nodes_last_update (
+CREATE TABLE IF NOT EXISTS nodes_last_data (
+    node_id         ascii,
+    last_update     TIMESTAMP,      -- milliseconds from epoch, integer
+    PRIMARY KEY     (node_id)
+);
+
+CREATE TABLE IF NOT EXISTS nodes_last_log (
+    node_id         ascii,
+    last_update     TIMESTAMP,      -- milliseconds from epoch, integer
+    PRIMARY KEY     (node_id)
+);
+
+CREATE TABLE IF NOT EXISTS nodes_last_ssh (
     node_id         ascii,
     last_update     TIMESTAMP,      -- milliseconds from epoch, integer
     PRIMARY KEY     (node_id)
