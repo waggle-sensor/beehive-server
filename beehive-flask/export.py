@@ -141,8 +141,8 @@ def get_nodes_last_update_dict():
     cluster, rows = query(statement)
     return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
 
-def get_nodes(bAllNodes = False):
 
+def get_nodes(bAllNodes = False):
     db = get_mysql_db()
 
     all_nodes = {}
@@ -150,14 +150,14 @@ def get_nodes(bAllNodes = False):
     # limit the output with a WHERE clause if bAllNodes is false
     whereClause = " " if bAllNodes else " WHERE opmode = 'active' "
 
-    query = "SELECT node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
+    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
 
     logger.debug(' query = ' + query)
 
     mysql_nodes_result = db.query_all(query)
 
     for result in mysql_nodes_result:
-        node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
+        node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated = result
 
         if not node_id:
             continue
@@ -166,7 +166,8 @@ def get_nodes(bAllNodes = False):
         node_id = node_id.lower()
 
         all_nodes[node_id] = {
-            'project': project,
+            'node_id': node_id,
+            'groups': groups.split(),
             'description': description,
             'reverse_ssh_port': reverse_ssh_port,
             'name': name,
