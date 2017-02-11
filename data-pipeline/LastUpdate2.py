@@ -207,9 +207,11 @@ if __name__ == '__main__':
     
     while p.is_alive():
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
+        if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize())
+
         while not q.empty():
             setUpdated.add(q.get())
-        if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
+        if verbosity: print('len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             p.cassandra_insert(values)
