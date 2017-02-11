@@ -114,6 +114,8 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
 
     db = get_mysql_db()
 
+    print('!!! this should print !!!', flush=True)
+
     all_nodes = {}
 
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
