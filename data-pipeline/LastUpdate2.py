@@ -78,7 +78,7 @@ class LastUpdateProcess(Process):
         # Declare this process's queue
         self.channel.queue_declare(self.queue)
         
-        if self.routing_key:
+        if False:   #self.routing_key:
             self.channel.queue_bind(exchange = self.input_exchange,
                 queue = self.queue,
                 routing_key = self.routing_key)
