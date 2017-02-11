@@ -90,10 +90,10 @@ class LastUpdateProcess(Process):
     def callback(self, ch, method, props, body):
         #TODO: this simply drops failed messages, might find a better solution!? Keeping them has the risk of spamming RabbitMQ
         if self.verbosity > 1:
-            print('######################################')
-            print('method = ', method)
-            print('props = ', props)
-            print('body = ', body)
+            logger.debug('######################################')
+            logger.debug('method = ', method)
+            logger.debug('props = ', props)
+            logger.debug('body = ', body)
         '''EXAMPLE: 
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
