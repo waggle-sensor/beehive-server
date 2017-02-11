@@ -100,7 +100,8 @@ def api_epoch():
         'epoch': int(time.time())
     })
 
-def NodeQuery(node_id_queried = None, bAllNodes = False):
+
+def NodeQuery(node_id_queried=None, bAllNodes=False):
     # if node_id_queried, then filter only that node, otherwise, query all nodes
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
 
@@ -116,7 +117,7 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
     else:
         whereClause = ""
 
-    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode FROM nodes {};".format(whereClause)
+    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode FROM nodes {}".format(whereClause)
 
     logger.debug(' query = ' + query)
 
@@ -132,6 +133,7 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
         node_id = node_id.lower()
 
         all_nodes[node_id] = {
+            'node_id': node_id,
             'groups': groups.split(),
             'opmode': opmode,
             'description': description or '',
@@ -140,6 +142,8 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
             'location': location or '',
             'last_updated': last_updated
         }
+
+    return jsonify(all_nodes)
 
     if bAllNodes and not node_id_queried:
         nodes_dict = export.list_node_dates()
@@ -152,11 +156,13 @@ def NodeQuery(node_id_queried = None, bAllNodes = False):
     #     logger.debug("%s %s" % (node_id, type(node_id)))
 
     if node_id_queried:
-        obj = {"data" : all_nodes.get(node_id_queried, {})}
+        obj = {"data": all_nodes.get(node_id_queried, {})}
     else:
-        obj = {"data" : all_nodes}
+        obj = {"data": all_nodes}
+
     return jsonify(obj)
     # return  json.dumps(obj, indent=4)
+
 
 @api.route('/1/nodes/')
 def api_nodes():
@@ -165,7 +171,7 @@ def api_nodes():
 
     logger.info("__ api_nodes()  bAllNodes = {}".format(str(bAllNodes)))
 
-    return NodeQuery(bAllNodes = bAllNodes)
+    return NodeQuery(bAllNodes=bAllNodes)
 
 
 @api.route('/1/nodes/<node_id>')

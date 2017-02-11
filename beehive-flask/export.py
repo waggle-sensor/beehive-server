@@ -62,21 +62,21 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = Non
         limitString = ' LIMIT ' + limit
 
     if version == '1':
-        statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data 
-                    FROM waggle.sensor_data 
+        statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data
+                    FROM waggle.sensor_data
                     WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     elif version == '2raw':  # 2 raw
-        statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data 
-                    FROM waggle.sensor_data_raw 
+        statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data
+                    FROM waggle.sensor_data_raw
                     WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     elif version == '2':
-        statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit 
-                    FROM waggle.sensor_data_decoded 
+        statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit
+                    FROM waggle.sensor_data_decoded
                     WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
     else:
         statement = None
-        
-    if statement:    
+
+    if statement:
         cluster, rows = query(statement)
 
         count = 0
@@ -112,7 +112,7 @@ def list_node_dates(version='1'):
         statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
     else:
         statement = None
-        
+
     nodes = {}
     if statement:
         try:
@@ -140,8 +140,6 @@ def get_nodes_last_update_dict():
     statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update"
     cluster, rows = query(statement)
     return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
-
-    
 
 def get_nodes(bAllNodes = False):
 
