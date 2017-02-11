@@ -1,27 +1,27 @@
+image = waggle/beehive-flask
+container = beehive-flask
+
 build:
-	docker build -t waggle/beehive-flask .
+	docker build -t $(image) .
 
 start:
-	systemctl start beehive-flask
+	systemctl start $(container)
 
 stop:
-	systemctl stop beehive-flask
+	systemctl stop $(container)
 
 restart:
-	systemctl restart beehive-flask
+	systemctl restart $(container)
 
 logs:
-	journalctl -f -u beehive-flask
+	journalctl -f -u $(container)
 
 clean:
-	docker rm -f beehive-flask
-	docker rmi -f waggle/beehive-flask
+	docker rm -f $(container)
+	docker rmi -f $(image)
 
 run:
-	echo 'running...'
-	docker rm -f beehive-flask || echo 'docker rm -f beehive-flask failed'
-	docker run -ti --rm  --name beehive-flask  -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask
+	docker run -ti --rm --name $(container) -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/ $(image)
 
 bash:
-	echo 'bashing...'
-	docker run -ti --rm  --name beehive-flask  -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/  waggle/beehive-flask  bash
+	docker run -ti --rm --name $(container) -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/ $(image) bash
