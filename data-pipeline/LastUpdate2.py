@@ -207,7 +207,7 @@ if __name__ == '__main__':
     
     setUpdated = set()
     q = Queue(2000)
-    p = LastUpdateProcess(q, mode = args.dataToTrack, verbosity)
+    p = LastUpdateProcess(q, args.dataToTrack, verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
