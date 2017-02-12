@@ -100,10 +100,10 @@ class LastUpdateProcess(Process):
         '''
         try:
             node_id     = props.reply_to
-            self.q.put(node_id)
+            self.q.put(node_id, block = False)
             if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
-            logger.error("Error inserting data: %s" % (str(e)))
+            logger.error("Error inserting (queue size = {})  data = %s" % (self.q.qsize(), str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
