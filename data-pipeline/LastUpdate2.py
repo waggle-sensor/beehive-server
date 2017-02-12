@@ -152,7 +152,8 @@ class LastUpdateProcess(Process):
                 continue
             
             break
-        logger.debug('cassandra_insert() exiting...')
+        if verbosity > 1:
+            logger.debug('cassandra_insert() exiting...')
 
     def cassandra_connect(self):
         bDone = False
