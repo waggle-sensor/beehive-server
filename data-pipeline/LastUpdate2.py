@@ -199,7 +199,7 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    q = Queue(2000)
+    q = Queue(2)
     p = LastUpdateProcess(q, args.dataToTrack, verbosity)
     p.start()
     
