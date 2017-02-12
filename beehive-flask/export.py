@@ -50,6 +50,7 @@ def get_mysql_db():
                  passwd="waggle",
                  db="waggle")
 
+
 def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = None):
     """
     Python generator to export sensor data from Cassandra
@@ -99,34 +100,35 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = Non
                 yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
 
 
+dataset_version_table = {
+    '1': 'sensor_data',
+    '2raw': 'sensor_data_raw',
+    '2': 'sensor_data_decoded',
+}
+
+
 def list_node_dates(version='1'):
     """
     Returns hash of nodes with dates.
     version = 1 or 2, indicates which database/dataset is being queried
     """
-    if version == '1':
-        statement = "SELECT DISTINCT node_id,date FROM sensor_data"
-    elif version == '2raw':
-        statement = "SELECT DISTINCT node_id,date FROM sensor_data_raw"
-    elif version == '2':
-        statement = "SELECT DISTINCT node_id,date FROM sensor_data_decoded"
-    else:
+    try:
+        table = dataset_version_table[version]
+        statement = 'SELECT DISTINCT node_id, date FROM {}'.format(table)
+    except KeyError:
         statement = None
 
     nodes = {}
-    if statement:
-        try:
-            cluster, rows = query(statement)
-        except:
-            raise
 
-        count = 0
+    if statement:
+        cluster, rows = query(statement)
+
         for (node_id, date) in rows:
             node_id = node_id.lower()
 
-            if not node_id in nodes:
-                nodes[node_id]=[]
-                count = count +1
+            if node_id not in nodes:
+                nodes[node_id] = []
+
             nodes[node_id].append(date)
 
     return nodes
