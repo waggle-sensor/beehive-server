@@ -103,7 +103,7 @@ class LastUpdateProcess(Process):
             self.q.put(node_id, block = False)
             if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
-            logger.error("Error inserting (queue size = {})  data = %s" % (self.q.qsize(), str(e)))
+            logger.error("Error inserting (queue size = %d)  data = %s" % (self.q.qsize(), str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     p.start()
     
     print(__name__ + ': created process ', p)
-    time.sleep(10)   
+    time.sleep(10)
     
     while p.is_alive():
         # stage 1 - empty queue to setUpdated
