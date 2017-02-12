@@ -207,18 +207,21 @@ if __name__ == '__main__':
     time.sleep(10)   
     
     while p.is_alive():
+        # stage 1 - empty queue to setUpdated
+        for _i in range(30)
+            while not q.empty():
+                setUpdated.add(q.get())
+            if verbosity: print('len(setUpdated) = ', len(setUpdated))
+            time.sleep(1)
+        
+        # stage 2 - periodically write setUpdated to db
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
         if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize())
-
-        while not q.empty():
-            setUpdated.add(q.get())
-        if verbosity: print('len(setUpdated) = ', len(setUpdated))
         for node_id in setUpdated:
             values = (node_id, timestamp)
             p.cassandra_insert(values)
             if verbosity > 1: print('  writing:  ', node_id)
         setUpdated.clear()
-        time.sleep(30)
         
     print(__name__ + ': process is dead, time to die')
     p.join()    
