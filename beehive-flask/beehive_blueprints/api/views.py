@@ -262,13 +262,14 @@ def get_datasets():
 
     datasets = []
 
-    for node_id, date in node_dates.items():
-        datasets.append({
-            'node_id': node_id,
-            'date': date,
-            'version': version,
-            'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
-        })
+    for node_id, dates in node_dates.items():
+        for date in dates:
+            datasets.append({
+                'node_id': node_id,
+                'date': date,
+                'version': version,
+                'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
+            })
 
     return jsonify(datasets)
 
