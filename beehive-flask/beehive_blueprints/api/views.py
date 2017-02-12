@@ -254,22 +254,10 @@ def api_dates(node_id):
 def get_datasets():
     version = request.args.get('version', '2raw')
 
-    # duct tape for now. this is to make the string format before more secure.
-    if version not in ['1', '2', '2raw']:
-        return 'Invalid dataset version.', 404
-
-    node_dates = export.list_node_dates(version)
-
-    datasets = []
-
-    for node_id, dates in node_dates.items():
-        for date in dates:
-            datasets.append({
-                'node_id': node_id,
-                'date': date,
-                'version': version,
-                'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
-            })
+    try:
+        datasets = export.get_datasets(version)
+    except KeyError:
+        return 'invalid dataset version', 404
 
     return jsonify(datasets)
 

@@ -134,6 +134,24 @@ def list_node_dates(version='1'):
     return nodes
 
 
+def get_datasets(version):
+    table = dataset_version_table[version]
+    statement = 'SELECT DISTINCT node_id, date FROM {}'.format(table)
+    cluster, rows = query(statement)
+
+    datasets = []
+
+    for node_id, date in rows:
+        datasets.append({
+            'node_id': node_id.lower()[-12:],
+            'date': date,
+            'version': version,
+            'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
+        })
+
+    return datasets
+
+
 def get_nodes_last_update_dict():
     """
     Returns dictionary that maps node_id to last_update.
