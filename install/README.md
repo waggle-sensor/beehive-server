@@ -6,6 +6,8 @@ Waggle cloud software for aggregation, storage and analysis of sensor data from 
 
 The recommended installation method for the waggle beehive server is Docker. But it should be easily possible to install everything in a non-virtualized ubuntu environment. In that case we recommend ubuntu trusty (14.04). If you are using Docker, you can use any operating system with a recent Linux kernel that runs Docker. 
 
+**NOTE:** (WCC 2/13/2017) We will assume that beehive is installed on Ubuntu.  LastSsh.py assumes python3 is available from the host command line.  Others may follow.
+
 ### Docker
 
 To get the latest version of Docker in Ubuntu use this (simply copy-paste the whole block):
