@@ -34,19 +34,6 @@ if __name__ == '__main__':
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
 
-
-
-
-    for x in Cmd('whoami;  which ssh; which docker; /bin/docker ps', bPrint = True):
-        print(x)
-
-    # for x in Cmd('''/bin/docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "SELECT node_id, reverse_ssh_port FROM waggle.nodes;"''', bPrint = True):
-    for x in Cmd('''/bin/docker exec -t beehive-mysql mysql  -u waggle --password=waggle -e "SHOW databases;"''', bPrint = True): print(x)
-
-    #print('Exiting...')
-    #exit()
-
-
     sleepSeconds = 300
     while True:
         tStart = datetime.datetime.utcnow()
