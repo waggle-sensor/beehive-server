@@ -156,7 +156,7 @@ def get_nodes_last_update_dict(dataType = None):
     """
     Returns dictionary that maps node_id to the last_update of the specified data type.
     """
-    dataTypes = ['data', 'log', 'ssh']:
+    dataTypes = ['data', 'log', 'ssh']
     if dataType in dataTypes:
         statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_{}".format(dataType)
         cluster, rows = query(statement)
