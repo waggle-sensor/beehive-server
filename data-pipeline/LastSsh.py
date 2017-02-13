@@ -34,8 +34,10 @@ if __name__ == '__main__':
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
 
+    sleepSeconds = 300
     while True:
         tStart = datetime.datetime.utcnow()
+        if verbosity: print('starting ssh test of nodes at UTC', tStart)
         nSuccess = 0
         nNodes = 0
         nodeInfos = Cmd('/bin/docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -B --disable-column-names -e "use waggle; SELECT node_id, reverse_ssh_port FROM nodes;"')
@@ -51,7 +53,7 @@ if __name__ == '__main__':
                     if verbosity > 1: print('   try {}  {}...'.format(node_id, port))
                     #print('    ', cmd)
                     output = subprocess.check_output(cmd, shell = True, universal_newlines = True, timeout = 20)
-                    if verbosity > 0: print(nSuccess, node_id, '     ', output.strip())
+                    if verbosity > 0: print('{:>3d}. {}   {}'.format(nSuccess, node_id, output.strip()))
                     nSuccess += 1
                     
                     # if the command succeeds (no exception) write the value to the database
@@ -66,6 +68,8 @@ if __name__ == '__main__':
                 print(x)
         tEnd = datetime.datetime.utcnow()
         dtProcess = tEnd - tStart
-        print('################## all nodes ssh-tested in ', dtProcess, '. {} / {} successes'.format(nSuccess, nNodes))
+        if verbosity: print('finished ssh test of nodes at UTC', tEnd)
+        print('################## all nodes ssh-tested in ', dtProcess, '. {} / {} successes.  sleeping {}s ...'.format(nSuccess, nNodes, sleepSeconds))
         
+        time.sleep(sleepSeconds)
         
