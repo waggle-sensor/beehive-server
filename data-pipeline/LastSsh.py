@@ -37,6 +37,7 @@ if __name__ == '__main__':
     while True:
         tStart = datetime.datetime.utcnow()
         nSuccess = 0
+        nNodes = 0
         nodeInfos = Cmd('/bin/docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -B --disable-column-names -e "use waggle; SELECT node_id, reverse_ssh_port FROM nodes;"')
         for nodeInfo in nodeInfos:
             #print('nodeInfo = ', nodeInfo)
@@ -44,6 +45,7 @@ if __name__ == '__main__':
             if len(values) == 2: # and values[1] == '50027':
                 node_id, port = values
                 try:
+                    nNodes += 1
                     # sshpass is used to pass a bogus password of "" in case the node is improperly configured to require the password to be entered
                     cmd = """/bin/sshpass -p "" /bin/ssh -o StrictHostKeyChecking=no -o ProxyCommand='/usr/bin/docker exec -i beehive-sshd nc -q0 localhost {}' -i /mnt/ssh_keys/id_rsa_waggle_aot_ping waggle@ -- date 2> /dev/null""".format(port)
                     if verbosity > 1: print('   try {}  {}...'.format(node_id, port))
@@ -64,7 +66,6 @@ if __name__ == '__main__':
                 print(x)
         tEnd = datetime.datetime.utcnow()
         dtProcess = tEnd - tStart
-        print('################## all nodes ssh-tested in ', dtProcess, '. Had {} successes'.format(nSuccess))
-
+        print('################## all nodes ssh-tested in ', dtProcess, '. {} / {} successes'.format(nSuccess, nNodes))
         
         
