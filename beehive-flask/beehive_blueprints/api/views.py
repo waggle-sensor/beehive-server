@@ -115,7 +115,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
     if node_id_queried:
         whereClause = " WHERE node_id = '{}'".format(node_id_queried)
     elif bAllNodes:
-        whereClause = " WHERE opmode = 'active'"
+        whereClause = " WHERE opmode != 'testing'"
     else:
         whereClause = ""
 
