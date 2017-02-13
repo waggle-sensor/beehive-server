@@ -282,15 +282,15 @@ def api_all_dates():
 
 
 @api.route('/1/nodes_last_data/')
-def api_nodes_last_update():
+def api_nodes_last_data():
     return jsonify(export.get_nodes_last_update_dict('data'))
 
 @api.route('/1/nodes_last_log/')
-def api_nodes_last_update():
+def api_nodes_last_log():
     return jsonify(export.get_nodes_last_update_dict('log'))
 
 @api.route('/1/nodes_last_ssh/')
-def api_nodes_last_update():
+def api_nodes_last_ssh():
     return jsonify(export.get_nodes_last_update_dict('ssh'))
 
 
