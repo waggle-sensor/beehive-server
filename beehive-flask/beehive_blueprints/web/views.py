@@ -60,7 +60,7 @@ def main_page():
     dtUtcNow = datetime.datetime.utcnow()
 
     # request last_update
-    dictLastUpdate = export.get_nodes_last_update_dict()
+    dictLastUpdate = export.get_nodes_last_update_dict('data')
 
     listRows = []
 

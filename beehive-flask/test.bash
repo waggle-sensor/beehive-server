@@ -53,7 +53,9 @@ if true; then
     url "${IP}/api/1/nodes/${NODE}/dates?version=2"
     url "${IP}/api/1/nodes/${NODE}/dates?version=2.1"
     
-    url ${IP}/api/1/nodes_last_update/
+    url "${IP}/api/1/nodes_last_data/"
+    url "${IP}/api/1/nodes_last_log/"
+    url "${IP}/api/1/nodes_last_ssh/"
     
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01"
     url "${IP}/api/1/nodes/${NODE}/export?date=2016-01-01&version=1"

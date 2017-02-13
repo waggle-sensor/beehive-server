@@ -152,14 +152,21 @@ def get_datasets(version):
     return datasets
 
 
-def get_nodes_last_update_dict():
+def get_nodes_last_update_dict(dataType = None):
     """
-    Returns dictionary that maps node_id to last_update.
-    Only works for version 2 data.
+    Returns dictionary that maps node_id to the last_update of the specified data type.
     """
-    statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_data"
-    cluster, rows = query(statement)
-    return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
+    dataTypes = ['data', 'log', 'ssh']:
+    if dataType in dataTypes:
+        statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_{}".format(dataType)
+        cluster, rows = query(statement)
+        result = dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
+    else:
+        print('illegal dataType: {}; must be one of : {}'.format(dataType, dataTypes))
+        result = {}
+        
+    return result
+    
 
 
 def get_nodes(bAllNodes = False):
