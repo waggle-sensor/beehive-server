@@ -157,7 +157,7 @@ def get_nodes_last_update_dict():
     Returns dictionary that maps node_id to last_update.
     Only works for version 2 data.
     """
-    statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_update"
+    statement = "SELECT node_id, blobAsBigInt(last_update) FROM waggle.nodes_last_data"
     cluster, rows = query(statement)
     return dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
 
