@@ -34,13 +34,26 @@ if __name__ == '__main__':
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
 
+
+
+
+    for x in Cmd('whoami;  which ssh; which docker; /bin/docker ps', bPrint = True):
+        print(x)
+
+    # for x in Cmd('''/bin/docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "SELECT node_id, reverse_ssh_port FROM waggle.nodes;"''', bPrint = True):
+    for x in Cmd('''/bin/docker exec -t beehive-mysql mysql  -u waggle --password=waggle -e "SHOW databases;"''', bPrint = True): print(x)
+
+    #print('Exiting...')
+    #exit()
+
+
     sleepSeconds = 300
     while True:
         tStart = datetime.datetime.utcnow()
         if verbosity: print('starting ssh test of nodes at UTC', tStart)
         nSuccess = 0
         nNodes = 0
-        nodeInfos = Cmd('/bin/docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -B --disable-column-names -e "use waggle; SELECT node_id, reverse_ssh_port FROM nodes;"')
+        nodeInfos = Cmd('/usr/bin/docker exec -t beehive-mysql mysql  -u waggle --password=waggle -B --disable-column-names -e "SELECT node_id, reverse_ssh_port FROM waggle.nodes;"')
         for nodeInfo in nodeInfos:
             #print('nodeInfo = ', nodeInfo)
             values = nodeInfo.split()
@@ -58,7 +71,7 @@ if __name__ == '__main__':
                     
                     # if the command succeeds (no exception) write the value to the database
                     timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-                    cmd = '''/bin/docker exec -it beehive-cassandra cqlsh -e "INSERT INTO waggle.nodes_last_ssh (node_id, last_update) VALUES ('{}', {})" '''.format(node_id, timestamp)
+                    cmd = '''/bin/docker exec -t beehive-cassandra cqlsh -e "INSERT INTO waggle.nodes_last_ssh (node_id, last_update) VALUES ('{}', {})" '''.format(node_id, timestamp)
                     Cmd(cmd)
                 except:
                     pass
