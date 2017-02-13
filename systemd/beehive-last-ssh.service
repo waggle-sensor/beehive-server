@@ -1,7 +1,7 @@
 [Unit]
 Description=Beehive Last SSH
 Requires=beehive-cassandra.service beehive-mysql.service
-After=beehive-cassandra.service
+After=beehive-cassandra.service beehive-mysql.service
 OnFailure=slack-notify-failure@%i.service
 
 [Service]
