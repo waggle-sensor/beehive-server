@@ -8,7 +8,6 @@ sys.path.append("/usr/lib/waggle/")
 sys.path.append("/usr/lib/waggle/beehive-server")
 
 import argparse
-import binascii
 from cassandra.cluster import Cluster
 from cassandra.query import BatchStatement
 from cassandra import ConsistencyLevel
@@ -16,7 +15,6 @@ from cassandra.cqlengine.columns import Ascii
 from cassandra.cqlengine.usertype import UserType
 from config import *
 import datetime
-import json
 import logging 
 from multiprocessing import Process, Manager, Queue
 import pika
@@ -33,17 +31,22 @@ class LastUpdateProcess(Process):
         This process writes the most recent date of each node's incoming raw sample
     """
 
-    def __init__(self, q, verbosity = 0):
+    def __init__(self, q, mode, verbosity = 0):
         """
             Starts up the Data handling Process
         """
         super(LastUpdateProcess, self).__init__()
         
         self.q = q
-        self.input_exchange = 'data-pipeline-in'
-        self.queue          = 'last-update'
-        self.statement = "INSERT INTO    nodes_last_update   (node_id, last_update) VALUES (?, ?)"
-            
+        if mode == 'logs':
+            self.input_exchange = 'logs'
+            self.queue          = 'last-log'
+            self.statement = "INSERT INTO nodes_last_log  (node_id, last_update) VALUES (?, ?)"
+        else:
+            self.input_exchange = 'data-pipeline-in'
+            self.queue          = 'last-data'
+            self.statement = "INSERT INTO nodes_last_data (node_id, last_update) VALUES (?, ?)"
+        
         logger.info("Initializing LastUpdateProcess")
         
         # Set up the Rabbit connection
@@ -76,6 +79,7 @@ class LastUpdateProcess(Process):
         self.channel.queue_bind(exchange = self.input_exchange,
             queue = self.queue)
         
+        
         try: 
             self.channel.basic_consume(self.callback, queue=self.queue)
         except KeyboardInterrupt:
@@ -96,10 +100,10 @@ class LastUpdateProcess(Process):
         '''
         try:
             node_id     = props.reply_to
-            self.q.put(node_id)
+            self.q.put(node_id, block = False)
             if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
-            logger.error("Error inserting data: %s" % (str(e)))
+            logger.error("Error inserting (queue size = %d)  data = %s" % (self.q.qsize(), str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
@@ -148,7 +152,8 @@ class LastUpdateProcess(Process):
                 continue
             
             break
-        logger.debug('cassandra_insert() exiting...')
+        if verbosity > 1:
+            logger.debug('cassandra_insert() exiting...')
 
     def cassandra_connect(self):
         bDone = False
@@ -189,29 +194,35 @@ class LastUpdateProcess(Process):
    
 if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
+    argParser.add_argument('dataToTrack', choices = ['data', 'logs'], help = 'which stream of data to track')
     argParser.add_argument('--verbose', '-v', action='count')
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    q = Queue(2000)
-    p = LastUpdateProcess(q, verbosity)
+    q = Queue(1000)
+    p = LastUpdateProcess(q, args.dataToTrack, verbosity)
     p.start()
     
     print(__name__ + ': created process ', p)
-    time.sleep(10)   
+    time.sleep(10)
     
     while p.is_alive():
+        # stage 1 - empty queue to setUpdated
+        for _i in range(30):
+            while not q.empty():
+                setUpdated.add(q.get())
+            if verbosity: print('len(setUpdated) = ', len(setUpdated))
+            time.sleep(1)
+        
+        # stage 2 - periodically write setUpdated to db
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
-        while not q.empty():
-            setUpdated.add(q.get())
-        if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize(), 'len(setUpdated) = ', len(setUpdated))
+        if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize())
         for node_id in setUpdated:
             values = (node_id, timestamp)
             p.cassandra_insert(values)
             if verbosity > 1: print('  writing:  ', node_id)
         setUpdated.clear()
-        time.sleep(30)
         
     print(__name__ + ': process is dead, time to die')
     p.join()    
