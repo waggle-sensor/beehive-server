@@ -181,13 +181,21 @@ def get_nodes_offline_dict():
         all_nodes[node_id] = start_time
     
     return all_nodes
+
     
-def node_offline_clear(node_id):
-    """ clears the offline entry for a single node
+def set_node_offline(node_id, bOffline = True):
+    """ if bOffline == True, sets the offline entry for a single node to the current time
+        if bOffline == False, clears the offline entry
     """
-    query = "DELETE FROM waggle.node_offline WHERE node_id = {}".format(node_id)
-    db = get_mysql_db()
-    db.query_all(query)
+    try:
+        db = get_mysql_db()
+        
+        db.query_all("DELETE FROM waggle.node_offline WHERE node_id = {}".format(node_id))
+        
+        if bOffline:
+            db.query_all("INSERT INTO waggle.node_offline (node_id) VALUES ({})".format(node_id))
+    except:
+        print('ERROR: operation failed!')
 
 
 def get_nodes(bAllNodes = False):
@@ -198,14 +206,14 @@ def get_nodes(bAllNodes = False):
     # limit the output with a WHERE clause if bAllNodes is false
     whereClause = " " if bAllNodes else " WHERE opmode != 'testing' "
 
-    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated FROM nodes {};".format(whereClause)
+    query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode FROM nodes {};".format(whereClause)
 
     logger.debug(' query = ' + query)
 
     mysql_nodes_result = db.query_all(query)
 
     for result in mysql_nodes_result:
-        node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated = result
+        node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode = result
 
         if not node_id:
             continue
@@ -220,8 +228,10 @@ def get_nodes(bAllNodes = False):
             'reverse_ssh_port': reverse_ssh_port,
             'name': name,
             'location': location,
-            'last_updated': last_updated
+            'last_updated': last_updated,
+            'opmode' : opmode
         }
+
 
     if bAllNodes:
         nodes_dict = list_node_dates()
