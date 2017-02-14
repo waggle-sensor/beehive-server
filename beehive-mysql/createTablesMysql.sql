@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS software (
     time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS `node_offline` (
-  node_id               VARCHAR(16) NOT NULL PRIMARY_KEY,
+CREATE TABLE IF NOT EXISTS node_offline (
+  node_id               VARCHAR(16) NOT NULL,
   start_time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
