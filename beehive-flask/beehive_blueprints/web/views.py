@@ -49,12 +49,12 @@ def web_wcc_test():
     return ''.join(rl)
 
 durations_human_readable = [
-    ('year', datetime.timedelta(days = 365).total_seconds()),
-    ('month', datetime.timedelta(days = 30).total_seconds()),
-    ('week', datetime.timedelta(days = 7).total_seconds()),
-    ('day', datetime.timedelta(days = 1).total_seconds()),
-    ('hour', datetime.timedelta(seconds = 3600).total_seconds()),
-    ('minute', datetime.timedelta(seconds = 60).total_seconds()),
+    ('yr', datetime.timedelta(days = 365).total_seconds()),
+    ('mo', datetime.timedelta(days = 30).total_seconds()),
+    ('wk', datetime.timedelta(days = 7).total_seconds()),
+    ('d', datetime.timedelta(days = 1).total_seconds()),
+    ('hr', datetime.timedelta(seconds = 3600).total_seconds()),
+    ('m', datetime.timedelta(seconds = 60).total_seconds()),
 ]
 
 def timedelta_to_human_readable(delta):
@@ -64,7 +64,7 @@ def timedelta_to_human_readable(delta):
     for dur in durations_human_readable:
         if delta_seconds >= dur[1]:
             num = int(delta_seconds / dur[1])
-            s = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
+            s = '{} {}'.format(num, dur[0])
             break
     return s
 
@@ -89,7 +89,7 @@ def main_page_new():
     all_nodes = export.get_nodes(bAllNodes)
 
     # header row
-    headings = ['Vinyl Sticker Number', 'Node ID', 'Description', 'Location', 'Status', 'Last Connection', 'Last Data']
+    headings = ['Name/<br>VSN*', 'Node ID', 'Description', 'Location', 'Status', 'Last Connection', 'Last Data']
     listRows.append('<tr>' + ''.join(['<td align="center"><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n')
 
     # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
@@ -169,16 +169,40 @@ def main_page_new():
             duration_string = timedelta_to_human_readable(delta)
             last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, duration_string, s)
 
-        status = "S'all good"
+        # last connection (most recent of all 3 last_update's)
+        latest = None
+        last_connection = '<td></td>'
+        for t in lastUpdateTypes:
+            if node_id in dictLastUpdate[t]:
+                if latest == None or dictLastUpdate[t][node_id] > latest:
+                    latest = dictLastUpdate[t][node_id]
+        if latest:
+            dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
+            #s = dt.isoformat(sep = ' ')
+            sLastConnection = dtLastConnection.strftime("%Y-%m-%d %H:%M:%S")
+            last_connection = '<td align="left"><tt>{}</tt></td>'.format(sLastConnection)
+        
+        # Compute the Status
+        status = '<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
+        if opmode == 'testing':
+            status = '<td align="center" style="background-color:#8888ff">Testing</td>'  # this shouldn't print in generic user mode
+        elif node_id in dictOffline and dictOffline[node_id] > dtUtcNow - datetime.timedelta(hours = 1):
+            status = '<td align="center" style="background-color:#666666">Offline</td>'
+        elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 1)): 
+            status = '<td align="center" style="background-color:#00ff00">Alive</td>'
+        else:
+            status = '<td align="center" style="background-color:#ff0000">Dead</td>'
+        
         listRows.append('''<tr>
             <td align="right"><tt>%s</tt></td>
             <td><a href="%snodes/%s"><tt>%s</tt></a></td>
             <td>%s</td>
             <td>%s</td>
-            <td>%s</td>
+            %s
+            %s
             %s
             </tr>'''                \
-            % (name, web_host, node_id, node_id, description, location, status, last_data, last_data))
+            % (name, web_host, node_id, node_id, description, location, status, last_connection, last_data))
 
     return render_template('nodes.html',
         api_url = api_url,
