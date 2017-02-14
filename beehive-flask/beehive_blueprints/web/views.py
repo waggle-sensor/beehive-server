@@ -57,16 +57,36 @@ durations_human_readable = [
     ('m', datetime.timedelta(seconds = 60).total_seconds()),
 ]
 
-def timedelta_to_human_readable(delta):
-    s = '1 minute ago'
-    delta_seconds = delta.total_seconds()
+def pretty_print_last_update(dtNow, timestampUpdate):
+    if timestampUpdate == None:
+        last_data = '<td></td>'
+    else:
+        duration_string = ''
 
-    for dur in durations_human_readable:
-        if delta_seconds >= dur[1]:
-            num = int(delta_seconds / dur[1])
-            s = '{} {}'.format(num, dur[0])
-            break
-    return s
+        dt = datetime.datetime.utcfromtimestamp(float(timestampUpdate) / 1000.0)
+        s = dt.strftime("%Y-%m-%d %H:%M:%S")
+        delta = dtNow - dt
+        if False: #bAllNodes:
+            color = timeToColors[-1][1] # negative time - should correspond to last value
+            for tuple in timeToColors:
+                if delta > tuple[0]:
+                    color = tuple[1]
+                    break
+        else:
+            color = '#ffffff'
+                
+        # human readable duration
+        sHuman = '1 m'
+        delta_seconds = delta.total_seconds()
+
+        for dur in durations_human_readable:
+            if delta_seconds >= dur[1]:
+                num = int(delta_seconds / dur[1])
+                sHuman = '{} {}'.format(num, dur[0])
+                break
+
+        last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
+    return last_data
 
 @web.route("/new")
 def main_page_new():
@@ -146,42 +166,25 @@ def main_page_new():
 
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
-        # last_data contains its own <td> and </td> because it modifies them for color
-        # eg. <td style="background-color:#FF0000">
-        last_data = '<td></td>'
-        duration_string = ''
-
+        
         if node_id in dictLastUpdateData:
-            dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdateData[node_id])/1000.0)
-            #s = dt.isoformat(sep = ' ')
-            s = dt.strftime("%Y-%m-%d %H:%M:%S")
-            delta = dtUtcNow - dt
-            if bAllNodes:
-                color = timeToColors[-1][1] # negative time - should correspond to last value
-                for tuple in timeToColors:
-                    if delta > tuple[0]:
-                        color = tuple[1]
-                        break
-            else:
-                color = '#ffffff'
-
-            # human-readable duration
-            duration_string = timedelta_to_human_readable(delta)
-            last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, duration_string, s)
+            last_data = pretty_print_last_update(dtUtcNow, dictLastUpdateData[node_id])
+        else:
+            last_data = '<td></td>'
 
         # last connection (most recent of all 3 last_update's)
         latest = None
-        last_connection = '<td></td>'
         for t in lastUpdateTypes:
             if node_id in dictLastUpdate[t]:
                 if latest == None or dictLastUpdate[t][node_id] > latest:
                     latest = dictLastUpdate[t][node_id]
+
         if latest:
             dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
-            #s = dt.isoformat(sep = ' ')
-            sLastConnection = dtLastConnection.strftime("%Y-%m-%d %H:%M:%S")
-            last_connection = '<td align="left"><tt>{}</tt></td>'.format(sLastConnection)
-        
+            last_connection = pretty_print_last_update(dtUtcNow, latest)
+        else:
+            last_connection = '<td></td>'
+
         # Compute the Status
         status = '<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
         if opmode == 'testing':
