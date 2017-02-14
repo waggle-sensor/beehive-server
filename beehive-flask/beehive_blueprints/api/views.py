@@ -293,7 +293,12 @@ def api_nodes_last_log():
 def api_nodes_last_ssh():
     return jsonify(export.get_nodes_last_update_dict('ssh'))
 
-
+    
+@api.route('/1/nodes_offline/')
+def api_nodes_offline():
+    return jsonify(export.get_nodes_offline_dict())
+    
+    
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):
     date = request.args.get('date')

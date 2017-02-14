@@ -166,7 +166,28 @@ def get_nodes_last_update_dict(dataType = None):
         result = {}
         
     return result
+
+def get_nodes_offline_dict():
+    """
+    Returns dictionary that maps node_id to the start_time of OFFLINE state
+    """
+    all_nodes = {}
+
+    query = "SELECT node_id, start_time FROM waggle.node_offline"
+    db = get_mysql_db()
+    query_result = db.query_all(query)
+    for result in query_result:
+        node_id, start_time = result
+        all_nodes[node_id] = start_time
     
+    return all_nodes
+    
+def node_offline_clear(node_id):
+    """ clears the offline entry for a single node
+    """
+    query = "DELETE FROM waggle.node_offline WHERE node_id = {}".format(node_id)
+    db = get_mysql_db()
+    db.query_all(query)
 
 
 def get_nodes(bAllNodes = False):
