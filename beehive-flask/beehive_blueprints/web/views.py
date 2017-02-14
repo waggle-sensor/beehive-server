@@ -48,6 +48,145 @@ def web_wcc_test():
     rl.append('debug :  {}'.format(debug))
     return ''.join(rl)
 
+durations_human_readable = [
+    ('year', datetime.timedelta(days = 365).total_seconds()),
+    ('month', datetime.timedelta(days = 30).total_seconds()),
+    ('week', datetime.timedelta(days = 7).total_seconds()),
+    ('day', datetime.timedelta(days = 1).total_seconds()),
+    ('hour', datetime.timedelta(seconds = 3600).total_seconds()),
+    ('minute', datetime.timedelta(seconds = 60).total_seconds()),
+]
+
+def timedelta_to_human_readable(delta):
+    s = '1 minute ago'
+    delta_seconds = delta.total_seconds()
+
+    for dur in durations_human_readable:
+        if delta_seconds >= dur[1]:
+            num = int(delta_seconds / dur[1])
+            s = '{} {}{} ago'.format(num, dur[0], '' if num < 2 else 's')
+            break
+    return s
+
+@web.route("/new")
+def main_page_new():
+
+    api_call = web_host + '/api/1/'
+
+    # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
+    bAllNodes = request.args.get('all', 'false').lower() == 'true'
+
+    dtUtcNow = datetime.datetime.utcnow()
+
+    # request last_update info
+    lastUpdateTypes = ['data', 'log', 'ssh']
+    dictLastUpdate = {t : export.get_nodes_last_update_dict(t) for t in lastUpdateTypes}
+    dictLastUpdateData = dictLastUpdate['data']
+    dictOffline = export.get_nodes_offline_dict()
+
+    listRows = []
+
+    all_nodes = export.get_nodes(bAllNodes)
+
+    # header row
+    headings = ['Vinyl Sticker Number', 'Node ID', 'Description', 'Location', 'Status', 'Last Connection', 'Last Data']
+    listRows.append('<tr>' + ''.join(['<td align="center"><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n')
+
+    # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
+    # find the first timedelta that is smaller than the data's timestamp's
+    timeToColors = [
+        (datetime.timedelta(days = 1),  '#ff3333'),      # dead = red
+        (datetime.timedelta(hours = 2), '#ff8000'),     # dying = orange
+        (datetime.timedelta(minutes = 5), '#ffff00'),   # just starting to die = yellow
+        (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
+        (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
+    ]
+    # one row per node
+
+    nodes_sorted = list()
+    for node_id in all_nodes:
+
+        node_obj = all_nodes[node_id]
+        node_id = node_id.encode('ascii','replace').lower().decode()
+
+        description = ''
+        if u'description' in node_obj:
+            if node_obj[u'description']:
+                description = node_obj[u'description'].encode('ascii','replace').decode()
+        """
+        hostname = ''
+        if u'hostname' in node_obj:
+            if node_obj[u'hostname']:
+                hostname = node_obj[u'hostname'].encode('ascii','replace').decode()
+        """
+        name = ''
+        if u'name' in node_obj:
+            if node_obj[u'name']:
+                name = node_obj[u'name'].encode('ascii','replace').decode()
+
+        location = ''
+        if u'location' in node_obj:
+            if node_obj[u'location']:
+                location = node_obj[u'location'].encode('ascii','replace').decode()
+
+        opmode = ''
+        if u'opmode' in node_obj:
+            if node_obj[u'opmode']:
+                opmode = node_obj[u'opmode'].encode('ascii','replace').decode()
+
+        nodes_sorted.append((node_id, name, description, location, opmode))
+
+    # sort the list
+    def EmptyStringsLast(v):
+        return v if v != '' else 'ZZZZZZ'
+    def MyKey(x):
+        return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]), EmptyStringsLast(x[0]))
+
+    nodes_sorted.sort(key = lambda x: MyKey(x))
+
+    for node_tuple in nodes_sorted:
+        node_id, name, description, location, opmode = node_tuple
+        # last_data contains its own <td> and </td> because it modifies them for color
+        # eg. <td style="background-color:#FF0000">
+        last_data = '<td></td>'
+        duration_string = ''
+
+        if node_id in dictLastUpdateData:
+            dt = datetime.datetime.utcfromtimestamp(float(dictLastUpdateData[node_id])/1000.0)
+            #s = dt.isoformat(sep = ' ')
+            s = dt.strftime("%Y-%m-%d %H:%M:%S")
+            delta = dtUtcNow - dt
+            if bAllNodes:
+                color = timeToColors[-1][1] # negative time - should correspond to last value
+                for tuple in timeToColors:
+                    if delta > tuple[0]:
+                        color = tuple[1]
+                        break
+            else:
+                color = '#ffffff'
+
+            # human-readable duration
+            duration_string = timedelta_to_human_readable(delta)
+            last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, duration_string, s)
+
+        status = "S'all good"
+        listRows.append('''<tr>
+            <td align="right"><tt>%s</tt></td>
+            <td><a href="%snodes/%s"><tt>%s</tt></a></td>
+            <td>%s</td>
+            <td>%s</td>
+            <td>%s</td>
+            %s
+            </tr>'''                \
+            % (name, web_host, node_id, node_id, description, location, status, last_data, last_data))
+
+    return render_template('nodes.html',
+        api_url = api_url,
+        utc_now = dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"),
+        list_rows = listRows)
+
+
+        
 
 @web.route("/")
 def main_page():
@@ -172,8 +311,8 @@ def main_page():
         api_url = api_url,
         utc_now = dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"),
         list_rows = listRows)
-
-
+        
+        
 @web.route('/nodes/<node_id>/')
 def web_node_page(node_id):
     logger.debug('GET web_node_page()  node_id = {}'.format(node_id))
