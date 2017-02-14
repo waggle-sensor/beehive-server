@@ -162,7 +162,7 @@ def get_nodes_last_update_dict(dataType = None):
         cluster, rows = query(statement)
         result = dict((nodeid.lower(), timestamp) for nodeid, timestamp in rows)
     else:
-        print('illegal dataType: {}; must be one of : {}'.format(dataType, dataTypes))
+        print('illegal dataType: {}; must be one of : {}'.format(dataType, str(dataTypes)))
         result = {}
         
     return result

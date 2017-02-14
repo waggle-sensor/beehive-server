@@ -101,7 +101,6 @@ def main_page_new():
     # request last_update info
     lastUpdateTypes = ['data', 'log', 'ssh']
     dictLastUpdate = {t : export.get_nodes_last_update_dict(t) for t in lastUpdateTypes}
-    dictLastUpdateData = dictLastUpdate['data']
     dictOffline = export.get_nodes_offline_dict()
 
     listRows = []
@@ -110,6 +109,7 @@ def main_page_new():
 
     # header row
     headings = ['Name/<br>VSN*', 'Node ID', 'Description', 'Location', 'Status', 'Last Connection', 'Last Data']
+    if bAllNodes:  headings.extend(['Last SSH', 'Last Log'])
     listRows.append('<tr>' + ''.join(['<td align="center"><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n')
 
     # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
@@ -167,10 +167,14 @@ def main_page_new():
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
         
-        if node_id in dictLastUpdateData:
-            last_data = pretty_print_last_update(dtUtcNow, dictLastUpdateData[node_id])
+        last_data = pretty_print_last_update(dtUtcNow, dictLastUpdate['data'].get(node_id))
+        if bAllNodes:
+            last_ssh  = pretty_print_last_update(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
+            last_log  = pretty_print_last_update(dtUtcNow, dictLastUpdate['log'].get(node_id))
+            # concatenate them into last_data so that it stores all 3
+            last_data = last_data + last_ssh + last_log
         else:
-            last_data = '<td></td>'
+            last_data = pretty_print_last_update(dtUtcNow, dictLastUpdate['data'].get(node_id))
 
         # last connection (most recent of all 3 last_update's)
         latest = None
@@ -181,9 +185,7 @@ def main_page_new():
 
         if latest:
             dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
-            last_connection = pretty_print_last_update(dtUtcNow, latest)
-        else:
-            last_connection = '<td></td>'
+        last_connection = pretty_print_last_update(dtUtcNow, latest)
 
         # Compute the Status
         status = '<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
@@ -197,7 +199,7 @@ def main_page_new():
             status = '<td align="center" style="background-color:#ff0000">Dead</td>'
         
         listRows.append('''<tr>
-            <td align="right"><tt>%s</tt></td>
+            <td align="right"><tt><b>%s</b></tt></td>
             <td><a href="%snodes/%s"><tt>%s</tt></a></td>
             <td>%s</td>
             <td>%s</td>
