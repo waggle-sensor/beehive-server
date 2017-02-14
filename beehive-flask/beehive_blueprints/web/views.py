@@ -97,6 +97,7 @@ def main_page_new():
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
 
     dtUtcNow = datetime.datetime.utcnow()
+    deltaOfflineMin = datetime.timedelta(minutes = 2) # minimum duration to keep a node offline
 
     # request last_update info
     lastUpdateTypes = ['data', 'log', 'ssh']
@@ -172,9 +173,9 @@ def main_page_new():
             last_ssh  = pretty_print_last_update(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
             last_log  = pretty_print_last_update(dtUtcNow, dictLastUpdate['log'].get(node_id))
             # concatenate them into last_data so that it stores all 3
-            last_data = last_data + last_ssh + last_log
+            last_updates = last_data + last_ssh + last_log
         else:
-            last_data = pretty_print_last_update(dtUtcNow, dictLastUpdate['data'].get(node_id))
+            last_updates = last_data
 
         # last connection (most recent of all 3 last_update's)
         latest = None
@@ -187,12 +188,34 @@ def main_page_new():
             dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
         last_connection = pretty_print_last_update(dtUtcNow, latest)
 
-        # Compute the Status
+        # offline status 
+        bOffline = False
+        if node_id in dictOffline:
+            dtOfflineStart = datetime.datetime.utcfromtimestamp(float(dictOffline[node_id]))
+            dtOfflineEnd = dtOfflineStart + deltaOfflineMin
+            print('node_id = {}, dtOfflineStart = {}, dtOfflineEnd = {} dtUtcNow = {}'.format(node_id, dtOfflineStart.strftime("%Y-%m-%d %H:%M:%S"), dtOfflineEnd.strftime("%Y-%m-%d %H:%M:%S"), dtUtcNow.strftime("%Y-%m-%d %H:%M:%S")))
+            if dtUtcNow < dtOfflineEnd:
+                # offline period has not expired yet
+                bOffline = True
+            elif latest == None:
+                # no communication happened yet
+                bOffline = True
+            elif dtLastConnection < dtOfflineEnd:
+                # the last communication was before the expiration period
+                bOffline = True
+            else:   # the last communication happened after the expiration period
+                bOffline = False
+                
+            # clear the offline flag if it changed to False
+            if not bOffline:
+                export.set_node_offline(node_id, False)
+                
+        # compute the status
         status = '<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
         if opmode == 'testing':
             status = '<td align="center" style="background-color:#8888ff">Testing</td>'  # this shouldn't print in generic user mode
-        elif node_id in dictOffline and dictOffline[node_id] > dtUtcNow - datetime.timedelta(hours = 1):
-            status = '<td align="center" style="background-color:#666666">Offline</td>'
+        elif bOffline:
+            status = '<td align="center" style="background-color:#aaaaaa">Offline</td>'
         elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 1)): 
             status = '<td align="center" style="background-color:#00ff00">Alive</td>'
         else:
@@ -207,7 +230,7 @@ def main_page_new():
             %s
             %s
             </tr>'''                \
-            % (name, web_host, node_id, node_id, description, location, status, last_connection, last_data))
+            % (name, web_host, node_id, node_id, description, location, status, last_connection, last_updates))
 
     return render_template('nodes.html',
         api_url = api_url,
