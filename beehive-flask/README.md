@@ -1,8 +1,8 @@
 
-# Beehive API server
+# Beehive Flask server
  
 
-This is the Beehive API server. 
+This is the Beehive Flask server. 
 
 ## OS Dependencies
 
