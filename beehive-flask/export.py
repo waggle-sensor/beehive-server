@@ -173,7 +173,7 @@ def get_nodes_offline_dict():
     """
     all_nodes = {}
 
-    query = "SELECT node_id, start_time FROM waggle.node_offline"
+    query = "SELECT node_id, UNIX_TIMESTAMP(start_time) FROM waggle.node_offline"
     db = get_mysql_db()
     query_result = db.query_all(query)
     for result in query_result:
