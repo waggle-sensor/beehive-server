@@ -22,7 +22,7 @@ from waggle.protocol.utils.mysql import *
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
-logger = logging.getLogger('beehive-api')
+logger = logging.getLogger('beehive-flask')
 logger.setLevel(logging.INFO)
 
 handler = JournalHandler()
