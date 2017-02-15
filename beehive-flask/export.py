@@ -190,7 +190,10 @@ def set_node_offline(node_id, bOffline = True):
     try:
         db = get_mysql_db()
         
-        db.query_all("DELETE FROM waggle.node_offline WHERE LOWER(node_id) = LOWER('{}');".format(node_id))
+        query = "DELETE FROM waggle.node_offline WHERE LOWER(node_id) = '{}';".format(node_id.lower())
+        print('QUERY = ', query)
+        for x in db.query_all(query):
+            print(x)
         
         if bOffline:
             db.query_all("INSERT INTO waggle.node_offline (node_id) VALUES ('{}');".format(node_id))
