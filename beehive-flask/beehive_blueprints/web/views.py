@@ -208,6 +208,7 @@ def main_page_new():
                 
             # clear the offline flag if it changed to False
             if not bOffline:
+                print('############# CLEARING OFFLINE!!!!!!!!!!!!!!!!!!!!')
                 export.set_node_offline(node_id, False)
                 
         # compute the status
