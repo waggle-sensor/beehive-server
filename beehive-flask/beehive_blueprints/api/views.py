@@ -114,7 +114,7 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
     if node_id_queried:
         whereClause = " WHERE node_id = '{}'".format(node_id_queried)
-    elif bAllNodes:
+    elif not bAllNodes:
         whereClause = " WHERE opmode != 'testing'"
     else:
         whereClause = ""
