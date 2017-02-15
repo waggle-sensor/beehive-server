@@ -22,16 +22,19 @@ def Cmd(command, bPrint = False):
 if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
     argParser.add_argument('command', choices = ['set', 'clear', 'list'])
-    argParser.add_argument('node_id')    
+    argParser.add_argument('node_id', nargs = '?')    
     argParser.add_argument('--verbose', '-v', action='count')
     args = argParser.parse_args()
+    print('args = ', args)
 
+    node_id = args.node_id.lower()
+    
     if args.command == 'list':
         result = Cmd('docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -B --disable-column-names -e "SELECT * FROM waggle.node_offline;"')
     else:
-        query0 = "DELETE FROM waggle.node_offline WHERE node_id = '{}';".format(args.node_id)
+        query0 = "DELETE FROM waggle.node_offline WHERE node_id = '{}';".format(node_id)
         if args.command == 'set':
-            query1 = "INSERT INTO waggle.node_offline (node_id) VALUES ('{}');".format(args.node_id)
+            query1 = "INSERT INTO waggle.node_offline (node_id) VALUES ('{}');".format(node_id)
         else:
             query1 = ''
         result = Cmd('''docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "{}" '''.format(query0 + query1))
