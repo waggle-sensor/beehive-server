@@ -97,7 +97,7 @@ def main_page_new():
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
 
     dtUtcNow = datetime.datetime.utcnow()
-    deltaOfflineMin = datetime.timedelta(minutes = 2) # minimum duration to keep a node offline
+    deltaOfflineMin = datetime.timedelta(seconds = 30) # minimum duration to keep a node offline
 
     # request last_update info
     lastUpdateTypes = ['data', 'log', 'ssh']
