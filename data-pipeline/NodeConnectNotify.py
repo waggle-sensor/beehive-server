@@ -66,9 +66,9 @@ if __name__ == '__main__':
                        'data down:   Node {}')
         },
         'ssh' : {
-            True :  (':white_check_mark: :phone:', 
+            True :  (':white_check_mark: :shell:', 
                         'SSH up  :   Node {}'),
-            False : (':x: :phone:', 
+            False : (':x: :shell:', 
                         'SSH down:   Node {}')
         },
         'online' : {
