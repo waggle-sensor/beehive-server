@@ -252,7 +252,7 @@ def get_node_logs(node_id):
 
     maxBytes = 10000
     logFilePath = '/mnt/beehive/node-logs/'
-    if True: #try:
+    try:
         filename = logFilePath + node_id.strip().lower()
         logger.info('filename = "{}"'.format(filename))
         with open(filename, 'r') as f:
@@ -264,7 +264,7 @@ def get_node_logs(node_id):
             else:
                 f.seek(0)       # seek to start of file to read the whole thing
             result = f.read()
-    if False: #except:
+    except:
         result = ''
     return result
     
