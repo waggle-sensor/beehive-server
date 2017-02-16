@@ -1,0 +1,14 @@
+[Unit]
+Description=Beehive Node Connection Notify
+Requires=beehive-flask.service
+After=beehive-flask.service
+OnFailure=slack-notify-failure@%i.service
+
+[Service]
+Restart=on-failure
+RestartSec=1m
+
+ExecStart=/bin/python3 -u /root/git/beehive-server/data-pipeline/NodeConnectionNotify.py -v
+
+[Install]
+WantedBy=multi-user.target
