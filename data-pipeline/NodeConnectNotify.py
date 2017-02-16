@@ -37,13 +37,14 @@ if __name__ == '__main__':
     argParser.add_argument('-q', '--quiet', action = 'store_true', help = 'does not transmit messages to slack or to logfile')
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
+    if verbosity: print('args =', args)
 
     if args.debug: # debug values for rapid iteration
         timedeltaDataMax = datetime.timedelta(seconds = 10)
         timedeltaSshMax = datetime.timedelta(seconds = 13)
         sleepSeconds = 10
-        #web_url = 'http://beehive1.mcs.anl.gov/'   # for running from outside machine
-        web_url = 'http://localhost:/'      # for on beehive server
+        web_url = 'http://beehive1.mcs.anl.gov/'   # for running from outside machine
+        #web_url = 'http://localhost:/'      # for on beehive server
         logFilePath = '/home/wcatino/nodeLogs/'
     else:
         timedeltaDataMax = datetime.timedelta(minutes = 10)
@@ -95,7 +96,7 @@ if __name__ == '__main__':
         # load the list of nodes
         r = requests.get(web_url + 'api/1/nodes')
         node_full_info = json.loads(r.text)['data']
-        nodes_list = {x : node_info[x].get('name', '') for x in node_full_info}
+        nodes_list = {x : node_full_info[x].get('name', '') for x in node_full_info}
         if verbosity > 1: print(json.dumps(nodes_list, indent = 4))
         
         # load the webpage just to force the update of the OFFLINE state
@@ -162,7 +163,8 @@ if __name__ == '__main__':
                 msgLines = []
                 for n in nodeNotifications:
                     e = events[n[0]][n[1]]
-                    msgLines.append('"{} {}"'.format(e[0], e[1].format(node_id)))  # concatenate the emoji and the text
+                    strNode = '`{}` ({})'.format(node_id, nodes_list[node_id])
+                    msgLines.append('"{} {}  at {}"'.format(e[0], e[1].format(strNode), tStartString))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
                 if not args.quiet: 
                     Cmd('/bin/slack-ops ' + msg)
@@ -172,7 +174,8 @@ if __name__ == '__main__':
                 msgLines = []
                 for n in nodeNotifications:
                     e = events[n[0]][n[1]]
-                    msgLines.append(tStartString + '  ' + e[1].format(node_id) + '\n')  # send just the text
+                    strNode = '{} ({})'.format(node_id, nodes_list[node_id])
+                    msgLines.append(tStartString + '  ' + e[1].format(strNode) + '\n')  # send just the text
                 msg = ''.join(msgLines)
                 if verbosity: print('LOGFILE: ' + msg)
                 
