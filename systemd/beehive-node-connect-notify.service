@@ -1,7 +1,7 @@
 [Unit]
 Description=Beehive Node Connect Notify
-Requires=beehive-flask.service
-After=beehive-flask.service
+#Requires=beehive-flask.service
+#After=beehive-flask.service
 OnFailure=slack-notify-failure@%i.service
 
 [Service]
