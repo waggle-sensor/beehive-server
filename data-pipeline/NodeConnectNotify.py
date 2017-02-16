@@ -58,19 +58,19 @@ if __name__ == '__main__':
     dataSets = [('lastData', 'nodes_last_data'), ('lastSsh', 'nodes_last_ssh'), ('offline', 'nodes_offline')]
     events = {
         'data' : {
-            True :  (':white_checkmark: :chart_with_upwards_trend:', 
+            True :  (':white_check_mark: :chart_with_upwards_trend:', 
                        'Node {} data up'),
             False : (':x: :chart_with_upwards_trend:', 
                        'Node {} data down')
         },
         'ssh' : {
-            True :  (':white_checkmark: :phone:', 
+            True :  (':white_check_mark: :phone:', 
                         'Node {} SSH down'),
             False : (':x: :phone:', 
                         'Node {} SSH down')
         },
         'online' : {
-            True :  (':white_checkmark: :electric_plug:', 
+            True :  (':white_check_mark: :electric_plug:', 
                         'Node {} ONline'),
             False : (':x: :electric_plug:', 
                         'Node {} OFFline')
