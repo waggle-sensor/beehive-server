@@ -83,7 +83,7 @@ if __name__ == '__main__':
     while True:
         tStart = datetime.datetime.utcnow()
         tStartString = tStart.strftime("%Y-%m-%d %H:%M:%S")
-        if verbosity: print('starting node status at UTC', tStart)
+        if verbosity: print('starting node status at UTC', tStartString)
 
         statePrev = stateCurrent
         stateCurrent = {}
