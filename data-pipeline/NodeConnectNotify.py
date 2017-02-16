@@ -10,7 +10,7 @@ import sys
 import time
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('beehive-node-control-notify')
 logger.setLevel(logging.DEBUG)
 
 """ Check last update of all nodes - update OFFLINE info
