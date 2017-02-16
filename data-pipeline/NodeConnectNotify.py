@@ -45,13 +45,13 @@ if __name__ == '__main__':
         sleepSeconds = 10
         web_url = 'http://beehive1.mcs.anl.gov/'   # for running from outside machine
         #web_url = 'http://localhost:/'      # for on beehive server
-        logFilePath = '/home/wcatino/nodeLogs/'
+        logFilePath = '/home/wcatino/node-logs/'
     else:
         timedeltaDataMax = datetime.timedelta(minutes = 10)
         timedeltaSshMax = datetime.timedelta(minutes = 30)
         sleepSeconds = 300
         web_url = 'http://localhost:/'
-        logFilePath = '/mnt/beehive/nodeLogs/'
+        logFilePath = '/mnt/beehive/node-logs/'
         
     stateCurrent = {}
     statePrev = {}
