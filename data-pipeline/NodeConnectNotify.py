@@ -61,21 +61,21 @@ if __name__ == '__main__':
     events = {
         'data' : {
             True :  (':white_check_mark: :chart_with_upwards_trend:', 
-                       'Node {} data up'),
+                       'data up  :   Node {}'),
             False : (':x: :chart_with_upwards_trend:', 
-                       'Node {} data down')
+                       'data down:   Node {}')
         },
         'ssh' : {
             True :  (':white_check_mark: :phone:', 
-                        'Node {} SSH up'),
+                        'SSH up  :   Node {}'),
             False : (':x: :phone:', 
-                        'Node {} SSH down')
+                        'SSH down:   Node {}')
         },
         'online' : {
             True :  (':white_check_mark: :electric_plug:', 
-                        'Node {} ONline'),
+                        'ONline   :  Node {}'),
             False : (':x: :electric_plug:', 
-                        'Node {} OFFline')
+                        'OFFline  :  Node {}')
         }
     }
     
@@ -163,7 +163,7 @@ if __name__ == '__main__':
                 msgLines = []
                 for n in nodeNotifications:
                     e = events[n[0]][n[1]]
-                    strNode = '`{}` ({})'.format(node_id, nodes_list[node_id])
+                    strNode = "'{}' ({})".format(node_id, nodes_list[node_id])
                     msgLines.append('"{} {}  at {}"'.format(e[0], e[1].format(strNode), tStartString))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
                 if not args.quiet: 
