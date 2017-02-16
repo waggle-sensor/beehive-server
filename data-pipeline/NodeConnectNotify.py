@@ -159,7 +159,7 @@ if __name__ == '__main__':
                 msgLines = []
                 for n in nodeNotifications:
                     e = events[n[0]][n[1]]
-                    msgLines.append(e[0] + '  ' + e[1].format(node_id))  # concatenate the emoji and the text
+                    msgLines.append('"{} {}"'.format(e[0], e[1].format(node_id)))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
                 Cmd('/bin/slack-ops ' + msg)
                 if verbosity: print('SLACK: ' + msg)
