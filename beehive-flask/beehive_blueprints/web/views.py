@@ -418,3 +418,17 @@ def web_node_page(node_id):
         api_call = api_call,
         api_url = api_url,
         dateList = dateList)
+
+@web.route('/node/logs/<node_id>/')
+def web_node_logs_page(node_id):
+    logger.debug('GET web_node_logs_page()  node_id = {}'.format(node_id))
+
+    txt = get_node_logs(node_id)
+    if len(txt) > 0:
+        txt = '<br>'.join(txt.split('\n'))
+
+    return render_template('node_logs.html',
+        node_id = node_id,
+        utc_now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+        api_call = api_call)
+        

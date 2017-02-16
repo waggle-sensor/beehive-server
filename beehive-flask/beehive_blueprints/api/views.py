@@ -8,6 +8,7 @@ from flask import stream_with_context
 import logging
 from waggle.logging import JournalHandler
 from waggle.logging import SlackHandler
+import os
 import re
 import sys
 import time
@@ -297,7 +298,11 @@ def api_nodes_last_ssh():
 @api.route('/1/nodes_offline/')
 def api_nodes_offline():
     return jsonify(export.get_nodes_offline_dict())
-    
+
+@api.route('/1/nodes/<node_id>/logs')
+def api_logs(node_id):
+    logger.info("__ api_logs()  node_id = {}".format(node_id))
+    return get_node_logs(node_id)
     
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):

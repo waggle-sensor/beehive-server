@@ -244,3 +244,26 @@ def get_nodes(bAllNodes = False):
                 all_nodes[node_id]={}
 
     return all_nodes
+
+    
+def get_node_logs(node_id):
+    logger.info("__ export.get_node_logs()  node_id = {}".format(node_id))
+
+    maxBytes = 10000
+    logFilePath = '/mnt/beehive/node-logs/'
+    try:
+        filename = logFilePath + node_id.strip().lower()
+        logger.info('filename = "{}"'.format(filename))
+        with open(filename, 'r') as f:
+            f.seek(0, os.SEEK_END)        # end of file
+            nBytes = f.tell()
+            if nBytes > maxBytes:
+                f.seek(nBytes - maxBytes)
+                f.readline()    # seek ahead to the start of next line
+            else:
+                f.seek(0)       # seek to start of file to read the whole thing
+            result = f.read()
+    except:
+        result = ''
+    return result
+    
