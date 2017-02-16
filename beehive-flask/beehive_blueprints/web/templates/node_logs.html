@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <style>
+        table {    border-collapse: collapse; }
+        table, td, th { border: 1px solid black; padding: 1px 5px; text-align: center;}
+    </style>
+
+    <title>{{ node_id }} node_logs</title>
+</head>
+<body>
+    <h1>Node {{ node_id }} Logs</h1>
+    
+    <p>
+        {{ txt }} 
+    </p>
+    
+    <br><br>
+
+    Corresponding API call to get logs text, for specified node:
+    <br>
+
+    <pre>
+    &nbsp&nbsp&nbsp&nbsp curl {{ api_url }}1/nodes/${node_id}/logs
+    </pre>
+
+</body>
+</html>
