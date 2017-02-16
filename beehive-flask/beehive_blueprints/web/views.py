@@ -88,8 +88,8 @@ def pretty_print_last_update(dtNow, timestampUpdate):
         last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
     return last_data
 
-@web.route("/new")
-def main_page_new():
+@web.route("/")
+def main_page():
 
     api_call = web_host + '/api/1/'
 
@@ -241,8 +241,8 @@ def main_page_new():
 
         
 
-@web.route("/")
-def main_page():
+@web.route("/old")
+def main_page_old():
 
     api_call = web_host + '/api/1/'
 
