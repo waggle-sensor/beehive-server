@@ -41,7 +41,8 @@ if __name__ == '__main__':
         timedeltaDataMax = datetime.timedelta(seconds = 15)
         timedeltaSshMax = datetime.timedelta(minutes = 1)
         sleepSeconds = 15
-        web_url = 'http://beehive1.mcs.anl.gov/'
+        #web_url = 'http://beehive1.mcs.anl.gov/'   # for running from outside machine
+        web_url = 'http://localhost:/'      # for on beehive server
         logFilePath = '/home/wcatino/nodeLogs/'
     else:
         timedeltaDataMax = datetime.timedelta(minutes = 10)
