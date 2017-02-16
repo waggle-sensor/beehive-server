@@ -162,6 +162,7 @@ if __name__ == '__main__':
                     msgLines.append(e[0] + '  ' + e[1].format(node_id))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
                 Cmd('/bin/slack-ops ' + msg)
+                if verbosity: print('SLACK: ' + msg)
                 
                 # log-file
                 msgLines = []
@@ -169,6 +170,7 @@ if __name__ == '__main__':
                     e = events[n[0]][n[1]]
                     msgLines.append(tStartString + '  ' + e[1].format(node_id) + '\n')  # send just the text
                 msg = ''.join(msgLines)
+                if verbosity: print('LOGFILE: ' + msg)
                 
                 with open(logFilePath + node_id, 'a') as f:
                     f.write(msg)
