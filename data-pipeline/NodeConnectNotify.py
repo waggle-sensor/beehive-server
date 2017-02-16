@@ -106,7 +106,7 @@ if __name__ == '__main__':
             r = requests.get(url)
             D[ds[0]] = json.loads(r.text)
             
-        if verbosity: print(json.dumps(D, indent = 4))
+        if verbosity > 1: print(json.dumps(D, indent = 4))
         
         # convert all timestamps to datetime's
         for dataSet in D:
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
         # compute current state of things
         for node_id in nodes_list:
-            print(node_id)
+            if verbosity > 1: print(node_id)
             stateCurrent[node_id] = d = {}
                             
             # compute state of data flow:
