@@ -47,9 +47,8 @@ if __name__ == '__main__':
         timedeltaDataMax = datetime.timedelta(minutes = 10)
         timedeltaSshMax = datetime.timedelta(minutes = 30)
         sleepSeconds = 300
-        web_url = '127.0.0.1/'
+        web_url = 'http://localhost:/'
         logFilePath = '/mnt/beehive/nodeLogs/'
-
         
     stateCurrent = {}
     statePrev = {}
