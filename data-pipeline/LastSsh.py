@@ -8,7 +8,7 @@ import subprocess
 import time
 #logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('beehive-last-ssh')
 logger.setLevel(logging.DEBUG)
 
 """ get list of nodes and their ports
