@@ -161,7 +161,7 @@ if __name__ == '__main__':
                     e = events[n[0]][n[1]]
                     msgLines.append(e[0] + '  ' + e[1].format(node_id))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
-                Cmd('/bin/slack-ops' + msg)
+                Cmd('/bin/slack-ops ' + msg)
                 
                 # log-file
                 msgLines = []
