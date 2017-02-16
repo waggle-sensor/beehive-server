@@ -34,13 +34,14 @@ if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
     argParser.add_argument('--verbose', '-v', action = 'count')
     argParser.add_argument('-debug', action = 'store_true')
+    argParser.add_argument('-q', '--quiet', action = 'store_true', help = 'does not transmit messages to slack or to logfile')
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
 
     if args.debug: # debug values for rapid iteration
-        timedeltaDataMax = datetime.timedelta(seconds = 15)
-        timedeltaSshMax = datetime.timedelta(minutes = 1)
-        sleepSeconds = 15
+        timedeltaDataMax = datetime.timedelta(seconds = 10)
+        timedeltaSshMax = datetime.timedelta(seconds = 13)
+        sleepSeconds = 10
         #web_url = 'http://beehive1.mcs.anl.gov/'   # for running from outside machine
         web_url = 'http://localhost:/'      # for on beehive server
         logFilePath = '/home/wcatino/nodeLogs/'
@@ -65,7 +66,7 @@ if __name__ == '__main__':
         },
         'ssh' : {
             True :  (':white_check_mark: :phone:', 
-                        'Node {} SSH down'),
+                        'Node {} SSH up'),
             False : (':x: :phone:', 
                         'Node {} SSH down')
         },
@@ -93,7 +94,8 @@ if __name__ == '__main__':
         
         # load the list of nodes
         r = requests.get(web_url + 'api/1/nodes')
-        nodes_list = list(json.loads(r.text)['data'].keys())
+        node_full_info = json.loads(r.text)['data']
+        nodes_list = {x : node_info[x].get('name', '') for x in node_full_info}
         if verbosity > 1: print(json.dumps(nodes_list, indent = 4))
         
         # load the webpage just to force the update of the OFFLINE state
@@ -162,7 +164,8 @@ if __name__ == '__main__':
                     e = events[n[0]][n[1]]
                     msgLines.append('"{} {}"'.format(e[0], e[1].format(node_id)))  # concatenate the emoji and the text
                 msg = '\n'.join(msgLines)
-                Cmd('/bin/slack-ops ' + msg)
+                if not args.quiet: 
+                    Cmd('/bin/slack-ops ' + msg)
                 if verbosity: print('SLACK: ' + msg)
                 
                 # log-file
@@ -173,8 +176,9 @@ if __name__ == '__main__':
                 msg = ''.join(msgLines)
                 if verbosity: print('LOGFILE: ' + msg)
                 
-                with open(logFilePath + node_id, 'a') as f:
-                    f.write(msg)
+                if not args.quiet: 
+                    with open(logFilePath + node_id, 'a') as f:
+                        f.write(msg)
         
         tEnd = datetime.datetime.utcnow()
         dtProcess = tEnd - tStart
