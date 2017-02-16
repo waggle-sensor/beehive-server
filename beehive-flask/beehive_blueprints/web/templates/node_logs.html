@@ -12,7 +12,7 @@
 <body>
     <h1>Node {{ node_id }} Logs</h1>
     
-    <p>
+    <p> {% autoescape false %}
         {{ txt }} 
     </p>
     
@@ -22,7 +22,7 @@
     <br>
 
     <pre>
-    &nbsp&nbsp&nbsp&nbsp curl {{ api_url }}1/nodes/${node_id}/logs
+    &nbsp&nbsp&nbsp&nbsp curl {{ api_call }}
     </pre>
 
 </body>
