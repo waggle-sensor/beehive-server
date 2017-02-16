@@ -302,7 +302,7 @@ def api_nodes_offline():
 @api.route('/1/nodes/<node_id>/logs')
 def api_logs(node_id):
     logger.info("__ api_logs()  node_id = {}".format(node_id))
-    return get_node_logs(node_id)
+    return jsonify({"data" : export.get_node_logs(node_id)})
     
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):
