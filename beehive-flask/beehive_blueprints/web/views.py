@@ -415,6 +415,7 @@ def web_node_page(node_id):
 
     return render_template('node_data.html',
         node_id = node_id,
+        web_host = web_host,
         api_call = api_call,
         api_url = api_url,
         dateList = dateList)
