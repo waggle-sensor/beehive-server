@@ -68,11 +68,7 @@ if __name__ == "__main__":
         create_default_user()
 
         base = automap_base()
-        base.column_display_pk = True
-
         base.prepare(db.engine, reflect=True)
-        base.column_display_pk = True
-
         for table in base.classes:
             admin.add_view(BeehiveModelView(table, db.session))
 
