@@ -71,6 +71,7 @@ if __name__ == "__main__":
         base.prepare(db.engine, reflect=True)
         for table in base.classes:
             admin.add_view(BeehiveModelView(table, db.session))
+            table.column_display_pk = True
 
     # Vamonos!
     app.run(host = '0.0.0.0')
