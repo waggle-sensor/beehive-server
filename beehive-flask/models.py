@@ -58,7 +58,9 @@ class BeehiveAdminIndexView(AdminIndexView):
 
 class BeehiveModelView(ModelView):
     """Custom model views that hide pages for individual database models."""
-        
+
+    column_display_pk = True
+
     def _handle_view(self, name, **kwargs):
         if not accessible():
             return redirect(url_for('security.login', next=request.url))    
