@@ -25,7 +25,8 @@ app = Flask(__name__)
 
 # Change this on production, it gives everyone access to the flask debugger
 # on an uncaught exception (which literally gives them a shell inside your app)
-app.config["DEBUG"] = True  
+#app.config["DEBUG"] = True  
+
 # Also change this
 app.config["SECRET_KEY"] = "highly secret"
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
