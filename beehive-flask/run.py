@@ -65,6 +65,8 @@ def create_default_user():
 if __name__ == "__main__":
 
     # Reflects the existing mysql schema and registers each table with admin
+    # NOTE: For a table to be eligible for registration with the admin panel
+    # NOTE: it needs to have an auto incremented primary key
     with app.app_context():
         create_default_user()
 
