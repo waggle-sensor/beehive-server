@@ -7,12 +7,12 @@ CREATE TABLE IF NOT EXISTS node_management (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             VARCHAR(32),
     rssh_port           INT,
-    rssh_key            TEXT,
-    cert                TEXT,
+    rssh_key            TEXT,   # RSA private key, from key.pem
+    rssh_cert           TEXT,   # x509 cert (part of which is an RSA public key), from cert.pem
     sim_iccid           VARCHAR(64),  # 3G/4G
     modem_imei          VARCHAR(64),  # modem
     opmode              VARCHAR(64) DEFAULT 'testing',
-    groups              TEXT NOT NULL,
+    groups              TEXT,   # TEXT cannot have default value
     time_created        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_node (node_id)
@@ -48,15 +48,16 @@ CREATE TABLE IF NOT EXISTS calibration (
 CREATE TABLE IF NOT EXISTS node_config (
     node_config_id          INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name                    TEXT,
+    description             TEXT,           # description of the node might change eg. if it moves
     node_id                 VARCHAR(32),
-    time_started            TIMESTAMP,
+    time_started            TIMESTAMP,      # the time this config started - went into effect
     street_address          TEXT,
     location_lat            FLOAT,
     location_long           FLOAT,
     location_altitude       FLOAT,
-    location_elevation      FLOAT,    # centimeters above ground
-    location_orientation    FLOAT,    # relative to true North, degrees cw ???
-    config                  JSON,    # hardware, software, and relationships
+    location_elevation      FLOAT,  # centimeters above ground
+    location_orientation    FLOAT,  # relative to true North, degrees cw ???
+    config                  JSON,   # hardware, software, and relationships
     time_created            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     time_last_updated       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX   idx_node_time (node_id, time_started)
