@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS node_offline (
 );
 
 #################################################################################
-#####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #################################################################################
 CREATE TABLE nodes (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
