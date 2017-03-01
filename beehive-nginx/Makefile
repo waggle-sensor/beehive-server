@@ -19,7 +19,7 @@ clean:
 .PHONY: ssl
 
 ssl:
-	mkdir -p ssl
+	mkdir -p $(SSL_PATH)
 	openssl genrsa -out $(SSL_PATH)/nginx.key 2048
 	openssl req -new -key $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.csr
 	openssl x509 -req -days 365 -in $(SSL_PATH)/nginx.csr -signkey $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.crt
