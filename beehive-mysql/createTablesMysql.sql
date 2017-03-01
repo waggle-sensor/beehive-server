@@ -108,3 +108,21 @@ CREATE TABLE IF NOT EXISTS node_offline (
   node_id               VARCHAR(16) NOT NULL,
   start_time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+#################################################################################
+#####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#################################################################################
+CREATE TABLE nodes (
+    id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    node_id             VARCHAR(16),
+    hostname            VARCHAR(64),
+    project             INT,
+    description         VARCHAR(255),
+    reverse_ssh_port    MEDIUMINT,
+    hardware            JSON,
+    name                VARCHAR(64),
+    location            VARCHAR(255),
+    opmode              VARCHAR(64) DEFAULT 'testing',
+    groups              TEXT NOT NULL,
+    last_updated        TIMESTAMP
+);
