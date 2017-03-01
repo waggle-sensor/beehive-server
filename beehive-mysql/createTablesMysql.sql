@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS node_offline (
 #################################################################################
 #####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #################################################################################
-CREATE TABLE nodes (
+CREATE TABLE IF NOT EXISTS nodes (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             VARCHAR(16),
     hostname            VARCHAR(64),
