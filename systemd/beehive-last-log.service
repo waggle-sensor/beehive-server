@@ -19,9 +19,9 @@ ExecStart=/bin/docker run \
     --rm \
     --name ${CONTAINER} \
     --net beehive \
-    -v /mnt/beehive:/mnt/beehive \
-    -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
-    -v /root/git/beehive-server/:/usr/lib/waggle/beehive-server/ \
+    -v /mnt/beehive:/mnt/beehive:ro \
+    -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/:ro \
+    -v /root/git/beehive-server/:/usr/lib/waggle/beehive-server/:ro \
     waggle/beehive-server:latest \
     bash -c './configure && python3 -u ./data-pipeline/LastUpdate.py logs'
 
