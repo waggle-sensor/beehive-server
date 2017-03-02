@@ -21,7 +21,24 @@ clean:
 	docker rmi -f $(image)
 
 run:
-	docker run -ti --rm --name $(container) -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/ $(image)
-
+	docker run \
+    -ti \
+    --rm \
+    --name $(container) \
+    -p 5000:5000 \
+    --net beehive \
+    -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/:ro \
+    -v /mnt/beehive/:/mnt/beehive:ro \
+    $(image)
+    
 bash:
-	docker run -ti --rm --name $(container) -p 5000:5000 --net beehive -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/ $(image) bash
+	docker run \
+    -ti \
+    --rm \
+    --name $(container) \
+    -p 5000:5000 \
+    --net beehive \
+    -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/:ro \
+    -v /mnt/beehive/:/mnt/beehive:ro \
+    $(image) \
+    bash
