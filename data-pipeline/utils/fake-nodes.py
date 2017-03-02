@@ -93,7 +93,7 @@ if __name__ == '__main__':
         print('### node #{}: {}'.format(iNode, nodeId))
 
         # create node
-        cmd = '''docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; INSERT INTO nodes (node_id, hostname, project, description, reverse_ssh_port, hardware, name, location) VALUES ('{node_id}', '{hostname}', {iNode}, '{description}', {reverse_ssh_port}, '{hardware}', '{name}', '{location}');"'''.format(
+        cmd = '''docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; INSERT INTO nodes (node_id, hostname, project, description, reverse_ssh_port, hardware, name, location, groups) VALUES ('{node_id}', '{hostname}', {iNode}, '{description}', {reverse_ssh_port}, '{hardware}', '{name}', '{location}', '{groups}');"'''.format(
             iNode = iNode,
             node_id = nodeId,
             hostname = 'hostname{}'.format(iNode),
@@ -102,7 +102,8 @@ if __name__ == '__main__':
             reverse_ssh_port = '{}'.format(iNode),
             hardware = '{{ \\"hw\\" : \\"hw{}\\" }}'.format(iNode),
             name = 'name{}'.format(iNode),
-            location = 'location{}'.format(iNode))
+            location = 'location{}'.format(iNode),
+            groups = 'aot')
         print(cmd)
         
         #create data for node
