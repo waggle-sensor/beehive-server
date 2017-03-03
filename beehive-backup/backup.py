@@ -61,7 +61,7 @@ if __name__ == '__main__':
     print('local directory :', pathLocal)
     Cmd('mkdir -p ' + pathLocal)
     Cmd('chmod 700 ' + pathLocal)
-    print([x for x in Cmd('ls -lr ' + pathLocal + "/..")], bPrintAll=False)
+    print([x for x in Cmd('ls -lr ' + pathLocal + "/..", bPrintAll=False)])
     
     # Make sure the remote backup folder exists, if it doesn't, then create it
     print('remote directory :', destCompletePath)
