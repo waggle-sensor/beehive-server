@@ -98,7 +98,7 @@ if __name__ == '__main__':
         # create the name of this backup based on date and time
         tUtcNow = datetime.datetime.utcnow()
         name, filename = DatetimeToNameAndFilename(tUtcNow)
-        pathTemp = '/tmp/beehive-backup/'
+        pathTemp = '/mnt/beehive-backup-tmp/'
         mysqlFileTemp = pathTemp + 'waggle.sql'
         filenameArchive = pathTemp + filename
         
