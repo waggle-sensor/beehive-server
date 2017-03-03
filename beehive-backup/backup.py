@@ -10,13 +10,19 @@ import time
 
 #_______________________________________________________________________
 # Run a command and capture it's output
-def Cmd(command):
+# bPrintAll should be True only if the caller is not interested in the output, and wants to print the output
+def Cmd(command, bPrintAll=True):
     #print(' CMD:  ', command)
     p = subprocess.Popen(command, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE,
                                   shell = True,
                                   universal_newlines = True)
     #return iter(p.stdout.readline, b'')
+    
+    if bPrintAll:
+        # We may need to print all the output to ensure proper blocking until the operation is finished
+        for line in p.stdout:
+            print(line)
     return p.stdout
 #_______________________________________________________________________
 def DatetimeToNameAndFilename(t):
@@ -55,7 +61,7 @@ if __name__ == '__main__':
     print('local directory :', pathLocal)
     Cmd('mkdir -p ' + pathLocal)
     Cmd('chmod 700 ' + pathLocal)
-    print([x for x in Cmd('ls -lr ' + pathLocal + "/..")])
+    print([x for x in Cmd('ls -lr ' + pathLocal + "/..")], bPrintAll=False)
     
     # Make sure the remote backup folder exists, if it doesn't, then create it
     print('remote directory :', destCompletePath)
@@ -65,7 +71,7 @@ if __name__ == '__main__':
     while True:
         print('###########################\n-------- ', datetime.datetime.utcnow())
         # get the list of existing backups
-        filesExisting = Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir))
+        filesExisting = Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir), bPrintAll=False)
         existingBackups = []
         for f in filesExisting:
             t = FilenameToDatetime(f)
@@ -120,7 +126,7 @@ if __name__ == '__main__':
         cmd1 = 'ssh {}@{} ls -ahl {}'.format(destUsername, destUrl, destDir)
         cmd = cmd0 + ';' + cmd1
         #print('\nAFTER creating new backup:\n' + '\n\t'.join([DatetimeToNameAndFilename(FilenameToDatetime(x))[0] for x in Cmd(cmd)]))
-        print('\nAFTER creating new backup:\n\t' + '\t'.join([x for x in Cmd(cmd)]))
+        print('\nAFTER creating new backup:\n\t' + '\t'.join([x for x in Cmd(cmd, bPrintAll=False)]))
         
         # sleep until it is time for another backup
         print('sleeping for {} seconds starting at (roughly) {}...'.format(sleepSeconds, name))
