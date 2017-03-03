@@ -1,0 +1,24 @@
+{
+    "beehive-config version" : "0",
+    "server" : 
+    {
+        "url" : "http://beehive1.mcs.anl.gov",
+        "name" : "Beehive1"
+    },
+    "backup" :
+    {
+        "local directory" : "/mnt/beehive-backup",
+        
+        "dest username" : "beehive1",
+        "dest url" : "bishop.mcs.anl.gov",
+        "dest dir" : "/digital/backups/beehive1",
+        
+        "number of files" : 5,
+        "period": 20
+    },
+    "default user" :
+    {
+        "name" : "admin",
+        "password" : "changethis"
+    }
+}
