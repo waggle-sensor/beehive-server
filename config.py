@@ -83,8 +83,8 @@ RABBITMQ_PORT=23181
 
 
 # Beehive server has needs client certificates for RabbitMQ
-CLIENT_KEY_FILE="/usr/lib/waggle/SSL/server/key.pem"
-CLIENT_CERT_FILE="/usr/lib/waggle/SSL/server/cert.pem"
+CLIENT_KEY_FILE="/usr/lib/waggle/SSL/beehive-server/key.pem"
+CLIENT_CERT_FILE="/usr/lib/waggle/SSL/beehive-server/cert.pem"
 
 CA_ROOT_FILE="/usr/lib/waggle/SSL/waggleca/cacert.pem"
 
