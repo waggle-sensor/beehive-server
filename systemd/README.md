@@ -10,9 +10,9 @@ git clone https://github.com/waggle-sensor/beehive-server.git
 cd ~/git/beehive-server/systemd/
 ```
 
-At this point, we assume the program 'docker' exists in /bin/docker.  If it does not, then a link to the actual docker must be created in its place.  For example, if it is installed at '/usr/bin/docker', then use:
+At this point, we assume the program 'docker' exists in /usr/bin/docker (WCC: This is where my installation put it on Ubuntu 16.04 as of 3/7/2017).  If it does not, then a link to the actual docker must be created in its place.  For example, if it is installed at '/bin/docker', then use:
 ```bash
-ln -s /usr/bin/docker /bin/docker
+ln -s /bin/docker /usr/bin/docker
 ```
 
 Enable docker.service if needed:
