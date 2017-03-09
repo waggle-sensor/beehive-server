@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS node_management (
     sim_iccid           VARCHAR(64),  # 3G/4G
     modem_imei          VARCHAR(64),  # modem
     opmode              VARCHAR(64) DEFAULT 'testing',
-    groups              TEXT,   # TEXT cannot have default value
+    groups              VARCHAR(128) DEFAULT '',
     time_created        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     time_last_updated   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_node (node_id)
@@ -123,6 +123,6 @@ CREATE TABLE IF NOT EXISTS nodes (
     name                VARCHAR(64),
     location            VARCHAR(255),
     opmode              VARCHAR(64) DEFAULT 'testing',
-    groups              TEXT NOT NULL,
+    groups              VARCHAR(128) DEFAULT '',
     last_updated        TIMESTAMP
 );
