@@ -94,6 +94,7 @@ if true; then
     cd git
     git clone https://github.com/waggle-sensor/beehive-server.git
     cd ~/git/beehive-server/
+    git checkout wcc-install0
     
     #### Docker
     apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
