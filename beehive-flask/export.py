@@ -208,7 +208,7 @@ def get_nodes(bAllNodes = False):
     all_nodes = {}
 
     # limit the output with a WHERE clause if bAllNodes is false
-    whereClause = " " if bAllNodes else " WHERE opmode != 'testing' "
+    whereClause = " " if bAllNodes else " WHERE opmode = 'production' "
 
     query = "SELECT node_id, hostname, groups, description, reverse_ssh_port, name, location, last_updated, opmode FROM nodes {};".format(whereClause)
 
