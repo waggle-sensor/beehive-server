@@ -60,7 +60,7 @@ if __name__ == '__main__':
     if verbosity: print('args =', args)
 
     q = multiprocessing.Queue(1000)
-    p = LogSaverProcess(q, args.dataToTrack, verbosity)
+    p = LogSaverProcess(q, verbosity)
     p.start()
 
     print(__name__ + ': created process ', p)
