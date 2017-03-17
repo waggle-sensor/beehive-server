@@ -3,6 +3,7 @@ import argparse
 import datetime
 import multiprocessing
 import pika
+import time
 
 class LogSaverProcess(multiprocessing.Process):
     def __init__(self, q, verbosity = 0):
