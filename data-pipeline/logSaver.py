@@ -1,20 +1,53 @@
 #!/usr/bin/env python3
 import argparse
 import datetime
+import multiprocessing
 import pika
 
+class LogSaverProcess(Process):
+    def __init__(self, q, verbosity = 0):
+        super(LastUpdateProcess, self).__init__()
+        self.q = q
+        
+        # set up the rabbitmq connection
+        self.credentials = pika.PlainCredentials('server', 'waggle')
+        self.parameters = pika.ConnectionParameters('beehive-rabbitmq', credentials = self.credentials)
+        self.connection = pika.BlockingConnection(self.parameters)
+        self.channel = self.connection.channel()
+        
+        self.channel.queue_declare(queue='log-saver', durable=True)
+        self.channel.queue_bind(queue='log-saver', exchange='logs', routing_key='#')
 
-def callback(ch, method, properties, body):
-    headers = properties.headers
+        self.channel.basic_consume(callback, queue='log-saver', no_ack=False)
 
-    node_id = properties.reply_to[4:].lower()
-    priority = headers['value']
+    def callback(ch, method, properties, body):
+        try:
+            node_id = properties.reply_to[4:].lower()
+            headers = properties.headers
+            priority = headers['value']
+            strUtcNow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            s = '{} <{}>{} {}'.format(strUtcNow, priority, node_id, body.decode())
+            print(s, flush=True)
+        
+            self.q.put((node_id, s), block = False)
+            if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
+        except Exception as e:
+            print("Error inserting (queue size = %d)  data = %s" % (self.q.qsize(), str(e)))
+            print(' method = {}'.format(repr(method)))
+            print(' props  = {}'.format(repr(props)))
+            print(' body   = {}'.format(repr(body)))
+            ch.basic_ack(delivery_tag = method.delivery_tag)
+            return
 
-    strUtcNow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        ch.basic_ack(delivery_tag = method.delivery_tag)
 
-    print('{} <{}>{} {}'.format(strUtcNow, priority, node_id, body.decode()), flush=True)
-    
-    
+    def run(self):
+        self.channel.start_consuming()
+
+    def join(self):
+        super(LogSaverProcess, self).terminate()
+        self.connection.close(0)
+
 #_______________________________________________________________________
 if __name__ == '__main__':
 
@@ -26,14 +59,32 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     if verbosity: print('args =', args)
 
-    # set up the rabbitmq connection
-    credentials = pika.PlainCredentials('server', 'waggle')
-    parameters = pika.ConnectionParameters('beehive-rabbitmq', credentials=credentials)
-    connection = pika.BlockingConnection(parameters)
-    channel = connection.channel()
-    
-    channel.queue_declare(queue='log-saver', durable=True)
-    channel.queue_bind(queue='log-saver', exchange='logs', routing_key='#')
+    q = multiprocessing.Queue(1000)
+    p = LogSaverProcess(q, args.dataToTrack, verbosity)
+    p.start()
 
-    channel.basic_consume(callback, queue='log-saver', no_ack=True)
-    channel.start_consuming()
+    print(__name__ + ': created process ', p)
+    time.sleep(3)
+    
+    while p.is_alive():
+        # stage 1 - empty queue to dictionary of lists - one list of strings per node_id
+        d = {}
+        for _i in range(3):
+            while not q.empty():
+                data = q.get()
+                node_id = data[0]
+                s = data[1]
+                if node_id not in d:
+                    d[node_id] = [s]
+                else:
+                    d[node_id].append(s)
+            time.sleep(1)
+        
+        # stage 2 - periodically write all strings to the appropriate files, batched by node_id
+        for node_id in d:
+            filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id)
+            with open(filename, 'a') as f:
+                f.write('\n'.join(d[node_id]))
+        d.clear() # free the memory
+    print(__name__ + ': process is dead, time to die')
+    p.join()    
