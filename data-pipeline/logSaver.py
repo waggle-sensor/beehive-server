@@ -14,6 +14,7 @@ def callback(ch, method, properties, body):
 
     print('{} <{}>{} {}'.format(strUtcNow, priority, node_id, body.decode()), flush=True)
     
+    
 #_______________________________________________________________________
 if __name__ == '__main__':
 
