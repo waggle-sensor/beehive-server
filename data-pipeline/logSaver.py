@@ -11,7 +11,7 @@ class LogSaverProcess(multiprocessing.Process):
         self.q = q
         
         # set up the rabbitmq connection
-        self.credentials = pika.PlainCredentials('server', 'waggle')
+        self.credentials = pika.PlainCredentials('log-saver', 'waggle')
         self.parameters = pika.ConnectionParameters('beehive-rabbitmq', credentials = self.credentials)
         self.connection = pika.BlockingConnection(self.parameters)
         self.channel = self.connection.channel()
