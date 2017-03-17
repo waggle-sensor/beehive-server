@@ -9,6 +9,7 @@ class LogSaverProcess(multiprocessing.Process):
     def __init__(self, q, verbosity = 0):
         super(LogSaverProcess, self).__init__()
         self.q = q
+        self.verbosity = verbosity
         
         # set up the rabbitmq connection
         self.credentials = pika.PlainCredentials('log_saver', 'waggle')
@@ -27,11 +28,16 @@ class LogSaverProcess(multiprocessing.Process):
             headers = properties.headers
             priority = headers['value']
             strUtcNow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-            s = '{} <{}>{} {}'.format(strUtcNow, priority, node_id, body.decode())
+            s = '{} <{}> {} {}'.format(strUtcNow, priority, node_id, body.decode())
             print(s, flush=True)
-        
+
+            if self.verbosity > 3:
+                print(' method = {}'.format(repr(method)))
+                print(' props  = {}'.format(repr(props)))
+                print(' body   = {}'.format(repr(body)))
+            
             self.q.put((node_id, s), block = False)
-            if verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
+            if self.verbosity > 1: print('  caching:  ', node_id,  'self.q.qsize() = ', self.q.qsize())
         except Exception as e:
             print("Error inserting (queue size = %d)  data = %s" % (self.q.qsize(), str(e)))
             print(' method = {}'.format(repr(method)))
