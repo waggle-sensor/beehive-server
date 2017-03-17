@@ -85,8 +85,8 @@ if __name__ == '__main__':
         # stage 2 - periodically write all strings to the appropriate files, batched by node_id
         for node_id in d:
             filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id)
-            with open(filename, 'a') as f:
-                f.write('\n'.join(d[node_id]))
+            with open(filename, 'a+') as f:
+                f.write('\n'.join(d[node_id]) + '\n')
         d.clear() # free the memory
     print(__name__ + ': process is dead, time to die')
     p.join()    
