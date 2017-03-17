@@ -86,7 +86,8 @@ if __name__ == '__main__':
         for node_id in d:
             filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id)
             with open(filename, 'a+') as f:
-                f.write('\n'.join(d[node_id]) + '\n')
+                for s in d[node_id]:
+                    f.write(s.strip() + '\n')
         d.clear() # free the memory
     print(__name__ + ': process is dead, time to die')
     p.join()    
