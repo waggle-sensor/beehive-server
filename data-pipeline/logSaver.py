@@ -8,7 +8,7 @@ def callback(ch, method, properties, body):
     headers = properties.headers
 
     node_id = properties.reply_to[4:].lower()
-    priority = getpriority(headers['value'])
+    priority = headers['value']
 
     print('<{}>{} {}'.format(priority, node_id, body.decode()), flush=True)
     
