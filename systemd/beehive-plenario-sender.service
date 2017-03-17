@@ -11,6 +11,9 @@ RestartSec=1m
 Environment='CONTAINER=beehive-plenario-sender'
 Environment='IMAGE=waggle/beehive-plenario-sender'
 
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
+
 ExecStart=/bin/docker run \
   --log-driver=journald \
   --rm \
