@@ -21,7 +21,7 @@ class LogSaverProcess(multiprocessing.Process):
 
         self.channel.basic_consume(self.callback, queue='log-saver', no_ack=False)
 
-    def callback(ch, method, properties, body):
+    def callback(self, ch, method, properties, body):
         try:
             node_id = properties.reply_to[4:].lower()
             headers = properties.headers
