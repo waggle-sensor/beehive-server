@@ -18,7 +18,7 @@ class LogSaverProcess(multiprocessing.Process):
         self.channel.queue_declare(queue='log-saver', durable=True)
         self.channel.queue_bind(queue='log-saver', exchange='logs', routing_key='#')
 
-        self.channel.basic_consume(callback, queue='log-saver', no_ack=False)
+        self.channel.basic_consume(self.callback, queue='log-saver', no_ack=False)
 
     def callback(ch, method, properties, body):
         try:
