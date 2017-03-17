@@ -32,8 +32,9 @@ class LogSaverProcess(multiprocessing.Process):
             print(s, flush=True)
 
             if self.verbosity > 3:
+                print(' ch = {}'.format(repr(ch)))
                 print(' method = {}'.format(repr(method)))
-                print(' props  = {}'.format(repr(props)))
+                print(' properties  = {}'.format(repr(properties)))
                 print(' body   = {}'.format(repr(body)))
             
             self.q.put((node_id, s), block = False)
