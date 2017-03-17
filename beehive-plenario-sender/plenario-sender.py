@@ -182,7 +182,9 @@ orientation.z > orient_z
 allowed_nodes = parse_node_list('''
 0000001e0610ba72
 0000001e0610b9e7
+0000001e0610b9fd
 ''')
+
 print('allowed_nodes = ', allowed_nodes)
 
 # url = 'amqps://jbracho:password@0.0.0.0:23181?{}'.format(urlencode({
