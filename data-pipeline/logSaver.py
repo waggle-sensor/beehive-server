@@ -10,7 +10,9 @@ def callback(ch, method, properties, body):
     node_id = properties.reply_to[4:].lower()
     priority = headers['value']
 
-    print('<{}>{} {}'.format(priority, node_id, body.decode()), flush=True)
+    strUtcNow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+
+    print('{} <{}>{} {}'.format(strUtcNow, priority, node_id, body.decode()), flush=True)
     
 #_______________________________________________________________________
 if __name__ == '__main__':
