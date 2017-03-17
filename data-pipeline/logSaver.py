@@ -24,7 +24,7 @@ class LogSaverProcess(multiprocessing.Process):
 
     def callback(self, ch, method, properties, body):
         try:
-            node_id = properties.reply_to[4:].lower()
+            node_id = properties.reply_to.lower()
             headers = properties.headers
             priority = headers['value']
             strUtcNow = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         
         # stage 2 - periodically write all strings to the appropriate files, batched by node_id
         for node_id in d:
-            filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id.rjust(16, '0'))
+            filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id)
             with open(filename, 'a+') as f:
                 for s in d[node_id]:
                     f.write(s.strip() + '\n')
