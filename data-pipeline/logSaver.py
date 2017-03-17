@@ -4,7 +4,7 @@ import datetime
 import multiprocessing
 import pika
 
-class LogSaverProcess(Process):
+class LogSaverProcess(multiprocessing.Process):
     def __init__(self, q, verbosity = 0):
         super(LastUpdateProcess, self).__init__()
         self.q = q
