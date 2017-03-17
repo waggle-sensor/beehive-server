@@ -84,7 +84,7 @@ if __name__ == '__main__':
         
         # stage 2 - periodically write all strings to the appropriate files, batched by node_id
         for node_id in d:
-            filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id)
+            filename = '/mnt/beehive/node-logs-test/test{}.txt'.format(node_id.rjust(16, '0'))
             with open(filename, 'a+') as f:
                 for s in d[node_id]:
                     f.write(s.strip() + '\n')
