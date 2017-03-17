@@ -1,0 +1,31 @@
+[Unit]
+Description=Beehive Log Saver
+Requires=beehive-rabbitmq.service
+After=beehive-rabbitmq.service
+OnFailure=slack-notify-failure@%i.service
+
+[Service]
+Restart=on-failure
+RestartSec=1m
+
+Environment='CONTAINER=beehive-log-saver'
+Environment='DATA=/mnt'
+
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
+
+ExecStart=/bin/docker run \
+    --log-driver=journald \
+    --rm \
+    --name ${CONTAINER} \
+    --net beehive \
+    -v /mnt/beehive:/mnt/beehive:ro \
+    -v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/:ro \
+    -v /root/git/beehive-server/:/usr/lib/waggle/beehive-server/:ro \
+    waggle/beehive-server:latest \
+    bash -c './configure && python3 -u ./data-pipeline/logSaver.py'
+
+ExecStop=/usr/bin/docker stop --time=10 ${CONTAINER}
+
+[Install]
+WantedBy=multi-user.target
