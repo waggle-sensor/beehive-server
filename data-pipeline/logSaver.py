@@ -6,7 +6,7 @@ import pika
 
 class LogSaverProcess(multiprocessing.Process):
     def __init__(self, q, verbosity = 0):
-        super(LastUpdateProcess, self).__init__()
+        super(LogSaverProcess, self).__init__()
         self.q = q
         
         # set up the rabbitmq connection
