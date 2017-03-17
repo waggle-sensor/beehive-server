@@ -79,6 +79,7 @@ if __name__ == '__main__':
                     d[node_id] = [s]
                 else:
                     d[node_id].append(s)
+                    if verbosity: print('   {}  has  {} '.format(node_id, len(d[node_id])
             time.sleep(1)
         
         # stage 2 - periodically write all strings to the appropriate files, batched by node_id
