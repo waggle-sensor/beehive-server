@@ -42,7 +42,7 @@ class LogSaverProcess(multiprocessing.Process):
         except Exception as e:
             print("Error inserting (queue size = %d)  data = %s" % (self.q.qsize(), str(e)))
             print(' method = {}'.format(repr(method)))
-            print(' props  = {}'.format(repr(props)))
+            print(' properties  = {}'.format(repr(properties)))
             print(' body   = {}'.format(repr(body)))
             ch.basic_ack(delivery_tag = method.delivery_tag)
             return
