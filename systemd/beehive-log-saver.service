@@ -14,7 +14,7 @@ Environment='DATA=/mnt'
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill ${CONTAINER} > /dev/null 2>&1"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm ${CONTAINER} > /dev/null 2>&1"
 
-ExecStart=/bin/docker run \
+ExecStart=/usr/bin/docker run \
     --log-driver=journald \
     --rm \
     --name ${CONTAINER} \
