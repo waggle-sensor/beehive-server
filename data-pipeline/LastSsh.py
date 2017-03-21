@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 try:
                     nNodes += 1
                     # sshpass is used to pass a bogus password of "" in case the node is improperly configured to require the password to be entered
-                    cmd = """/bin/sshpass -p "" /bin/ssh -o StrictHostKeyChecking=no -o ProxyCommand='/usr/bin/docker exec -i beehive-sshd nc -q0 localhost {}' -i /mnt/ssh_keys/id_rsa_waggle_aot_ping waggle@ -- date 2> /dev/null""".format(port)
+                    cmd = """/bin/ssh -o StrictHostKeyChecking=no -o ProxyCommand='/usr/bin/docker exec -i beehive-sshd nc -q0 localhost {}' -i /mnt/ssh_keys/id_rsa_waggle_aot_test waggle@ -- date 2> /dev/null""".format(port)
                     if verbosity > 1: print('   try {}  {}...'.format(node_id, port))
                     #print('    ', cmd)
                     output = subprocess.check_output(cmd, shell = True, universal_newlines = True, timeout = 20)
