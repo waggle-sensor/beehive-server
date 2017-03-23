@@ -37,14 +37,14 @@ and ```csv filename``` is the name of the CSV file that will be created.
 Note that the 1st line of the CSV file will contain a header, which is a
 comma-separated list of columns.
 The following lines will contain the comma-separated data.
-For example, to save the data from the CDOT node named 011, and id
-0000001E061089FA, into a file named ```cdot011.csv```, type:
+For example, to save the data from the CDOT node named 00F, and id
+0000001e0610b9fd, into a file named ```cdot00F.csv```, type:
 ```
-python3 wag2.py -id 0000001E061089FA -date 2016-09-18 -csv_out cdot011.csv
+python3 wag2.py -id 0000001e0610b9fd -date 2016-09-18 -csv_out cdot00F.csv
 ```
 An example of multiple nodes and dates is:
 ```
-python3 wag2.py -id 0000001E061089FA 0000001E06107FF0 -date 2016-09-17 2016-09-18 -csv_out cdot011_012_Sept17_18.csv
+python3 wag2.py -id 0000001e0610b9fd 	0000001e0610b9e7 -date 2016-09-17 2016-09-18 -csv_out cdot00F_028_Sept17_18.csv
 ```
 
 
