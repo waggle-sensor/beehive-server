@@ -2,7 +2,7 @@
 Description=Beehive Flask Watchdog
 
 [Service]
-Environment='CONTAINER=beehive-flask'
+Environment='CONTAINER=beehive-flask-watchdog'
 Environment='DATA=/mnt'
 
 Restart=on-failure
@@ -13,12 +13,12 @@ RestartSec=5
 
 ExecStart=/bin/bash -c ' \
   while [ 1 ] ; do \
-    sleep 2 ; \
+    sleep 2m ; \
     if [ $(curl --silent --max-time 10 localhost:/api/1/cassandra_time | wc -l) -eq "1" ] ; then \
       echo "pass..." ; \
-      sleep 45 ; \
     else \
       echo "failed - restarting flask & nginx..." ; \
+      /bin/slack-ops ":exclamation: :dog2: flask-watchdog restarting flask" ; \
       systemctl restart beehive-flask ; \
       systemctl restart beehive-nginx ; \
       sleep 90 ; \
