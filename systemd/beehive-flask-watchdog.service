@@ -13,14 +13,17 @@ RestartSec=5
 
 ExecStart=/bin/bash -c ' \
   while [ 1 ] ; do \
-    sleep 2m ; \
-    if [ $(curl --silent --max-time 10 http://beehive1.mcs.anl.gov/api/ | grep "Waggle Beehive" | wc -l) -ne 1 ] ; then \
-      docker rm -f ${CONTAINER} ; \
-      sleep 20 ; \
-      docker rm -f beehive-nginx ; \
+    sleep 2 ; \
+    if [ $(curl --silent --max-time 10 localhost:/api/1/cassandra_time | wc -l) -eq "1" ] ; then \
+      echo "pass..." ; \
+      sleep 45 ; \
+    else \
+      echo "failed - restarting flask & nginx..." ; \
+      systemctl restart beehive-flask ; \
+      systemctl restart beehive-nginx ; \
+      sleep 90 ; \
     fi \
-  done'
-
+  done '
 
 [Install]
 WantedBy=multi-user.target

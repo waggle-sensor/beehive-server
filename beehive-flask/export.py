@@ -250,7 +250,7 @@ def get_nodes(bAllNodes = False):
 def get_node_logs(node_id):
     logger.info("__ export.get_node_logs()  node_id = {}".format(node_id))
 
-    maxBytes = 10000
+    maxBytes = 100000
     logFilePath = '/mnt/beehive/node-logs/'
     try:
         filename = logFilePath + node_id.strip().lower()
@@ -267,4 +267,10 @@ def get_node_logs(node_id):
     except:
         result = ''
     return result
+
+# This is just to test beehive-flask's connection to Cassandra - which often breaks    
+def get_cassandra_time():
+    statement = 'SELECT dateof(now()) FROM system.local ;'
+    cluster, rows = query(statement)
+    return rows[0][0]
     
