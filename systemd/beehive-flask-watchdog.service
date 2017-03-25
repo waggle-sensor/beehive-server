@@ -14,9 +14,7 @@ RestartSec=5
 ExecStart=/bin/bash -c ' \
   while [ 1 ] ; do \
     sleep 2m ; \
-    if [ $(curl --silent --max-time 10 localhost:/api/1/cassandra_time | wc -l) -eq "1" ] ; then \
-      echo "pass..." ; \
-    else \
+    if [ $(curl --silent --max-time 10 localhost:/api/1/cassandra_time | wc -l) -ne "1" ] ; then \
       echo "failed - restarting flask & nginx..." ; \
       /bin/slack-ops ":exclamation: :dog2: flask-watchdog restarting flask" ; \
       systemctl restart beehive-flask ; \
