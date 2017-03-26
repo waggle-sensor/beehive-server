@@ -1,0 +1,13 @@
+[Unit]
+Description=Beehive Monitor Queues
+
+[Service]
+Environment='DATA=/mnt'
+
+Restart=on-failure
+RestartSec=5
+
+ExecStart=/bin/bash /root/git/beehive-server/monitors/monitor-queues.bash
+
+[Install]
+WantedBy=multi-user.target
