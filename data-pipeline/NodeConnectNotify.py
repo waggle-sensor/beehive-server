@@ -101,6 +101,8 @@ if __name__ == '__main__':
         
         # load the webpage just to force the update of the OFFLINE state
         webpage = Cmd('curl ' + web_url)
+        for line in webpage:
+            pass            # consume every line, or don't move on
        
         D = {}  # capital 'D' for Dictionary, the big one with all the data in it!
         
