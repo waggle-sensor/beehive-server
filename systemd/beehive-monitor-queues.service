@@ -1,5 +1,8 @@
 [Unit]
 Description=Beehive Monitor Queues
+Requires=beehive-rabbitmq.service
+After=beehive-rabbitmq.service
+OnFailure=slack-notify-failure@%i.service
 
 [Service]
 Environment='DATA=/mnt'
