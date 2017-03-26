@@ -71,6 +71,7 @@ class DataProcess(Process):
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.verbosity = verbosity
         self.numInserted = 0
+        self.numFailed = 0
         self.session = None
         self.cluster = None
         self.prepared_statement = None
@@ -107,12 +108,13 @@ class DataProcess(Process):
         try:
             for iValues, values in enumerate(self.function_ExtractValuesFromMessage(props, body)):
                 # Send the data off to Cassandra
-                print('iValues =', iValues)
-                print(' values =',  values)
+                if self.verbosity > 1: 
+                    print('iValues =', iValues)
+                    print(' values =',  values)
                 self.cassandra_insert(values)
-                print('-------AFTER inserting--------')
         except Exception as e:
             values = None
+            self.numFailed += 1
             logger.error("Error inserting data: %s" % (str(e)))
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
@@ -123,12 +125,12 @@ class DataProcess(Process):
         ch.basic_ack(delivery_tag = method.delivery_tag)
         if values:
             self.numInserted += 1
-            if self.numInserted % 2 == 0:
-                logger.debug('  inserted {} raw samples of data'.format(self.numInserted))
+            if self.numInserted % 1000 == 0:
+                logger.debug('  inserted {} / {} raw samples of data'.format(self.numInserted, self.numInserted + self.numFailed))
 
     # Parse a message of sensor data and convert to the values to be inserted into a row in the db.  NOTE: this is a generator - because the decoded messages produce multiple rows of data.
     def ExtractValuesFromMessage_raw(self, props, body):
-        print('props.app_id =', props.app_id)
+        if self.verbosity > 0: print('props.app_id =', props.app_id)
         versionStrings  = props.app_id.split(':')
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
@@ -159,9 +161,7 @@ class DataProcess(Process):
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
-        print('before loads...')
         dictData = json.loads(body.decode())
-        print('dictData =', dictData)
         
         # same for each parameter:value pair
         sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
@@ -177,9 +177,7 @@ class DataProcess(Process):
         
         for k in dictData.keys():
             parameter      = k
-            print('k = ', k)
             data           = str(dictData[k])
-            print('data = ', data)
 
             values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
@@ -208,7 +206,7 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
         
-        logger.debug("inserting: %s" % (str(values)))
+        if self.verbosity > 1: logger.debug("inserting: %s" % (str(values)))
         try:
             bound_statement = self.prepared_statement.bind(values)
         except Exception as e:
@@ -236,7 +234,6 @@ class DataProcess(Process):
                 continue
             
             break
-        logger.debug('cassandra_insert() exiting...')
 
     def cassandra_connect(self):
         bDone = False
