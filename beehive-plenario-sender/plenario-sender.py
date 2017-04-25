@@ -180,7 +180,7 @@ orientation.z > orient_z
 # do same kind of mapping as above node_id > external_id
 
 allowed_nodes = parse_node_list('''
-0000001e0610ba72
+0000001e0610ba89
 0000001e0610b9e7
 0000001e0610b9fd
 ''')
