@@ -44,20 +44,22 @@ channel.exchange_declare(exchange='plugins-out',
 
 
 def callback(ch, method, properties, body):
-    for sensor, values in decode_frame(body).items():
-        props = pika.BasicProperties(
-            app_id=properties.app_id,
-            timestamp=properties.timestamp,
-            reply_to=properties.reply_to,
-            type=sensor,
-            content_type='text/json',
-        )
+    try:
+       for sensor, values in decode_frame(body).items():
+            props = pika.BasicProperties(
+                app_id=properties.app_id,
+                timestamp=properties.timestamp,
+                reply_to=properties.reply_to,
+                type=sensor,
+                content_type='text/json',
+            )
 
-        channel.basic_publish(properties=props,
-                              exchange='plugins-out',
-                              routing_key=method.routing_key,
-                              body=json.dumps(values))
-
+            channel.basic_publish(properties=props,
+                                  exchange='plugins-out',
+                                  routing_key=method.routing_key,
+                                  body=json.dumps(values))
+    except:
+        print('plugin "{}" worker callback: bad message, reply_to={}, properties={}, body={}'.format(plugin, properties.reply_to, properties, body))
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
