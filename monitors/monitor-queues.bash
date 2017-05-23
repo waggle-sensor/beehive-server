@@ -6,4 +6,3 @@ while true; do
     fi 
     sleep 30 
 done
-
