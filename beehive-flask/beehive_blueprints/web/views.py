@@ -217,7 +217,7 @@ def main_page():
             status = '<td align="center" style="background-color:#8888ff">{}</td>'.format(opmode.strip())  # this shouldn't print in generic user mode
         elif bOffline:
             status = '<td align="center" style="background-color:#aaaaaa">Offline</td>'
-        elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 1)): 
+        elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 7)): 
             status = '<td align="center" style="background-color:#00ff00">Alive</td>'
         else:
             status = '<td align="center" style="background-color:#ff0000">Dead</td>'
