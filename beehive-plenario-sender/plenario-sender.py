@@ -4,6 +4,7 @@ import os
 import sys
 
 import base64
+import random
 import boto3
 
 sys.path.append(os.path.abspath('../'))
@@ -227,7 +228,7 @@ def callback(ch, method, properties, body):
 
         kinesis_client.put_record(**{
             'StreamName': 'ObservationStream',
-            'PartitionKey': 'arbitrary',
+            'PartitionKey': str(random.random()),
             'Data': json.dumps(payload)
         })
 
