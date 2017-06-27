@@ -209,7 +209,7 @@ if __name__ == '__main__':
     
     while p.is_alive():
         # stage 1 - empty queue to setUpdated
-        for _i in range(30):
+        for _i in range(10):
             while not q.empty():
                 setUpdated.add(q.get())
             if verbosity: print('len(setUpdated) = ', len(setUpdated))
