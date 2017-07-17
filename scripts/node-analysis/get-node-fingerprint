@@ -6,7 +6,7 @@ node_id_part=${1^^}
 dirs=($(ls -1d /mnt/waggle/SSL/nodes/node_* | grep "${node_id_part}\$"))
 
 if [ ${#dirs[@]} -eq 0 ]; then
-  echo "No nodes matching the (partial) node ID ${node_id_part}"
+  # echo "No nodes matching the (partial) node ID ${node_id_part}"
   exit 1
 fi
 

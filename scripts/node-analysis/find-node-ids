@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+import docker
+import re
+import sys
+
+import waggle.beehive.node as node
+
+
+if len(sys.argv) < 2:
+  print('Usage: get-node-id <partial-node-id>')
+  sys.exit(2)
+
+node_ids = node.find_ids(sys.argv[1])
+if len(node_ids) > 0:
+  for node_id in node_ids:
+    print(node_id)
+else:
+  sys.exit(1)
