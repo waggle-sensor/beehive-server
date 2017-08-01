@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+
+import sys
+
+import waggle.beehive.node as node
+
+
+
+if len(sys.argv) == 1:
+  print("Usage: get-node-ssh-metrics <partial_node_id>")
+  sys.exit(1)
+
+metrics = node.ssh_metrics(sys.argv[1])
+if 'node_id' in metrics:
+  print(metrics)
+else:
+  sys.exit(1)
