@@ -97,7 +97,7 @@ if __name__ == '__main__':
                     for s in d[node_id]:
                         f.write(s.strip() + '\n')
             except Exception as e:
-                print('EXCEPTION: {}: {} :  {}'.format(str(e), node_id, d[node_id]))
+                print('########## EXCEPTION: {}: {} :  {}'.format(str(e), node_id, d[node_id]))
         d.clear() # free the memory
     print(__name__ + ': process is dead, time to die')
     p.join()    
