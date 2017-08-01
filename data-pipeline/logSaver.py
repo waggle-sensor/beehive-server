@@ -92,9 +92,12 @@ if __name__ == '__main__':
         # stage 2 - periodically write all strings to the appropriate files, batched by node_id
         for node_id in d:
             filename = '/mnt/beehive/node-logs/{}'.format(node_id)
-            with open(filename, 'a+') as f:
-                for s in d[node_id]:
-                    f.write(s.strip() + '\n')
+            try:
+                with open(filename, 'a+') as f:
+                    for s in d[node_id]:
+                        f.write(s.strip() + '\n')
+            except Exception as e:
+                print('EXCEPTION: {}: {} :  {}'.format(str(e), node_id, d[node_id]))
         d.clear() # free the memory
     print(__name__ + ': process is dead, time to die')
     p.join()    
