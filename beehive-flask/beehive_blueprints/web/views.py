@@ -224,14 +224,14 @@ def main_page():
         
         listRows.append('''<tr>
             <td align="right"><tt><b>%s</b></tt></td>
-            <td><a href="%snodes/%s"><tt>%s</tt></a></td>
+            <td><a href="nodes/%s"><tt>%s</tt></a></td>
             <td>%s</td>
             <td>%s</td>
             %s
             %s
             %s
             </tr>'''                \
-            % (name, web_host, node_id, node_id, description, location, status, last_connection, last_updates))
+            % (name, node_id, node_id, description, location, status, last_connection, last_updates))
 
     return render_template('nodes.html',
         api_url = api_url,
@@ -280,7 +280,7 @@ def web_node_page(node_id):
         l.append(date)
         for version in versions:
             if date in data[version]:
-                l.append('<a href="%s1/nodes/%s/export?date=%s&version=%s">download</a>' % (api_url, node_id, date, version))
+                l.append('<a href="/api/1/nodes/%s/export?date=%s&version=%s">download</a>' % (node_id, date, version))
             else:
                 l.append('')
 
@@ -310,6 +310,6 @@ def web_node_logs_page(node_id):
         node_id = node_id,
         utc_now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
         txt = txt,
-        api_call = '%s1/nodes/%s/logs' % (api_url, node_id)
+        api_call = '/api/1/nodes/%s/logs' % (node_id)
 )
         

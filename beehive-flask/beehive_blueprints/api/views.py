@@ -297,7 +297,6 @@ def api_nodes_last_log():
 @api.route('/1/nodes_last_ssh/')
 def api_nodes_last_ssh():
     return jsonify(export.get_nodes_last_update_dict('ssh'))
-
     
 @api.route('/1/nodes_offline/')
 def api_nodes_offline():
@@ -307,6 +306,19 @@ def api_nodes_offline():
 def api_logs(node_id):
     logger.info("__ api_logs()  node_id = {}".format(node_id))
     return jsonify({"data" : export.get_node_logs(node_id)})
+
+
+@api.route('/1/node_metrics_date')
+def api_node_metrics_date():
+    date = request.args.get('date')
+
+    logger.info("__ api_node_metrics_date()  date = {}".format(str(date)))
+
+    if not date:
+        raise InvalidUsage("date is empty", status_code=STATUS_Not_Found)
+    d = export.get_node_metrics_date_dict(date)
+    logger.info("  __ api_node_metrics_date()  d = {}".format(str(d)))
+    return jsonify({"data" : d})
     
 @api.route('/1/nodes/<node_id>/export')
 def api_export(node_id):

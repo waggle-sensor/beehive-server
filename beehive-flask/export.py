@@ -167,6 +167,28 @@ def get_nodes_last_update_dict(dataType = None):
         result = {}
         
     return result
+    
+def get_node_metrics_date_dict(date):
+    """
+    Returns dictionary of node-metrics data for a given date, the result is a dictionary with the structure:
+       {timestamp : { node_id : { data } } }
+    """
+    d = {}
+
+    statement = "SELECT blobAsBigInt(timestamp), node_id, data FROM waggle.node_metrics_date WHERE date = '{}'".format(date)
+    cluster, rows = query(statement)
+    for row in rows:
+        logger.info('   row = ', row)
+        timestamp, node_id, data = row
+        if timestamp not in d:
+            d[timestamp] = {}
+        if node_id not in d[timestamp]:
+            d[timestamp][node_id] = [data]
+        else:
+            d[timestamp][node_id].append(data)
+    return d
+
+    
 
 def get_nodes_offline_dict():
     """
