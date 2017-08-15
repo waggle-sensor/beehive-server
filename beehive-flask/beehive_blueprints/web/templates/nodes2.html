@@ -56,12 +56,10 @@
                 {{ row.status_label }}</td>
                            
             <td align="left"><b>{{ row.last_connection_human }}</b> <tt>{{ row.last_connection_timestamp }}</tt></td>
-            
-            
-            <td>{{ row.last_data }}</td>
+            <td align="left"><b>{{ row.last_data_human }}</b> <tt>{{ row.last_data_timestamp }}</tt></td>
             {% if show_all_nodes %}
-                <td>{{ row.last_ssh }}</td>
-                <td>{{ row.last_log }}</td>
+                <td align="left"><b>{{ row.last_ssh_human }}</b> <tt>{{ row.last_ssh_timestamp }}</tt></td>
+                <td align="left"><b>{{ row.last_log_human }}</b> <tt>{{ row.last_log_timestamp }}</tt></td>
             {% endif %}
             </tr>
         {% endfor %}

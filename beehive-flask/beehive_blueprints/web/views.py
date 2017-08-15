@@ -414,9 +414,16 @@ def main_page2():
             'status_label':status['label'], 
             'last_connection_human':last_connection['human'], 
             'last_connection_timestamp':last_connection['timestamp'], 
-            'last_data':last_data, 
-            'last_ssh':last_ssh, 
-            'last_log':last_log})
+            
+            'last_data_human':last_data['human'], 
+            'last_data_timestamp':last_data['timestamp'], 
+            
+            'last_ssh_human':last_ssh['human'], 
+            'last_ssh_timestamp':last_ssh['timestamp'], 
+            
+            'last_log_human':last_log['human'], 
+            'last_log_timestamp':last_log['timestamp'], 
+        })
 
     return render_template('nodes2.html',
         show_all_nodes = bAllNodes,
