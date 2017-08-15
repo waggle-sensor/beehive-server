@@ -92,7 +92,7 @@ def pretty_print_last_update_dict(dtNow, timestampUpdate):
     d = {'human': '', 'timestamp':''}
     if timestampUpdate:
         dt = datetime.datetime.utcfromtimestamp(float(timestampUpdate) / 1000.0)
-        d['timestamp'] = dt.strftime("%Y-%m-%d %H:%M:%S")
+        d['timestamp'] = '({})'.format(dt.strftime("%Y-%m-%d %H:%M:%S"))
         delta = dtNow - dt
         if False: #bAllNodes:
             color = timeToColors[-1][1] # negative time - should correspond to last value
