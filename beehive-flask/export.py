@@ -1,6 +1,7 @@
 from cassandra.cluster import Cluster
 import logging
 import os
+import re
 import sys
 import time
 
@@ -9,6 +10,12 @@ from waggle.protocol.utils.mysql import *
 sys.path.pop()
 
 logger = logging.getLogger('beehive-api')
+
+dataset_version_table = {
+    '1': 'sensor_data',
+    '2raw': 'sensor_data_raw',
+    '2': 'sensor_data_decoded',
+}
 
 
 # NOTE This is ok, but it may be nicer to move this to an application /
@@ -52,31 +59,82 @@ def get_mysql_db():
                  db="waggle")
 
 
+def validate_node_id(node_id):
+    """ returns (True,None) if the node_id is valid, 
+        otherwise returns (False, msg) where msg is an error message
+    """
+    success = False
+    msg = None
+    
+    if node_id and re.match('^[0-9a-fA-F]{16}$', node_id):
+        success = True
+    if not success:
+        msg = "ERROR: Illegal node_id.  Must be 16 hexadecimal characters."
+    return (success, msg)
+    
+def validate_version(version):
+    """ returns (True,None) if the version is valid, 
+        otherwise returns (False, msg) where msg is an error message
+    """
+    success = False
+    msg = None
+    
+    if version and version in dataset_version_table.keys():
+        success = True
+    if not success:
+        msg = "ERROR: Illegal version.  Must be one of {}.".format(str(dataset_version_table.keys()))
+    return (success, msg)
+    
+def validate_date(theDate):
+    """ returns (True,None) if theDate is a valid date, 
+        otherwise returns (False, msg) where msg is an error message
+    """
+    success = False
+    msg = None
+    
+    if theDate and re.match('^[0-9]{4}-[0-9]{2}-[0-9]{2}$', theDate):
+        success = True
+    if not success:
+        msg = 'ERROR: Illegal date.  Must be in "YYYY-MM-DD" format.'
+    return (success, msg)
+    
+                 
 def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = None):
     """
     Python generator to export sensor data from Cassandra
     version = 1 or 2 or 2.1, indicates which database/dataset is being queried
     """
+    statement = None
+    
     node_id = node_id.lower()
     # TODO check if node exists
-    limitString = ''
-    if limit:
-        limitString = ' LIMIT ' + limit
+    valid_node_id, msg = validate_node_id(node_id)
+    if valid_node_id:
+        valid_date, msg = validate_date(date)
+        if valid_date:
+            valid_version, msg = validate_version(version)
+            if valid_version:
+            
+                limitString = ''
+                if limit:
+                    try:
+                        limit_int = int(limit)
+                        limitString = ' LIMIT {:d}'.format(limit_int)
+                    except:
+                        pass
 
-    if version == '1':
-        statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data
-                    FROM waggle.sensor_data
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
-    elif version == '2raw':  # 2 raw
-        statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data
-                    FROM waggle.sensor_data_raw
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
-    elif version == '2':
-        statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit
-                    FROM waggle.sensor_data_decoded
-                    WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
-    else:
-        statement = None
+                if version == '1':
+                    statement = """SELECT node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, sensor, sensor_meta, data
+                                FROM waggle.sensor_data
+                                WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
+                elif version == '2raw':  # 2 raw
+                    statement = """SELECT node_id, date, ingest_id, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data
+                                FROM waggle.sensor_data_raw
+                                WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
+                elif version == '2':
+                    statement = """SELECT node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit
+                                FROM waggle.sensor_data_decoded
+                                WHERE node_id='{}' AND date='{}' {}""".format(node_id, date, limitString)
 
     if statement:
         cluster, rows = query(statement)
@@ -100,12 +158,6 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = Non
                 # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
                 yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
 
-
-dataset_version_table = {
-    '1': 'sensor_data',
-    '2raw': 'sensor_data_raw',
-    '2': 'sensor_data_decoded',
-}
 
 
 def list_node_dates(version='1'):
@@ -136,19 +188,23 @@ def list_node_dates(version='1'):
 
 
 def get_datasets(version):
-    table = dataset_version_table[version]
-    statement = 'SELECT DISTINCT node_id, date FROM {}'.format(table)
-    cluster, rows = query(statement)
+    try:
+        table = dataset_version_table[version]
+        statement = 'SELECT DISTINCT node_id, date FROM {}'.format(table)
+    except KeyError:
+        statement = None
 
     datasets = []
+    if statement:
+        cluster, rows = query(statement)
 
-    for node_id, date in rows:
-        datasets.append({
-            'node_id': node_id.lower()[-12:],
-            'date': date,
-            'version': version,
-            'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
-        })
+        for node_id, date in rows:
+            datasets.append({
+                'node_id': node_id.lower()[-12:],
+                'date': date,
+                'version': version,
+                'url': 'http://beehive1.mcs.anl.gov/api/1/nodes/{}/export?date={}&version={}'.format(node_id, date, version),
+            })
 
     return datasets
 
@@ -175,17 +231,19 @@ def get_node_metrics_date_dict(date):
     """
     d = {}
 
-    statement = "SELECT blobAsBigInt(timestamp), node_id, data FROM waggle.node_metrics_date WHERE date = '{}'".format(date)
-    cluster, rows = query(statement)
-    for row in rows:
-        logger.info('   row = ', row)
-        timestamp, node_id, data = row
-        if timestamp not in d:
-            d[timestamp] = {}
-        if node_id not in d[timestamp]:
-            d[timestamp][node_id] = [data]
-        else:
-            d[timestamp][node_id].append(data)
+    valid_date, msg = validate_date(date)
+    if valid_date:
+        statement = "SELECT blobAsBigInt(timestamp), node_id, data FROM waggle.node_metrics_date WHERE date = '{}'".format(date)
+        cluster, rows = query(statement)
+        for row in rows:
+            logger.info('   row = ', row)
+            timestamp, node_id, data = row
+            if timestamp not in d:
+                d[timestamp] = {}
+            if node_id not in d[timestamp]:
+                d[timestamp][node_id] = [data]
+            else:
+                d[timestamp][node_id].append(data)
     return d
 
     
@@ -210,18 +268,20 @@ def set_node_offline(node_id, bOffline = True):
     """ if bOffline == True, sets the offline entry for a single node to the current time
         if bOffline == False, clears the offline entry
     """
-    try:
-        db = get_mysql_db()
-        
-        query = "DELETE FROM waggle.node_offline WHERE LOWER(node_id) = '{}';".format(node_id.lower())
-        print('QUERY = ', query)
-        for x in db.query_all(query):
-            print(x)
-        
-        if bOffline:
-            db.query_all("INSERT INTO waggle.node_offline (node_id) VALUES ('{}');".format(node_id))
-    except:
-        print('ERROR: operation failed!')
+    valid_node_id, msg = validate_node_id(node_id)
+    if valid_node_id:
+        try:
+            db = get_mysql_db()
+            
+            query = "DELETE FROM waggle.node_offline WHERE LOWER(node_id) = '{}';".format(node_id.lower())
+            print('QUERY = ', query)
+            for x in db.query_all(query):
+                print(x)
+            
+            if bOffline:
+                db.query_all("INSERT INTO waggle.node_offline (node_id) VALUES ('{}');".format(node_id))
+        except:
+            print('ERROR: operation failed!')
 
 
 def get_nodes(bAllNodes = False):
@@ -271,23 +331,26 @@ def get_nodes(bAllNodes = False):
     
 def get_node_logs(node_id):
     logger.info("__ export.get_node_logs()  node_id = {}".format(node_id))
+    result = ''
 
-    maxBytes = 100000
-    logFilePath = '/mnt/beehive/node-logs/'
-    try:
-        filename = logFilePath + node_id.strip().lower()
-        logger.info('filename = "{}"'.format(filename))
-        with open(filename, 'r') as f:
-            f.seek(0, os.SEEK_END)        # end of file
-            nBytes = f.tell()
-            if nBytes > maxBytes:
-                f.seek(nBytes - maxBytes)
-                f.readline()    # seek ahead to the start of next line
-            else:
-                f.seek(0)       # seek to start of file to read the whole thing
-            result = f.read()
-    except:
-        result = ''
+    valid_node_id, msg = validate_node_id(node_id)
+    if valid_node_id:
+        maxBytes = 100000
+        logFilePath = '/mnt/beehive/node-logs/'
+        try:
+            filename = logFilePath + node_id.strip().lower()
+            logger.info('filename = "{}"'.format(filename))
+            with open(filename, 'r') as f:
+                f.seek(0, os.SEEK_END)        # end of file
+                nBytes = f.tell()
+                if nBytes > maxBytes:
+                    f.seek(nBytes - maxBytes)
+                    f.readline()    # seek ahead to the start of next line
+                else:
+                    f.seek(0)       # seek to start of file to read the whole thing
+                result = f.read()
+        except:
+            pass
     return result
 
 # This is just to test beehive-flask's connection to Cassandra - which often breaks    

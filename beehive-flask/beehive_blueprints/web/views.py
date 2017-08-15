@@ -246,7 +246,6 @@ def main_page():
 def web_node_page(node_id):
     logger.debug('GET web_node_page()  node_id = {}'.format(node_id))
 
-    versions = ['2', '2raw', '1']
     data = {}
     datesUnion = set()
     listDebug = []
@@ -259,7 +258,7 @@ def web_node_page(node_id):
             </style>
         </head>''')
 
-    for version in versions:
+    for version in export.dataset_version_table.keys():
         listDebug.append(' VERSION ' + version + '<br>\n')
 
         api_call            = '%s1/nodes/%s/dates?version=%s' % (api_url, node_id, version)
@@ -278,7 +277,7 @@ def web_node_page(node_id):
     for date in datesUnionSorted:
         l = list()
         l.append(date)
-        for version in versions:
+        for version in export.dataset_version_table.keys():
             if date in data[version]:
                 l.append('<a href="/api/1/nodes/%s/export?date=%s&version=%s">download</a>' % (node_id, date, version))
             else:

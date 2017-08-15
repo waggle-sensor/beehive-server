@@ -118,6 +118,9 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
 
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
     if node_id_queried:
+        success, error_message = export.validate_node_id(node_id_queried)
+        if not success:
+            return {}
         whereClause = " WHERE node_id = '{}'".format(node_id_queried)
     elif not bAllNodes:
         whereClause = " WHERE opmode != 'testing'"
