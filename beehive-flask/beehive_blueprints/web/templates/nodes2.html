@@ -31,14 +31,13 @@
             {% endif %}
         </tr>
         
-        
         {% for row in list_rows %}
             <tr>
             <td align="right"><tt><b>{{ row.name }}</b></tt></td>
             <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
             <td>{{ row.description }}</td>
             <td>{{ row.location }}</td>
-            <td align="center" style="background-color:#{{ row.status.color }}">{{ row.status.label }}</td>
+            <td align="center" style="background-color:#{{ row.status_color }}">{{ row.status_label }}</td>
             <td>{{ row.last_connection }}</td>
             <td>{{ row.last_data }}</td>
             {% if show_all_nodes %}
