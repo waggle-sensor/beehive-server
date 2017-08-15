@@ -383,7 +383,7 @@ def main_page2():
             'node_id':node_id,
             'description':description, 
             'location':location, 
-            'status_color':'"background-color:#{}"'.format(status['color']), 
+            'status_color':status['color'], 
             'status_label':status['label'], 
             'last_connection':last_connection, 
             'last_data':last_data, 
