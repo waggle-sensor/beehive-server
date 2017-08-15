@@ -54,10 +54,8 @@
                 <td align="center" style="background-color:#ffffff">
             {% endif %}
                 {{ row.status_label }}</td>
-                
-            <td>{{ row.last_connection }}</td>
-            
-            <td align="left"><b>{{ last_connection_human }}</b> <tt>{{ last_connection_timestamp }}</tt></td>
+                           
+            <td align="left"><b>{{ row.last_connection_human }}</b> <tt>{{ row.last_connection_timestamp }}</tt></td>
             
             
             <td>{{ row.last_data }}</td>
