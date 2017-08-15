@@ -11,6 +11,7 @@ sys.path.pop()
 
 logger = logging.getLogger('beehive-api')
 
+dataset_versions = ['1', '2raw', '2']
 dataset_version_table = {
     '1': 'sensor_data',
     '2raw': 'sensor_data_raw',
