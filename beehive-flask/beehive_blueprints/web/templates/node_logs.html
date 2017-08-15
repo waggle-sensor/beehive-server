@@ -13,10 +13,9 @@
     <h1>Node {{ node_id }} Logs</h1>
     
     <p> 
-        {% autoescape false %}
-        {{ txt }} 
-        {% endautoescape %}
-
+        {% for line in txt %} 
+            {{ line }} <br>
+        {% endfor %}
     </p>
     
     <br><br>
