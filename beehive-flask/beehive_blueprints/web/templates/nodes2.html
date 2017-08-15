@@ -16,6 +16,22 @@
     <p><i> UTC of last update of this page:</i> {{ utc_now }} </p>
     <table>
         {# {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #} #}
+        
+        <tr>
+            <td align="center"><b>Name/<br>VSN*</b></td>
+            <td align="center"><b>Node ID</td>
+            <td align="center"><b>Description</td>
+            <td align="center"><b>Location</td>
+            <td align="center"><b>Status</td>
+            <td align="center"><b>Last Connection</td>
+            <td align="center"><b>Last Data</td>
+            {% if show_all_nodes %}
+                <td align="center"><b>Last SSH</td>
+                <td align="center"><b>Last Log</td>
+            {% endif %}
+        </tr>
+        
+        
         {% for row in list_rows %}
             <tr>
             <td align="right"><tt><b>{{ row.name }}</b></tt></td>
