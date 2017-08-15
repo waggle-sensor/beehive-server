@@ -37,17 +37,17 @@
             <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
             <td>{{ row.description }}</td>
             <td>{{ row.location }}</td>
-            {% if row.status_color is equalto 'ff0000' %}
+            {% if row.status_color is equalto '#ff0000' %}
                 <td align="center" style="background-color:#ff0000">
-            {% elif row.status_color is equalto '00ff00' %}
+            {% elif row.status_color is equalto '#00ff00' %}
                 <td align="center" style="background-color:#00ff00">
-            {% elif row.status_color is equalto '0000ff' %}
+            {% elif row.status_color is equalto '#0000ff' %}
                 <td align="center" style="background-color:#0000ff">
-            {% elif row.status_color is equalto 'ff00ff' %}
+            {% elif row.status_color is equalto '#ff00ff' %}
                 <td align="center" style="background-color:#ff00ff">
-            {% elif row.status_color is equalto '8888ff' %}
+            {% elif row.status_color is equalto '#8888ff' %}
                 <td align="center" style="background-color:#8888ff">
-            {% elif row.status_color is equalto 'aaaaaa' %}
+            {% elif row.status_color is equalto '#aaaaaa' %}
                 <td align="center" style="background-color:#aaaaaa">
             {% else %}
                 <td align="center" style="background-color:#ffffff">
