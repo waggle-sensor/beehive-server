@@ -87,6 +87,34 @@ def pretty_print_last_update(dtNow, timestampUpdate):
 
         last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
     return last_data
+    
+def pretty_print_last_update_dict(dtNow, timestampUpdate):
+    d = {'human': '', 'timestamp':''}
+    if timestampUpdate:
+        dt = datetime.datetime.utcfromtimestamp(float(timestampUpdate) / 1000.0)
+        d['timestamp'] = dt.strftime("%Y-%m-%d %H:%M:%S")
+        delta = dtNow - dt
+        if False: #bAllNodes:
+            color = timeToColors[-1][1] # negative time - should correspond to last value
+            for tuple in timeToColors:
+                if delta > tuple[0]:
+                    color = tuple[1]
+                    break
+        else:
+            color = '#ffffff'
+                
+        # human readable duration
+        sHuman = '1 m'
+        delta_seconds = delta.total_seconds()
+
+        for dur in durations_human_readable:
+            if delta_seconds >= dur[1]:
+                num = int(delta_seconds / dur[1])
+                sHuman = '{} {}'.format(num, dur[0])
+                break
+        d['human'] = s
+        last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
+    return d
 
 @web.route("/")
 def main_page():
@@ -339,7 +367,7 @@ def main_page2():
 
         if latest:
             dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
-        last_connection = pretty_print_last_update(dtUtcNow, latest)
+        last_connection = pretty_print_last_update_dict(dtUtcNow, latest)
 
         # offline status 
         bOffline = False

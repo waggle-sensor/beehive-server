@@ -37,6 +37,7 @@
             <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
             <td>{{ row.description }}</td>
             <td>{{ row.location }}</td>
+            
             {% if row.status_color is equalto '#ff0000' %}
                 <td align="center" style="background-color:#ff0000">
             {% elif row.status_color is equalto '#00ff00' %}
@@ -53,7 +54,12 @@
                 <td align="center" style="background-color:#ffffff">
             {% endif %}
                 {{ row.status_label }}</td>
+                
             <td>{{ row.last_connection }}</td>
+            
+            <td align="left" style="background-color:{}"><b>{{ last_connection.human }}</b> <tt>({{ last_connection.timestamp }})</tt></td>
+            
+            
             <td>{{ row.last_data }}</td>
             {% if show_all_nodes %}
                 <td>{{ row.last_ssh }}</td>
