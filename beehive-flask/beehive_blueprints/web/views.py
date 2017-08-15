@@ -373,16 +373,7 @@ def main_page2():
         else:
             status = '<td align="center" style="background-color:#ff0000">Dead</td>'
         
-        listRows.append('''<tr>
-            <td align="right"><tt><b>%s</b></tt></td>
-            <td><a href="nodes/%s"><tt>%s</tt></a></td>
-            <td>%s</td>
-            <td>%s</td>
-            %s
-            %s
-            %s
-            </tr>'''                \
-            % (name, node_id, node_id, description, location, status, last_connection, last_updates))
+        listRows.append({'name':name, 'node_id':node_id, 'description':description, 'location':location, 'status':status, 'last_connection':last_connection, 'last_updates':last_updates})
 
     return render_template('nodes2.html',
         api_url = api_url,

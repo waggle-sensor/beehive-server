@@ -17,7 +17,15 @@
     <table>
         {# {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #} #}
         {% for row in list_rows %}
-            {{ row }}
+            <tr>
+            <td align="right"><tt><b>{{ row.name }}</b></tt></td>
+            <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
+            <td>{{ row.description }}</td>
+            <td>{{ row.location }}</td>
+            {{ row.status }}
+            {{ row.last_connection }}
+            {{ row.last_updates }}
+            </tr>
         {% endfor %}
         {# {% endautoescape %} #}
 
