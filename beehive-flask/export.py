@@ -11,7 +11,7 @@ sys.path.pop()
 
 logger = logging.getLogger('beehive-api')
 
-dataset_versions = ['1', '2raw', '2']
+dataset_versions = ['2', '2raw', '1']   # These should match the keys in the dataset_version_table and be sorted in the same order as they appear in the columns on the node data pages
 dataset_version_table = {
     '1': 'sensor_data',
     '2raw': 'sensor_data_raw',
