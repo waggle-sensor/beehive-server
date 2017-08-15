@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <style>
+        table {    border-collapse: collapse; }
+        table, td, th { border: 1px solid black; padding: 1px 5px;}
+        h3 { color: red; }
+    </style>
+    <title>Waggle Beehive Web Server</title>
+</head>
+<body>
+    <h1>Waggle Beehive Web Server</h1>
+    <h3 style="color:red">NOTE: Waggle is a research project.  This website and its related systems are under active development.</h3>
+    <h2>Public nodes:</h2>
+    
+    <p><i> UTC of last update of this page:</i> {{ utc_now }} </p>
+    <table>
+        {# {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #} #}
+        {% for row in list_rows %}
+            {{ row }}
+        {% endfor %}
+        {# {% endautoescape %} #}
+
+    </table>
+    * - "VSN" = "Vinyl Sticker Number"
+
+</body>
+</html>
