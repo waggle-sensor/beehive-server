@@ -112,8 +112,7 @@ def pretty_print_last_update_dict(dtNow, timestampUpdate):
                 num = int(delta_seconds / dur[1])
                 sHuman = '{} {}'.format(num, dur[0])
                 break
-        d['human'] = s
-        last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
+        d['human'] = sHuman
     return d
 
 @web.route("/")
