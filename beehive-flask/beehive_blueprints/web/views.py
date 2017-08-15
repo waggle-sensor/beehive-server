@@ -412,7 +412,8 @@ def main_page2():
             'location':location, 
             'status_color':status['color'], 
             'status_label':status['label'], 
-            'last_connection':last_connection, 
+            'last_connection_human':last_connection['human'], 
+            'last_connection_timestamp':last_connection['timestamp'], 
             'last_data':last_data, 
             'last_ssh':last_ssh, 
             'last_log':last_log})
