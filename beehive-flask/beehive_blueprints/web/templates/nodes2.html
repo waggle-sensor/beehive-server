@@ -22,9 +22,9 @@
             <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
             <td>{{ row.description }}</td>
             <td>{{ row.location }}</td>
-            {{ row.status }}
-            {{ row.last_connection }}
-            {{ row.last_updates }}
+            <td>{{ row.status }}</td>
+            <td>{{ row.last_connection }}</td>
+            <td>{{ row.last_updates }}</td>
             </tr>
         {% endfor %}
         {# {% endautoescape %} #}
