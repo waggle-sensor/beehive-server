@@ -349,8 +349,8 @@ def web_node_logs_page(node_id):
         api_call = '/api/1/nodes/%s/logs' % (node_id)
     )
         
-@web.route('/node/logs/<node_id>/')
-def web_node_logs_page(node_id):
+@web.route('/node/logs2/<node_id>/')
+def web_node_logs2_page(node_id):
     logger.debug('GET web_node_logs_page()  node_id = {}'.format(node_id))
 
     txt = export.get_node_logs(node_id)
