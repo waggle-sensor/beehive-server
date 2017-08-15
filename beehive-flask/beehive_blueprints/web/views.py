@@ -365,15 +365,19 @@ def main_page2():
                 export.set_node_offline(node_id, False)
                 
         # compute the status
-        status = '<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
+        status = {'color':'#ff00ff', 'label':'UNKNOWN'} #'<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
         if opmode.strip().lower() != 'production':
-            status = '<td align="center" style="background-color:#8888ff">{}</td>'.format(opmode.strip())  # this shouldn't print in generic user mode
+            #status = '<td align="center" style="background-color:#8888ff">{}</td>'.format(opmode.strip())  # this shouldn't print in generic user mode
+            status = {'color':'#8888ff', 'label':opmode.strip()} 
         elif bOffline:
-            status = '<td align="center" style="background-color:#aaaaaa">Offline</td>'
+            #status = '<td align="center" style="background-color:#aaaaaa">Offline</td>'
+            status = {'color':'#aaaaaa', 'label':'Offline'} 
         elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 7)): 
-            status = '<td align="center" style="background-color:#00ff00">Alive</td>'
+            #status = '<td align="center" style="background-color:#00ff00">Alive</td>'
+            status = {'color':'#00ff00', 'label':'Alive'} 
         else:
-            status = '<td align="center" style="background-color:#ff0000">Dead</td>'
+            #status = '<td align="center" style="background-color:#ff0000">Dead</td>'
+            status = {'color':'#ff0000', 'label':'Dead'} 
         
         listRows.append({'name':name, 
             'node_id':node_id,
