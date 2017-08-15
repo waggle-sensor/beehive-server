@@ -15,8 +15,6 @@
     
     <p><i> UTC of last update of this page:</i> {{ utc_now }} </p>
     <table>
-        {# {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #} #}
-        
         <tr>
             <td align="center"><b>Name/<br>VSN*</b></td>
             <td align="center"><b>Node ID</td>
@@ -63,7 +61,6 @@
             {% endif %}
             </tr>
         {% endfor %}
-        {# {% endautoescape %} #}
 
     </table>
     * - "VSN" = "Vinyl Sticker Number"
