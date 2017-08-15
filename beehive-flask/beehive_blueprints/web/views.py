@@ -348,10 +348,10 @@ def main_page2():
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
         
-        last_data = pretty_print_last_update(dtUtcNow, dictLastUpdate['data'].get(node_id))
+        last_data = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['data'].get(node_id))
         if bAllNodes:
-            last_ssh  = pretty_print_last_update(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
-            last_log  = pretty_print_last_update(dtUtcNow, dictLastUpdate['log'].get(node_id))
+            last_ssh  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
+            last_log  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['log'].get(node_id))
             # concatenate them into last_data so that it stores all 3
             last_updates = last_data + last_ssh + last_log
         else:
