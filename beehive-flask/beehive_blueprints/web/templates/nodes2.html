@@ -40,7 +40,11 @@
             <td>{{ row.location }}</td>
             <td>{{ row.status }}</td>
             <td>{{ row.last_connection }}</td>
-            <td>{{ row.last_updates }}</td>
+            <td>{{ row.last_data }}</td>
+            {% if show_all_nodes %}
+                <td>{{ row.last_ssh }}</td>
+                <td>{{ row.last_log }}</td>
+            {% endif %}
             </tr>
         {% endfor %}
         {# {% endautoescape %} #}

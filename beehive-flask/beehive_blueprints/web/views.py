@@ -316,6 +316,8 @@ def main_page2():
 
     nodes_sorted.sort(key = lambda x: MyKey(x))
 
+    last_ssh = ''
+    last_log = ''
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
         
@@ -373,9 +375,18 @@ def main_page2():
         else:
             status = '<td align="center" style="background-color:#ff0000">Dead</td>'
         
-        listRows.append({'name':name, 'node_id':node_id, 'description':description, 'location':location, 'status':status, 'last_connection':last_connection, 'last_updates':last_updates})
+        listRows.append({'name':name, 
+            'node_id':node_id,
+            'description':description, 
+            'location':location, 
+            'status':status, 
+            'last_connection':last_connection, 
+            'last_data':last_data, 
+            'last_ssh':last_ssh, 
+            'last_log':last_log})
 
     return render_template('nodes2.html',
+        show_all_nodes = bAllNodes,
         api_url = api_url,
         utc_now = dtUtcNow.strftime("%Y-%m-%d %H:%M:%S"),
         list_rows = listRows)
