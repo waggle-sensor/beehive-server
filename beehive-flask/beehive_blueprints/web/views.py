@@ -347,5 +347,22 @@ def web_node_logs_page(node_id):
         utc_now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
         txt = txt,
         api_call = '/api/1/nodes/%s/logs' % (node_id)
-)
+    )
+        
+@web.route('/node/logs/<node_id>/')
+def web_node_logs_page(node_id):
+    logger.debug('GET web_node_logs_page()  node_id = {}'.format(node_id))
+
+    txt = export.get_node_logs(node_id)
+    if len(txt) > 0:
+        txt = txt.split('\n')
+    else:
+        txt = [' *** No log data at this time ***']
+
+    return render_template('node_logs2.html',
+        node_id = node_id,
+        utc_now = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+        txt = txt,
+        api_call = '/api/1/nodes/%s/logs' % (node_id)
+    )
         
