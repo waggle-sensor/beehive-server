@@ -343,8 +343,6 @@ def main_page2():
 
     nodes_sorted.sort(key = lambda x: MyKey(x))
 
-    last_ssh = ''
-    last_log = ''
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
         
@@ -352,6 +350,8 @@ def main_page2():
         if bAllNodes:
             last_ssh  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
             last_log  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['log'].get(node_id))
+        else:
+            last_ssh = last_log = pretty_print_last_update_dict(dtUtcNow, None)
 
         # last connection (most recent of all 3 last_update's)
         latest = None
