@@ -352,10 +352,6 @@ def main_page2():
         if bAllNodes:
             last_ssh  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
             last_log  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['log'].get(node_id))
-            # concatenate them into last_data so that it stores all 3
-            last_updates = last_data + last_ssh + last_log
-        else:
-            last_updates = last_data
 
         # last connection (most recent of all 3 last_update's)
         latest = None
