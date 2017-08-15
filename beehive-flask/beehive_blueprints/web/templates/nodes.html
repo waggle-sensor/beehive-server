@@ -15,11 +15,52 @@
     
     <p><i> UTC of last update of this page:</i> {{ utc_now }} </p>
     <table>
-        {% autoescape false %}  {# this prevents the automatic escaping of the HTML in the table data #}
+        <tr>
+            <td align="center"><b>Name/<br>VSN*</b></td>
+            <td align="center"><b>Node ID</td>
+            <td align="center"><b>Description</td>
+            <td align="center"><b>Location</td>
+            <td align="center"><b>Status</td>
+            <td align="center"><b>Last Connection</td>
+            <td align="center"><b>Last Data</td>
+            {% if show_all_nodes %}
+                <td align="center"><b>Last SSH</td>
+                <td align="center"><b>Last Log</td>
+            {% endif %}
+        </tr>
+        
         {% for row in list_rows %}
-            {{ row }}
+            <tr>
+            <td align="right"><tt><b>{{ row.name }}</b></tt></td>
+            <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
+            <td>{{ row.description }}</td>
+            <td>{{ row.location }}</td>
+            
+            {% if row.status_color is equalto '#ff0000' %}
+                <td align="center" style="background-color:#ff0000">
+            {% elif row.status_color is equalto '#00ff00' %}
+                <td align="center" style="background-color:#00ff00">
+            {% elif row.status_color is equalto '#0000ff' %}
+                <td align="center" style="background-color:#0000ff">
+            {% elif row.status_color is equalto '#ff00ff' %}
+                <td align="center" style="background-color:#ff00ff">
+            {% elif row.status_color is equalto '#8888ff' %}
+                <td align="center" style="background-color:#8888ff">
+            {% elif row.status_color is equalto '#aaaaaa' %}
+                <td align="center" style="background-color:#aaaaaa">
+            {% else %}
+                <td align="center" style="background-color:#ffffff">
+            {% endif %}
+                {{ row.status_label }}</td>
+                           
+            <td align="left"><b>{{ row.last_connection_human }}</b> <tt>{{ row.last_connection_timestamp }}</tt></td>
+            <td align="left"><b>{{ row.last_data_human }}</b> <tt>{{ row.last_data_timestamp }}</tt></td>
+            {% if show_all_nodes %}
+                <td align="left"><b>{{ row.last_ssh_human }}</b> <tt>{{ row.last_ssh_timestamp }}</tt></td>
+                <td align="left"><b>{{ row.last_log_human }}</b> <tt>{{ row.last_log_timestamp }}</tt></td>
+            {% endif %}
+            </tr>
         {% endfor %}
-        {% endautoescape %}
 
     </table>
     * - "VSN" = "Vinyl Sticker Number"
