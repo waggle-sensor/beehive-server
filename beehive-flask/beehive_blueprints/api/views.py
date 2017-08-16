@@ -116,6 +116,8 @@ def NodeQuery(node_id_queried=None, bAllNodes=False):
 
     all_nodes = []
 
+    logger.info('NodeQuery:  node_id_queried = {}, bAllNodes = {}'.format(str(node_id_queried), str(bAllNodes)))
+
     # apply the appropriate WHERE clause - node_id_queried trumps bAllNodes
     if node_id_queried:
         success, error_message = export.validate_node_id(node_id_queried)
@@ -191,7 +193,7 @@ def api_nodes_single(node_id):
 
     logger.info("__ api_nodes_single()  node_id = {}".format(node_id))
 
-    return NodeQuery(node_id_queried = node_id)
+    return jsonify(NodeQuery(node_id_queried = node_id))
 
 
 @api.route('/nodes')
