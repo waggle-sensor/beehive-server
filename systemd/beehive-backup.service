@@ -1,0 +1,14 @@
+[Unit]
+Description=Beehive Backup
+OnFailure=slack-notify-failure@%i.service
+
+[Service]
+Environment='DATA=/mnt'
+
+Restart=on-failure
+RestartSec=5
+
+ExecStart=/bin/python3 -u /root/git/beehive-server/beehive-backup/backup.py
+
+[Install]
+WantedBy=multi-user.target
