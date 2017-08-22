@@ -71,7 +71,7 @@ if __name__ == '__main__':
     while True:
         print('###########################\n-------- ', datetime.datetime.utcnow())
         # get the list of existing backups
-        filesExisting = Cmd('ssh {}@{} ls {}'.format(destUsername, destUrl, destDir), bPrintAll=False)
+        filesExisting = Cmd('ssh {}@{} ls {}/*.tgz'.format(destUsername, destUrl, destDir), bPrintAll=False)
         existingBackups = []
         for f in filesExisting:
             t = FilenameToDatetime(f)
