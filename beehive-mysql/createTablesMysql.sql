@@ -18,22 +18,6 @@ CREATE TABLE IF NOT EXISTS node_management (
     INDEX idx_node (node_id)
 );
 
-# decoded sensor data, from Cassanrda
-CREATE TABLE IF NOT EXISTS sensor_data_decoded (
-    node_id         VARCHAR(16),
-    date            VARCHAR(16),
-    ingest_id       INT,
-    meta_id         INT,            # foreign key into node_meta table
-    timestamp       TIMESTAMP,      # milliseconds from epoch, integer
-    data_set        VARCHAR(64),    # distinguish between identical sensors on same node
-    sensor          VARCHAR(64),    # eg. TMP112
-    parameter       VARCHAR(64),    # parameter name (eg. temperature, humidity)
-    data            TEXT,           # data from sensor, decoded / human-readable
-    unit            VARCHAR(64),
-    PRIMARY KEY(node_id)
-);
-
-
 CREATE TABLE IF NOT EXISTS calibration (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     part_number         TEXT,
