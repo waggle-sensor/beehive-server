@@ -200,7 +200,7 @@ if __name__ == '__main__':
     verbosity = 0 if not args.verbose else args.verbose
     
     setUpdated = set()
-    q = Queue(1000)
+    q = Queue(10000)
     p = LastUpdateProcess(q, args.dataToTrack, verbosity)
     p.start()
     
@@ -209,7 +209,7 @@ if __name__ == '__main__':
     
     while p.is_alive():
         # stage 1 - empty queue to setUpdated
-        for _i in range(10):
+        for _i in range(30):
             while not q.empty():
                 setUpdated.add(q.get())
             if verbosity: print('len(setUpdated) = ', len(setUpdated))
