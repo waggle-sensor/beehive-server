@@ -27,10 +27,8 @@ run:
     --name $(container) \
     -p 5000:5000 \
     --net beehive \
-    -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/:ro \
-    -v /mnt/beehive/:/mnt/beehive:ro \
     $(image)
-    
+
 bash:
 	docker run \
     -ti \
@@ -38,7 +36,5 @@ bash:
     --name $(container) \
     -p 5000:5000 \
     --net beehive \
-    -v /root/git/beehive-server/beehive-flask/:/usr/lib/waggle/beehive-server/beehive-flask/:ro \
-    -v /mnt/beehive/:/mnt/beehive:ro \
     $(image) \
     bash

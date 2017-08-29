@@ -4,4 +4,5 @@ flask==0.12
 flask-admin==1.4.2
 flask-security==1.7.5
 flask-sqlalchemy==2.1
+gunicorn
 git+https://github.com/waggle-sensor/pywaggle

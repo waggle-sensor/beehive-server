@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 # Change this on production, it gives everyone access to the flask debugger
 # on an uncaught exception (which literally gives them a shell inside your app)
-#app.config["DEBUG"] = True  
+#app.config["DEBUG"] = True
 
 # Also change this
 app.config["SECRET_KEY"] = "highly secret"
@@ -37,14 +37,14 @@ app.register_blueprint(web, url_prefix="")
 # Creates a sqlalchemy engine with the URI found in the app's config
 # This lets you manage database sessions, execute sql, and lots more
 db.init_app(app)
-# Sets up login management and access control 
+# Sets up login management and access control
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
 # Sets up the sqlalchemy based admin page
 admin = Admin(
-    app=app, 
+    app=app,
     index_view=BeehiveAdminIndexView(),
-    name='beehive-server', 
+    name='beehive-server',
     template_mode='bootstrap3'
 )
 
@@ -55,11 +55,11 @@ def create_default_user():
     existing_user = db.session.query(User).first()
     if existing_user:
         return
-    
+
     default_user = User(email="admin@waggle.net", password="changeme", id = 0, active = True)
     db.session.add(default_user)
     db.session.commit()
-    
+
 
 
 if __name__ == "__main__":
@@ -77,5 +77,3 @@ if __name__ == "__main__":
 
     # Vamonos!
     app.run(host = '0.0.0.0')
-
-
