@@ -13,12 +13,12 @@ db.init_app(app)
 db.reflect(app=app)
 
 
-@web.route('/v2/')
+@app.route('/v2/')
 def v2_index():
     return 'starting a-new'
 
 
-@web.route('/v2/nodes')
+@app.route('/v2/nodes')
 def v2_nodes():
     return 'starting a-new'
 
