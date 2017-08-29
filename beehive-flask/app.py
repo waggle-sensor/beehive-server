@@ -20,7 +20,12 @@ def v2_index():
 
 @app.route('/v2/nodes')
 def v2_nodes():
-    return 'starting a-new'
+    nodes = []
+
+    for node_id, name in db.engine.execute('SELECT node_id, name FROM nodes'):
+        nodes.append((node_id, name))
+
+    return str(nodes)
 
 
 if __name__ == '__main__':
