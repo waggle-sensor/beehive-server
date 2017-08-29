@@ -17,28 +17,6 @@ web_host = 'http://beehive1.mcs.anl.gov/'
 api_url = web_host + 'api/'
 
 
-@web.route("/wcc/test/")
-def web_wcc_test():
-    rl = [] # result list
-
-    rl.append("<h1 style='color:green'>Hello There!</h1>")
-    rl.append('args = ' + str(request.args))
-    rl.append('<br>')
-    d = request.args.to_dict()
-    rl.append('to_dict = ' + str(d))
-    rl.append('<br>')
-    rl.append('<br>')
-    rl.append('items:  ' + str(d.items()))
-    rl.append('<br>')
-    rl.append('<br>')
-    for x in d.keys():
-        rl.append('   {} : {} <br>'.format(x, d[x]))
-    debug = request.args.get('debug', 'False')
-    rl.append('<br>')
-    rl.append('debug :  {}'.format(debug))
-    return ''.join(rl)
-
-
 durations_human_readable = [
     ('yr', datetime.timedelta(days=365).total_seconds()),
     ('mo', datetime.timedelta(days=30).total_seconds()),
@@ -79,6 +57,7 @@ def pretty_print_last_update(dtNow, timestampUpdate):
 
         last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
     return last_data
+
 
 def pretty_print_last_update_dict(dtNow, timestampUpdate):
     d = {'human': '', 'timestamp':''}
@@ -154,12 +133,7 @@ def main_page():
         if u'description' in node_obj:
             if node_obj[u'description']:
                 description = node_obj[u'description'].encode('ascii','replace').decode()
-        """
-        hostname = ''
-        if u'hostname' in node_obj:
-            if node_obj[u'hostname']:
-                hostname = node_obj[u'hostname'].encode('ascii','replace').decode()
-        """
+
         name = ''
         if u'name' in node_obj:
             if node_obj[u'name']:
@@ -180,18 +154,19 @@ def main_page():
     # sort the list
     def EmptyStringsLast(v):
         return v if v != '' else 'ZZZZZZ'
+
     def MyKey(x):
         return (EmptyStringsLast(x[1]), EmptyStringsLast(x[2]), EmptyStringsLast(x[3]), EmptyStringsLast(x[0]))
 
-    nodes_sorted.sort(key = lambda x: MyKey(x))
+    nodes_sorted.sort(key=MyKey)
 
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
 
         last_data = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['data'].get(node_id))
         if bAllNodes:
-            last_ssh  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
-            last_log  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['log'].get(node_id))
+            last_ssh = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
+            last_log = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['log'].get(node_id))
         else:
             last_ssh = last_log = pretty_print_last_update_dict(dtUtcNow, None)
 
