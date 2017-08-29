@@ -107,19 +107,18 @@ def pretty_print_last_update_dict(dtNow, timestampUpdate):
         d['human'] = sHuman
     return d
 
-@web.route("/")
-def main_page():
-    api_call = web_host + '/api/1/'
 
+@web.route('/')
+def main_page():
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
     bAllNodes = request.args.get('all', 'false').lower() == 'true'
 
     dtUtcNow = datetime.datetime.utcnow()
-    deltaOfflineMin = datetime.timedelta(hours = 1) # minimum duration to keep a node offline
+    deltaOfflineMin = datetime.timedelta(hours=1) # minimum duration to keep a node offline
 
     # request last_update info
     lastUpdateTypes = ['data', 'log', 'ssh']
-    dictLastUpdate = {t : export.get_nodes_last_update_dict(t) for t in lastUpdateTypes}
+    dictLastUpdate = {t: export.get_nodes_last_update_dict(t) for t in lastUpdateTypes}
     dictOffline = export.get_nodes_offline_dict()
 
     listRows = []
@@ -128,7 +127,10 @@ def main_page():
 
     # header row
     headings = ['Name/<br>VSN*', 'Node ID', 'Description', 'Location', 'Status', 'Last Connection', 'Last Data']
-    if bAllNodes:  headings.extend(['Last SSH', 'Last Log'])
+
+    if bAllNodes:
+        headings.extend(['Last SSH', 'Last Log'])
+
     listRows.append('<tr>' + ''.join(['<td align="center"><b>{}</b></td>'.format(x) for x in headings]) + '</tr>\n')
 
     # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
@@ -140,8 +142,8 @@ def main_page():
         (datetime.timedelta(seconds=0), '#00ff00'),   # live = green
         (datetime.timedelta(seconds=-1), '#ff00ff'),   # future!!! (time error) = magenta
     ]
-    # one row per node
 
+    # one row per node
     nodes_sorted = list()
     for node_id in all_nodes:
 
@@ -268,8 +270,6 @@ def main_page():
         list_rows = listRows)
 
 
-
-
 @web.route('/nodes/<node_id>/')
 def web_node_page(node_id):
     logger.debug('GET web_node_page()  node_id = {}'.format(node_id))
@@ -322,6 +322,7 @@ def web_node_page(node_id):
         api_call = api_call,
         api_url = api_url,
         dateList = dateList)
+
 
 @web.route('/node/logs/<node_id>/')
 def web_node_logs_page(node_id):
