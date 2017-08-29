@@ -9,7 +9,7 @@ sys.path.append("..")
 from waggle.protocol.utils.mysql import *
 sys.path.pop()
 
-logger = logging.getLogger('beehive-api')
+logger = logging.getLogger(__name__)
 
 dataset_versions = ['2', '2raw', '1']   # These should match the keys in the dataset_version_table and be sorted in the same order as they appear in the columns on the node data pages
 dataset_version_table = {
@@ -53,20 +53,13 @@ def query(statement):
     return cluster, rows
 
 
-# checking if session recreation is a problem
-mysql_db = None
-
-
 def get_mysql_db():
-    global mysql_db
+    logger.debug('getting mysql connector')
 
-    if mysql_db is None:
-        mysql_db = Mysql(host='beehive-mysql',
-                         user='waggle',
-                         passwd='waggle',
-                         db='waggle')
-
-    return mysql_db
+    return Mysql(host='beehive-mysql',
+                 user='waggle',
+                 passwd='waggle',
+                 db='waggle')
 
 
 def validate_node_id(node_id):
