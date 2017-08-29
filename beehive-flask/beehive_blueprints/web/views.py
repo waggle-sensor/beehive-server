@@ -10,14 +10,8 @@ sys.path.append("../..")
 import export
 sys.path.pop()
 
-LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
-formatter = logging.Formatter(LOG_FORMAT)
-handler = logging.StreamHandler(stream=sys.stdout)
-handler.setFormatter(formatter)
+
 logger = logging.getLogger(__name__)
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
-logging.getLogger('export').setLevel(logging.DEBUG)
 
 web_host = 'http://beehive1.mcs.anl.gov/'
 api_url = web_host + 'api/'
