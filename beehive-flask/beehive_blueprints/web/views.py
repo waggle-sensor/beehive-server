@@ -1,14 +1,9 @@
 from . import web
-
-from flask import Response
 from flask import request
-from flask import jsonify
 from flask import render_template
-from flask import stream_with_context
 
 import datetime
 import logging
-import requests
 import sys
 
 sys.path.append("../..")
@@ -25,7 +20,8 @@ logger.setLevel(logging.DEBUG)
 logging.getLogger('export').setLevel(logging.DEBUG)
 
 web_host = 'http://beehive1.mcs.anl.gov/'
-api_url  = web_host + 'api/'
+api_url = web_host + 'api/'
+
 
 @web.route("/wcc/test/")
 def web_wcc_test():
@@ -48,14 +44,16 @@ def web_wcc_test():
     rl.append('debug :  {}'.format(debug))
     return ''.join(rl)
 
+
 durations_human_readable = [
-    ('yr', datetime.timedelta(days = 365).total_seconds()),
-    ('mo', datetime.timedelta(days = 30).total_seconds()),
-    ('wk', datetime.timedelta(days = 7).total_seconds()),
-    ('d', datetime.timedelta(days = 1).total_seconds()),
-    ('hr', datetime.timedelta(seconds = 3600).total_seconds()),
-    ('m', datetime.timedelta(seconds = 60).total_seconds()),
+    ('yr', datetime.timedelta(days=365).total_seconds()),
+    ('mo', datetime.timedelta(days=30).total_seconds()),
+    ('wk', datetime.timedelta(days=7).total_seconds()),
+    ('d', datetime.timedelta(days=1).total_seconds()),
+    ('hr', datetime.timedelta(seconds=3600).total_seconds()),
+    ('m', datetime.timedelta(seconds=60).total_seconds()),
 ]
+
 
 def pretty_print_last_update(dtNow, timestampUpdate):
     if timestampUpdate == None:
@@ -74,7 +72,7 @@ def pretty_print_last_update(dtNow, timestampUpdate):
                     break
         else:
             color = '#ffffff'
-                
+
         # human readable duration
         sHuman = '1 m'
         delta_seconds = delta.total_seconds()
@@ -87,7 +85,7 @@ def pretty_print_last_update(dtNow, timestampUpdate):
 
         last_data = '<td align="left" style="background-color:{}"><b>{}</b> <tt>({})</tt></td>'.format(color, sHuman, s)
     return last_data
-    
+
 def pretty_print_last_update_dict(dtNow, timestampUpdate):
     d = {'human': '', 'timestamp':''}
     if timestampUpdate:
@@ -102,7 +100,7 @@ def pretty_print_last_update_dict(dtNow, timestampUpdate):
                     break
         else:
             color = '#ffffff'
-                
+
         # human readable duration
         sHuman = '1 m'
         delta_seconds = delta.total_seconds()
@@ -117,7 +115,6 @@ def pretty_print_last_update_dict(dtNow, timestampUpdate):
 
 @web.route("/")
 def main_page():
-
     api_call = web_host + '/api/1/'
 
     # if bAllNodes ('b' is for 'bool') is True, print all nodes, otherwise filter the active ones
@@ -143,11 +140,11 @@ def main_page():
     # list of tuples.  1st number is dt, 2nd is color.  Must be sorted in order of decreasing times.
     # find the first timedelta that is smaller than the data's timestamp's
     timeToColors = [
-        (datetime.timedelta(days = 1),  '#ff3333'),      # dead = red
-        (datetime.timedelta(hours = 2), '#ff8000'),     # dying = orange
-        (datetime.timedelta(minutes = 5), '#ffff00'),   # just starting to die = yellow
-        (datetime.timedelta(seconds = 0), '#00ff00'),   # live = green
-        (datetime.timedelta(seconds = -1), '#ff00ff'),   # future!!! (time error) = magenta
+        (datetime.timedelta(days=1),  '#ff3333'),      # dead = red
+        (datetime.timedelta(hours=2), '#ff8000'),     # dying = orange
+        (datetime.timedelta(minutes=5), '#ffff00'),   # just starting to die = yellow
+        (datetime.timedelta(seconds=0), '#00ff00'),   # live = green
+        (datetime.timedelta(seconds=-1), '#ff00ff'),   # future!!! (time error) = magenta
     ]
     # one row per node
 
@@ -194,7 +191,7 @@ def main_page():
 
     for node_tuple in nodes_sorted:
         node_id, name, description, location, opmode = node_tuple
-        
+
         last_data = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['data'].get(node_id))
         if bAllNodes:
             last_ssh  = pretty_print_last_update_dict(dtUtcNow, dictLastUpdate['ssh'].get(node_id))
@@ -213,7 +210,7 @@ def main_page():
             dtLastConnection = datetime.datetime.utcfromtimestamp(float(latest)/1000.0)
         last_connection = pretty_print_last_update_dict(dtUtcNow, latest)
 
-        # offline status 
+        # offline status
         bOffline = False
         if node_id in dictOffline:
             dtOfflineStart = datetime.datetime.utcfromtimestamp(float(dictOffline[node_id]))
@@ -230,44 +227,44 @@ def main_page():
                 bOffline = True
             else:   # the last communication happened after the expiration period
                 bOffline = False
-                
+
             # clear the offline flag if it changed to False
             if not bOffline:
                 print('############# CLEARING OFFLINE!!!!!!!!!!!!!!!!!!!!')
                 export.set_node_offline(node_id, False)
-                
+
         # compute the status
         status = {'color':'#ff00ff', 'label':'UNKNOWN'} #'<td align="center" style="background-color:#ff00ff">UNKNOWN</td>'
         if opmode.strip().lower() != 'production':
             #status = '<td align="center" style="background-color:#8888ff">{}</td>'.format(opmode.strip())  # this shouldn't print in generic user mode
-            status = {'color':'#8888ff', 'label':opmode.strip()} 
+            status = {'color':'#8888ff', 'label':opmode.strip()}
         elif bOffline:
             #status = '<td align="center" style="background-color:#aaaaaa">Offline</td>'
-            status = {'color':'#aaaaaa', 'label':'Offline'} 
-        elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 7)): 
+            status = {'color':'#aaaaaa', 'label':'Offline'}
+        elif (latest and dtUtcNow - dtLastConnection < datetime.timedelta(days = 7)):
             #status = '<td align="center" style="background-color:#00ff00">Alive</td>'
-            status = {'color':'#00ff00', 'label':'Alive'} 
+            status = {'color':'#00ff00', 'label':'Alive'}
         else:
             #status = '<td align="center" style="background-color:#ff0000">Dead</td>'
-            status = {'color':'#ff0000', 'label':'Dead'} 
-        
-        listRows.append({'name':name, 
+            status = {'color':'#ff0000', 'label':'Dead'}
+
+        listRows.append({'name':name,
             'node_id':node_id,
-            'description':description, 
-            'location':location, 
-            'status_color':status['color'], 
-            'status_label':status['label'], 
-            'last_connection_human':last_connection['human'], 
-            'last_connection_timestamp':last_connection['timestamp'], 
-            
-            'last_data_human':last_data['human'], 
-            'last_data_timestamp':last_data['timestamp'], 
-            
-            'last_ssh_human':last_ssh['human'], 
-            'last_ssh_timestamp':last_ssh['timestamp'], 
-            
-            'last_log_human':last_log['human'], 
-            'last_log_timestamp':last_log['timestamp'], 
+            'description':description,
+            'location':location,
+            'status_color':status['color'],
+            'status_label':status['label'],
+            'last_connection_human':last_connection['human'],
+            'last_connection_timestamp':last_connection['timestamp'],
+
+            'last_data_human':last_data['human'],
+            'last_data_timestamp':last_data['timestamp'],
+
+            'last_ssh_human':last_ssh['human'],
+            'last_ssh_timestamp':last_ssh['timestamp'],
+
+            'last_log_human':last_log['human'],
+            'last_log_timestamp':last_log['timestamp'],
         })
 
     return render_template('nodes.html',
@@ -278,7 +275,7 @@ def main_page():
 
 
 
-        
+
 @web.route('/nodes/<node_id>/')
 def web_node_page(node_id):
     logger.debug('GET web_node_page()  node_id = {}'.format(node_id))
@@ -348,4 +345,3 @@ def web_node_logs_page(node_id):
         txt = txt,
         api_call = '/api/1/nodes/%s/logs' % (node_id)
     )
-        
