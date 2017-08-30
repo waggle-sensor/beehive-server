@@ -8,9 +8,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://waggle:waggle@beehive-mysql/wag
 app.register_blueprint(web, url_prefix='')
 app.register_blueprint(api, url_prefix='/api')
 
-db = SQLAlchemy()
-db.init_app(app)
-db.reflect(app=app)
+db = SQLAlchemy(app)
+db.reflect()
 
 
 @app.route('/v2/')
