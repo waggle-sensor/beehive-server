@@ -1,0 +1,20 @@
+<html>
+<body>
+
+<table>
+  <tr>
+    <th>Node ID</th>
+    <th>Name</th>
+    <th>Description</th>
+  </tr>
+  {% for node in nodes %}
+  <tr>
+    <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
+    <td>{{ node['name'] }}</td>
+    <td>{{ node['description'] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>

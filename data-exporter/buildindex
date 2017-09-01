@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+from glob import glob
+import os
+import requests
+from jinja2 import Template
+
+r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes')
+
+nodes = []
+
+for item in r.json()['data'].values():
+    node = {
+        'id': item['node_id'][-12:],
+        'name': item.get('name', ''),
+        'description': item.get('description', ''),
+    }
+
+    try:
+        node['datasets'] = []
+
+        for filename in glob('data/{}/*.csv'.format(node['id'])):
+            node['datasets'].append({
+                'path': filename,
+                'date': filename.split('/')[-1].split('.')[0],
+            })
+    except FileNotFoundError:
+        continue
+
+    nodes.append(node)
+
+index_template = Template(open('templates/index.html').read())
+node_template = Template(open('templates/node.html').read())
+
+os.makedirs('static', exist_ok=True)
+
+with open('static/index.html', 'w') as f:
+    f.write(index_template.render(nodes=nodes))
+
+for node in nodes:
+    with open('static/{}.html'.format(node['id']), 'w') as f:
+        f.write(node_template.render(node=node))
