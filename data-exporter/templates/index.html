@@ -7,7 +7,7 @@
     <th>Name</th>
     <th>Description</th>
   </tr>
-  {% for node in nodes %}
+  {% for node in (nodes | sort(attribute='description')) %}
   <tr>
     <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
     <td>{{ node['name'] }}</td>
