@@ -28,3 +28,13 @@ pulled. Running the command
 
 will populate the `static` directory with a statically generated set of pages.
 Open `static/index.html` to view the datasets.
+
+## Remote backup
+
+You can do pulls over the network using ssh forwarding
+
+```
+ssh -C -L 9042:localhost:9042 beehive1
+```
+
+Then, just run `export` or `exportall`.
