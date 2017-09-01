@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+from cassandra.cluster import Cluster
+import os
+import sys
+
+
+cluster = Cluster()
+session = cluster.connect('waggle')
+
+query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+
+rows = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
+keys = [[row.node_id, row.date] for row in rows]
+
+for key in keys:
+    rows = session.execute(query, key)
+
+    node_id = key[0][-12:]
+    prefix = 'data/{}'.format(node_id)
+    os.makedirs(prefix, exist_ok=True)
+
+    filename = '{}/{}.csv'.format(prefix, key[1])
+
+    with open(filename, 'w') as outfile:
+        for row in rows:
+            if row.data.startswith("b'"):
+                data = row.data[2:-1]
+            else:
+                data = row.data
+
+            columns = [
+                node_id,
+                row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
+                row.plugin_name,
+                row.plugin_version,
+                row.parameter,
+                data,
+            ]
+
+            print(','.join(columns), file=outfile)
+
+    print(filename)
