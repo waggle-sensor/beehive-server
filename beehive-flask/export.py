@@ -4,20 +4,19 @@ import os
 import re
 import sys
 import time
-
 sys.path.append("..")
 from waggle.protocol.utils.mysql import *
 sys.path.pop()
 
 logger = logging.getLogger(__name__)
 
-dataset_versions = ['2', '2raw', '1']   # These should match the keys in the dataset_version_table and be sorted in the same order as they appear in the columns on the node data pages
 dataset_version_table = {
     '1': 'sensor_data',
     '2raw': 'sensor_data_raw',
     '2': 'sensor_data_decoded',
 }
 
+dataset_versions = list(dataset_version_table.keys())
 
 # NOTE This is ok, but it may be nicer to move this to an application /
 # per-route / level decorator.
@@ -69,7 +68,7 @@ def validate_node_id(node_id):
     success = False
     msg = None
 
-    if node_id and re.match('^[0-9a-fA-F]{16}$', node_id):
+    if node_id and re.match('^[0-9a-fA-F]+$', node_id):
         success = True
     if not success:
         msg = "ERROR: Illegal node_id.  Must be 16 hexadecimal characters."
@@ -162,7 +161,6 @@ def export_generator(node_id, date, ttl, delimiter=';', version='1', limit = Non
                 count += 1
                 # yield "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s" % (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
                 yield delimiter.join((str(timestamp), data_set, sensor, parameter, data, unit))
-
 
 
 def list_node_dates(version='1'):
