@@ -5,6 +5,9 @@
   <body>
     <h1>{{ node['id'] }}</h1>
     <table>
+      <tr>
+        <th>Date</th>
+      </tr>
       {% for dataset in (node['datasets'] | sort(attribute='date')) %}
       <tr>
         <td><a href="../{{ dataset['path'] }}">{{ dataset['date'] }}</a></td>
