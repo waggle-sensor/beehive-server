@@ -1,2 +1,3 @@
 cassandra-driver
 jinja2
+requests
