@@ -12,12 +12,14 @@
         <th>Dataset Count</th>
       </tr>
       {% for node in (nodes | sort(attribute='description')) %}
+      {% if (node['datasets'] | length) > 0 %}
       <tr>
         <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
         <td>{{ node['name'] }}</td>
         <td>{{ node['description'] }}</td>
         <td>{{ node['datasets'] | length }}</td>
       </tr>
+      {% endif %}
       {% endfor %}
     </table>
   </body>
