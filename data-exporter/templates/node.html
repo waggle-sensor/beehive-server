@@ -1,15 +1,15 @@
 <html>
-<body>
-
-<h1>{{ node['id'] }}</h1>
-
-<table>
-  {% for dataset in (node['datasets'] | sort(attribute='date')) %}
-  <tr>
-    <td><a href="../{{ dataset['path'] }}">{{ dataset['date'] }}</a></td>
-  </tr>
-  {% endfor %}
-</table>
-
-</body>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1>{{ node['id'] }}</h1>
+    <table>
+      {% for dataset in (node['datasets'] | sort(attribute='date')) %}
+      <tr>
+        <td><a href="../{{ dataset['path'] }}">{{ dataset['date'] }}</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
 </html>

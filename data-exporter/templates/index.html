@@ -1,20 +1,24 @@
 <html>
-<body>
-
-<table>
-  <tr>
-    <th>Node ID</th>
-    <th>Name</th>
-    <th>Description</th>
-  </tr>
-  {% for node in (nodes | sort(attribute='description')) %}
-  <tr>
-    <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
-    <td>{{ node['name'] }}</td>
-    <td>{{ node['description'] }}</td>
-  </tr>
-  {% endfor %}
-</table>
-
-</body>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <h1>Node List</h1>
+    <table>
+      <tr>
+        <th>Node ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Dataset Count</th>
+      </tr>
+      {% for node in (nodes | sort(attribute='description')) %}
+      <tr>
+        <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
+        <td>{{ node['name'] }}</td>
+        <td>{{ node['description'] }}</td>
+        <td>{{ node['datasets'] | length }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
 </html>
