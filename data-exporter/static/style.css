@@ -1,0 +1,8 @@
+table {
+  border-collapse: separate;
+}
+
+td {
+  padding-right: 2em;
+  text-align: left;
+}
