@@ -1,5 +1,12 @@
 # Data Exporting Tools
 
+## Installing dependencies
+
+```sh
+# Expects Python 3, so you may need pip3 install ...
+pip install -r requirements.txt
+```
+
 ## export / exportall
 
 On Beehive, these can do a direct bulk pull from the Cassandra database. You
