@@ -7,22 +7,29 @@
 pip install -r requirements.txt
 ```
 
-## export / exportall
+## list-datasets and export-datasets
 
-On Beehive, these can do a direct bulk pull from the Cassandra database. You
-simply provide:
+These tools are used together to perform bulk pulls from the Cassandra database.
+They will dump all pulled datasets to `data/nodeid/date.csv`. Let's look a few
+use cases:
 
-```sh
-./export node1 node2 ... noden
-```
-
-or
+This first example pulls all the datasets.
 
 ```sh
-./exportall
+./list-datasets | ./export-datasets
 ```
 
-This will dump all datasets using the prefix `data/nodeid/date.csv`.
+This second example pulls all the datasets from node 001e0610ba3f.
+
+```sh
+./list-datasets | awk '/001e0610ba3f/' | ./export-datasets
+```
+
+This last example pulls all the datasets after September 1, 2017.
+
+```sh
+./list-datasets | awk '$3 >= "2017-09-01"' | ./export-datasets
+```
 
 ## buildindex
 
