@@ -31,13 +31,13 @@ This last example pulls all the datasets after September 1, 2017.
 ./list-datasets | awk '$3 >= "2017-09-01"' | ./export-datasets
 ```
 
-## buildindex
+## build-index
 
 This provides an easy way to get a quick overview of what datasets you've
 pulled. Running the command
 
 ```sh
-./buildindex
+./build-index
 ```
 
 will populate the `static` directory with a statically generated set of pages.
