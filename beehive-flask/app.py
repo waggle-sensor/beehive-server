@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from beehive_blueprints.api import api
 from beehive_blueprints.web import web
 
@@ -8,8 +7,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://waggle:waggle@beehive-mysql/wag
 app.register_blueprint(web, url_prefix='')
 app.register_blueprint(api, url_prefix='/api')
 
-db = SQLAlchemy(app)
-db.reflect()
+
+@app.after_request
+def add_header(response):
+    response.cache_control.max_age = 300
+    return response
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
