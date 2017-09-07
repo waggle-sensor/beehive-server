@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import fileinput
 from cassandra.cluster import Cluster
+import sys
 import os
 
 cluster = Cluster()
@@ -11,33 +12,38 @@ query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sen
 lines = list(fileinput.input())
 
 for i, line in enumerate(lines):
-    fields = line.split()
-    node_id = fields[0]
-    date = fields[2]
-    partition_key = (fields[1], fields[2])
+    try:
+        fields = line.split()
+        node_id = fields[0]
+        date = fields[2]
+        partition_key = (fields[1], fields[2])
 
-    prefix = 'data/{}'.format(node_id)
-    os.makedirs(prefix, exist_ok=True)
-    filename = '{}/{}.csv'.format(prefix, date)
+        prefix = 'data/{}'.format(node_id)
+        os.makedirs(prefix, exist_ok=True)
+        filename = '{}/{}.csv'.format(prefix, date)
 
-    rows = session.execute(query, partition_key)
+        rows = session.execute(query, partition_key)
 
-    print('{} [{:.0%}]'.format(filename, i / len(lines)))
+        print('{} [{:.0%}]'.format(filename, i / len(lines)))
 
-    with open(filename, 'w') as outfile:
-        for row in rows:
-            if row.data.startswith("b'"):
-                data = row.data[2:-1]
-            else:
-                data = row.data
+        with open(filename, 'w') as outfile:
+            for row in rows:
+                if row.data.startswith("b'"):
+                    data = row.data[2:-1]
+                else:
+                    data = row.data
 
-            columns = [
-                node_id,
-                row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                row.plugin_name,
-                row.plugin_version,
-                row.parameter,
-                data,
-            ]
+                columns = [
+                    node_id,
+                    row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
+                    row.plugin_name,
+                    row.plugin_version,
+                    row.parameter,
+                    data,
+                ]
 
-            print(','.join(columns), file=outfile)
+                print(','.join(columns), file=outfile)
+    except KeyboardInterrupt:
+        break
+    except Exception as e:
+        print(e, flush=True, file=sys.stderr)
