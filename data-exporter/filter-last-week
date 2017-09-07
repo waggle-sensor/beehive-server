@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+import fileinput
+from datetime import datetime
+
+now = datetime.now()
+
+for line in map(str.strip, fileinput.input()):
+    fields = line.split()
+    date = datetime.strptime(fields[2], '%Y-%m-%d')
+
+    if (now - date).days <= 7:
+        print(line, flush=True)
