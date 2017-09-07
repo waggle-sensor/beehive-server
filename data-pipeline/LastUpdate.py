@@ -15,7 +15,7 @@ from cassandra.cqlengine.columns import Ascii
 from cassandra.cqlengine.usertype import UserType
 from config import *
 import datetime
-import logging 
+import logging
 from multiprocessing import Process, Manager, Queue
 import pika
 import time
@@ -36,7 +36,7 @@ class LastUpdateProcess(Process):
             Starts up the Data handling Process
         """
         super(LastUpdateProcess, self).__init__()
-        
+
         self.q = q
         if mode == 'logs':
             self.input_exchange = 'logs'
@@ -46,9 +46,9 @@ class LastUpdateProcess(Process):
             self.input_exchange = 'data-pipeline-in'
             self.queue          = 'last-data'
             self.statement = "INSERT INTO nodes_last_data (node_id, last_update) VALUES (?, ?)"
-        
+
         logger.info("Initializing LastUpdateProcess")
-        
+
         # Set up the Rabbit connection
         #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
         #Connect to rabbitMQ
@@ -60,27 +60,27 @@ class LastUpdateProcess(Process):
                 time.sleep(1)
                 continue
             break
-            
+
         logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.verbosity = verbosity
         self.numInserted = 0
         self.session = None
         self.cluster = None
         self.prepared_statement = None
-        
+
         self.cassandra_connect()
-        
-        
+
+
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
-        self.channel.queue_declare(self.queue)
-        
+        self.channel.queue_declare(self.queue, durable=True)
+
         self.channel.queue_bind(exchange = self.input_exchange,
             queue = self.queue)
-        
-        
-        try: 
+
+
+        try:
             self.channel.basic_consume(self.callback, queue=self.queue)
         except KeyboardInterrupt:
            logger.info("exiting.")
@@ -95,7 +95,7 @@ class LastUpdateProcess(Process):
             print('method = ', method)
             print('props = ', props)
             print('body = ', body)
-        '''EXAMPLE: 
+        '''EXAMPLE:
             props =  <BasicProperties(['app_id=coresense:3', 'content_type=b', 'delivery_mode=2', 'reply_to=0000001e06107d97', 'timestamp=1476135836151', 'type=frame'])>
         '''
         try:
@@ -113,17 +113,17 @@ class LastUpdateProcess(Process):
         ch.basic_ack(delivery_tag = method.delivery_tag)
 
     def cassandra_insert(self, values):
-    
+
         if not self.session:
             self.cassandra_connect()
-            
+
         if not self.prepared_statement:
-            try: 
+            try:
                 self.prepared_statement = self.session.prepare(self.statement)
             except Exception as e:
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
-        
+
         logger.debug("inserting: %s" % (str(values)))
         try:
             bound_statement = self.prepared_statement.bind(values)
@@ -133,10 +133,10 @@ class LastUpdateProcess(Process):
 
         connection_retry_delay = 1
         while True :
-            # this is long term storage    
+            # this is long term storage
             try:
                 self.session.execute(bound_statement)
-            except TypeError as e:    
+            except TypeError as e:
                  logger.error("QueueToDb: (TypeError) Error executing cassandra cql statement: %s -- values was: %s" % (str(e), str(values)) )
                  break
             except Exception as e:
@@ -144,13 +144,13 @@ class LastUpdateProcess(Process):
                 if "TypeError" in str(e):
                     logger.debug("detected TypeError, will ignore this message")
                     break
-                
+
                 self.cassandra_connect()
                 time.sleep(connection_retry_delay)
                 if connection_retry_delay < 10:
                     connection_retry_delay += 1
                 continue
-            
+
             break
         if verbosity > 1:
             logger.debug('cassandra_insert() exiting...')
@@ -164,10 +164,10 @@ class LastUpdateProcess(Process):
                     self.cluster.shutdown()
                 except:
                     pass
-                    
+
             self.cluster = Cluster(contact_points=[CASSANDRA_HOST])
             self.session = None
-            
+
             iTry2 = 0
             while not bDone and (iTry2 < 5):
                 iTry2 += 1
@@ -190,23 +190,23 @@ class LastUpdateProcess(Process):
         self.connection.close(0)
         if self.cluster:
             self.cluster.shutdown()
-            
-   
+
+
 if __name__ == '__main__':
     argParser = argparse.ArgumentParser()
     argParser.add_argument('dataToTrack', choices = ['data', 'logs'], help = 'which stream of data to track')
     argParser.add_argument('--verbose', '-v', action='count')
     args = argParser.parse_args()
     verbosity = 0 if not args.verbose else args.verbose
-    
+
     setUpdated = set()
     q = Queue(10000)
     p = LastUpdateProcess(q, args.dataToTrack, verbosity)
     p.start()
-    
+
     print(__name__ + ': created process ', p)
     time.sleep(10)
-    
+
     while p.is_alive():
         # stage 1 - empty queue to setUpdated
         for _i in range(30):
@@ -214,7 +214,7 @@ if __name__ == '__main__':
                 setUpdated.add(q.get())
             if verbosity: print('len(setUpdated) = ', len(setUpdated))
             time.sleep(1)
-        
+
         # stage 2 - periodically write setUpdated to db
         timestamp = int(datetime.datetime.utcnow().timestamp() * 1000)
         if verbosity: print('timestamp = ', timestamp, 'q.qsize() = ', q.qsize())
@@ -223,6 +223,6 @@ if __name__ == '__main__':
             p.cassandra_insert(values)
             if verbosity > 1: print('  writing:  ', node_id)
         setUpdated.clear()
-        
+
     print(__name__ + ': process is dead, time to die')
-    p.join()    
+    p.join()
