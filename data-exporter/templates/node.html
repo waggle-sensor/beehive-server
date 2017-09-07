@@ -10,7 +10,7 @@
       </tr>
       {% for dataset in (node['datasets'] | sort(attribute='date')) %}
       <tr>
-        <td><a href="../{{ dataset['path'] }}">{{ dataset['date'] }}</a></td>
+        <td><a href="../{{ dataset['url'] }}">{{ dataset['date'] }}</a></td>
       </tr>
       {% endfor %}
     </table>

@@ -3,38 +3,42 @@ from glob import glob
 import os
 import requests
 from jinja2 import Template
+import json
 
-r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes')
+r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/')
 
 nodes = []
 
 for item in r.json()['data'].values():
-    node = {
+    nodes.append({
         'id': item['node_id'][-12:],
         'name': item.get('name', ''),
         'description': item.get('description', ''),
-    }
+        'url': '{}.json'.format(item['node_id'][-12:]),
+    })
 
+with open('static/index.json', 'w') as f:
+    json.dump(nodes, f)
+
+for node in nodes:
     try:
         node['datasets'] = []
 
         # uncompressed datasets
         for filename in glob('data/{}/*.csv'.format(node['id'])):
             node['datasets'].append({
-                'path': filename,
+                'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
             })
 
         # compressed datasets
         for filename in glob('data/{}/*.csv.gz'.format(node['id'])):
             node['datasets'].append({
-                'path': filename,
+                'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
             })
     except FileNotFoundError:
         continue
-
-    nodes.append(node)
 
 index_template = Template(open('templates/index.html').read())
 node_template = Template(open('templates/node.html').read())
@@ -45,5 +49,8 @@ with open('static/index.html', 'w') as f:
     f.write(index_template.render(nodes=nodes))
 
 for node in nodes:
+    with open('static/{}.json'.format(node['id']), 'w') as f:
+        json.dump(node['datasets'], f)
+
     with open('static/{}.html'.format(node['id']), 'w') as f:
         f.write(node_template.render(node=node))
