@@ -7,7 +7,7 @@
   </head>
   <body>
     <div class="container">
-      <h1>Datasets for {{ node['name'] }}</h1>
+      <h1>Datasets for Node {{ node['name'] }}</h1>
 
       <table class="table table-bordered">
         <thead class="thead-inverse">
@@ -17,12 +17,12 @@
           </tr>
         </thead>
         <tbody>
-          {% for dataset in (node['datasets'] | sort(attribute='date')) %}
+          {% for dataset in (node['datasets'] | sort(attribute='date')) -%}
           <tr>
             <td><a href="../{{ dataset['url'] }}">{{ dataset['date'] }}</a></td>
             <td>2 Raw</td>
           </tr>
-          {% endfor %}
+          {%- endfor %}
         </tbody>
       </table>
     </div>

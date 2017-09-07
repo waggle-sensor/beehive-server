@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for node in (nodes | sort(attribute='description')) %}
+          {% for node in (nodes | sort(attribute='description')) -%}
           {% if (node['name'] | length) > 0 and (node['datasets'] | length) > 0 %}
           <tr>
             <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
@@ -28,7 +28,7 @@
             <td>{{ node['datasets'] | length }}</td>
           </tr>
           {% endif %}
-          {% endfor %}
+          {%- endfor %}
         </tbody>
       </table>
     </div>
