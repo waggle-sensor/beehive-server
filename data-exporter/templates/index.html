@@ -1,26 +1,37 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
   </head>
   <body>
-    <h1>Node List</h1>
-    <table>
-      <tr>
-        <th>Node ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Dataset Count</th>
-      </tr>
-      {% for node in (nodes | sort(attribute='description')) %}
-      {% if (node['datasets'] | length) > 0 %}
-      <tr>
-        <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
-        <td>{{ node['name'] }}</td>
-        <td>{{ node['description'] }}</td>
-        <td>{{ node['datasets'] | length }}</td>
-      </tr>
-      {% endif %}
-      {% endfor %}
-    </table>
+    <div class="container">
+      <h1>Node List</h1>
+
+      <table class="table table-bordered">
+        <thead class="thead-inverse">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Datasets</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for node in (nodes | sort(attribute='description')) %}
+          {% if (node['name'] | length) > 0 and (node['datasets'] | length) > 0 %}
+          <tr>
+            <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
+            <td>{{ node['name'] }}</td>
+            <td>{{ node['description'] }}</td>
+            <td>{{ node['datasets'] | length }}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
   </body>
 </html>

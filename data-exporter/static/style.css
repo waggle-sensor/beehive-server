@@ -1,8 +1,12 @@
-table {
+/*table {
   border-collapse: separate;
+}
+
+tr:hover {
+  background-color: #f8f8f8;
 }
 
 td {
   padding-right: 2em;
-  text-align: left;
-}
+  text-align: right;
+}*/
