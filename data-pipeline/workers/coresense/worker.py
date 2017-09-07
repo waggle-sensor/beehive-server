@@ -26,7 +26,8 @@ connection = pika.BlockingConnection(pika.URLParameters(url))
 channel = connection.channel()
 
 channel.exchange_declare(exchange='plugins-in',
-                         exchange_type='direct')
+                         exchange_type='direct',
+                         durable=True)
 
 channel.exchange_bind(source='data-pipeline-in',
                       destination='plugins-in')
