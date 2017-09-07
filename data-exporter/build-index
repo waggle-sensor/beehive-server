@@ -18,7 +18,15 @@ for item in r.json()['data'].values():
     try:
         node['datasets'] = []
 
+        # uncompressed datasets
         for filename in glob('data/{}/*.csv'.format(node['id'])):
+            node['datasets'].append({
+                'path': filename,
+                'date': filename.split('/')[-1].split('.')[0],
+            })
+
+        # compressed datasets
+        for filename in glob('data/{}/*.csv.gz'.format(node['id'])):
             node['datasets'].append({
                 'path': filename,
                 'date': filename.split('/')[-1].split('.')[0],

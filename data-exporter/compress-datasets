@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for item in $(echo data/*/*.csv); do
+  echo $item
+  gzip -f $item
+done
