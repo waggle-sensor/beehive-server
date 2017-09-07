@@ -18,43 +18,18 @@ dataset_version_table = {
 
 dataset_versions = list(dataset_version_table.keys())
 
-# NOTE This is ok, but it may be nicer to move this to an application /
-# per-route / level decorator.
-def retry(attempts=3, delay=1):
-    def wrap(f):
-        def wrapped(*args, **kwargs):
-            exception = None
-            for attempt in range(attempts):
-                try:
-                    return f(*args, **kwargs)
-                except Exception as e:
-                    exception = e
-                    time.sleep(delay * 2 ** min(attempt, 3))
-            else:
-                raise exception
-        return wrapped
-    return wrap
-
 
 # NOTE Probably want connection to be cached and then more safely insert
 # parameters into query.
-@retry(attempts=5, delay=3)
+# @retry(attempts=5, delay=3)
 def query(statement):
-    logger.info('Connecting to Cassandra cluster.')
     cluster = Cluster(['beehive-cassandra'])
-
-    logger.info('Connecting to Cassandra database.')
     session = cluster.connect('waggle')
-
-    logger.info('Executing Cassandra query.  {}'.format(statement))
     rows = session.execute(statement)
-
     return cluster, rows
 
 
 def get_mysql_db():
-    logger.debug('getting mysql connector')
-
     return Mysql(host='beehive-mysql',
                  user='waggle',
                  passwd='waggle',
