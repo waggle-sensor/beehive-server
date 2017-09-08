@@ -12,7 +12,7 @@ services:
   worker_coresense:
     image: waggle/beehive-worker-coresense
   worker_gps:
-    image: waggle/beehive-worker-gps
+    image: waggle/beehive-worker-gps-sense
 configs:
   nginx_config:
     file: ./beehive-nginx/beehive.conf
