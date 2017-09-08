@@ -1,27 +1,21 @@
 #!/usr/bin/env python3
-import os.path
-import pika
-import ssl
-from waggle.coresense.utils import decode_frame
-from urllib.parse import urlencode
 import json
-
+import pika
+import os
+from waggle.coresense.utils import decode_frame
 
 plugin = 'coresense:3'
 
-url = 'amqp://worker_coresense:worker@beehive-rabbitmq'
-
-# url = 'amqps://worker:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-#     'ssl': 't',
-#     'ssl_options': {
-#         'certfile': os.path.abspath('SSL/node/cert.pem'),
-#         'keyfile': os.path.abspath('SSL/node/key.pem'),
-#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-#         'cert_reqs': ssl.CERT_REQUIRED
-#     }
-# }))
-
-connection = pika.BlockingConnection(pika.URLParameters(url))
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+    host=os.environ.get('WORKER_HOST', 'beehive-rabbitmq'),
+    port=os.environ.get('WORKER_PORT', 5672),
+    credentials=pika.PlainCredentials(
+        username=os.environ.get('WORKER_USERNAME', 'worker_coresense'),
+        password=os.environ.get('WORKER_PASSWORD', 'worker'),
+    ),
+    connection_attempts=5,
+    retry_delay=5.0,
+))
 
 channel = connection.channel()
 
