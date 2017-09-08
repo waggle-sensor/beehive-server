@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 import fileinput
 from datetime import datetime
+import sys
 
 now = datetime.now()
 
 for line in map(str.strip, fileinput.input()):
-    fields = line.split()
-    date = datetime.strptime(fields[2], '%Y-%m-%d')
+    try:
+        fields = line.split()
+        date = datetime.strptime(fields[2], '%Y-%m-%d')
 
-    if (now - date).days <= 31:
-        print(line, flush=True)
+        if (now - date).days <= 31:
+            print(line, flush=True)
+    except KeyboardInterrupt:
+        break
+    except Exception as e:
+        print(e, flush=True, file=sys.stderr)
