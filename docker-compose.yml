@@ -1,8 +1,18 @@
 version: '3.3'
 services:
+  nginx:
+    image: nginx
+    ports:
+      - "8080:80"
+    configs:
+      - source: nginx_config
+        target: /etc/nginx/nginx.conf
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
   worker_coresense:
     image: waggle/beehive-worker-coresense
   worker_gps:
     image: waggle/beehive-worker-gps
+configs:
+  nginx_config:
+    file: ./beehive-nginx/beehive.conf
