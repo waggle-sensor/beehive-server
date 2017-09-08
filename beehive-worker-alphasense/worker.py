@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-import os.path
-import sys
 import json
 import pika
-import ssl
+import os
 import struct
-from urllib.parse import urlencode
 
 
 def decode_alphasense(data):
@@ -15,11 +12,8 @@ def decode_alphasense(data):
     # pressure = struct.unpack_from('<I', data, offset=40)[0]
     # temperature = pressure / 10.0
     # sampling_period = struct.unpack_from('<f', data, offset=44)[0]
-    checksum = struct.unpack_from('<H', data, offset=48)[0]
+    # checksum = struct.unpack_from('<H', data, offset=48)[0]
     pmvalues = struct.unpack_from('<3f', data, offset=50)
-
-    #assert pmvalues[0] <= pmvalues[1] <= pmvalues[2]
-    #assert sum(bincounts) & 0xFFFF == checksum
 
     values = {
         'bins': ','.join(map(str, bincounts)),
@@ -41,20 +35,16 @@ def decode_alphasense(data):
 
 plugin = 'alphasense:1'
 
-#url = 'amqp://worker_alphasense:worker@localhost'
-url = 'amqp://worker_alphasense:worker@beehive-rabbitmq'
-
-# url = 'amqps://worker_alphasense:worker@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-#     'ssl': 't',
-#     'ssl_options': {
-#         'certfile': os.path.abspath('SSL/node/cert.pem'),
-#         'keyfile': os.path.abspath('SSL/node/key.pem'),
-#         'ca_certs': os.path.abspath('SSL/waggleca/cacert.pem'),
-#         'cert_reqs': ssl.CERT_REQUIRED
-#     }
-# }))
-
-connection = pika.BlockingConnection(pika.URLParameters(url))
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+    host=os.environ.get('WORKER_HOST', 'beehive-rabbitmq'),
+    port=os.environ.get('WORKER_PORT', 5672),
+    credentials=pika.PlainCredentials(
+        username=os.environ.get('WORKER_USERNAME', 'worker_alphasense'),
+        password=os.environ.get('WORKER_PASSWORD', 'worker'),
+    ),
+    connection_attempts=5,
+    retry_delay=5.0,
+))
 
 channel = connection.channel()
 
