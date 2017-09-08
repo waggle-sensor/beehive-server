@@ -1,48 +1,8 @@
-version: '3'
+version: '3.3'
 services:
-
-  nginx:
-    build: beehive-nginx
-    # container_name: beehive-nginx
-    hostname: beehive-nginx
-    volumes:
-      - "/mnt/waggle/SSL/nginx/:/ssl"
-    ports:
-      - "127.0.0.1:10000:80"
-      - "127.0.0.1:10001:443"
-    links:
-      - flask
-      - rabbitmq
-    restart: always
-
-  flask:
-    build: beehive-flask
-    # container_name: beehive-flask
-    hostname: beehive-flask
-    links:
-      - mysql
-      - cassandra
-    restart: always
-
-  mysql:
-    image: mysql
-    # container_name: beehive-mysql
-    hostname: beehive-mysql
-    environment:
-      - "MYSQL_ROOT_PASSWORD=waggle"
-      - "MYSQL_USER=waggle"
-      - "MYSQL_PASSWORD=waggle"
-      - "MYSQL_DATABASE=waggle"
-    restart: always
-
-  cassandra:
-    image: cassandra
-    # container_name: beehive-cassandra
-    hostname: beehive-cassandra
-    restart: always
-
-  rabbitmq:
-    image: rabbitmq:management
-    # container_name: beehive-rabbitmq
-    hostname: beehive-rabbitmq
-    restart: always
+  worker_alphasense:
+    image: waggle/beehive-worker-alphasense
+  worker_coresense:
+    image: waggle/beehive-worker-coresense
+  worker_gps:
+    image: waggle/beehive-worker-gps
