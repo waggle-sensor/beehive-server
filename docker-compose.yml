@@ -6,7 +6,7 @@ services:
       - "8080:80"
     configs:
       - source: nginx_config
-        target: /etc/nginx/nginx.conf
+        target: /etc/nginx/conf.d/default.conf
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
   worker_coresense:
