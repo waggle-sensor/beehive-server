@@ -1,11 +1,20 @@
 CREATE KEYSPACE IF NOT EXISTS waggle
   WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 2 };
 
+CREATE KEYSPACE IF NOT EXISTS production
+  WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 3 };
+
+CREATE KEYSPACE IF NOT EXISTS development
+  WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+CREATE KEYSPACE IF NOT EXISTS testing
+  WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
 USE waggle;
 
 CREATE TABLE IF NOT EXISTS sensor_data_raw (
-    node_id         ascii,    
-    date            ascii,    
+    node_id         ascii,
+    date            ascii,
     ingest_id       int,
     plugin_name     ascii,
     plugin_version  ascii,
@@ -37,7 +46,7 @@ CREATE TABLE IF NOT EXISTS admin_messages (
     meta_id         int,            -- foreign key into node_meta table
     timestamp       TIMESTAMP,      -- milliseconds from epoch, integer
     data_set        ascii,          -- distinguish between identical sensors on same node
-    sensor          ascii,    
+    sensor          ascii,
     parameter       ascii,          -- parameter name (eg. temperature, humidity)
     data            ascii,          -- data from sensor, encoded to hex
     unit            ascii,
