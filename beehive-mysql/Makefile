@@ -14,6 +14,7 @@ deploy:
 		-e MYSQL_USER=waggle \
 		-e MYSQL_PASSWORD=waggle \
 		-p 127.0.0.1:3306:3306 \
+		--hostname $(name) \
 		--name $(name) \
 		$(image)
 
