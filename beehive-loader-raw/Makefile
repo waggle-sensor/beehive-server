@@ -4,8 +4,12 @@ image = waggle/$(name)
 build:
 	docker build -t $(image) .
 
-run:
+deploy:
+	docker rm -f $(name) || true
 	docker run --detach --net beehive --restart=on-failure:10 --name $(name) $(image)
+
+rm:
+	docker rm -f $(name)
 
 start:
 	docker start $(name)
