@@ -1,11 +1,17 @@
+name = beehive-worker-coresense
+image = waggle/$(name)
+
 build:
-	docker build -t waggle/beehive-worker-coresense .
+	docker build -t $(image) .
+
+run:
+	docker run --detach --net beehive --restart=on-failure:10 -e WORKER_DEPLOYMENT=/ --name $(name) $(image)
 
 start:
-	systemctl start beehive-worker-coresense
+	systemctl start $(name)
 
 stop:
-	systemctl stop beehive-worker-coresense
+	systemctl stop $(name)
 
 restart:
-	systemctl restart beehive-worker-coresense
+	systemctl restart $(name)

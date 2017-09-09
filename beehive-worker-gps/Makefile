@@ -1,11 +1,17 @@
+name = beehive-worker-gps-sense
+image = waggle/$(name)
+
 build:
-	docker build -t waggle/beehive-worker-gps-sense .
+	docker build -t $(image) .
+
+run:
+	docker run --detach --net beehive --restart=on-failure:10 -e WORKER_DEPLOYMENT=/ --name $(name) $(image)
 
 start:
-	systemctl start beehive-worker-gps-sense
+	systemctl start $(name)
 
 stop:
-	systemctl stop beehive-worker-gps-sense
+	systemctl stop $(name)
 
 restart:
-	systemctl restart beehive-worker-gps-sense
+	systemctl restart $(name)
