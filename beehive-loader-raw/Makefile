@@ -5,6 +5,7 @@ build:
 	docker build -t $(image) .
 
 deploy:
+	docker network create beehive || true
 	docker rm -f $(name) || true
 	docker run --detach --net beehive --restart=on-failure:10 --name $(name) $(image)
 
