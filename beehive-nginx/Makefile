@@ -1,3 +1,24 @@
+name = beehive-nginx
+image = waggle/$(name)
+
+build:
+	docker build -t $(image) .
+
+deploy:
+	docker network create beehive || true
+	docker rm -f $(name) || true
+	docker run \
+		--detach \
+		--net beehive \
+		--restart=on-failure:10 \
+		--name $(name) \
+		$(image)
+
+rm:
+	docker rm -f $(name)
+
+
+
 IMAGE = waggle/beehive-nginx
 CONTAINER = beehive-nginx
 SSL_PATH = /mnt/waggle/SSL/nginx/
@@ -23,4 +44,3 @@ ssl:
 	openssl genrsa -out $(SSL_PATH)/nginx.key 2048
 	openssl req -new -key $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.csr
 	openssl x509 -req -days 365 -in $(SSL_PATH)/nginx.csr -signkey $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.crt
-
