@@ -10,7 +10,7 @@ deploy:
 	docker run \
 		--detach \
 		--net beehive \
-		--restart=on-failure:10 \
+		--restart=always \
 		-v /mnt/beehive:/mnt/beehive \
 		--name $(name) \
 		$(image)
