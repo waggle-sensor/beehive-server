@@ -23,3 +23,20 @@ deploy:
 
 rm:
 	docker rm -f $(name)
+
+setup:
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost production
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost development
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost testing
+
+	docker exec -ti $(name) rabbitmqctl add_user node waggle || true
+	docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p production node "^$" ".*" "^$" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p development node "^$" ".*" "^$" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p testing node "^$" ".*" "^$" || true
+
+	docker exec -ti $(name) rabbitmqctl add_user server waggle || true
+	docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p production server ".*" ".*" ".*" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p development server ".*" ".*" ".*" || true
+	docker exec -ti $(name) rabbitmqctl set_permissions -p testing server ".*" ".*" ".*" || true
