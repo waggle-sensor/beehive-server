@@ -5,10 +5,10 @@ run:
 	docker run --detach --net beehive --restart always --name beehive-loader-raw waggle/beehive-loader-raw
 
 start:
-	systemctl start waggle/beehive-loader-raw
+	docker start waggle/beehive-loader-raw
 
 stop:
-	systemctl stop waggle/beehive-loader-raw
+	docker stop waggle/beehive-loader-raw
 
 restart:
-	systemctl restart waggle/beehive-loader-raw
+	docker restart waggle/beehive-loader-raw
