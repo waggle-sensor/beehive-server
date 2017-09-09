@@ -16,7 +16,7 @@ class SensorData(Model):
     created_at = columns.DateTime(primary_key=True)
     received_at = columns.DateTime()
     plugin_id = columns.Text(primary_key=True)
-    topic = columns.Text()
+    topic = columns.Text(primary_key=True)
     data = columns.Blob()
 
 
