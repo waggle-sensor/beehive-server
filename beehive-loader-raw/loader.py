@@ -42,7 +42,7 @@ def process_message(ch, method, properties, body):
 
 if __name__ == '__main__':
     # setup cassandra connection and models
-    connection.setup(['cassandra'], 'waggle')
+    connection.setup(['beehive-cassandra'], 'waggle')
     create_keyspace_simple(BEEHIVE_DEPLOYMENT, replication_factor=3)
     sync_table(SensorData)
 
