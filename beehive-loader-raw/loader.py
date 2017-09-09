@@ -1,7 +1,6 @@
 from cassandra.cqlengine import columns
 from cassandra.cqlengine import connection
 from cassandra.cqlengine.management import sync_table
-from cassandra.cqlengine.management import create_keyspace_simple
 from cassandra.cqlengine.models import Model
 from datetime import datetime
 import pika
@@ -70,8 +69,7 @@ if __name__ == '__main__':
 
     channel.queue_bind(
         queue='raw-data',
-        exchange='data-pipeline-in',
-        routing_key='')
+        exchange='data-pipeline-in')
 
     channel.basic_consume(
         process_message,
