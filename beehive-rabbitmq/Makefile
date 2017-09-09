@@ -12,7 +12,6 @@ deploy:
 		--net beehive \
 		--restart=always \
 		-e RABBITMQ_NODENAME=$(name) \
-		-v /mnt/rabbitmq/config/:/etc/rabbitmq:rw \
 		-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \
 		-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
