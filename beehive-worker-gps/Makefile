@@ -7,7 +7,7 @@ build:
 deploy:
 	docker network create beehive || true
 	docker rm -f $(name) || true
-	docker run --detach --net beehive --restart=on-failure:10 -e WORKER_DEPLOYMENT=/ --name $(name) $(image)
+	docker run --detach --net beehive --restart=on-failure:10 -e BEEHIVE_DEPLOYMENT=/ --name $(name) $(image)
 
 rm:
 	docker rm -f $(name)
