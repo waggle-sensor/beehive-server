@@ -16,7 +16,7 @@ deploy:
 		-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
 		-p 23181:23181 \
-		-p 15672:15672 \
+		-p 15671:15671 \
 		--name $(name) \
 		$(image)
 
