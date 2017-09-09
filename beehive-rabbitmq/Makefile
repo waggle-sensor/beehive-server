@@ -1,20 +1,25 @@
-IMAGE = waggle/beehive-rabbitmq
-CONTAINER = beehive-rabbitmq
+name = beehive-rabbitmq
+image = waggle/$(name)
 
 build:
-	docker build -t $(IMAGE) .
+	docker build -t $(image) .
 
-run:
+deploy:
+	docker network create beehive || true
+	docker rm -f $(name) || true
 	docker run \
-	--rm \
-	--net beehive \
-	--hostname $(CONTAINER) \
-	--name ${CONTAINER} \
-	-e RABBITMQ_NODENAME=${CONTAINER} \
-	-v /mnt/rabbitmq/config/:/etc/rabbitmq:rw \
-	-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \
-	-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
-	-p 127.0.0.1:5672:5672 \
-	-p 23181:23181 \
-	-p 15672:15672 \
-	$(IMAGE)
+		--detach \
+		--net beehive \
+		--restart=on-failure:10 \
+		-e RABBITMQ_NODENAME=$(name) \
+		-v /mnt/rabbitmq/config/:/etc/rabbitmq:rw \
+		-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \
+		-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
+		-p 127.0.0.1:5672:5672 \
+		-p 23181:23181 \
+		-p 15672:15672 \
+		--name $(name) \
+		$(image)
+
+rm:
+	docker rm -f $(name)
