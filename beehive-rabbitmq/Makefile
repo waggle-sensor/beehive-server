@@ -10,7 +10,7 @@ deploy:
 	docker run \
 		--detach \
 		--net beehive \
-		--restart=on-failure:10 \
+		--restart=always \
 		-e RABBITMQ_NODENAME=$(name) \
 		-v /mnt/rabbitmq/config/:/etc/rabbitmq:rw \
 		-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \

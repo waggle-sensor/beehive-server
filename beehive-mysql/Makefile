@@ -7,7 +7,7 @@ deploy:
 	docker run \
 		--detach \
 		--net beehive \
-		--restart=on-failure:10 \
+		--restart=always \
 		-v /mnt/mysql/datadir:/var/lib/mysql \
 		-e MYSQL_ROOT_PASSWORD=waggle \
 		-e MYSQL_DATABASE=waggle \
