@@ -1,9 +1,6 @@
 #!/usr/bin/env python
-
 import os
 import sys
-
-import base64
 import random
 import boto3
 
@@ -200,7 +197,9 @@ url = 'amqps://node:waggle@beehive-rabbitmq:23181?{}'.format(urlencode({
         'cert_reqs': ssl.CERT_REQUIRED
     }
 }))
+
 print('url = ', url)
+
 
 def map_values(sensor, values):
     for key, value in values.items():
