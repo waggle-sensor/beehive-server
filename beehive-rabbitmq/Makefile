@@ -25,9 +25,9 @@ rm:
 	docker rm -f $(name)
 
 setup:
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost production
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost development
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost testing
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost production || true
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost development || true
+	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost testing || true
 
 	docker exec -ti $(name) rabbitmqctl add_user node waggle || true
 	docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
