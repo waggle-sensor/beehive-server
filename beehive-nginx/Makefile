@@ -1,24 +1,23 @@
-name = beehive-nginx
-image = waggle/$(name)
-
-build:
-	docker build -t $(image) .
-
-deploy:
-	docker network create beehive || true
-	docker rm -f $(name) || true
-	docker run \
-		--detach \
-		--net beehive \
-		--restart=on-failure:10 \
-		--name $(name) \
-		$(image)
-
-rm:
-	docker rm -f $(name)
-
-
-
+# name = beehive-nginx
+# image = waggle/$(name)
+#
+# build:
+# 	docker build -t $(image) .
+#
+# deploy:
+# 	docker network create beehive || true
+# 	docker rm -f $(name) || true
+# 	docker run \
+# 		--detach \
+# 		--net beehive \
+# 		--restart=on-failure:10 \
+# 		--name $(name) \
+# 		$(image)
+#
+# rm:
+# 	docker rm -f $(name)
+#
+#
 IMAGE = waggle/beehive-nginx
 CONTAINER = beehive-nginx
 SSL_PATH = /mnt/waggle/SSL/nginx/
