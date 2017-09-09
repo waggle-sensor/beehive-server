@@ -14,8 +14,8 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
         username=os.environ.get('BEEHIVE_USERNAME', 'worker_coresense'),
         password=os.environ.get('BEEHIVE_PASSWORD', 'worker'),
     ),
-    connection_attempts=5,
-    retry_delay=5.0,
+    connection_attempts=10,
+    retry_delay=3.0,
 ))
 
 channel = connection.channel()
