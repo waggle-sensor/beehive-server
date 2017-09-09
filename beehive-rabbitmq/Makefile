@@ -1,5 +1,8 @@
 name = beehive-rabbitmq
-image = rabbitmq:3.5.6
+image = waggle/$(name)
+
+build:
+	docker build -t $(image) .
 
 deploy:
 	docker network create beehive || true
@@ -9,7 +12,6 @@ deploy:
 		--net beehive \
 		--restart=always \
 		-e RABBITMQ_NODENAME=$(name) \
-		-v /mnt/rabbitmq/config/:/etc/rabbitmq \
 		-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \
 		-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
