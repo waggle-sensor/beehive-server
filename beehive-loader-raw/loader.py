@@ -59,18 +59,6 @@ if __name__ == '__main__':
     # get channel and start processing messages
     channel = connection.channel()
 
-    channel.exchange_declare(
-        exchange='data-pipeline-in',
-        durable=True)
-
-    channel.queue_declare(
-        queue='raw-data',
-        durable=True)
-
-    channel.queue_bind(
-        queue='raw-data',
-        exchange='data-pipeline-in')
-
     channel.basic_consume(
         process_message,
         queue='raw-data')
