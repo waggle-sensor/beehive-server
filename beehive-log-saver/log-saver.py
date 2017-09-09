@@ -6,16 +6,27 @@ import pika
 import time
 
 
+BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
+
+
 class LogSaverProcess(multiprocessing.Process):
     def __init__(self, q, verbosity = 0):
         super(LogSaverProcess, self).__init__()
         self.q = q
         self.verbosity = verbosity
 
-        # set up the rabbitmq connection
-        self.credentials = pika.PlainCredentials('log_saver', 'waggle')
-        self.parameters = pika.ConnectionParameters('beehive-rabbitmq', credentials = self.credentials)
-        self.connection = pika.BlockingConnection(self.parameters)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host='beehive-rabbitmq',
+            port=5672,
+            virtual_host=BEEHIVE_DEPLOYMENT,
+            credentials=pika.PlainCredentials(
+                username='log_saver',
+                password='waggle',
+            ),
+            connection_attempts=10,
+            retry_delay=3.0,
+        ))
+
         self.channel = self.connection.channel()
 
         self.channel.queue_declare(queue='log-saver', durable=True)
