@@ -53,8 +53,8 @@ if __name__ == '__main__':
             username='loader_raw',
             password='waggle',
         ),
-        connection_attempts=5,
-        retry_delay=5.0))
+        connection_attempts=10,
+        retry_delay=3.0))
 
     # get channel and start processing messages
     channel = connection.channel()

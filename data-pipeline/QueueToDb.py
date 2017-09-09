@@ -1,43 +1,32 @@
 #!/usr/bin/env python3
 import os
 import sys
-sys.path.append(os.path.abspath('../'))
-sys.path.append("/usr/lib/waggle/")
-sys.path.append("/usr/lib/waggle/beehive-server")
-
 import argparse
 import binascii
 from cassandra.cluster import Cluster
-from cassandra.query import BatchStatement
-from cassandra import ConsistencyLevel
-from cassandra.cqlengine.columns import Ascii
-from cassandra.cqlengine.usertype import UserType
-from config import *
 import datetime
 import json
 import logging
-from multiprocessing import Process, Manager
+from multiprocessing import Process
 import pika
 import time
+sys.path.append(os.path.abspath('../'))
+sys.path.append("/usr/lib/waggle/")
+sys.path.append("/usr/lib/waggle/beehive-server")
+from config import *
 from waggle_protocol.protocol.PacketHandler import *
 from waggle_protocol.utilities.gPickler import *
-#logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.CRITICAL)
 
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
+
 
 class DataProcess(Process):
-    """
-        This process handles all data submissions
-        is_database_raw is a bool, if True, will write data to raw-db, else to decoded-db)
-    """
 
     def __init__(self, is_database_raw, verbosity = 0):
-        """
-            Starts up the Data handling Process
-        """
         super(DataProcess,self).__init__()
 
         if is_database_raw:
@@ -53,20 +42,17 @@ class DataProcess(Process):
 
         logger.info("Initializing DataProcess")
 
-        # Set up the Rabbit connection
-        #self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-        #Connect to rabbitMQ
-        while True:
-            try:
-                self.connection = pika.BlockingConnection(pika_params)
-            except Exception as e:
-                logger.error("QueueToDb: Could not connect to RabbitMQ server \"%s\": %s" % (pika_params.host, e))
-                time.sleep(1)
-                continue
-            break
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host='beehive-rabbitmq',
+            port=5672,
+            virtual_host=BEEHIVE_DEPLOYMENT,
+            credentials=pika.PlainCredentials(
+                username='loader_raw',
+                password='waggle',
+            ),
+            connection_attempts=10,
+            retry_delay=3.0))
 
-
-        logger.info("Connected to RabbitMQ server \"%s\"" % (pika_params.host))
         self.verbosity = verbosity
         self.numInserted = 0
         self.numFailed = 0
@@ -76,14 +62,14 @@ class DataProcess(Process):
 
         self.cassandra_connect()
 
-
         self.channel = self.connection.channel()
         self.channel.basic_qos(prefetch_count=1)
         # Declare this process's queue
         self.channel.queue_declare(self.queue, durable=True)
 
-        self.channel.queue_bind(exchange = self.input_exchange,
-            queue = self.queue)
+        self.channel.queue_bind(
+            exchange=self.input_exchange,
+            queue=self.queue)
 
         try:
             self.channel.basic_consume(self.callback, queue=self.queue)
@@ -123,9 +109,7 @@ class DataProcess(Process):
         parameter       = props.type
         data            = str(binascii.hexlify(body))
 
-        values = (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
-
-        yield values
+        yield (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
     def ExtractValuesFromMessage_decoded(self, props, body):
         #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
