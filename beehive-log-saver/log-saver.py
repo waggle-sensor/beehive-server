@@ -4,6 +4,7 @@ import datetime
 import multiprocessing
 import pika
 import time
+import os
 
 
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
