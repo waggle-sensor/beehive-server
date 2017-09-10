@@ -15,7 +15,7 @@ prepared = session.prepare(query)
 
 def process_message(ch, method, properties, body):
     versionStrings = properties.app_id.split(':')
-    sampleDatetime = datetime.datetime.utcfromtimestamp(float(properties.timestamp) / 1000.0)
+    sampleDatetime = datetime.utcfromtimestamp(float(properties.timestamp) / 1000.0)
     sampleDate = sampleDatetime.strftime('%Y-%m-%d')
     # TODO Validate / santize node_id here.
     node_id = properties.reply_to
