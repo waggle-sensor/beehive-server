@@ -44,5 +44,5 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 
 channel = connection.channel()
 # channel.basic_qos(prefetch_count=1)
-channel.basic_consume(process_message, queue='raw-data')
+channel.basic_consume(process_message, queue='db-raw')
 channel.start_consuming()
