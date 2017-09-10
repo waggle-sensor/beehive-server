@@ -22,22 +22,23 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
+CASSANDRA_HOST = 'beehive-cassandra'
 
 
 class DataProcess(Process):
 
-    def __init__(self, is_database_raw, verbosity = 0):
-        super(DataProcess,self).__init__()
+    def __init__(self, is_database_raw, verbosity=0):
+        super(DataProcess, self).__init__()
 
         if is_database_raw:
             self.input_exchange = 'data-pipeline-in'
-            self.queue          = 'db-raw'
-            self.statement = "INSERT INTO    sensor_data_raw   (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+            self.queue = 'db-raw'
+            self.statement = "INSERT INTO sensor_data_raw (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_raw
         else:
             self.input_exchange = 'plugins-out'
-            self.queue          = 'db-decoded'
-            self.statement = "INSERT INTO    sensor_data_decoded   (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?,   ?, ?, ?, ?, ?)"
+            self.queue = 'db-decoded'
+            self.statement = "INSERT INTO sensor_data_decoded (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?,   ?, ?, ?, ?, ?)"
             self.function_ExtractValuesFromMessage = self.ExtractValuesFromMessage_decoded
 
         logger.info("Initializing DataProcess")
@@ -91,33 +92,31 @@ class DataProcess(Process):
             logger.error(' method = {}'.format(repr(method)))
             logger.error(' props  = {}'.format(repr(props)))
             logger.error(' body   = {}'.format(repr(body)))
+
             # TODO With this, we drop every failed message... I'm not sure if we want to do that...
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
     # Parse a message of sensor data and convert to the values to be inserted into a row in the db.  NOTE: this is a generator - because the decoded messages produce multiple rows of data.
     def ExtractValuesFromMessage_raw(self, props, body):
-        if self.verbosity > 0: print('props.app_id =', props.app_id)
-        versionStrings  = props.app_id.split(':')
-        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
-        sampleDate      = sampleDatetime.strftime('%Y-%m-%d')
+        versionStrings = props.app_id.split(':')
+        sampleDatetime = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+        sampleDate = sampleDatetime.strftime('%Y-%m-%d')
         # TODO Validate / santize node_id here.
-        node_id         = props.reply_to
-        plugin_name     = versionStrings[0]
-        plugin_version  = versionStrings[1]
+        node_id = props.reply_to
+        plugin_name = versionStrings[0]
+        plugin_version = versionStrings[1]
         plugin_instance = '0' if (len(versionStrings) < 3) else versionStrings[2]
-        timestamp       = int(props.timestamp)
-        parameter       = props.type
-        data            = str(binascii.hexlify(body))
+        timestamp = int(props.timestamp)
+        parameter = props.type
+        data = binascii.hexlify(body).decode()
 
         yield (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data)
 
     def ExtractValuesFromMessage_decoded(self, props, body):
-        #(node_id, date, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-
         dictData = json.loads(body.decode())
 
         # same for each parameter:value pair
-        sampleDatetime  = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
+        sampleDatetime = datetime.datetime.utcfromtimestamp(float(props.timestamp) / 1000.0)
         # TODO Validate / santize node_id here.
         node_id = props.reply_to
         sampleDate = sampleDatetime.strftime('%Y-%m-%d')
@@ -129,23 +128,9 @@ class DataProcess(Process):
         unit = 'NO_UNIT'
 
         for k in dictData.keys():
-            parameter      = k
-            data           = str(dictData[k])
-
-            values = (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
-
-            if self.verbosity > 0:
-                print('   node_id = ',          node_id     )
-                print('   date = ',             sampleDate  )
-                print('   ingest_id = ',        ingest_id   )
-                print('   meta_id = ',          meta_id     )
-                print('   timestamp = ',        timestamp   )
-                print('   data_set = ',         data_set    )
-                print('   sensor = ',           sensor      )
-                print('   parameter = ',        parameter   )
-                print('   data = ',             data        )
-                print('   unit = ',             unit        )
-            yield values
+            parameter = k
+            data = str(dictData[k])
+            yield (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit)
 
     def cassandra_insert(self, values):
 
@@ -159,15 +144,11 @@ class DataProcess(Process):
                 logger.error("Error preparing statement: (%s) %s" % (type(e).__name__, str(e)) )
                 raise
 
-        if self.verbosity > 1: logger.debug("inserting: %s" % (str(values)))
-        try:
-            bound_statement = self.prepared_statement.bind(values)
-        except Exception as e:
-            logger.error("QueueToDb: Error binding cassandra cql statement:(%s) %s -- values was: %s" % (type(e).__name__, str(e), str(values)) )
-            raise
+        bound_statement = self.prepared_statement.bind(values)
 
         connection_retry_delay = 1
-        while True :
+
+        while True:
             # this is long term storage
             try:
                 self.session.execute(bound_statement)
