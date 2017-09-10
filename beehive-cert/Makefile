@@ -11,7 +11,7 @@ deploy:
 		--detach \
 		--net beehive \
 		--restart=always \
-		-p 24181:80 \
+		-p 127.0.0.1:24181:80 \
 		-v /mnt/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
 		-v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
