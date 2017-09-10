@@ -30,6 +30,7 @@ def process_message(ch, method, properties, body):
     session.execute(prepared, (node_id, sampleDate, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data))
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    print(node_id, timestamp, plugin_name, plugin_version, parameter, flush=True)
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(

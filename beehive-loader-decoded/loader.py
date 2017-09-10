@@ -35,6 +35,7 @@ def process_message(ch, method, properties, body):
         session.execute(prepared, (node_id, sampleDate, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit))
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    print(node_id, timestamp, data_set, parameter, flush=True)
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
