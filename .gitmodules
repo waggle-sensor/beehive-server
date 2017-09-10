@@ -1,3 +1,0 @@
-[submodule "waggle_protocol"]
-	path = waggle_protocol
-	url = https://github.com/waggle-sensor/waggle_protocol.git
