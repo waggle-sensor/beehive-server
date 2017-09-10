@@ -4,7 +4,7 @@ import pika
 import os
 import binascii
 
-BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', 'development')
+BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
 
 
 cluster = Cluster(contact_points=['beehive-cassandra'])
