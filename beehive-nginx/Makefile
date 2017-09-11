@@ -1,45 +1,20 @@
-# name = beehive-nginx
-# image = waggle/$(name)
-#
-# build:
-# 	docker build -t $(image) .
-#
-# deploy:
-# 	docker network create beehive || true
-# 	docker rm -f $(name) || true
-# 	docker run \
-# 		--detach \
-# 		--net beehive \
-# 		--restart=on-failure:10 \
-# 		--name $(name) \
-# 		$(image)
-#
-# rm:
-# 	docker rm -f $(name)
-#
-#
-IMAGE = waggle/beehive-nginx
-CONTAINER = beehive-nginx
-SSL_PATH = /mnt/waggle/SSL/nginx/
+name = beehive-nginx
+image = waggle/$(name)
 
 build:
-	docker build -t $(IMAGE) .
+	docker build -t $(image) .
 
-run:
-	docker run --rm -ti --name=$(CONTAINER) --net beehive -p 80:80 -p 443:443 -v $(SSL_PATH):/ssl $(IMAGE) /usr/sbin/nginx -g 'daemon off;'
+deploy:
+	docker network create beehive || true
+	docker rm -f $(name) || true
+	docker run \
+		--detach \
+		--net beehive \
+		--restart=always \
+		-p 80:80 \
+		-p 443:443 \
+		--name $(name) \
+		$(image)
 
-start:
-	docker run --rm --name=$(CONTAINER) --net beehive -p 80:80 -p 443:443 -v $(SSL_PATH):/ssl $(IMAGE) /usr/sbin/nginx -g 'daemon off;'
-stop:
-	docker rm -f beehive-nginx
-clean:
-	docker rm -f beehive-nginx
-	docker rmi -f waggle/beehive-nginx
-
-.PHONY: ssl
-
-ssl:
-	mkdir -p $(SSL_PATH)
-	openssl genrsa -out $(SSL_PATH)/nginx.key 2048
-	openssl req -new -key $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.csr
-	openssl x509 -req -days 365 -in $(SSL_PATH)/nginx.csr -signkey $(SSL_PATH)/nginx.key -out $(SSL_PATH)/nginx.crt
+rm:
+	docker rm -f $(name)
