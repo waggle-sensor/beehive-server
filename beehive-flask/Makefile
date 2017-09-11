@@ -1,40 +1,28 @@
-image = waggle/beehive-flask
-container = beehive-flask
+name = beehive-flask
+image = waggle/$(name)
 
 build:
 	docker build -t $(image) .
 
+deploy:
+	docker network create beehive || true
+	docker rm -f $(name) || true
+	docker run \
+		--detach \
+		--net beehive \
+		--restart=always \
+		--hostname $(name) \
+		--name $(name) \
+		$(image)
+
+rm:
+	docker rm -f $(name)
+
 start:
-	systemctl start $(container)
+	docker start $(name)
 
 stop:
-	systemctl stop $(container)
+	docker stop $(name)
 
 restart:
-	systemctl restart $(container)
-
-logs:
-	journalctl -f -u $(container)
-
-clean:
-	docker rm -f $(container)
-	docker rmi -f $(image)
-
-run:
-	docker run \
-    -ti \
-    --rm \
-    --name $(container) \
-    -p 5000:5000 \
-    --net beehive \
-    $(image)
-
-bash:
-	docker run \
-    -ti \
-    --rm \
-    --name $(container) \
-    -p 5000:5000 \
-    --net beehive \
-    $(image) \
-    bash
+	docker restart $(name)
