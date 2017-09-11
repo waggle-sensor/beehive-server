@@ -10,6 +10,7 @@ from waggle.coresense.utils import decode_frame
 from alphasense.opc import decode18
 import logging
 
+
 logging.basicConfig(level=logging.ERROR)
 
 
@@ -41,7 +42,7 @@ for i, line in enumerate(lines):
         date = fields[2]
         partition_key = (fields[1], fields[2])
 
-        prefix = 'decoded/{}'.format(node_id)
+        prefix = 'datasets/2/{}'.format(node_id)
         os.makedirs(prefix, exist_ok=True)
         filename = '{}/{}.txt'.format(prefix, date)
 
@@ -51,19 +52,13 @@ for i, line in enumerate(lines):
 
         with open(filename, 'w') as outfile:
             for row in rows:
-                doc = {
-                    'ts': int(row.timestamp.timestamp() * 1000),
-                    'node_id': node_id,
-                    'plugin_name': row.plugin_name,
-                    'plugin_version': row.plugin_version,
-                    'parameter': row.parameter,
-                }
+                doc = {}
 
+                # need to fix this in the raw database anyway...
+                # once our path is clear, we should drop corner cases like
+                # this. we should also redo the table to just store bytes
+                # data which will prevent this kind of thing in the future
                 if row.data.startswith("b'"):
-                    # need to fix this in the raw database anyway...
-                    # once our path is clear, we should drop corner cases like
-                    # this. we should also redo the table to just store bytes
-                    # data which will prevent this kind of thing in the future
                     source = binascii.unhexlify(row.data[2:-1])
                 else:
                     source = binascii.unhexlify(row.data)
@@ -77,7 +72,11 @@ for i, line in enumerate(lines):
                 else:
                     results = {}
 
-                doc['values'] = values = {normalize_key(k): normalize_value(v) for k, v in results.items()}
+                doc = {normalize_key(k): normalize_value(v) for k, v in results.items()}
+                doc['timestamp'] = int(row.timestamp.timestamp() * 1000)
+                doc['node_id'] = node_id
+                doc['plugin'] = ':'.join([row.plugin_name, row.plugin_version])
+                doc['parameter'] = row.parameter
 
                 print(json.dumps(doc, separators=(',', ':')), file=outfile)
     except KeyboardInterrupt:

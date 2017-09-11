@@ -27,7 +27,7 @@
             <td>{{ node['name'] }}</td>
             <td>{{ node['description'] }}</td>
             <td>{{ node['datasets'] | length }}</td>
-            <td>{{ (node['datasets'] | last)['date'] }}</td>
+            <td>{{ node['latest'] }}</td>
           </tr>
           {% endif %}
           {%- endfor %}

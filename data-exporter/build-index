@@ -4,7 +4,6 @@ import os
 import requests
 from jinja2 import Template
 import json
-from datetime import datetime
 
 
 r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/')
@@ -26,21 +25,24 @@ for node in nodes:
     try:
         datasets = []
 
-        # uncompressed datasets
-        for filename in glob('data/{}/*.csv'.format(node['id'])):
+        for filename in glob('datasets/2raw/{}/*.gz'.format(node['id'])):
             datasets.append({
                 'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
+                'version': '2 Raw',
             })
 
-        # compressed datasets
-        for filename in glob('data/{}/*.csv.gz'.format(node['id'])):
+        for filename in glob('datasets/2/{}/*.gz'.format(node['id'])):
             datasets.append({
                 'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
+                'version': '2',
             })
 
-        node['datasets'] = sorted(datasets, key=lambda r: r['date'])
+        node['datasets'] = sorted(datasets, key=lambda r: (r['version'], r['date']))
+
+        if node['datasets']:
+            node['latest'] = max([dataset['date'] for dataset in node['datasets']])
 
     except FileNotFoundError:
         continue

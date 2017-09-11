@@ -1,6 +1,11 @@
 #!/bin/sh
 
-for item in $(echo data/*/*.csv); do
+for item in $(ls datasets/*/*/*.txt); do
+  echo $item
+  gzip -f $item
+done
+
+for item in $(ls datasets/*/*/*.csv); do
   echo $item
   gzip -f $item
 done
