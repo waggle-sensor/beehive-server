@@ -43,6 +43,7 @@ authorized_keys_file = ssl_path_nodes+"authorized_keys"
 
 db = None
 
+
 def read_file(str):
     print "read_file: "+str
     if not os.path.isfile(str) :
