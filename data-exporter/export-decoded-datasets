@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+import fileinput
+from cassandra.cluster import Cluster
+import sys
+import os
+import binascii
+import json
+import re
+from waggle.coresense.utils import decode_frame
+from alphasense.opc import decode18
+import logging
+
+logging.basicConfig(level=logging.ERROR)
+
+
+def normalize_key(k):
+    return re.sub('[-_ ]+', '_', k).lower()
+
+
+def normalize_value(v):
+    if isinstance(v, dict):
+        return {normalize_key(k2): normalize_value(v2) for k2, v2 in v.items()}
+    if isinstance(v, list):
+        return [normalize_value(v2) for v2 in v]
+    if isinstance(v, float):
+        return round(v, 3)
+    return v
+
+
+cluster = Cluster()
+session = cluster.connect('waggle')
+
+query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+
+lines = list(fileinput.input())
+
+for i, line in enumerate(lines):
+    try:
+        fields = line.split()
+        node_id = fields[0]
+        date = fields[2]
+        partition_key = (fields[1], fields[2])
+
+        prefix = 'decoded/{}'.format(node_id)
+        os.makedirs(prefix, exist_ok=True)
+        filename = '{}/{}.txt'.format(prefix, date)
+
+        rows = session.execute(query, partition_key)
+
+        print('{} [{:.0%}]'.format(filename, i / len(lines)))
+
+        with open(filename, 'w') as outfile:
+            for row in rows:
+                doc = {
+                    'ts': int(row.timestamp.timestamp() * 1000),
+                    'node_id': node_id,
+                    'plugin_name': row.plugin_name,
+                    'plugin_version': row.plugin_version,
+                    'parameter': row.parameter,
+                }
+
+                if row.data.startswith("b'"):
+                    # need to fix this in the raw database anyway...
+                    # once our path is clear, we should drop corner cases like
+                    # this. we should also redo the table to just store bytes
+                    # data which will prevent this kind of thing in the future
+                    source = binascii.unhexlify(row.data[2:-1])
+                else:
+                    source = binascii.unhexlify(row.data)
+
+                plugin = (row.plugin_name, row.plugin_version)
+
+                if plugin == ('coresense', '3'):
+                    results = decode_frame(source)
+                elif plugin == ('alphasense', '1'):
+                    results = decode18(source)
+                else:
+                    results = {}
+
+                doc['values'] = values = {normalize_key(k): normalize_value(v) for k, v in results.items()}
+
+                print(json.dumps(doc, separators=(',', ':')), file=outfile)
+    except KeyboardInterrupt:
+        break
+    except Exception as e:
+        print(e, line.strip(), flush=True, file=sys.stderr)
