@@ -1,6 +1,6 @@
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y openssh-server curl netcat
+RUN apt-get update && apt-get install -y openssh-server curl netcat net-tools
 RUN mkdir -p /var/run/sshd
 
 RUN echo 'root:waggle' | chpasswd
