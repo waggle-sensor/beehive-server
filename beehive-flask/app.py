@@ -10,7 +10,7 @@ app.register_blueprint(api, url_prefix='/api')
 
 @app.after_request
 def add_header(response):
-    response.cache_control.max_age = 300
+    response.cache_control.max_age = 60
     return response
 
 
