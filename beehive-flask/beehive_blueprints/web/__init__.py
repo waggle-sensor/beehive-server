@@ -221,6 +221,7 @@ def main_page():
 
         listRows.append({'name':name,
             'node_id':node_id,
+            'node_id_normalized': node_id[-12:],
             'description':description,
             'location':location,
             'status_color':status['color'],

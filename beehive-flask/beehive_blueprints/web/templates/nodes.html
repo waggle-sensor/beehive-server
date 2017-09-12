@@ -12,7 +12,7 @@
     <h1>Waggle Beehive Web Server</h1>
     <h3 style="color:red">NOTE: Waggle is a research project.  This website and its related systems are under active development.</h3>
     <h2>Public nodes:</h2>
-    
+
     <p><i> UTC of last update of this page:</i> {{ utc_now }} </p>
     <table>
         <tr>
@@ -28,14 +28,14 @@
                 <td align="center"><b>Last Log</td>
             {% endif %}
         </tr>
-        
+
         {% for row in list_rows %}
             <tr>
             <td align="right"><tt><b>{{ row.name }}</b></tt></td>
-            <td><a href="nodes/{{ row.node_id }}"><tt>{{ row.node_id }}</tt></a></td>
+            <td><a href="/static/{{ row.node_id_normalized }}.html"><tt>{{ row.node_id }}</tt></a></td>
             <td>{{ row.description }}</td>
             <td>{{ row.location }}</td>
-            
+
             {% if row.status_color is equalto '#ff0000' %}
                 <td align="center" style="background-color:#ff0000">
             {% elif row.status_color is equalto '#00ff00' %}
@@ -52,7 +52,7 @@
                 <td align="center" style="background-color:#ffffff">
             {% endif %}
                 {{ row.status_label }}</td>
-                           
+
             <td align="left"><b>{{ row.last_connection_human }}</b> <tt>{{ row.last_connection_timestamp }}</tt></td>
             <td align="left"><b>{{ row.last_data_human }}</b> <tt>{{ row.last_data_timestamp }}</tt></td>
             {% if show_all_nodes %}
