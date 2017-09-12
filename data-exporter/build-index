@@ -63,7 +63,7 @@ for node in nodes:
     with open('static/{}.csv'.format(node['id']), 'w') as f:
         for dataset in node['datasets']:
             row = [dataset['date'], dataset['version'], dataset['url']]
-            print(','.join(row), file=f)
+            print(';'.join(row), file=f)
 
     with open('static/{}.html'.format(node['id']), 'w') as f:
         f.write(node_template.render(node=node))
