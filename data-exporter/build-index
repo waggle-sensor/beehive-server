@@ -25,14 +25,14 @@ for node in nodes:
     try:
         datasets = []
 
-        for filename in glob('datasets/2raw/{}/*.gz'.format(node['id'])):
+        for filename in glob('datasets/2raw/{}/*.csv.gz'.format(node['id'])):
             datasets.append({
                 'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
                 'version': '2 Raw',
             })
 
-        for filename in glob('datasets/2/{}/*.gz'.format(node['id'])):
+        for filename in glob('datasets/2/{}/*.csv.gz'.format(node['id'])):
             datasets.append({
                 'url': filename,
                 'date': filename.split('/')[-1].split('.')[0],
