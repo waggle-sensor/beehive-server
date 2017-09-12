@@ -25,12 +25,12 @@ for node in nodes:
     try:
         datasets = []
 
-        for filename in glob('datasets/2raw/{}/*.csv.gz'.format(node['id'])):
-            datasets.append({
-                'url': filename,
-                'date': filename.split('/')[-1].split('.')[0],
-                'version': '2 Raw',
-            })
+        # for filename in glob('datasets/2raw/{}/*.csv.gz'.format(node['id'])):
+        #     datasets.append({
+        #         'url': filename,
+        #         'date': filename.split('/')[-1].split('.')[0],
+        #         'version': '2 Raw',
+        #     })
 
         for filename in glob('datasets/2/{}/*.csv.gz'.format(node['id'])):
             datasets.append({
@@ -58,6 +58,12 @@ with open('static/index.html', 'w') as f:
 for node in nodes:
     with open('static/{}.json'.format(node['id']), 'w') as f:
         json.dump(node['datasets'], f)
+
+    # write csv version
+    with open('static/{}.csv'.format(node['id']), 'w') as f:
+        for dataset in node['datasets']:
+            row = [dataset['date'], dataset['version'], dataset['url']]
+            print(','.join(row), file=f)
 
     with open('static/{}.html'.format(node['id']), 'w') as f:
         f.write(node_template.render(node=node))

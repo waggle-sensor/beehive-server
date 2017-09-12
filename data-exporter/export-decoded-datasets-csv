@@ -4,7 +4,6 @@ from cassandra.cluster import Cluster
 import sys
 import os
 import binascii
-import json
 import re
 from waggle.coresense.utils import decode_frame
 from alphasense.opc import decode18
