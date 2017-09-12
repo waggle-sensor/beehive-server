@@ -66,13 +66,14 @@ for i, line in enumerate(lines):
                     results = decode_frame(source)
                 elif plugin == ('alphasense', '1'):
                     results = decode18(source)
+                    print(results)
                 else:
                     results = {}
 
                 for sensor, values in results.items():
                     if isinstance(values, dict):
                         enum = values.items()
-                    elif isinstance(values, list):
+                    elif isinstance(values, list) or isinstance(values, tuple):
                         enum = enumerate(values)
                     else:
                         # non-dict or list child is not currently supported
