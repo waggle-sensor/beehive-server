@@ -69,15 +69,15 @@ for i, line in enumerate(lines):
                 else:
                     results = {}
 
-
-                # results = {normalize_key(k): normalize_value(v) for k, v in results.items()}
-
                 for sensor, values in results.items():
                     if isinstance(values, dict):
                         enum = values.items()
                     elif isinstance(values, list):
                         enum = enumerate(values)
                     else:
+                        # non-dict or list child is not currently supported
+                        # could do an expansion out to the leaves with prefix
+                        # key?
                         continue
 
                     for name, value in enum:
