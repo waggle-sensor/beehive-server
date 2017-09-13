@@ -1,23 +1,17 @@
 #!/usr/bin/env python
 import os
-import sys
 import random
 import boto3
-
-sys.path.append(os.path.abspath('../'))
-from config import beehiveConfig
-sys.path.pop()
-
 import datetime
 import json
 import logging
 import pika
 import re
-import ssl
-
-from datetime import datetime
 from pprint import pprint
-from urllib.parse import urlencode
+
+
+BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
+
 
 global nCallbacks
 nCallbacks = 0
@@ -34,28 +28,20 @@ nCallbacks = 0
 #
 # $ source ~/.bashrc
 
-if False:
-    AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
-    AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY']
-else:
-    AWS_ACCESS_KEY = beehiveConfig['plenario']['AWS_ACCESS_KEY']
-    AWS_SECRET_KEY = beehiveConfig['plenario']['AWS_SECRET_KEY']
-    print('beehiveConfig', beehiveConfig)
-    print('AWS_ACCESS_KEY', AWS_ACCESS_KEY)
+AWS_ACCESS_KEY = os.environ['AWS_ACCESS_KEY']
+AWS_SECRET_KEY = os.environ['AWS_SECRET_KEY']
 
 kinesis_client = boto3.client(
     'kinesis',
     aws_access_key_id=AWS_ACCESS_KEY,
     aws_secret_access_key=AWS_SECRET_KEY,
-    region_name='us-east-1',
-)
+    region_name='us-east-1')
 
 # set the logging level - the default prints so many debug messages that it slows things down
 logging.getLogger('botocore').setLevel(logging.WARNING)
 
 
 def parse_node_list(table):
-
     return set(map(str.strip, table.strip().splitlines()))
 
 
@@ -183,23 +169,6 @@ allowed_nodes = parse_node_list('''
 0000001e0610b9fd
 ''')
 
-print('allowed_nodes = ', allowed_nodes)
-
-# url = 'amqps://jbracho:password@0.0.0.0:23181?{}'.format(urlencode({
-# url = 'amqps://node:waggle@beehive1.mcs.anl.gov:23181?{}'.format(urlencode({
-# url = 'amqps://node:waggle@172.18.0.2:23181?{}'.format(urlencode({
-url = 'amqps://node:waggle@beehive-rabbitmq:23181?{}'.format(urlencode({
-    'ssl': 't',
-    'ssl_options': {
-        'certfile': os.path.abspath('/mnt/waggle/SSL/beehive-server/cert.pem'),
-        'keyfile': os.path.abspath('/mnt/waggle/SSL/beehive-server/key.pem'),
-        'ca_certs': os.path.abspath('/mnt/waggle/SSL/waggleca/cacert.pem'),
-        'cert_reqs': ssl.CERT_REQUIRED
-    }
-}))
-
-print('url = ', url)
-
 
 def map_values(sensor, values):
     for key, value in values.items():
@@ -208,7 +177,6 @@ def map_values(sensor, values):
 
 
 def callback(ch, method, properties, body):
-
     global nCallbacks
 
     node_id = properties.reply_to
@@ -235,27 +203,35 @@ def callback(ch, method, properties, body):
             # print(datetime.utcnow().isoformat(sep=' '), "[plenario-sender] Sent: {}    sensor={}, data={}".format(nCallbacks, sensor, body.decode()))
             print(timestamp, "[plenario-sender] Sent: {}    sensor={}, data={}".format(nCallbacks, sensor, body.decode()))
         nCallbacks += 1
-        # pprint(payload)
-        # print()
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-if __name__ == "__main__":
+print("[plenario-sender] Start!")
 
-    print("[plenario-sender] Start!")
+print("[plenario-sender] mapping: \n")
+pprint(mapping)
+print()
 
-    print("[plenario-sender] mapping: \n")
-    pprint(mapping)
-    print()
+print("[plenario-sender] allowed_nodes: \n")
+pprint(allowed_nodes)
+print()
 
-    print("[plenario-sender] allowed_nodes: \n")
-    pprint(allowed_nodes)
-    print()
+connection = pika.BlockingConnection(pika.ConnectionParameters(
+    host='beehive-rabbitmq',
+    port=5672,
+    virtual_host=BEEHIVE_DEPLOYMENT,
+    credentials=pika.PlainCredentials(
+        username='plenario_sender',
+        password='waggle',
+    ),
+    connection_attempts=10,
+    retry_delay=3.0))
 
-    connection = pika.BlockingConnection(pika.URLParameters(url))
+channel = connection.channel()
 
-    channel = connection.channel()
-    channel.exchange_declare(exchange='plugins-out', exchange_type='fanout', durable=True)
-    channel.queue_declare(queue='plenario', durable=True)
-    channel.queue_bind(queue='plenario', exchange='plugins-out')
-    channel.basic_consume(callback, queue='plenario', no_ack=True)
-    channel.start_consuming()
+channel.queue_declare(queue='plenario', durable=True)
+channel.queue_bind(queue='plenario', exchange='plugins-out')
+
+channel.basic_consume(callback, queue='plenario')
+channel.start_consuming()
