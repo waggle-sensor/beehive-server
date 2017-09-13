@@ -1,26 +1,29 @@
+name = beehive-plenario-sender
+image = waggle/$(name)
+
 build:
-	docker rm -f beehive-plenario-sender || echo 'rm failed'
-	docker rmi -f waggle/beehive-plenario-sender || echo 'rmi failed'
-	docker build -t waggle/beehive-plenario-sender .
+	docker build -t $(image) .
+
+deploy:
+	docker network create beehive || true
+	docker rm -f $(name) || true
+	docker run \
+		--detach \
+		--net beehive \
+		--restart=always \
+		-e AWS_ACCESS_KEY=FILL_IN \
+		-e AWS_SECRET_KEY=FILL_IN \
+		--name $(name) \
+		$(image)
+
+rm:
+	docker rm -f $(name)
 
 start:
-	systemctl start beehive-plenario-sender
+	systemctl start $(name)
 
 stop:
-	systemctl stop beehive-plenario-sender
+	systemctl stop $(name)
 
 restart:
-	systemctl restart beehive-plenario-sender
-
-logs:
-	journalctl -f -u beehive-plenario-sender
-
-run:
-	echo 'running...'
-	docker rm -f beehive-plenario-sender || echo 'rm failed'
-	#docker run -ti --rm  --name beehive-plenario-sender --net beehive -v  /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender bash -c 'pwd; ls -l'
-	docker run -ti --rm  --name beehive-plenario-sender --net beehive -v  /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  -v /mnt/beehive:/mnt/beehive -v /mnt/waggle:/mnt/waggle waggle/beehive-plenario-sender 
-
-bash:
-	echo 'bashing...'
-	docker run -ti --rm  --name beehive-plenario-sender --net beehive -v /root/git/beehive-server/beehive-plenario-sender/:/usr/lib/waggle/beehive-server/beehive-plenario-sender/  waggle/beehive-plenario-sender  bash
+	systemctl restart $(name)

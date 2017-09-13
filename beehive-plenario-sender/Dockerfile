@@ -1,16 +1,9 @@
-FROM waggle/beehive-server
+FROM python:3
 
-ADD . /usr/lib/waggle/beehive-server/beehive-plenario-sender
+WORKDIR /usr/src/app
 
-RUN apt-get update && apt-get install -y \
-    python3-pip 
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# python modules
-# Note regarding the mysql library (mysqlclient is a replacement for MySQL-python which has some python3 issues)
-
-RUN pip3 install -r /usr/lib/waggle/beehive-server/beehive-plenario-sender/requirements.txt
-
-WORKDIR /usr/lib/waggle/beehive-server/beehive-plenario-sender/
-
+COPY plenario-sender.py ./
 CMD ["python3", "plenario-sender.py"]
-

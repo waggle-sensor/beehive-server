@@ -1,18 +1,32 @@
-version: '3.3'
+version: "3.3"
 services:
-  nginx:
-    image: nginx
-    ports:
-      - "8080:80"
-    configs:
-      - source: nginx_config
-        target: /etc/nginx/conf.d/default.conf
+  # nginx:
+  #   image: nginx
+  #   ports:
+  #     - "8080:80"
+  #   configs:
+  #     - source: nginx_config
+  #       target: /etc/nginx/conf.d/default.conf
+  loader_raw:
+    image: waggle/beehive-loader-raw
+    environement:
+      - BEEHIVE_DEPLOYMENT=/
+    restart: always
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
+    environement:
+      - BEEHIVE_DEPLOYMENT=/
+    restart: always
   worker_coresense:
     image: waggle/beehive-worker-coresense
+    environement:
+      - BEEHIVE_DEPLOYMENT=/
+    restart: always
   worker_gps:
     image: waggle/beehive-worker-gps-sense
-configs:
-  nginx_config:
-    file: ./beehive-nginx/beehive.conf
+    environement:
+      - BEEHIVE_DEPLOYMENT=/
+    restart: always
+# configs:
+#   nginx_config:
+#     file: ./beehive-nginx/beehive.conf
