@@ -218,7 +218,7 @@ pprint(allowed_nodes)
 print()
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host='beehive-rabbitmq',
+    host='rabbitmq',
     port=5672,
     virtual_host=BEEHIVE_DEPLOYMENT,
     credentials=pika.PlainCredentials(

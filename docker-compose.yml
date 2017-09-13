@@ -2,7 +2,6 @@ version: "3.3"
 services:
   rabbitmq:
     image: rabbitmq:3.5.6
-    hostname: beehive-rabbitmq
     ports:
       - "23181:23181"
       - "15671:15671"
@@ -19,7 +18,6 @@ services:
       - waggle_rabbitmq_key
   mysql:
     image: mysql:5.7.10
-    hostname: beehive-mysql
     ports:
       - "127.0.0.1:3306:3306"
   loader_raw:

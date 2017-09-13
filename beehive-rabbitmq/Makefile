@@ -17,7 +17,7 @@ deploy:
 		-p 127.0.0.1:5672:5672 \
 		-p 23181:23181 \
 		-p 15671:15671 \
-		--hostname $(name) \
+		--hostname rabbitmq \
 		--name $(name) \
 		$(image)
 

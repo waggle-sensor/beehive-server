@@ -17,7 +17,7 @@ class LogSaverProcess(multiprocessing.Process):
         self.verbosity = verbosity
 
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host='beehive-rabbitmq',
+            host='rabbitmq',
             port=5672,
             virtual_host=BEEHIVE_DEPLOYMENT,
             credentials=pika.PlainCredentials(

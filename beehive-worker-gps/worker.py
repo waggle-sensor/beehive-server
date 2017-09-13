@@ -7,12 +7,12 @@ import re
 plugin = 'gps:1'
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host=os.environ.get('BEEHIVE_HOST', 'beehive-rabbitmq'),
-    port=os.environ.get('BEEHIVE_PORT', 5672),
+    host='rabbitmq',
+    port=5672,
     virtual_host=os.environ.get('BEEHIVE_DEPLOYMENT', 'development'),
     credentials=pika.PlainCredentials(
-        username=os.environ.get('BEEHIVE_USERNAME', 'worker_gps'),
-        password=os.environ.get('BEEHIVE_PASSWORD', 'worker'),
+        username='worker_gps',
+        password='worker',
     ),
     connection_attempts=10,
     retry_delay=3.0,

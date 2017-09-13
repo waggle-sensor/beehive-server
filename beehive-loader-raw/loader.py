@@ -34,7 +34,7 @@ def process_message(ch, method, properties, body):
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host='beehive-rabbitmq',
+    host='rabbitmq',
     port=5672,
     virtual_host=BEEHIVE_DEPLOYMENT,
     credentials=pika.PlainCredentials(
