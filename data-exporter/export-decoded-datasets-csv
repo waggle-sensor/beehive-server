@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import fileinput
 from cassandra.cluster import Cluster
-import sys
 import os
 import binascii
 import re
@@ -9,8 +8,9 @@ from waggle.coresense.utils import decode_frame
 from alphasense.opc import decode18
 import logging
 
-
 logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger('export')
+logger.setLevel(logging.INFO)
 
 
 def normalize_key(k):
@@ -47,7 +47,7 @@ for i, line in enumerate(lines):
 
         rows = session.execute(query, partition_key)
 
-        print('{} [{:.0%}]'.format(filename, i / len(lines)))
+        logger.info('{} [{:.0%}]'.format(filename, i / len(lines)))
 
         with open(filename, 'w') as outfile:
             for row in rows:
@@ -62,12 +62,18 @@ for i, line in enumerate(lines):
 
                 plugin = (row.plugin_name, row.plugin_version)
 
-                if plugin == ('coresense', '3'):
-                    results = decode_frame(source)
-                elif plugin == ('alphasense', '1'):
-                    results = decode18(source)
-                else:
-                    results = {}
+                try:
+                    if plugin == ('coresense', '3'):
+                        results = decode_frame(source)
+                    elif plugin == ('alphasense', '1'):
+                        results = decode18(source)
+                    else:
+                        results = {}
+                except KeyboardInterrupt:
+                    break
+                except Exception as exc:
+                    logger.debug('{} - {} - {}'.format(exc, plugin, source))
+                    continue
 
                 for sensor, values in results.items():
                     if isinstance(values, dict):
@@ -95,5 +101,5 @@ for i, line in enumerate(lines):
 
     except KeyboardInterrupt:
         break
-    except Exception as e:
-        print(e, line.strip(), flush=True, file=sys.stderr)
+    except Exception as exc:
+        logger.error('{} - {} - {}'.format(exc, plugin, source))
