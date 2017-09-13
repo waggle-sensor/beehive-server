@@ -1,32 +1,46 @@
 version: "3.3"
 services:
-  # nginx:
-  #   image: nginx
-  #   ports:
-  #     - "8080:80"
-  #   configs:
-  #     - source: nginx_config
-  #       target: /etc/nginx/conf.d/default.conf
+  rabbitmq:
+    image: rabbitmq:3.5.6
+    hostname: beehive-rabbitmq
+    ports:
+      - "23181:23181"
+      - "15671:15671"
+    configs:
+      - source: rabbitmq.config
+        target: /etc/rabbitmq/rabbitmq.config
+      - source: enabled_plugins
+        target: /etc/rabbitmq/enabled_plugins
+      - source: definitions.json
+        target: /etc/rabbitmq/definitions.json
+    secrets:
+      - waggle_cacert
+      - waggle_rabbitmq_cert
+      - waggle_rabbitmq_key
+  mysql:
+    image: mysql:5.7.10
+    hostname: beehive-mysql
+    ports:
+      - "127.0.0.1:3306:3306"
   loader_raw:
     image: waggle/beehive-loader-raw
-    environement:
-      - BEEHIVE_DEPLOYMENT=/
-    restart: always
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
-    environement:
-      - BEEHIVE_DEPLOYMENT=/
-    restart: always
   worker_coresense:
     image: waggle/beehive-worker-coresense
-    environement:
-      - BEEHIVE_DEPLOYMENT=/
-    restart: always
   worker_gps:
     image: waggle/beehive-worker-gps-sense
-    environement:
-      - BEEHIVE_DEPLOYMENT=/
-    restart: always
-# configs:
-#   nginx_config:
-#     file: ./beehive-nginx/beehive.conf
+configs:
+  rabbitmq.config:
+    file: ./beehive-rabbitmq/configs/rabbitmq.config.stack
+  enabled_plugins:
+    file: ./beehive-rabbitmq/configs/enabled_plugins
+  definitions.json:
+    file: ./beehive-rabbitmq/configs/definitions.json
+secrets:
+  waggle_cacert:
+    external: true
+  waggle_rabbitmq_cert:
+    external: true
+  waggle_rabbitmq_key:
+    external: true
