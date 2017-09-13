@@ -8,7 +8,7 @@ import binascii
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
 
 
-cluster = Cluster(contact_points=['beehive-cassandra'])
+cluster = Cluster(contact_points=['cassandra'])
 session = cluster.connect('waggle')
 query = 'INSERT INTO sensor_data_raw (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
 prepared = session.prepare(query)

@@ -16,10 +16,19 @@ services:
       - waggle_cacert
       - waggle_rabbitmq_cert
       - waggle_rabbitmq_key
+  cassandra:
+    image: cassandra:3.2
+    ports:
+      - "127.0.0.1:9042:9042"
   mysql:
     image: mysql:5.7.10
     ports:
       - "127.0.0.1:3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=waggle
+      - MYSQL_DATABASE=waggle
+      - MYSQL_USER=waggle
+      - MYSQL_PASSWORD=waggle
   loader_raw:
     image: waggle/beehive-loader-raw
   worker_alphasense:

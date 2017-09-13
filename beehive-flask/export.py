@@ -23,7 +23,7 @@ dataset_versions = list(dataset_version_table.keys())
 # parameters into query.
 # @retry(attempts=5, delay=3)
 def query(statement):
-    cluster = Cluster(['beehive-cassandra'])
+    cluster = Cluster(['cassandra'])
     session = cluster.connect('waggle')
     rows = session.execute(statement)
     return cluster, rows

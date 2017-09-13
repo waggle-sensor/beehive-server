@@ -10,7 +10,7 @@ deploy:
 		--restart=always \
 		-v /mnt/cassandra/:/var/lib/cassandra/ \
 		-p 127.0.0.1:9042:9042 \
-		--hostname $(name) \
+		--hostname cassandra \
 		--name $(name) \
 		$(image)
 

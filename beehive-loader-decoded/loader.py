@@ -8,7 +8,7 @@ import json
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
 
 
-cluster = Cluster(contact_points=['beehive-cassandra'])
+cluster = Cluster(contact_points=['cassandra'])
 session = cluster.connect('waggle')
 query = 'INSERT INTO sensor_data_decoded (node_id, date, ingest_id, meta_id, timestamp, data_set, sensor, parameter, data, unit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
 prepared = session.prepare(query)
