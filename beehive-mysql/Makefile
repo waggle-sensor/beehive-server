@@ -14,7 +14,8 @@ deploy:
 		-e MYSQL_USER=waggle \
 		-e MYSQL_PASSWORD=waggle \
 		-p 127.0.0.1:3306:3306 \
-		--hostname $(name) \
+		--hostname beehive-mysql \
+		--network-alias beehive-mysql \
 		--name $(name) \
 		$(image)
 

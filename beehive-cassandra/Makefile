@@ -11,6 +11,7 @@ deploy:
 		-v /mnt/cassandra/:/var/lib/cassandra/ \
 		-p 127.0.0.1:9042:9042 \
 		--hostname cassandra \
+		--network-alias cassandra \
 		--name $(name) \
 		$(image)
 

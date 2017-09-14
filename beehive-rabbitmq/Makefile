@@ -18,6 +18,7 @@ deploy:
 		-p 23181:23181 \
 		-p 15671:15671 \
 		--hostname rabbitmq \
+		--network-alias rabbitmq \
 		--name $(name) \
 		$(image)
 
