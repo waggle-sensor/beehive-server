@@ -19,8 +19,6 @@ services:
       - waggle_rabbitmq_key
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
-    networks:
-      - overlay
 
   cassandra:
     image: cassandra:3.2
@@ -28,8 +26,6 @@ services:
       - "127.0.0.1:9042:9042"
     volumes:
       - data_cassandra:/var/lib/cassandra
-    networks:
-      - overlay
 
   mysql:
     image: mysql:5.7.10
@@ -42,33 +38,21 @@ services:
       - MYSQL_PASSWORD=waggle
     volumes:
       - data_mysql:/var/lib/mysql
-    networks:
-      - overlay
 
   loader_raw:
     image: waggle/beehive-loader-raw
-    networks:
-      - overlay
 
   loader_decoded:
     image: waggle/beehive-loader-decoded
-    networks:
-      - overlay
 
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
-    networks:
-      - overlay
 
   worker_coresense:
     image: waggle/beehive-worker-coresense
-    networks:
-      - overlay
 
   worker_gps:
     image: waggle/beehive-worker-gps-sense
-    networks:
-      - overlay
 
 configs:
   rabbitmq.config:
@@ -90,6 +74,3 @@ volumes:
   data_rabbitmq:
   data_cassandra:
   data_mysql:
-
-networks:
-  overlay:

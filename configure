@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+import secrets
+
+admin_password = secrets.token_urlsafe(20)
+print('admin_password={}'.format(admin_password))
