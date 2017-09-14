@@ -4,11 +4,14 @@ import pika
 import os
 import binascii
 
-
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
+RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
+RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'loader_raw')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'waggle')
+CASSANDRA_HOSTS = os.environ.get('CASSANDRA_HOSTS', 'cassandra').split()
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
 
-
-cluster = Cluster(contact_points=['cassandra'])
+cluster = Cluster(contact_points=CASSANDRA_HOSTS)
 session = cluster.connect('waggle')
 query = 'INSERT INTO sensor_data_raw (node_id, date, plugin_name, plugin_version, plugin_instance, timestamp, parameter, data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
 prepared = session.prepare(query)
@@ -34,12 +37,12 @@ def process_message(ch, method, properties, body):
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host='rabbitmq',
-    port=5672,
+    host=RABBITMQ_HOST,
+    port=RABBITMQ_PORT,
     virtual_host=BEEHIVE_DEPLOYMENT,
     credentials=pika.PlainCredentials(
-        username='loader_raw',
-        password='waggle',
+        username=RABBITMQ_USERNAME,
+        password=RABBITMQ_PASSWORD,
     ),
     connection_attempts=10,
     retry_delay=3.0))
