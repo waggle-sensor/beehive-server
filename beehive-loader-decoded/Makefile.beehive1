@@ -11,6 +11,8 @@ deploy:
 		--detach \
 		--net beehive \
 		--restart=always \
+		-e RABBITMQ_HOST=beehive-rabbitmq \
+		-e CASSANDRA_HOSTS=beehive-cassandra \
 		--name $(name) \
 		$(image)
 
