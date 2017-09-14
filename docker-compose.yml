@@ -41,6 +41,9 @@ services:
   loader_decoded:
     image: waggle/beehive-loader-decoded
 
+  loader_metrics:
+    image: waggle/beehive-loader-metrics
+
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
 
