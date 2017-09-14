@@ -1,4 +1,4 @@
-name = beehive-loader-decoded
+name = beehive-loader-raw
 image = waggle/$(name)
 
 build:
