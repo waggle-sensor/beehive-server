@@ -11,7 +11,7 @@ deploy:
 		--detach \
 		--net beehive \
 		--restart=always \
-		-e RABBITMQ_NODENAME=$(name) \
+		-e RABBITMQ_NODENAME=rabbitmq \
 		-v /mnt/rabbitmq/data/:/var/lib/rabbitmq/:rw \
 		-v /mnt/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
