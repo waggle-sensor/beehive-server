@@ -4,6 +4,7 @@ from cassandra.cqlengine.management import sync_table
 from cassandra.cqlengine.models import Model
 import pika
 import os
+import json
 from datetime import datetime
 
 
@@ -19,17 +20,29 @@ class MetricData(Model):
 
     node_id = columns.Ascii(partition_key=True)
     date = columns.Date(partition_key=True)
-    received_at = columns.DateTime(primary_key=True)
+    data_timestamp = columns.DateTime(primary_key=True)
     data = columns.Ascii(required=True)
 
 
-connection.setup(['cassandra'], 'waggle')
+connection.setup(CASSANDRA_HOSTS, 'waggle')
 sync_table(MetricData)
 
 
 def process_message(ch, method, properties, body):
-    print(properties, body, flush=True)
+    doc = json.loads(body.decode())
+
+    node_id = doc['node_id']
+    timestamp = datetime.strptime(doc['@timestamp'], '%Y/%m/%d %H:%M:%S')
+    date = timestamp.date()
+
+    MetricData.create(
+        node_id=node_id,
+        date=date,
+        data_timestamp=timestamp,
+        data=json.dumps(doc, separators=(',', ':')))
+
     ch.basic_ack(delivery_tag=method.delivery_tag)
+    print(doc, flush=True)
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
