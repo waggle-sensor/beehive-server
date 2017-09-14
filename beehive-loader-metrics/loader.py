@@ -10,10 +10,12 @@ from datetime import datetime
 
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
 RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
+RABBITMQ_VIRTUAL_HOST = os.environ.get('RABBITMQ_VIRTUAL_HOST', '/')
 RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'loader_metrics')
 RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'waggle')
+
 CASSANDRA_HOSTS = os.environ.get('CASSANDRA_HOSTS', 'cassandra').split()
-BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
+CASSANDRA_KEYSPACE = os.environ.get('CASSANDRA_KEYSPACE', 'waggle')
 
 
 class MetricData(Model):
@@ -24,7 +26,7 @@ class MetricData(Model):
     data = columns.Ascii(required=True)
 
 
-connection.setup(CASSANDRA_HOSTS, 'waggle')
+connection.setup(CASSANDRA_HOSTS, CASSANDRA_KEYSPACE)
 sync_table(MetricData)
 
 
@@ -48,7 +50,7 @@ def process_message(ch, method, properties, body):
 connection = pika.BlockingConnection(pika.ConnectionParameters(
     host=RABBITMQ_HOST,
     port=RABBITMQ_PORT,
-    virtual_host=BEEHIVE_DEPLOYMENT,
+    virtual_host=RABBITMQ_VIRTUAL_HOST,
     credentials=pika.PlainCredentials(
         username=RABBITMQ_USERNAME,
         password=RABBITMQ_PASSWORD,
