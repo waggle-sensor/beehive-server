@@ -7,7 +7,7 @@ from waggle.coresense.utils import decode_frame
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
 RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
 RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'worker_coresense')
-RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'waggle')
+RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'worker')
 BEEHIVE_DEPLOYMENT = os.environ.get('BEEHIVE_DEPLOYMENT', '/')
 
 
