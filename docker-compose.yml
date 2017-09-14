@@ -7,11 +7,11 @@ services:
       - "23181:23181"
       - "15671:15671"
     configs:
-      - source: rabbitmq.config
+      - source: rabbitmq_rabbitmq.config
         target: /etc/rabbitmq/rabbitmq.config
-      - source: enabled_plugins
+      - source: rabbitmq_enabled_plugins
         target: /etc/rabbitmq/enabled_plugins
-      - source: definitions.json
+      - source: rabbitmq_definitions.json
         target: /etc/rabbitmq/definitions.json
     secrets:
       - waggle_cacert
@@ -55,11 +55,11 @@ services:
     image: waggle/beehive-worker-gps-sense
 
 configs:
-  rabbitmq.config:
+  rabbitmq_rabbitmq.config:
     file: ./beehive-rabbitmq/configs/rabbitmq.config.stack
-  enabled_plugins:
+  rabbitmq_enabled_plugins:
     file: ./beehive-rabbitmq/configs/enabled_plugins
-  definitions.json:
+  rabbitmq_definitions.json:
     file: ./beehive-rabbitmq/configs/definitions.json
 
 secrets:
