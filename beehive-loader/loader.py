@@ -35,7 +35,7 @@ class MessageLog(Model):
 def process_message(ch, method, properties, body):
     # Unpack and sanitize headers and properties.
     node_id = properties.reply_to[-12:]
-    received_at = datetime.now()
+    received_at = datetime.utcnow()
     created_at = datetime.fromtimestamp(properties.timestamp // 1000)
     topic = method.routing_key
 
