@@ -6,6 +6,7 @@ services:
     ports:
       - "23181:23181"
       - "15671:15671"
+      - "127.0.0.1:5672:5672"
     configs:
       - source: rabbitmq_rabbitmq.config
         target: /etc/rabbitmq/rabbitmq.config
@@ -25,6 +26,8 @@ services:
   cassandra:
     image: cassandra:3.2
     hostname: cassandra
+    ports:
+      - "127.0.0.1:9042:9042"
     volumes:
       - data_cassandra:/var/lib/cassandra
 
@@ -36,23 +39,28 @@ services:
       - MYSQL_DATABASE=waggle
       - MYSQL_USER=waggle
       - MYSQL_PASSWORD=waggle
+    ports:
+      - "127.0.0.1:3306:3306"
     volumes:
       - data_mysql:/var/lib/mysql
 
   loader_raw:
     image: waggle/beehive-loader-raw
 
-  loader_decoded:
-    image: waggle/beehive-loader-decoded
+  loader:
+    image: waggle/beehive-loader
 
-  worker_alphasense:
-    image: waggle/beehive-worker-alphasense
-
-  worker_coresense:
-    image: waggle/beehive-worker-coresense
-
-  worker_gps:
-    image: waggle/beehive-worker-gps-sense
+  # loader_decoded:
+  #   image: waggle/beehive-loader-decoded
+  #
+  # worker_alphasense:
+  #   image: waggle/beehive-worker-alphasense
+  #
+  # worker_coresense:
+  #   image: waggle/beehive-worker-coresense
+  #
+  # worker_gps:
+  #   image: waggle/beehive-worker-gps-sense
 
 configs:
   rabbitmq_rabbitmq.config:
