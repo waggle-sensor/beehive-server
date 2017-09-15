@@ -7,16 +7,7 @@ import pika
 import os
 
 
-RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
-RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
-RABBITMQ_VIRTUAL_HOST = os.environ.get('RABBITMQ_VIRTUAL_HOST', '/')
-RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'loader')
-RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'waggle')
-
-CASSANDRA_HOSTS = os.environ.get('CASSANDRA_HOSTS', 'cassandra').split()
-CASSANDRA_KEYSPACE = os.environ.get('CASSANDRA_KEYSPACE', 'waggle')
-
-
+# Model for long term data storage.
 class MessageData(Model):
 
     node_id = columns.Text(partition_key=True)
@@ -27,6 +18,7 @@ class MessageData(Model):
     body = columns.Blob(required=True)
 
 
+# Model for 72-hour rolling message log.
 class MessageLog(Model):
 
     __options__ = {
@@ -41,6 +33,7 @@ class MessageLog(Model):
 
 
 def process_message(ch, method, properties, body):
+    # Unpack and sanitize headers and properties.
     node_id = properties.reply_to[-12:]
     received_at = datetime.now()
     created_at = datetime.fromtimestamp(properties.timestamp // 1000)
@@ -68,17 +61,20 @@ def process_message(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-connection.setup(CASSANDRA_HOSTS, CASSANDRA_KEYSPACE)
+connection.setup(
+    CASSANDRA_HOSTS=os.environ.get('CASSANDRA_HOSTS', 'cassandra').split(),
+    CASSANDRA_KEYSPACE=os.environ.get('CASSANDRA_KEYSPACE', 'waggle'))
+
 sync_table(MessageData)
 sync_table(MessageLog)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-    host=RABBITMQ_HOST,
-    port=RABBITMQ_PORT,
-    virtual_host=RABBITMQ_VIRTUAL_HOST,
+    host=os.environ.get('RABBITMQ_HOST', 'rabbitmq'),
+    port=int(os.environ.get('RABBITMQ_PORT', None)),
+    virtual_host=os.environ.get('RABBITMQ_VIRTUAL_HOST', None),
     credentials=pika.PlainCredentials(
-        username=RABBITMQ_USERNAME,
-        password=RABBITMQ_PASSWORD,
+        username=os.environ.get('RABBITMQ_USERNAME', 'loader'),
+        password=os.environ.get('RABBITMQ_PASSWORD', 'waggle'),
     ),
     connection_attempts=10,
     retry_delay=3.0))
