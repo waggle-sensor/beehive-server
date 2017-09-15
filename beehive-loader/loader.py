@@ -10,7 +10,7 @@ import os
 RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
 RABBITMQ_PORT = int(os.environ.get('RABBITMQ_PORT', '5672'))
 RABBITMQ_VIRTUAL_HOST = os.environ.get('RABBITMQ_VIRTUAL_HOST', '/')
-RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'loader_metrics')
+RABBITMQ_USERNAME = os.environ.get('RABBITMQ_USERNAME', 'loader')
 RABBITMQ_PASSWORD = os.environ.get('RABBITMQ_PASSWORD', 'waggle')
 
 CASSANDRA_HOSTS = os.environ.get('CASSANDRA_HOSTS', 'cassandra').split()
@@ -42,7 +42,7 @@ def process_message(ch, method, properties, body):
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
-connection.setup(['127.0.0.1'], 'waggle')
+connection.setup(CASSANDRA_HOSTS, CASSANDRA_KEYSPACE)
 sync_table(MessageData)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
