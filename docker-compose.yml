@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   rabbitmq:
-    image: rabbitmq:3.5.6
+    image: rabbitmq:3.5
     ports:
       - "23181:23181"
       - "15671:15671"
@@ -17,16 +17,20 @@ services:
       - waggle_cacert
       - waggle_rabbitmq_cert
       - waggle_rabbitmq_key
+    environment:
+      - RABBITMQ_NODENAME=rabbitmq@rabbitmq
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
 
   cassandra:
     image: cassandra:3.2
+    hostname: cassandra
     volumes:
       - data_cassandra:/var/lib/cassandra
 
   mysql:
-    image: mysql:5.7.10
+    image: mysql:5.7
+    hostname: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=waggle
       - MYSQL_DATABASE=waggle
