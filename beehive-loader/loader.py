@@ -27,23 +27,50 @@ class MessageData(Model):
     body = columns.Blob(required=True)
 
 
+class MessageLog(Model):
+
+    __options__ = {
+        'default_time_to_live': 259200,
+    }
+
+    node_id = columns.Text(partition_key=True)
+    topic = columns.Text(primary_key=True)
+    created_at = columns.DateTime(primary_key=True)
+    received_at = columns.DateTime(required=True)
+    body = columns.Blob(required=True)
+
+
 def process_message(ch, method, properties, body):
+    node_id = properties.reply_to[-12:]
     received_at = datetime.now()
     created_at = datetime.fromtimestamp(properties.timestamp // 1000)
+    topic = method.routing_key
 
+    # Commit message to long term storage.
     MessageData.create(
-        node_id=properties.reply_to[-12:],
+        node_id=node_id,
         date=created_at.date(),
-        topic=method.routing_key,
+        topic=topic,
         created_at=created_at,
         received_at=received_at,
         body=body)
 
+    # Commit message to short term, rolling buffer.
+    MessageLog.create(
+        node_id=node_id,
+        topic=topic,
+        created_at=created_at,
+        received_at=received_at,
+        body=body)
+
+    # Only ack message after all commits are successful. Combined with
+    # idempotence of commits, this provides strong consistency guarentees.
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
 
 connection.setup(CASSANDRA_HOSTS, CASSANDRA_KEYSPACE)
 sync_table(MessageData)
+sync_table(MessageLog)
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
     host=RABBITMQ_HOST,
