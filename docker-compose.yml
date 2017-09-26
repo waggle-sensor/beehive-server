@@ -56,9 +56,6 @@ services:
     networks:
     - overlay
 
-  # loader:
-  #   image: waggle/beehive-loader
-
   loader_decoded:
     image: waggle/beehive-loader-decoded
     networks:
