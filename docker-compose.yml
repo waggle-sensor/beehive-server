@@ -18,16 +18,14 @@ services:
       - waggle_cacert
       - waggle_rabbitmq_cert
       - waggle_rabbitmq_key
-      # specify rabbitmq cookie as secret
-    hostname: rabbitmq
     environment:
-      - RABBITMQ_NODENAME=rabbitmq@rabbitmq
+      - RABBITMQ_NODENAME=rabbitmq
+      - RABBITMQ_ERLANG_COOKIE=supercookie
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
 
   cassandra:
     image: cassandra:3.2
-    hostname: cassandra
     ports:
       - "127.0.0.1:9042:9042"
     volumes:
@@ -35,7 +33,6 @@ services:
 
   mysql:
     image: mysql:5.7
-    hostname: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=waggle
       - MYSQL_DATABASE=waggle
@@ -49,8 +46,8 @@ services:
   loader_raw:
     image: waggle/beehive-loader-raw
 
-  loader:
-    image: waggle/beehive-loader
+  # loader:
+  #   image: waggle/beehive-loader
 
   loader_decoded:
     image: waggle/beehive-loader-decoded
