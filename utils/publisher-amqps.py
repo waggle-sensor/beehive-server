@@ -43,11 +43,13 @@ while True:
 
     channel.basic_publish(
         properties=pika.BasicProperties(
+            app_id='metric:1',
             timestamp=utctimestamp,
             reply_to='node1',
+            type='metric',
         ),
-        exchange='data',
-        routing_key='metric',
+        exchange='data-pipeline-in',
+        routing_key='metric:1',
         body=json.dumps(doc, separators=(',', ':')))
 
     print('published', flush=True)
