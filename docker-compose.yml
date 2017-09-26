@@ -4,9 +4,9 @@ services:
   rabbitmq:
     image: rabbitmq:3.5
     ports:
+      - "127.0.0.1:5672:5672"
       - "23181:23181"
       - "15671:15671"
-      - "127.0.0.1:5672:5672"
     configs:
       - source: rabbitmq_rabbitmq.config
         target: /etc/rabbitmq/rabbitmq.config
@@ -18,6 +18,8 @@ services:
       - waggle_cacert
       - waggle_rabbitmq_cert
       - waggle_rabbitmq_key
+      # specify rabbitmq cookie as secret
+    hostname: rabbitmq
     environment:
       - RABBITMQ_NODENAME=rabbitmq@rabbitmq
     volumes:
@@ -50,17 +52,17 @@ services:
   loader:
     image: waggle/beehive-loader
 
-  # loader_decoded:
-  #   image: waggle/beehive-loader-decoded
-  #
-  # worker_alphasense:
-  #   image: waggle/beehive-worker-alphasense
-  #
-  # worker_coresense:
-  #   image: waggle/beehive-worker-coresense
-  #
-  # worker_gps:
-  #   image: waggle/beehive-worker-gps-sense
+  loader_decoded:
+    image: waggle/beehive-loader-decoded
+
+  worker_alphasense:
+    image: waggle/beehive-worker-alphasense
+
+  worker_coresense:
+    image: waggle/beehive-worker-coresense
+
+  worker_gps:
+    image: waggle/beehive-worker-gps-sense
 
 configs:
   rabbitmq_rabbitmq.config:

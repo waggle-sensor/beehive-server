@@ -77,6 +77,7 @@ for i, line in enumerate(lines):
                 doc['node_id'] = node_id
                 doc['plugin'] = ':'.join([row.plugin_name, row.plugin_version])
                 doc['parameter'] = row.parameter
+                doc['source'] = binascii.hexlify(source).decode()
 
                 print(json.dumps(doc, separators=(',', ':')), file=outfile)
     except KeyboardInterrupt:
