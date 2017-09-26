@@ -1,10 +1,12 @@
 version: "3.3"
 
 services:
+
   rabbitmq:
     image: rabbitmq:3.5
+    hostname: rabbitmq
     ports:
-      - "127.0.0.1:5672:5672"
+      - "5672:5672"
       - "23181:23181"
       - "15671:15671"
     configs:
@@ -19,17 +21,21 @@ services:
       - waggle_rabbitmq_cert
       - waggle_rabbitmq_key
     environment:
-      - RABBITMQ_NODENAME=rabbitmq
+      - RABBITMQ_NODENAME=rabbitmq@rabbitmq
       - RABBITMQ_ERLANG_COOKIE=supercookie
     volumes:
       - data_rabbitmq:/var/lib/rabbitmq
+    networks:
+    - overlay
 
   cassandra:
     image: cassandra:3.2
     ports:
-      - "127.0.0.1:9042:9042"
+      - "9042:9042"
     volumes:
       - data_cassandra:/var/lib/cassandra
+    networks:
+    - overlay
 
   mysql:
     image: mysql:5.7
@@ -39,27 +45,39 @@ services:
       - MYSQL_USER=waggle
       - MYSQL_PASSWORD=waggle
     ports:
-      - "127.0.0.1:3306:3306"
+      - "3306:3306"
     volumes:
       - data_mysql:/var/lib/mysql
+    networks:
+    - overlay
 
   loader_raw:
     image: waggle/beehive-loader-raw
+    networks:
+    - overlay
 
   # loader:
   #   image: waggle/beehive-loader
 
   loader_decoded:
     image: waggle/beehive-loader-decoded
+    networks:
+    - overlay
 
   worker_alphasense:
     image: waggle/beehive-worker-alphasense
+    networks:
+    - overlay
 
   worker_coresense:
     image: waggle/beehive-worker-coresense
+    networks:
+    - overlay
 
   worker_gps:
     image: waggle/beehive-worker-gps-sense
+    networks:
+    - overlay
 
 configs:
   rabbitmq_rabbitmq.config:
@@ -81,3 +99,6 @@ volumes:
   data_rabbitmq:
   data_cassandra:
   data_mysql:
+
+networks:
+  overlay:
