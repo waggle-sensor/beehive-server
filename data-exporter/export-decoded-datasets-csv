@@ -64,9 +64,13 @@ for i, line in enumerate(lines):
 
                 try:
                     if plugin == ('coresense', '3'):
-                        # double decode case
+                        left = source.index(b'\xaa')
+                        right = source.rindex(b'\x55')
+                        source = source[left:right+1]
+
                         if source[0] != 0xAA:
                             source = binascii.unhexlify(source.decode())
+
                         results = decode_frame(source)
                     elif plugin == ('alphasense', '1'):
                         results = decode18(source)
