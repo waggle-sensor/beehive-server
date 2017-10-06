@@ -52,7 +52,7 @@ for i, line in enumerate(lines):
                     for name, value in enum:
                         columns = [
                             node_id,
-                            str(int(row.timestamp.timestamp() * 1000)),
+                            row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
                             ':'.join([row.plugin_name, row.plugin_version]),
                             row.parameter,
                             sensor,
