@@ -66,6 +66,9 @@ for i, line in enumerate(lines):
                 plugin = (row.plugin_name, row.plugin_version)
 
                 if plugin == ('coresense', '3'):
+                    left = source.index(b'\xaa')
+                    right = source.rindex(b'\x55')
+                    source = source[left:right+1]
                     results = decode_frame(source)
                 elif plugin == ('alphasense', '1'):
                     results = decode18(source)

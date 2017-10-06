@@ -2,34 +2,16 @@
 import fileinput
 from cassandra.cluster import Cluster
 import os
-import binascii
-import re
-from waggle.coresense.utils import decode_frame
-from alphasense.opc import decode18
+import pipeline
 import logging
 
-logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
 
-
-def normalize_key(k):
-    return re.sub('[-_ ]+', '_', k).lower()
-
-
-def normalize_value(v):
-    if isinstance(v, dict):
-        return {normalize_key(k2): normalize_value(v2) for k2, v2 in v.items()}
-    if isinstance(v, list):
-        return [normalize_value(v2) for v2 in v]
-    if isinstance(v, float):
-        return round(v, 3)
-    return v
-
+logging.basicConfig(level=logging.ERROR)
 
 cluster = Cluster()
 session = cluster.connect('waggle')
-
 query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
 
 lines = list(fileinput.input())
@@ -51,35 +33,12 @@ for i, line in enumerate(lines):
 
         with open(filename, 'w') as outfile:
             for row in rows:
-                # need to fix this in the raw database anyway...
-                # once our path is clear, we should drop corner cases like
-                # this. we should also redo the table to just store bytes
-                # data which will prevent this kind of thing in the future
-                if row.data.startswith("b'"):
-                    source = binascii.unhexlify(row.data[2:-1])
-                else:
-                    source = binascii.unhexlify(row.data)
-
-                plugin = (row.plugin_name, row.plugin_version)
-
                 try:
-                    if plugin == ('coresense', '3'):
-                        left = source.index(b'\xaa')
-                        right = source.rindex(b'\x55')
-                        source = source[left:right+1]
-
-                        if source[0] != 0xAA:
-                            source = binascii.unhexlify(source.decode())
-
-                        results = decode_frame(source)
-                    elif plugin == ('alphasense', '1'):
-                        results = decode18(source)
-                    else:
-                        results = {}
+                    results = pipeline.decode(row)
                 except KeyboardInterrupt:
                     break
                 except Exception as exc:
-                    logger.debug('{} - {} - {}'.format(exc, plugin, source))
+                    logger.exception('failed to decode row: {}'.format(row))
                     continue
 
                 for sensor, values in results.items():
@@ -88,9 +47,6 @@ for i, line in enumerate(lines):
                     elif isinstance(values, list) or isinstance(values, tuple):
                         enum = enumerate(values)
                     else:
-                        # non-dict or list child is not currently supported
-                        # could do an expansion out to the leaves with prefix
-                        # key?
                         continue
 
                     for name, value in enum:
@@ -109,4 +65,4 @@ for i, line in enumerate(lines):
     except KeyboardInterrupt:
         break
     except Exception as exc:
-        logger.error('{} - {} - {}'.format(exc, plugin, source))
+        logger.exception('failed to decode row: {}'.format(row))

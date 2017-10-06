@@ -8,7 +8,7 @@ import ssl
 
 
 parameters = pika.ConnectionParameters(
-    host='localhost',
+    host='34.215.1.152',
     port=23181,
     credentials=pika.PlainCredentials(
         username='publisher',
@@ -16,9 +16,9 @@ parameters = pika.ConnectionParameters(
     ),
     ssl=True,
     ssl_options={
-        'ca_certs': '/path/to/ca.crt',
-        'certfile': '/path/to/publisher.crt',
-        'keyfile': '/path/to/publisher.key',
+        'ca_certs': '/Users/Sean/deploy-intel/easy-rsa/easyrsa3/pki/ca.crt',
+        'certfile': '/Users/Sean/deploy-intel/easy-rsa/easyrsa3/pki/issued/publisher.crt',
+        'keyfile': '/Users/Sean/deploy-intel/easy-rsa/easyrsa3/pki/private/publisher.key',
         'cert_reqs': ssl.CERT_REQUIRED,
     },
     connection_attempts=5,
