@@ -100,3 +100,26 @@ WantedBy=timers.target
   sync-datasets-to-mcs.timer  - 15 Min
   sync-static-to-mcs.time - 5 Min
   ```
+  
+  ## Notes: 
+  
+### waggle/beehive-worker-coresense
+
+
+### waggle/beehive-logger
+
+### waggle/beehive-nginx
+
+### waggle/beehive-plenario-sender
+
+### waggle/beehive-loader-raw
+
+### waggle/beehive-sshd
+
+### waggle/beehive-cert
+
+### mysql:5.7.10
+
+### cassandra:3.2
+
+### waggle/beehive-rabbitmq
