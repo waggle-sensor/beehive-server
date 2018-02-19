@@ -1,6 +1,10 @@
-Show docker containers
+## Top Level Architecture:
+
+Beehive is made up of processes running in several docker containers - 
+
 ```
--bash-4.2$ docker ps
+beehive1:~$ docker ps
+$ docker ps
 CONTAINER ID        IMAGE                             COMMAND                  CREATED             STATUS              PORTS                                                                                                         NAMES
 a3c70587de38        waggle/beehive-worker-coresense   "python ./worker.py"     4 weeks ago         Up 36 hours                                                                                                                       beehive-worker-coresense
 622f42fef4cf        waggle/beehive-flask              "gunicorn -w 5 -b 0.0"   4 weeks ago         Up 4 weeks                                                                                                                        beehive-flask
@@ -16,6 +20,16 @@ fdd94d0688c1        cassandra:3.2                     "/docker-entrypoint.s"   5
 
 ```
 
-Sensor Data -> Beehive's RabbitMQ data exchange
+## Data Flow: 
 
-Node -> RabbitMQ
+### 1. Inflow from Nodes:
+
+### 2. Data pushed into RAW database
+
+### 3. Data pushed into HRF database
+
+### 4. Data exports:
+
+  1. Hourly
+  2. Monthly
+  3. Yearly
