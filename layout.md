@@ -22,11 +22,30 @@ fdd94d0688c1        cassandra:3.2                     "/docker-entrypoint.s"   5
 
 ## Data Flow: 
 
-### 1. Inflow from Nodes:
+### 1. Inflow from Nodes: [beehive-rabbitmq container]
+
+Node shovels data into beehive. 
+
+Node Side: https://github.com/waggle-sensor/nodecontroller/blob/master/etc/rabbitmq/rabbitmq.config
+
+Server Side: https://github.com/waggle-sensor/beehive-server/tree/master/beehive-rabbitmq
+
+_Config? How are the exchange and raw-queue linked?_
+
+### 2. Data pushed into RAW database [beehive-cassandra container]
+
+Take from data_raw queue and push into cassandra. 
+
+https://github.com/waggle-sensor/beehive-server/tree/master/beehive-loader-raw
+https://github.com/waggle-sensor/beehive-server/blob/master/beehive-loader-raw/loader.py
+
+into sensor_data_raw table
 
 
+https://github.com/waggle-sensor/beehive-server/tree/master/beehive-cassandra
 
-### 2. Data pushed into RAW database
+Cassandra is unclear. 
+
 
 ### 3. Data pushed into HRF database
 
