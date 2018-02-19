@@ -89,3 +89,8 @@ WantedBy=timers.target
   
   2. Monthly
   3. Yearly
+  
+  rsync-mcs timer is in here ... 
+  ```
+  node-report-hourly.timer  refresh-datasets.timer  refresh-live-nodes.timer  refresh-recent-datasets.timer  sync-datasets-to-mcs.timer  sync-static-to-mcs.time
+  ```
