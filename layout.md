@@ -102,24 +102,31 @@ WantedBy=timers.target
   ```
   
   ## Notes: 
-  
-### waggle/beehive-worker-coresense
+
+### Registration and Setup
+* waggle/beehive-cert
+
+### Management
+* waggle/beehive-sshd
+* mysql:5.7.10
+
+### Beehive Data Ingest and Storage 
+* waggle/beehive-rabbitmq
+* waggle/beehive-loader-raw
+* cassandra:3.2
+
+### Depricate
+* waggle/beehive-worker-coresense
+* waggle/beehive-logger
+* waggle/beehive-nginx
+* waggle/beehive-plenario-sender
 
 
-### waggle/beehive-logger
 
-### waggle/beehive-nginx
 
-### waggle/beehive-plenario-sender
 
-### waggle/beehive-loader-raw
 
-### waggle/beehive-sshd
 
-### waggle/beehive-cert
 
-### mysql:5.7.10
 
-### cassandra:3.2
 
-### waggle/beehive-rabbitmq
