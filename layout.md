@@ -52,5 +52,40 @@ Cassandra is unclear.
 ### 4. Data exports:
 
   1. Hourly
+  
+  Systemd timer on beehive:
+  
+  /etc/systemd/system/refresh-datasets.service
+```  
+rajesh@beehive1:~$ cat /etc/systemd/system/refresh-datasets.service
+[Unit]
+Description=Refresh datasets
+
+[Service]
+Type=oneshot
+WorkingDirectory=/homes/moose/beehive-server/data-exporter
+ExecStart=/homes/moose/beehive-server/data-exporter/refresh-datasets.sh
+```
+  
+  
+  /etc/systemd/system/refresh-datasets.timer
+  ```
+  rajesh@beehive1:~$ cat /etc/systemd/system/refresh-datasets.timer
+[Unit]
+Description=Refresh datasets hourly
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+  
+  https://github.com/waggle-sensor/beehive-server/blob/master/data-exporter/export-decoded-datasets-csv
+  
+  
+  
+  
   2. Monthly
   3. Yearly
