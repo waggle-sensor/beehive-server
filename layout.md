@@ -1,6 +1,6 @@
 ## Top Level Architecture:
 
-Beehive is made up of processes running in several docker containers - 
+Beehive is made up of many processes running in several *docker containers* - 
 
 ```
 beehive1:~$ docker ps
@@ -23,6 +23,8 @@ fdd94d0688c1        cassandra:3.2                     "/docker-entrypoint.s"   5
 ## Data Flow: 
 
 ### 1. Inflow from Nodes:
+
+
 
 ### 2. Data pushed into RAW database
 
