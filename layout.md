@@ -92,5 +92,11 @@ WantedBy=timers.target
   
   rsync-mcs timer is in here ... 
   ```
-  node-report-hourly.timer  refresh-datasets.timer  refresh-live-nodes.timer  refresh-recent-datasets.timer  sync-datasets-to-mcs.timer  sync-static-to-mcs.time
+  refresh-datasets.timer  - 60 Min
+  refresh-live-nodes.timer  - 1 Min
+  
+  refresh-recent-datasets.timer  - 5 Min
+  
+  sync-datasets-to-mcs.timer  - 15 Min
+  sync-static-to-mcs.time - 5 Min
   ```
