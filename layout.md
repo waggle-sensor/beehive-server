@@ -121,6 +121,41 @@ WantedBy=timers.target
 * waggle/beehive-nginx
 * waggle/beehive-plenario-sender
 
+## Scripts: 
+Location: beehive1:/homes/moose/beehive-server/data-exporter$
+GitHub Location:
+```
+build-index:
+bulk-export:
+compress-datasets:
+
+export-datasets:
+export-decoded-datasets-csv:
+export-decoded-datasets-json:
+export-metrics:
+export-raw:
+export-recent-datasets-csv:
+export-recent-datasets-csv.py:
+filter-last-3-days:
+filter-last-day:
+filter-last-month:
+filter-last-week:
+list-datasets:
+pipeline.py:
+pull-recent:
+test-metrics:
+
+update-task.sh: depricate
+refresh-datasets.sh: depricate
+
+datasets: 
+static:
+templates: 
+
+requirements.txt
+datasets.index
+```
+
 
 
 
