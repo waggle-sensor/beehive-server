@@ -1,6 +1,6 @@
 ## Top Level Architecture:
 
-Beehive is made up of many processes running in several *docker containers* - 
+Beehive is made up of many processes running in several *docker containers* -
 
 ```
 beehive1:~$ docker ps
@@ -20,11 +20,11 @@ fdd94d0688c1        cassandra:3.2                     "/docker-entrypoint.s"   5
 
 ```
 
-## Data Flow: 
+## Data Flow:
 
 ### 1. Inflow from Nodes: [beehive-rabbitmq container]
 
-Node shovels data into beehive. 
+Node shovels data into beehive.
 
 Node Side: https://github.com/waggle-sensor/nodecontroller/blob/master/etc/rabbitmq/rabbitmq.config
 
@@ -34,7 +34,7 @@ _Config? How are the exchange and raw-queue linked?_
 
 ### 2. Data pushed into RAW database [beehive-cassandra container]
 
-Take from data_raw queue and push into cassandra. 
+Take from data_raw queue and push into cassandra.
 
 https://github.com/waggle-sensor/beehive-server/tree/master/beehive-loader-raw
 https://github.com/waggle-sensor/beehive-server/blob/master/beehive-loader-raw/loader.py
@@ -44,17 +44,16 @@ into sensor_data_raw table
 
 https://github.com/waggle-sensor/beehive-server/tree/master/beehive-cassandra
 
-Cassandra is unclear. 
-
+Cassandra is unclear. (Does this mean the manual step where you run the CQL to setup the keyspace and tables is unclear?)
 
 ### 3. Data pushed into HRF database
 
 ### 4. Data exports:
 
   1. Hourly
-  
+
   Systemd timer on beehive:
-  
+
   /etc/systemd/system/refresh-datasets.service
 ```  
 rajesh@beehive1:~$ cat /etc/systemd/system/refresh-datasets.service
@@ -66,8 +65,8 @@ Type=oneshot
 WorkingDirectory=/homes/moose/beehive-server/data-exporter
 ExecStart=/homes/moose/beehive-server/data-exporter/refresh-datasets.sh
 ```
-  
-  
+
+
   /etc/systemd/system/refresh-datasets.timer
   ```
   rajesh@beehive1:~$ cat /etc/systemd/system/refresh-datasets.timer
@@ -81,27 +80,27 @@ Persistent=true
 [Install]
 WantedBy=timers.target
 ```
-  
+
   https://github.com/waggle-sensor/beehive-server/blob/master/data-exporter/export-decoded-datasets-csv
-  
-  
-  
-  
+
+
+
+
   2. Monthly
   3. Yearly
-  
-  rsync-mcs timer is in here ... 
+
+  rsync-mcs timer is in here ...
   ```
   refresh-datasets.timer  - 60 Min
   refresh-live-nodes.timer  - 1 Min
-  
+
   refresh-recent-datasets.timer  - 5 Min
-  
+
   sync-datasets-to-mcs.timer  - 15 Min
   sync-static-to-mcs.time - 5 Min
   ```
-  
-  ## Notes: 
+
+  ## Notes:
 
 ### Registration and Setup
 * waggle/beehive-cert
@@ -110,7 +109,7 @@ WantedBy=timers.target
 * waggle/beehive-sshd
 * mysql:5.7.10
 
-### Beehive Data Ingest and Storage 
+### Beehive Data Ingest and Storage
 * waggle/beehive-rabbitmq
 * waggle/beehive-loader-raw
 * cassandra:3.2
@@ -121,48 +120,43 @@ WantedBy=timers.target
 * waggle/beehive-nginx
 * waggle/beehive-plenario-sender
 
-## Scripts: 
+## Scripts:
 Location: beehive1:/homes/moose/beehive-server/data-exporter$
 </br>
 GitHub Location:
 ```
-build-index:
-bulk-export:
-compress-datasets:
+build-index: templates index and node pages
+compress-datasets: gzips all .csv dataset files
 
-export-datasets:
-export-decoded-datasets-csv:
-export-decoded-datasets-json:
-export-metrics:
-export-raw:
-export-recent-datasets-csv:
-export-recent-datasets-csv.py:
-filter-last-3-days:
-filter-last-day:
-filter-last-month:
-filter-last-week:
-list-datasets:
-pipeline.py:
-pull-recent:
-test-metrics:
+export-datasets: writes raw dataset csv files
+export-decoded-datasets-csv: decodes raw dataset and writes as csv file per nodeID / date
+export-decoded-datasets-json: decodes raw dataset and writes as json file per nodeID / date
+export-recent-datasets-csv: decodes last 15m of data across all nodes and write single csv, individual recent csv per node and compresses them
+export-recent-datasets-csv.py: script that actually does the work for export-recent-datasets-csv
+
+filter-last-3-days: filter output of list datasets to only include last 3 days
+filter-last-day: filter output of list datasets to only include last 24h
+filter-last-month: filter output of list datasets to only include last month
+filter-last-week: filter output of list datasets to only include last week
+
+list-datasets: lists distinct partition keys from sensor_data_raw in cassandra
+
+pipeline.py: main decoder module. small
 
 update-task.sh: depricate
 refresh-datasets.sh: depricate
 
-datasets: 
-static:
-templates: 
+datasets: dataset files
+static: statically generated pages
+templates: index / page templates for static site generation
 
-requirements.txt
-datasets.index
+requirements.txt: python requirements file
+datasets.index: just output from a list-datasets command
+
+*** deprecated scripts. some were just scratchpads for things i never used
+export-raw: test to see if i could run a cross compile a go version of the raw dataset csv exporter
+bulk-export: was an old test of doing a multithreaded export decode csv
+export-metrics:
+pull-recent:
+test-metrics:
 ```
-
-
-
-
-
-
-
-
-
-
