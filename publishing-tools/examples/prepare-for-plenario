@@ -64,7 +64,7 @@ if __name__ == '__main__':
             observations.append(observation)
 
         results.append({
-            'node_id': node_id,
+            'node_id': node['vsn'],
             'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             'latitude': node['coords']['lat'],
             'longitude': node['coords']['lon'],
