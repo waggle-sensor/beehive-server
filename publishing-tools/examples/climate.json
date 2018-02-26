@@ -3,22 +3,16 @@
     "range": [-40, 50]
   },
   "HTU21D.humidity": {
-    "range": [0, 100]
+    "range": [-1, 101]
   },
   "HTU21D.temperature": {
     "range": [-40, 50]
-  },
-  "HIH4030.humidity": {
-    "range": [0, 100]
   },
   "BMP180.temperature": {
     "range": [-40, 50]
   },
   "BMP180.pressure": {
     "range": [300, 1100]
-  },
-  "PR103J2.temperature": {
-    "range": [-40, 50]
   },
   "TSYS01.temperature": {
     "range": [-40, 50]
