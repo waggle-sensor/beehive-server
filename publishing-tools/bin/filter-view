@@ -13,8 +13,8 @@ def read_metadata(filename):
 
     for node in nodes:
         # convert commission_date to datetime
-        if 'commission_date' in node:
-            node['commission_date'] = datetime.strptime(node['commission_date'],
+        if 'commissioned_at' in node:
+            node['commissioned_at'] = datetime.strptime(node['commissioned_at'],
                                                         datetime_format)
 
     return nodes
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
         node = nodes_by_id[node_id]
 
-        return 'commission_date' in node and timestamp >= node['commission_date']
+        return 'commissioned_at' in node and timestamp >= node['commissioned_at']
 
     for line in filter(isviewable, sys.stdin.readlines()):
         sys.stdout.write(line)

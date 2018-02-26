@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
         params = config[name]
 
-        if 'range' in params and not (params['range'][0] < float(value) < params['range'][1]):
+        if 'range' in params and not (params['range'][0] <= float(value) <= params['range'][1]):
             return False
 
         return True
