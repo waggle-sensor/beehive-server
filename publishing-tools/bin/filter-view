@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
         node = nodes_by_id[node_id]
 
-        return ('commission_date' in node and timestamp >= node['commission_date'])
+        return 'commission_date' in node and timestamp >= node['commission_date']
 
     for line in filter(isviewable, sys.stdin.readlines()):
         sys.stdout.write(line)

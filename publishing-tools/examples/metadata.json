@@ -34,7 +34,11 @@
         "vsn": "080",
         "description": "AoT Chicago (S)[C]",
         "address": "Broadway Ave - Lawrence Ave [NEC] (02/14/2018)",
-        "commission_date": "2018/02/15 18:15:00"
+        "commission_date": "2018/02/15 18:15:00",
+        "coords": {
+          "lat": 41.9691029,
+          "lon": -87.6601463
+        }
     },
     {
         "node_id": "001e0610ba16",
