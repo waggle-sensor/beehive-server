@@ -1,6 +1,5 @@
 {
-  "BMI160.temperature": {
-    "range": [-20, 50]
+  "BMP180.pressure": {
   },
   "BMP180.temperature": {
     "range": [-20, 50]
@@ -8,7 +7,25 @@
   "HIH4030.humidity": {
     "range": [0, 100]
   },
+  "HIH6130.humidity": {
+    "range": [0, 100]
+  },
   "HIH6130.temperature": {
+    "range": [-20, 50]
+  },
+  "HTU21D.humidity": {
+    "range": [0, 100]
+  },
+  "HTU21D.temperature": {
+    "range": [-20, 50]
+  },
+  "SHT25.humidity": {
+    "range": [0, 100]
+  },
+  "SHT25.temperature": {
+    "range": [-20, 50]
+  },
+  "TMP112.temperature": {
     "range": [-20, 50]
   }
 }
