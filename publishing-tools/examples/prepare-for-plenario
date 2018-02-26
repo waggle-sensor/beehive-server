@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
         output = {
             'node_id': node_id,
-            'timstamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             'latitude': node['coords']['lat'],
             'longitude': node['coords']['lon'],
             'human_address': node['address'],
