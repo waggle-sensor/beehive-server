@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+import argparse
+from datetime import datetime
+import json
+import sys
+
+datetime_format = '%Y/%m/%d %H:%M:%S'
+
+
+def read_metadata(filename):
+    with open(filename) as f:
+        nodes = json.load(f)
+
+    # drop nodes without a commission_date
+    nodes = [node for node in nodes if 'commission_date' in node]
+
+    # convert commission_date to datetime
+    for node in nodes:
+        node['commission_date'] = datetime.strptime(node['commission_date'],
+                                                    datetime_format)
+
+    return nodes
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('meta', help='metadata config file for view')
+    args = parser.parse_args()
+
+    nodes = read_metadata(args.meta)
+    nodes_by_id = {node['node_id']: node for node in nodes}
+
+    def isviewable(line):
+        fields = line.split(';')
+        node_id = fields[0]
+        timestamp = datetime.strptime(fields[1], datetime_format)
+        return (node_id in nodes_by_id and
+                timestamp >= nodes_by_id[node_id]['commission_date'])
+
+    for line in filter(isviewable, sys.stdin.readlines()):
+        sys.stdout.write(line)

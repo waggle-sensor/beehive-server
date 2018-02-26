@@ -1,0 +1,14 @@
+{
+  "BMI160.temperature": {
+    "range": [-20, 50]
+  },
+  "BMP180.temperature": {
+    "range": [-20, 50]
+  },
+  "HIH4030.humidity": {
+    "range": [0, 100]
+  },
+  "HIH6130.temperature": {
+    "range": [-20, 50]
+  }
+}

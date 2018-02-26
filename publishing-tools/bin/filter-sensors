@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+import argparse
+import json
+import sys
+
+
+def invert(f):
+    return lambda x: not f(x)
+
+
+def read_config(filename):
+    with open(filename) as f:
+        return json.load(f)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', action='store_true', help='invert')
+    parser.add_argument('config', help='config file to use')
+    args = parser.parse_args()
+
+    config = read_config(args.config)
+
+    def isvalid(line):
+        fields = line.split(';')
+        sensor = fields[4]
+        param = fields[5]
+        value = fields[6]
+        name = '.'.join([sensor, param])
+
+        if name not in config:
+            return False
+
+        params = config[name]
+
+        if 'range' in params and not (params['range'][0] < float(value) < params['range'][1]):
+            return False
+
+        return True
+
+    if args.v:
+        isvalid = invert(isvalid)
+
+    for line in filter(isvalid, sys.stdin.readlines()):
+        sys.stdout.write(line)
