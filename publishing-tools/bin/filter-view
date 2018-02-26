@@ -11,13 +11,11 @@ def read_metadata(filename):
     with open(filename) as f:
         nodes = json.load(f)
 
-    # drop nodes without a commission_date
-    nodes = [node for node in nodes if 'commission_date' in node]
-
     # convert commission_date to datetime
     for node in nodes:
-        node['commission_date'] = datetime.strptime(node['commission_date'],
-                                                    datetime_format)
+        if 'commission_date' in node:
+            node['commission_date'] = datetime.strptime(node['commission_date'],
+                                                        datetime_format)
 
     return nodes
 
@@ -34,8 +32,13 @@ if __name__ == '__main__':
         fields = line.split(';')
         node_id = fields[0]
         timestamp = datetime.strptime(fields[1], datetime_format)
-        return (node_id in nodes_by_id and
-                timestamp >= nodes_by_id[node_id]['commission_date'])
+
+        if node_id not in nodes_by_id:
+            return False
+
+        node = nodes_by_id[node_id]
+
+        return ('commission_date' in node and timestamp >= node['commission_date'])
 
     for line in filter(isviewable, sys.stdin.readlines()):
         sys.stdout.write(line)
