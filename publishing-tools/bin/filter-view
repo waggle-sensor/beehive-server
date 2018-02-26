@@ -11,8 +11,8 @@ def read_metadata(filename):
     with open(filename) as f:
         nodes = json.load(f)
 
-    # convert commission_date to datetime
     for node in nodes:
+        # convert commission_date to datetime
         if 'commission_date' in node:
             node['commission_date'] = datetime.strptime(node['commission_date'],
                                                         datetime_format)
