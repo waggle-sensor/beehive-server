@@ -1,7 +1,4 @@
 {
-  "TMP112.temperature": {
-    "range": [-40, 50]
-  },
   "HTU21D.humidity": {
     "range": [-1, 101]
   },
