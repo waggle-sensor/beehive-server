@@ -38,6 +38,8 @@ if __name__ == '__main__':
     nodes = read_metadata(args.meta)
     nodes_by_id = {node['node_id']: node for node in nodes}
 
+    results = []
+
     samples = itersamples(sorted(sys.stdin.readlines()))
 
     for (node_id, timestamp), groupsamples in groupby(samples, key=lambda s: (s[0], s[1])):
@@ -61,13 +63,13 @@ if __name__ == '__main__':
 
             observations.append(observation)
 
-        output = {
+        results.append({
             'node_id': node_id,
             'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
             'latitude': node['coords']['lat'],
             'longitude': node['coords']['lon'],
             'human_address': node['address'],
             'observations': observations,
-        }
+        })
 
-        print(json.dumps(output))
+print(json.dumps(results, indent=True))
