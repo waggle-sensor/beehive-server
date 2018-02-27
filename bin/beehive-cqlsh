@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker exec -ti beehive-cassandra cqlsh -k waggle

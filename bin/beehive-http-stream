@@ -1,0 +1,3 @@
+#!/bin/sh
+
+journalctl -u monitor-nodes-http -f -q

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker logs --tail=20 -tf beehive-logger
