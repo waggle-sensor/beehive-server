@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker exec -ti beehive-mysql mysql -u waggle --password=waggle -e "select name, reverse_ssh_port, node_id, description, location from waggle.nodes"

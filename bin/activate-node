@@ -1,0 +1,34 @@
+#!/bin/sh
+
+usage() {
+  echo "Usage: activate-node <partial-node-id>"
+  echo
+}
+
+if [ $# -ne 1 ]; then
+  if [ $# -eq 1 ]; then
+    if [ "$1" == "--help" ]; then
+      usage
+      exit 0
+    fi
+  fi
+  echo "ERROR: Invalid number of arguments."
+  echo
+  usage
+  exit 1
+fi
+
+node_id_part=${1^^}
+description=$2
+
+results=$(docker exec -ti beehive-mysql mysql -u waggle --password=waggle -e "select node_id from nodes where node_id like \"%${node_id_part}\";" waggle | grep "${node_id_part} |" | sed "s/ *| *//g")
+result_count=$(echo "$results" | wc -l)
+if [ $result_count -eq 0 ]; then
+  echo "ERROR: No node ID matches ${node_id_part}."
+elif [ $result_count -gt 1 ]; then
+  echo "ERROR: More than one node ID matches ${node_id_part}."
+else
+  node_id=$(echo $results | tr -d '\r')
+  echo "Activating node ${node_id}."
+  docker exec -ti beehive-mysql mysql -u waggle --password=waggle -e "update nodes set opmode=\"active\" where node_id=\"${node_id}\""\; waggle
+fi

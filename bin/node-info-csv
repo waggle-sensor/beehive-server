@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+import subprocess
+import xml.etree.ElementTree as ET
+
+output = subprocess.check_output([
+    'mysql',
+    '--xml',
+    '-h', '127.0.0.1',
+    '-u', 'waggle',
+    '--password=waggle',
+    '-D', 'waggle',
+    '-e', 'SELECT node_id, name, description, location, reverse_ssh_port, groups FROM nodes',
+])
+
+tree = ET.fromstring(output)
+
+print('node_id;name;description;location;reverse_ssh_port;groups', flush=True)
+
+for child in tree.getchildren():
+    doc = {}
+
+    for field in child.getchildren():
+        doc[field.attrib['name']] = field.text or ''
+
+    row = [
+        doc.get('node_id', ''),
+        doc.get('name', ''),
+        doc.get('description', ''),
+        doc.get('location', ''),
+        doc.get('reverse_ssh_port', ''),
+        ','.join(doc.get('groups', '').split()),
+    ]
+    
+    print(';'.join(row), flush=True)

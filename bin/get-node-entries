@@ -1,0 +1,5 @@
+#!/bin/sh
+
+docker exec -ti beehive-mysql mysql -N -u waggle --password=waggle -e "select * from nodes;" waggle | egrep -v "\+-+\+" \
+          | fgrep -v 'mysql: [Warning]' | sed -e 's/^| *//g' -e 's/ *|.$//' -e 's/ *| */;/g'
+

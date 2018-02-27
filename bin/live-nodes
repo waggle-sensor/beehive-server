@@ -1,0 +1,65 @@
+#!/usr/bin/python3
+
+import requests
+import subprocess
+import json
+
+
+############################
+##### Helper Functions #####
+############################
+
+# Run a command and capture it's output
+def run_command(command):
+  p = subprocess.Popen(command, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+  return [line.rstrip() for line in iter(p.stdout.readline, b'')]
+
+
+############################
+###### Main  Function ######
+############################
+
+entries = run_command("get-node-entries")
+ports_dict = {}
+# 128;0000001E0610BA89;NULL;AoT Chicago;50053;NULL;NULL;S001;TCS 5th floor;NULL;testing;aot v2 tcs
+field_names = ("id", "node_id", "project", "description", "reverse_ssh_port", "hostname", "hardware", "name", "location",
+              "last_updated", "opmode", "groups")
+for entry in entries:
+  field_values = entry.decode().split(";")
+  fields_dict = {}
+  for index,field_name in enumerate(field_names):
+    fields_dict[field_name] = field_values[index]
+  ports_dict[int(field_values[4])] = fields_dict
+ports = sorted(ports_dict)
+
+print("Name  Port       Node ID                Description                      Location")
+print("----  -----  ----------------  ------------------------------  ------------------------------")
+
+### get live ports ###
+live_ports = sorted([int(port) for port in run_command(["live-ports"])])
+for port in live_ports:
+  try:
+    # echo "[0;30;32m[PASS][0;30;37m [0;30;34m${test_description}[0;30;37m"
+    color_code = ''
+    color_off = ''
+    if 'v1' in ports_dict[port]['groups']:
+      color_code = '[0;30;34m'
+      color_off = '[0;30;37m'
+    elif 'testing' in ports_dict[port]['opmode']:
+      color_code = '[0;30;33m'
+      color_off = '[0;30;37m'
+    node_id = ports_dict[port]['node_id'].lower()
+    name = ports_dict[port][u'name']
+    name_space_count = 0
+    if name != None:
+      name_space_count = 4 - len(name)
+    description = ports_dict[port][u'description']
+    desc_space_count = 26
+    if description != None:
+      desc_space_count = 30 - len(description)
+    location = ports_dict[port][u'location']
+    print("%s%s%s  %d  %s  %s%s  %s%s" % \
+	(color_code, name, ' '*name_space_count, port, node_id, description, ' '*desc_space_count, location, color_off))
+  except:
+    print("%s  %d  %s  %s%s  %s" % ("????", port, "???             ", "???", ' '*30, "???"))

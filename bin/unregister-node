@@ -1,0 +1,28 @@
+#!/bin/sh
+
+node_id_part=${1^^}
+results=$(docker exec -ti beehive-mysql mysql -E -u waggle --password=waggle -e "select node_id from nodes where node_id like \"%${node_id_part}\";" waggle)
+
+tmp=$(echo "$results" | grep "node_id:" | sed -e 's/[\t ]*node_id://' -e 's/[\t ]*/ /')
+node_ids=(${tmp//[$'\r\n']})
+result_count=${#node_ids[@]}
+
+if [ ${result_count} -eq 0 ]; then
+  echo "No nodes found with node ID matching \"${node_id_part}\""
+  exit 1
+elif [ ${result_count} -gt 1 ]; then
+  echo "More than one node found with node ID matching \"${node_id_part}\""
+  exit 2
+else
+  node_id=${node_ids[0]}
+  echo "You are requesting to delete the following node data:"
+  docker exec -ti beehive-mysql mysql -u waggle --password=waggle -e "select * from nodes where node_id like \"%${node_id_part}\";" waggle | grep -v 'Warning'
+  read -p "This cannot be undone. Continue? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[yY]$ ]]; then
+    docker exec -ti beehive-mysql mysql -u waggle --password=waggle -e "delete from nodes where node_id=\"${node_id}\";" waggle
+    echo "Entry deleted."
+  else
+    echo "Entry not deleted."
+  fi
+fi

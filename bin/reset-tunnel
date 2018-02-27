@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sshd_pid=$(docker exec -t beehive-sshd netstat -lp | grep '^tcp ..*localhost:[0-9][0-9][0-9][0-9][0-9]..*sshd: root' | grep "localhost:$1" | awk '{print $7}' | sed 's/\/sshd..*//')
+docker exec -t beehive-sshd kill -9 ${sshd_pid}
