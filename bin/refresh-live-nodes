@@ -1,5 +1,5 @@
 #!/bin/sh
-
+export PATH=$PATH:/usr/lib/waggle/beehive-server/bin/
 live-nodes > /homes/moose/beehive-server/data-exporter/static/live-nodes.txt
 echo >> /homes/moose/beehive-server/data-exporter/static/live-nodes.txt
 date +'Updated on %a %b %d %H:%M' >> /homes/moose/beehive-server/data-exporter/static/live-nodes.txt
