@@ -1,0 +1,7 @@
+[Unit]
+Description=Refresh datasets
+
+[Service]
+Type=oneshot
+WorkingDirectory=/usr/lib/waggle/beehive-server/data-exporter
+ExecStart=/usr/lib/waggle/beehive-server/data-exporter/refresh-datasets.sh

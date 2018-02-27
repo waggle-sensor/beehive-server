@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync static content to MCS
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'rsync -v -a /mnt/datasets/mcs/static/ mcswww:/mcs/www.mcs.anl.gov/research/projects/waggle/downloads/beehive1'

@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh live nodes
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '/usr/lib/waggle/beehive-server/bin/refresh-live-nodes'

@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh datasets
+
+[Service]
+WorkingDirectory=/usr/lib/waggle/beehive-server/data-exporter
+ExecStart=/usr/lib/waggle/beehive-server/data-exporter/export-recent-datasets-csv
