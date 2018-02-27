@@ -8,10 +8,65 @@ Kernel: Linux beehive1.mcs.anl.gov 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 
 Public IP: 40.221.47.67 (67.47.221.140.in-addr.arpa	name = beehive1.mcs.anl.gov.)
 ```
 
+#### FS of Beehive: 
+```
+/dev/mapper/centos_beehive1-root on / type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/vda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+```
+
+_All the data is in /mnt which is **not** a separately mounted partition, but part of root._ - Is root of Beehive backed up? If so how often? 
+
 All the Beehive processess are run either in docker containers or as jobs directly on the base Cent OS. 
+
+
+##### FS Usage (27 Feb 2017): Top Users
+```
+55G    /
+
+    23G    /var
+        17G    /var/lib
+            17G    /var/lib/docker    
+                16G    /var/lib/docker/devicemapper
+                    16G    /var/lib/docker/devicemapper/devicemapper
+        5.4G    /var/log
+
+    21G    /mnt
+        12G    /mnt/rabbitmq
+            12G    /mnt/rabbitmq/data
+                12G    /mnt/rabbitmq/data/mnesia
+                    12G    /mnt/rabbitmq/data/mnesia/rabbitmq
+                    12G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues
+                        5.4G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/3KKHZI9SX6T8Q78UNERI1H2W1
+                        2.0G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/CLRGSG3BEMCB4E5GRS63XRK0V
+                        1.6G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/ACZI56741375WMFLVFPQSXZ67
+                        1.3G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/1JE88H3ZUXZ2PM8VCY1Z7TVDP
+                        1.3G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/1M6BCTH8SNGEKZL68LZBPMWQL
+        
+        7.4G    /mnt/cassandra
+            7.1G    /mnt/cassandra/data
+                7.1G    /mnt/cassandra/data/waggle
+                    4.5G    /mnt/cassandra/data/waggle/sensor_data_raw-6a36efb090be11e68f941fe22eacf844
+                    2.6G    /mnt/cassandra/data/waggle/sensor_data-9abd35e0c44f11e59521091830ac5256
+
+        
+        1.3G    /mnt/beehive
+            1.3G    /mnt/beehive/node-logs
+        
+
+    7.4G    /homes
+        7.1G    /homes/moose
+            6.8G    /homes/moose/beehive-server
+                6.8G    /homes/moose/beehive-server/data-exporter
+                    6.8G    /homes/moose/beehive-server/data-exporter/datasets
+                        6.8G    /homes/moose/beehive-server/data-exporter/datasets/2
+
+    2.3G    /usr
+```
+
 
 #### Docker: 
 
+##### Version: 
 ```
 Client:
  Version:      1.10.2
@@ -29,7 +84,7 @@ Server:
  Built:        Mon Feb 22 16:16:33 2016
  OS/Arch:      linux/amd64
 ```
-* Containers: 
+##### Containers: 
 ```
 1. waggle/beehive-worker-coresense
 2. waggle/beehive-flask
@@ -44,9 +99,9 @@ Server:
 11. waggle/beehive-rabbitmq
 ```
 
-* Where are the docker images created? 
+##### Where are the docker images created? 
 
-Base_Dir is root of the [beehive-server](https://github.com/waggle-sensor/beehive-server) repo.  
+**Base_Dir** is root of the [beehive-server](https://github.com/waggle-sensor/beehive-server) repo.  
 ```
 [Base_Dir]/beehive-loader-decoded/Dockerfile
 [Base_Dir]/beehive-sshd/Dockerfile
