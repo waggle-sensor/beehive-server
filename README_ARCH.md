@@ -102,6 +102,9 @@ Server:
 ##### Where are the docker images created? 
 
 **Base_Dir** is root of the [beehive-server](https://github.com/waggle-sensor/beehive-server) repo.  
+
+Some images are generated using the Dockerfile in their respective directories - 
+`make build` and `make deploy` 
 ```
 [Base_Dir]/beehive-loader-decoded/Dockerfile
 [Base_Dir]/beehive-sshd/Dockerfile
@@ -171,7 +174,7 @@ Server:
 4710712	sensor_data_raw-6a36efb090be11e68f941fe22eacf844
 
 ```
-##### what do we have in the Cassandra BD - Tables? 
+##### what do we have in the Cassandra DB - Tables? 
 _Command:_ `/bin/beehive-cqlsh`
 
 ```
