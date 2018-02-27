@@ -1,11 +1,11 @@
 ## Current Server: 
-### Beehive1: 1
+### Beehive1: 
 
 ```
 Base OS: CentOS Linux release 7.2.1511 (Core)
 Kernel: Linux beehive1.mcs.anl.gov 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 17:03:50 UTC 
         2016 x86_64 x86_64 x86_64 GNU/Linux
-Public IP: 40.221.47.67 (67.47.221.140.in-addr.arpa	name = beehive1.mcs.anl.gov.)
+Public IP: `40.221.47.67 (67.47.221.140.in-addr.arpa	name = beehive1.mcs.anl.gov.)
 ```
 
 #### FS of Beehive: 
