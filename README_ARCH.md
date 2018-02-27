@@ -119,6 +119,14 @@ Server:
 [Base_Dir]/beehive-rabbitmq/Dockerfile
 ```
 
+#### Cassandra: 
+
+1. Docker Container: cassandra:3.2
+        - This image is pulled from the public docker image repo? (Need to confirm)
+        - The file here configures the container (Makefile.beehive1 - We need to understand why we have two MakeFiles in that directory) - [Makefile](https://github.com/waggle-sensor/beehive-server/blob/master/beehive-cassandra/Makefile.beehive1)
+
+
+
 ##### What do we have in Cassandra? 
 ```
 [Tue Feb 27 10:43:50 root@beehive1:/mnt/cassandra/data/waggle ] $ du -sc * | sort -k 1 -n 
