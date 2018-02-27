@@ -122,12 +122,12 @@ Server:
 #### Cassandra: 
 
 1. Docker Container: cassandra:3.2
-        - This image is pulled from the public docker image repo? (Need to confirm)
-        - The file here configures the container (Makefile.beehive1 - We need to understand why we have two MakeFiles in that directory) - [Makefile](https://github.com/waggle-sensor/beehive-server/blob/master/beehive-cassandra/Makefile.beehive1)
+	* This image is pulled from the public docker image repo? (Need to confirm)
+	* The file here configures the container (Makefile.beehive1 - We need to understand why we have two MakeFiles in that directory) - [Makefile](https://github.com/waggle-sensor/beehive-server/blob/master/beehive-cassandra/Makefile.beehive1)
 
 
 
-##### What do we have in Cassandra? 
+##### What do we have in Cassandra on the FS? 
 ```
 [Tue Feb 27 10:43:50 root@beehive1:/mnt/cassandra/data/waggle ] $ du -sc * | sort -k 1 -n 
 
@@ -171,8 +171,8 @@ Server:
 4710712	sensor_data_raw-6a36efb090be11e68f941fe22eacf844
 
 ```
-
-Command: /bin/beehive-cqlsh 
+##### what do we have in the Cassandra BD - Tables? 
+_Command:_ `/bin/beehive-cqlsh`
 
 ```
 #!/bin/sh
@@ -285,11 +285,6 @@ CREATE TABLE waggle.nodes (
     AND read_repair_chance = 0.0
     AND speculative_retry = '99PERCENTILE';
 ```
-
-
-
-
-
 
 
 ### Beehive2: 
