@@ -1,0 +1,8 @@
+#!/bin/sh
+
+./export-recent-datasets-csv.py
+
+for item in $(ls datasets/*/*/recent.csv); do
+  echo $item
+  gzip -f $item
+done
