@@ -1,6 +1,6 @@
 # Current Server
 
-<img src="https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/images/beehiveconnections.svg" width=900 />
+<img src="./images/beehiveconnections.svg" width=900 />
 
 ## Beehive1
 
