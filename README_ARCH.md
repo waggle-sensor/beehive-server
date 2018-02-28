@@ -124,11 +124,24 @@ Some images are generated using the Dockerfile in their respective directories -
 
 #### Cassandra:
 
-1. Docker Container: cassandra:3.2
-	* This image is pulled from the public docker image repo? (Need to confirm)
-	* The file here configures the container (Makefile.beehive1 - We need to understand why we have two MakeFiles in that directory) - [Makefile](https://github.com/waggle-sensor/beehive-server/blob/master/beehive-cassandra/Makefile.beehive1)
+##### Deployment
 
+Docker Container: `beehive-cassandra`
 
+Docker Image: `cassandra:3.2`
+
+* This image is pulled from the public docker image repo? (Need to confirm)
+* The file here configures the container (Makefile.beehive1 - We need to understand why we have two MakeFiles in that directory) - [Makefile](https://github.com/waggle-sensor/beehive-server/blob/master/beehive-cassandra/Makefile.beehive1)
+
+Admin User: `waggle`
+
+Admin Password: `waggle`
+
+Default Keyspace: `waggle`
+
+##### Access
+
+Can use `beehive-server/bin/beehive-cqlsh` to quickly connect to `waggle` keyspace in database.
 
 ##### What do we have in Cassandra on the FS?
 ```
@@ -369,6 +382,26 @@ MySQL [waggle]> describe nodes;
 | groups           | varchar(128) | YES  |     |          |                |
 +------------------+--------------+------+-----+----------+----------------+
 12 rows in set (0.11 sec)
+```
+
+Some example rows are:
+```
+MySQL [waggle]> select * from nodes where description like '%aot chicago (s)%' limit 10;
++-----+------------------+---------+---------------------+------------------+----------+----------+------+------------------------------------------------+--------------+------------+----------+
+| id  | node_id          | project | description         | reverse_ssh_port | hostname | hardware | name | location                                       | last_updated | opmode     | groups   |
++-----+------------------+---------+---------------------+------------------+----------+----------+------+------------------------------------------------+--------------+------------+----------+
+| 132 | 0000001E0610BC10 |    NULL | AoT Chicago (S) [C] |            50057 | NULL     | NULL     | 01F  | State St - 87th (02/22/2018)                   | NULL         | production | v2 surya |
+| 134 | 0000001E0610BA8B |    NULL | AoT Chicago (S) [C] |            50059 | NULL     | NULL     | 018  | CDOT,01/05/2018                                | NULL         | shipped    | v2 surya |
+| 135 | 0000001E0610BA18 |    NULL | AoT Chicago (S)     |            50060 | NULL     | NULL     | 01D  | Damen Ave - Cermak [SEC] (12/15/2017)          | NULL         | testing    | v2 surya |
+| 137 | 0000001E0610BA81 |    NULL | AoT Chicago (S)     |            50062 | NULL     | NULL     | 040  | Lake Shore Drive - 85th St (11/29/2017)        | NULL         | testing    | v2 tfx   |
+| 140 | 0000001E0610BA16 |    NULL | AoT Chicago (S) [C] |            50065 | NULL     | NULL     | 010  | Ohio St - Grand Ave [NEX] (12/01/2017)         | NULL         | testing    | v2 surya |
+| 141 | 0000001E0610BBF9 |    NULL | AoT Chicago (S) [C] |            50066 | NULL     | NULL     | 020  | Western Ave - 69th St [SEC] (02/13/2018)       | NULL         | production | v2 surya |
+| 143 | 0000001E0610BA8F |    NULL | AoT Chicago (S)     |            50068 | NULL     | NULL     | 00D  | Cornell - 47th St                              | NULL         | production | v2 surya |
+| 144 | 0000001E0610BA3B |    NULL | AoT Chicago (S)     |            50069 | NULL     | NULL     | 006  | 18th St - Lake Shore Dr                        | NULL         | production | v2 surya |
+| 145 | 0000001E0610BBFF |    NULL | AoT Chicago (S)     |            50070 | NULL     | NULL     | 025  | Western Ave - 18th St [SEC] (12/15/2017)       | NULL         | testing    | v2 surya |
+| 146 | 0000001E0610BBE5 |    NULL | AoT Chicago (S) [C] |            50071 | NULL     | NULL     | 02C  | Martin Luther King Dr. - 87th St. (02/16/2018) | NULL         | production |          |
++-----+------------------+---------+---------------------+------------------+----------+----------+------+------------------------------------------------+--------------+------------+----------+
+10 rows in set (0.00 sec)
 ```
 
 ### Beehive2
