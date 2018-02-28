@@ -7,6 +7,18 @@
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <style>
+      .table td {
+        max-width: 350px;
+      }
+      .table td span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 100%;
+      }
+    </style>
   </head>
   <body>
     <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
@@ -25,7 +37,9 @@
     </nav>
 
     <div class="container">
-      <h1 class="py-4">Datasets</h1>
+      <h1 class="py-4">Node Sensor Datasets</h1>
+
+      <h5 class="py-2">Last updated {{ timestamp }} CDT</h5>
 
       <table class="table table-bordered table-striped">
         <thead>
@@ -33,17 +47,19 @@
             <th>Node ID</th>
             <th>Name</th>
             <th>Description</th>
+            <th>Location</th>
             <th>Datasets</th>
             <th>Latest Dataset</th>
           </tr>
         </thead>
         <tbody>
-          {% for node in (nodes | sort(attribute='description')) -%}
+          {% for node in (nodes | sort(attribute='name')) -%}
           {% if node['name'] and node['description'] and node['datasets'] %}
           <tr>
             <td><a href="{{ node['id']}}.html">{{ node['id'] }}</a></td>
             <td>{{ node['name'] }}</td>
-            <td>{{ node['description'] }}</td>
+            <td><span>{{ node['description'] }}</span></td>
+            <td><span>{{ node['location'] }}</span></td>
             <td>{{ node['datasets'] | length }}</td>
             <td>{{ node['latest'] }}</td>
           </tr>

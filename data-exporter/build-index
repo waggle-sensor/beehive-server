@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 
 
-r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/')
+r = requests.get('http://beehive1.mcs.anl.gov/api/1/nodes/?all=True')
 
 nodes = []
 
@@ -16,20 +16,34 @@ for item in r.json()['data'].values():
         'id': item['node_id'][-12:],
         'name': item.get('name', ''),
         'description': item.get('description', ''),
+        'location': item.get('location', ''),
+        'groups': item.get('groups', []),
         'url': '{}.json'.format(item['node_id'][-12:]),
     })
 
 with open('static/index.json', 'w') as f:
     json.dump(nodes, f)
 
+with open('static/index.csv', 'w') as f:
+    for node in nodes:
+        url = '{}.csv'.format(node['id'][-12:])
+        print('{};{};{};{}'.format(node['id'], node['name'], node['description'], url), file=f)
+
 today = datetime.now().strftime('%Y-%m-%d')
+
+indexfile = open('static/index.txt', 'w')
 
 for node in nodes:
     try:
         datasets = []
 
         for filename in glob('datasets/2/{}/*.csv.gz'.format(node['id'])):
+            if 'recent' in filename:
+                continue
+
             date = filename.split('/')[-1].split('.')[0]
+
+            indexfile.write('http://www.mcs.anl.gov/research/projects/waggle/downloads/{} {} {} {}\n'.format(filename, node['id'], node['name'], ','.join(node['groups'])))
 
             # exceptional
             if date <= today:
@@ -47,13 +61,17 @@ for node in nodes:
     except FileNotFoundError:
         continue
 
+indexfile.close()
+
 index_template = Template(open('templates/index.html').read())
 node_template = Template(open('templates/node.html').read())
 
 os.makedirs('static', exist_ok=True)
 
+timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
 with open('static/index.html', 'w') as f:
-    f.write(index_template.render(nodes=nodes))
+    f.write(index_template.render(nodes=nodes, timestamp=timestamp))
 
 for node in nodes:
     with open('static/{}.json'.format(node['id']), 'w') as f:
