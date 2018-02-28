@@ -1,6 +1,6 @@
 # Current Server
 
-<img src="./images/beehiveconnections.svg" width=800 />
+<img src="./images/beehiveconnections.svg" width=900 />
 
 ## Beehive1
 
