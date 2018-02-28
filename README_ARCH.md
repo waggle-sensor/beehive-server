@@ -1,5 +1,7 @@
 # Current Server
 
+<img src="./images/beehiveconnections.svg" width=800 />
+
 ## Beehive1
 
 ```
