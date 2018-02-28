@@ -318,6 +318,14 @@ Docker image: `mysql:5.7.10`
 
 Listening: `127.0.0.1:3306`
 
+Admin User: `waggle`
+
+Admin Password: `waggle`
+
+Default Database `waggle`
+
 ##### Access
 
 Use `beehive-server/bin/beehive-mysql` to connect to `waggle` database inside container.
+
+##### Tables
