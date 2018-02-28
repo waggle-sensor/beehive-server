@@ -348,7 +348,7 @@ MySQL [waggle]> show tables;
 +----------------------+
 ```
 
-AFAIK `nodes` is the only table in active use:
+AFAIK, `nodes` is the only table in active use. It stores management data about each node. (It does _not_ store ssh keys or certificates! Discussed in section *will add*.)
 
 ```
 MySQL [waggle]> describe nodes;
@@ -369,7 +369,6 @@ MySQL [waggle]> describe nodes;
 | groups           | varchar(128) | YES  |     |          |                |
 +------------------+--------------+------+-----+----------+----------------+
 12 rows in set (0.11 sec)
-
 ```
 
 ### Beehive2
