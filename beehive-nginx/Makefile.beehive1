@@ -13,8 +13,7 @@ deploy:
 		--restart=always \
 		-p 80:80 \
 		-p 443:443 \
-		-v /homes/moose/beehive-server/data-exporter/static/:/www/static:ro \
-		-v /homes/moose/beehive-server/data-exporter/datasets/:/www/datasets:ro \
+		-v /mnt/datasets/mcs/epoch:/www/epoch:ro \
 		--name $(name) \
 		$(image)
 
