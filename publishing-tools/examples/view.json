@@ -1,16 +1,5 @@
 [
  {
-  "address": "State St - Washington St (SEC)",
-  "commissioned_at": "2017/11/20 23:25:34",
-  "coords": {
-   "lat": 41.87629680000001,
-   "lon": -87.6282279
-  },
-  "description": "AoT Chicago (T) - Replace",
-  "node_id": "001e06107e5d",
-  "vsn": "014"
- },
- {
   "address": "Sheridan Rd - Granville Ave",
   "commissioned_at": "2018/01/02 15:06:52",
   "coords": {
@@ -22,24 +11,13 @@
   "vsn": "02F"
  },
  {
-  "address": "Western Blvd - 35th St (NWC)",
-  "commissioned_at": "2018/01/02 15:26:10",
-  "coords": {
-   "lat": 41.8308495,
-   "lon": -87.62766549999999
-  },
-  "description": "AoT Chicago (T) - Replace",
-  "node_id": "001e0610b9e7",
-  "vsn": "028"
- },
- {
   "address": "Broadway Ave - Lawrence Ave [NEC]",
   "commissioned_at": "2018/02/16 00:20:00",
   "coords": {
    "lat": 41.9691029,
    "lon": -87.6601463
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610b9e9",
   "vsn": "080"
  },
@@ -160,7 +138,7 @@
    "lat": 41.75044219999999,
    "lon": -87.6639672
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610bc12",
   "vsn": "085"
  },
@@ -182,7 +160,7 @@
    "lat": 41.9608272,
    "lon": -87.73886689999999
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610e537",
   "vsn": "08F"
  },
@@ -193,7 +171,7 @@
    "lat": 41.7378844,
    "lon": -87.6056006
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610e538",
   "vsn": "087"
  },
@@ -204,7 +182,7 @@
    "lat": 41.879763,
    "lon": -87.7954683
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610e539",
   "vsn": "07E"
  },
@@ -237,7 +215,7 @@
    "lat": 41.9689086,
    "lon": -87.67939059999999
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610e835",
   "vsn": "086"
  },
@@ -336,7 +314,7 @@
    "lat": 41.9660259,
    "lon": -87.667487
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610eef2",
   "vsn": "088"
  },
@@ -391,7 +369,7 @@
    "lat": 41.9251177,
    "lon": -87.6882583
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610f05c",
   "vsn": "08C"
  },
@@ -413,7 +391,7 @@
    "lat": 41.9389559,
    "lon": -87.727173
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610f6dd",
   "vsn": "05D"
  },
@@ -424,7 +402,7 @@
    "lat": 41.872133,
    "lon": -87.64137269999999
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610f703",
   "vsn": "07F"
  },
@@ -442,7 +420,7 @@
    "lat": 41.89538110000001,
    "lon": -87.7453841
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610f732",
   "vsn": "08D"
  },
@@ -453,7 +431,7 @@
    "lat": 41.8324363,
    "lon": -87.6458069
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e0610f8f4",
   "vsn": "030"
  },
@@ -475,7 +453,7 @@
    "lat": 41.8960695,
    "lon": -87.6607112
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e061130f4",
   "vsn": "089"
  },
@@ -486,7 +464,7 @@
    "lat": 41.6931379,
    "lon": -87.6094919
   },
-  "description": "AoT Chicago (S)[C]",
+  "description": "AoT Chicago (S) [C]",
   "node_id": "001e06113100",
   "vsn": "08E"
  },
