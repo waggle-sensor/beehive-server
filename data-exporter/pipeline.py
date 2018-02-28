@@ -1,9 +1,13 @@
 import binascii
 import re
+import struct
+from waggle.coresense.utils import decode_frame as decode_frame_v3
+from waggle.protocol.v5.decoder import decode_frame as decode_frame_v5
+from waggle.protocol.v5.decoder import convert as convert_v5
 
 
 def normalize_key(k):
-    return re.sub('[-_ ]+', '_', k).lower()
+    return re.sub('[-_.]+', '_', k).lower()
 
 
 def normalize_value(v):
@@ -35,19 +39,45 @@ def reunpack_if_needed(source):
 
 
 def decode_coresense_3(source):
-    from waggle.coresense.utils import decode_frame
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
-    return decode_frame(source)
+    return decode_frame_v3(source)
+
+
+def decode_coresense_4(source):
+    source = trim_coresense_packet(source)
+    source = reunpack_if_needed(source)
+
+    results = {}
+
+    for sensor_id, parameters in decode_frame_v5(source).items():
+        results.update(convert_v5(parameters, sensor_id))
+
+    results = dict((name, value) for name, (value, unit) in results.items())
+    return map_readings_4to3(results)
+
+
+def decode18(data):
+    bincounts = struct.unpack_from('<16H', data, offset=0)
+    mtof = [x / 3 for x in struct.unpack_from('<4B', data, offset=32)]
+    pmvalues = sorted(struct.unpack_from('<3f', data, offset=50))
+
+    values = {
+        'bins': bincounts,
+        'mtof': mtof,
+        'pm': {'1': pmvalues[0], '2.5': pmvalues[1], '10': pmvalues[2]},
+    }
+
+    return values
 
 
 def decode_alphasense_1(source):
-    from alphasense.opc import decode18
     return decode18(source)
 
 
 decoders = {
     'coresense:3': decode_coresense_3,
+    'coresense:4': decode_coresense_4,
     'alphasense:1': decode_alphasense_1,
 }
 
@@ -61,3 +91,134 @@ def decode(row):
         return {}
 
     return decoders[plugin](source)
+
+
+template_4to3 = {
+    'APDS-9006-020': {
+        'intensity': 'lightsense_apds_9006_020_light'
+    },
+    'BMP180': {
+        'pressure': 'metsense_bmp180_pressure',
+        'temperature': 'metsense_bmp180_temperature',
+    },
+    'HIH4030': {
+        'humidity': 'metsense_hih4030_humidity',
+    },
+    'HIH6130': {
+        'humidity': 'lightsense_hih6130_humidity',
+        'temperature': 'lightsense_hih6130_temperature',
+    },
+    'HMC5883L': {
+        'magnetic_field.x': 'lightsense_hmc5883l_hx',
+        'magnetic_field.y': 'lightsense_hmc5883l_hy',
+        'magnetic_field.z': 'lightsense_hmc5883l_hz',
+    },
+    'HTU21D': {
+        'humidity': 'metsense_htu21d_humidity',
+        'temperature': 'metsense_htu21d_temperature',
+    },
+    'LPS25H': {
+        'pressure': 'chemsense_lpp',
+        'temperature': 'chemsense_lpt',
+    },
+    'ML8511': {
+        'intensity': 'lightsense_ml8511',
+    },
+    'MLX75305': {
+        'intensity': 'lightsense_mlx75305',
+    },
+    'MMA8452Q': {
+        'acceleration.x': 'metsense_mma8452q_acc_x',
+        'acceleration.y': 'metsense_mma8452q_acc_y',
+        'acceleration.z': 'metsense_mma8452q_acc_z',
+    },
+    'SHT25': {
+        'humidity': 'chemsense_shh',
+        'temperature': 'chemsense_sht',
+    },
+    'Si1145': {
+        'ir_count': 'chemsense_sir',
+        'uv_count': 'chemsense_suv',
+        'visible_light_count': 'chemsense_svl',
+    },
+    'TMP421': {
+        'temperature': 'lightsense_tmp421',
+    },
+    'TSL250RD-LS': {
+        'intensity': 'lightsense_tsl250_light',
+    },
+    'TSL260RD': {
+        'intensity': 'lightsense_tsl260_light',
+    },
+    'Coresense ID': {
+        'mac_address': 'metsense_id',
+    },
+    'PR103J2': {
+        'temperature': 'metsense_pr103j2_temperature',
+    },
+    'SPV1840LR5H-B': {
+        'intensity': 'metsense_spv1840lr5h-b',
+    },
+    'TMP112': {
+        'temperature': 'metsense_tmp112',
+    },
+    'TSL250RD-AS': {
+        'intensity': 'metsense_tsl250rd_light',
+    },
+    'TSYS01': {
+        'temperature': 'metsense_tsys01_temperature',
+    },
+    'Chemsense ID': {
+        'mac_address': 'chemsense_id',
+    },
+    'Chemsense': {
+        'co': 'chemsense_cmo',
+        'h2s': 'chemsense_h2s',
+        'no2': 'chemsense_no2',
+        'o3': 'chemsense_ozo',
+        'so2': 'chemsense_so2',
+        'reducing_gases': 'chemsense_irr',
+        'oxidizing_gases': 'chemsense_iaq',
+        'at0': 'chemsense_at0',
+        'at1': 'chemsense_at1',
+        'at2': 'chemsense_at2',
+        'at3': 'chemsense_at3',
+    },
+    'Alphasense': {
+        'pm1': 'alphasense_pm1',
+        'pm2.5': 'alphasense_pm2.5',
+        'pm10': 'alphasense_pm10',
+        'bins': 'alphasense_bins',
+        'sample flow rate': 'alphasense_sample_flow_rate',
+        'sampling period': 'alphasense_sampling_period',
+        'id': 'alpha_serial',
+        'fw': 'alpha_firmware',
+    },
+}
+
+
+def stringify(x):
+    if isinstance(x, tuple) or isinstance(x, list):
+        return ','.join([stringify(xi) for xi in x])
+    return str(x)
+
+
+def map_parameters_4to3(readings, parameters):
+    output = {}
+
+    for p, k in parameters.items():
+        output[p] = stringify(readings[k])
+
+    return output
+
+
+def map_readings_4to3(readings):
+    output = {}
+
+    for sensor, parameters in template_4to3.items():
+        try:
+            output[sensor] = map_parameters_4to3(readings, parameters)
+        except KeyError:
+            continue
+
+    return output
