@@ -43,7 +43,7 @@ if __name__ == '__main__':
     samples = itersamples(sorted(sys.stdin.readlines()))
 
     for (node_id, timestamp), groupsamples in groupby(samples, key=lambda s: (s[0], s[1])):
-        observations = []
+        observations = {}
 
         if node_id not in nodes_by_id:
             continue
@@ -56,12 +56,12 @@ if __name__ == '__main__':
         for sensor, sensorsamples in groupby(groupsamples, key=lambda s: s[2]):
             observation = {}
 
-            observation['sensor_id'] = sensor
+            # observation['sensor_id'] = sensor
 
             for s in sensorsamples:
                 observation[s[3]] = s[4]
 
-            observations.append(observation)
+            observations[sensor] = observation
 
         results.append({
             'node_id': node['vsn'],

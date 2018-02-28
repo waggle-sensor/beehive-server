@@ -1,6 +1,6 @@
 [
  {
-  "address": "State St - Washington St (SEC) 9/14/2016",
+  "address": "State St - Washington St (SEC)",
   "commissioned_at": "2017/11/20 23:25:34",
   "coords": {
    "lat": 41.87629680000001,
@@ -11,7 +11,7 @@
   "vsn": "014"
  },
  {
-  "address": "Sheridan Rd - Granville Ave (11/28/2017)",
+  "address": "Sheridan Rd - Granville Ave",
   "commissioned_at": "2018/01/02 15:06:52",
   "coords": {
    "lat": 41.994454,
@@ -33,7 +33,7 @@
   "vsn": "028"
  },
  {
-  "address": "Broadway Ave - Lawrence Ave [NEC] (02/14/2018)",
+  "address": "Broadway Ave - Lawrence Ave [NEC]",
   "commissioned_at": "2018/02/16 00:20:00",
   "coords": {
    "lat": 41.9691029,
@@ -44,7 +44,7 @@
   "vsn": "080"
  },
  {
-  "address": "Ohio St - Grand Ave [NEX] (12/01/2017)",
+  "address": "Ohio St - Grand Ave [NEX]",
   "commissioned_at": "2018/02/19 22:14:35",
   "coords": {
    "lat": 41.891897,
@@ -55,7 +55,7 @@
   "vsn": "010"
  },
  {
-  "address": "Damen Ave - Cermak [SEC] (12/15/2017)",
+  "address": "Damen Ave - Cermak [SEC]",
   "commissioned_at": "2018/01/02 15:28:43",
   "coords": {
    "lat": 42.0024119,
@@ -77,7 +77,7 @@
   "vsn": "006"
  },
  {
-  "address": "Western Ave - Madison St (11/20/2017)",
+  "address": "Western Ave - Madison St",
   "commissioned_at": "2018/01/02 15:04:46",
   "coords": {
    "lat": 41.88051970000001,
@@ -88,7 +88,7 @@
   "vsn": "041"
  },
  {
-  "address": "Lake Shore Drive - 85th St (11/29/2017)",
+  "address": "Lake Shore Drive - 85th St",
   "commissioned_at": "2018/02/19 22:17:06",
   "coords": {
    "lat": 41.4632047,
@@ -110,7 +110,7 @@
   "vsn": "00D"
  },
  {
-  "address": "Martin Luther King Dr. - 87th St. (02/16/2018)",
+  "address": "Martin Luther King Dr. - 87th St.",
   "commissioned_at": "2018/02/20 20:45:21",
   "coords": {
    "lat": 41.73828830000001,
@@ -121,7 +121,7 @@
   "vsn": "02C"
  },
  {
-  "address": "Western Ave - 69th St [SEC] (02/13/2018)",
+  "address": "Western Ave - 69th St [SEC]",
   "commissioned_at": "2018/02/16 00:21:36",
   "coords": {
    "lat": 41.7681762,
@@ -132,7 +132,7 @@
   "vsn": "020"
  },
  {
-  "address": "Western Ave - 18th St [SEC] (12/15/2017)",
+  "address": "Western Ave - 18th St [SEC]",
   "commissioned_at": "2018/02/19 22:15:08",
   "coords": {
    "lat": 41.856527,
@@ -143,7 +143,7 @@
   "vsn": "025"
  },
  {
-  "address": "Kedzie Ave - 5th Ave [NEC] (11-12/2017)",
+  "address": "Kedzie Ave - 5th Ave [NEC]",
   "commissioned_at": "2018/01/02 15:05:21",
   "coords": {
    "lat": 41.876372,
@@ -154,7 +154,7 @@
   "vsn": "03C"
  },
  {
-  "address": "Ashland Ave - 79th St [SEC] (02/08/2018)",
+  "address": "Ashland Ave - 79th St [SEC]",
   "commissioned_at": "2018/02/19 22:17:52",
   "coords": {
    "lat": 41.75044219999999,
@@ -165,7 +165,7 @@
   "vsn": "085"
  },
  {
-  "address": "Racine Ave - 18th St [SEC] (12/15/2017)",
+  "address": "Racine Ave - 18th St [SEC]",
   "commissioned_at": "2018/01/02 15:26:51",
   "coords": {
    "lat": 41.85818,
@@ -176,7 +176,7 @@
   "vsn": "053"
  },
  {
-  "address": "Clark St - Montrose Ave [NWX] (02/14/2018)",
+  "address": "Clark St - Montrose Ave [NWX]",
   "commissioned_at": "2018/02/19 16:46:14",
   "coords": {
    "lat": 41.9608272,
@@ -187,7 +187,7 @@
   "vsn": "08F"
  },
  {
-  "address": "Cottage Grove Ave - 87th St (02/16/2018)",
+  "address": "Cottage Grove Ave - 87th St",
   "commissioned_at": "2018/02/20 20:37:17",
   "coords": {
    "lat": 41.7378844,
@@ -198,7 +198,7 @@
   "vsn": "087"
  },
  {
-  "address": "Cicero Ave - Madison St (02/05/2018)",
+  "address": "Cicero Ave - Madison St",
   "commissioned_at": "2018/02/07 20:43:54",
   "coords": {
    "lat": 41.879763,
@@ -209,7 +209,7 @@
   "vsn": "07E"
  },
  {
-  "address": "Fort Dearborn Dr - 31st St [NEX] (11/29/2017)",
+  "address": "Fort Dearborn Dr - 31st St [NEX]",
   "commissioned_at": "2018/01/02 15:09:34",
   "coords": {
    "lat": 41.838483,
@@ -220,7 +220,7 @@
   "vsn": "05A"
  },
  {
-  "address": "Ashland Ave - Division St. (10/09/2017)",
+  "address": "Ashland Ave - Division St.",
   "commissioned_at": "2017/11/21 17:30:53",
   "coords": {
    "lat": 41.903456,
@@ -231,7 +231,7 @@
   "vsn": "050"
  },
  {
-  "address": "Damen Ave - Lawrence Ave (02/15/2018)",
+  "address": "Damen Ave - Lawrence Ave",
   "commissioned_at": "2018/02/20 20:07:26",
   "coords": {
    "lat": 41.9689086,
@@ -242,7 +242,7 @@
   "vsn": "086"
  },
  {
-  "address": "606 Path - Milwaukee Ave (01/11/2018)",
+  "address": "606 Path - Milwaukee Ave",
   "commissioned_at": "2018/01/22 21:10:28",
   "coords": {
    "lat": 41.8923213,
@@ -253,7 +253,7 @@
   "vsn": "03E"
  },
  {
-  "address": "Damen Ave - Wilson Ave (02/15/2018)",
+  "address": "Damen Ave - Wilson Ave",
   "commissioned_at": "2018/02/20 20:13:35",
   "coords": {
    "lat": 41.964821,
@@ -264,7 +264,7 @@
   "vsn": "02D"
  },
  {
-  "address": "Wood St - Warren Blv [NEX] (12/1/2017)",
+  "address": "Wood St - Warren Blv [NEX]",
   "commissioned_at": "2018/01/02 15:04:01",
   "coords": {
    "lat": 41.9625047,
@@ -275,7 +275,7 @@
   "vsn": "032"
  },
  {
-  "address": "Pulaski Rd - Madison St (11/20/2017)",
+  "address": "Pulaski Rd - Madison St",
   "commissioned_at": "2018/01/02 15:06:08",
   "coords": {
    "lat": 41.8804622,
@@ -286,7 +286,7 @@
   "vsn": "03F"
  },
  {
-  "address": "Damen Ave - Chicago Int'l Produce Mkt (11/20/2017)",
+  "address": "Damen Ave - Chicago Int'l Produce Mkt",
   "commissioned_at": "2018/01/02 15:29:27",
   "coords": {
    "lat": 42.0024119,
@@ -297,7 +297,7 @@
   "vsn": "04E"
  },
  {
-  "address": "Damen Ave - Webster (02/15/2018)",
+  "address": "Damen Ave - Webster",
   "commissioned_at": "2018/02/20 19:26:58",
   "coords": {
    "lat": 41.921213,
@@ -308,7 +308,7 @@
   "vsn": "048"
  },
  {
-  "address": "Wood St - Milwaukee Ave [NEX] (10/09/2017)",
+  "address": "Wood St - Milwaukee Ave [NEX]",
   "commissioned_at": "2018/02/19 22:15:44",
   "coords": {
    "lat": 41.9067303,
@@ -319,7 +319,7 @@
   "vsn": "03A"
  },
  {
-  "address": "Lake Shore Drive - Fullerton Ave (NWC) (11/28/2017)",
+  "address": "Lake Shore Drive - Fullerton Ave (NWC)",
   "commissioned_at": "2018/02/19 22:16:33",
   "coords": {
    "lat": 41.9270782,
@@ -330,7 +330,7 @@
   "vsn": "03B"
  },
  {
-  "address": "Clark St - Wilson Ave [SEC] (02/14/2018)",
+  "address": "Clark St - Wilson Ave [SEC]",
   "commissioned_at": "2018/02/19 16:46:53",
   "coords": {
    "lat": 41.9660259,
@@ -341,7 +341,7 @@
   "vsn": "088"
  },
  {
-  "address": "Milwaukee Ave - Wabansia Ave (NWX) (10/09/2017)",
+  "address": "Milwaukee Ave - Wabansia Ave (NWX)",
   "commissioned_at": "2018/01/02 15:35:22",
   "coords": {
    "lat": 41.912624,
@@ -352,7 +352,7 @@
   "vsn": "034"
  },
  {
-  "address": "Halsted St - Randolph St [NEC] (12/1/2017)",
+  "address": "Halsted St - Randolph St [NEC]",
   "commissioned_at": "2018/01/02 15:02:47",
   "coords": {
    "lat": 41.8846582,
@@ -363,7 +363,7 @@
   "vsn": "03D"
  },
  {
-  "address": "Western Ave - 25th St [NWC] (12/15/2017)",
+  "address": "Western Ave - 25th St [NWC]",
   "commissioned_at": "2018/01/31 22:09:55",
   "coords": {
    "lat": 41.8457656,
@@ -374,7 +374,7 @@
   "vsn": "04C"
  },
  {
-  "address": "Ashland Ave - 18th St (SWX) (11/20/2017)",
+  "address": "Ashland Ave - 18th St (SWX)",
   "commissioned_at": "2018/01/02 15:11:43",
   "coords": {
    "lat": 41.857535,
@@ -385,7 +385,7 @@
   "vsn": "04F"
  },
  {
-  "address": "Western Ave - Fullerton Ave [NWC] (02/07/2018)",
+  "address": "Western Ave - Fullerton Ave [NWC]",
   "commissioned_at": "2018/02/16 00:18:43",
   "coords": {
    "lat": 41.9251177,
@@ -396,7 +396,7 @@
   "vsn": "08C"
  },
  {
-  "address": "Damen Ave - Archer [SEC] (12/15/2017)",
+  "address": "Damen Ave - Archer [SEC]",
   "commissioned_at": "2018/01/02 15:30:03",
   "coords": {
    "lat": 41.7957436,
@@ -407,7 +407,7 @@
   "vsn": "038"
  },
  {
-  "address": "Pulaski Rd - Chicago Ave (02/06/2018)",
+  "address": "Pulaski Rd - Chicago Ave",
   "commissioned_at": "2018/02/16 00:23:58",
   "coords": {
    "lat": 41.9389559,
@@ -418,7 +418,7 @@
   "vsn": "05D"
  },
  {
-  "address": "Damen Ave - Polk St (02/06/2018)",
+  "address": "Damen Ave - Polk St",
   "commissioned_at": "2018/02/19 21:32:52",
   "coords": {
    "lat": 41.872133,
@@ -429,14 +429,14 @@
   "vsn": "07F"
  },
  {
-  "address": "Wood St - Warren Blvd - NEX (03/31/2017)",
+  "address": "Wood St - Warren Blvd - NEX",
   "commissioned_at": "2018/01/02 15:34:06",
   "description": "AoT Chicago (S)",
   "node_id": "001e0610f730",
   "vsn": "039"
  },
  {
-  "address": "Cicero Ave - Chicago Ave (02/05/2018)",
+  "address": "Cicero Ave - Chicago Ave",
   "commissioned_at": "2018/02/07 20:47:16",
   "coords": {
    "lat": 41.89538110000001,
@@ -447,7 +447,7 @@
   "vsn": "08D"
  },
  {
-  "address": "Halsted St - 34th St. [NEC] (02/13/2018)",
+  "address": "Halsted St - 34th St. [NEC]",
   "commissioned_at": "2018/02/16 00:16:55",
   "coords": {
    "lat": 41.8324363,
@@ -458,7 +458,7 @@
   "vsn": "030"
  },
  {
-  "address": "Leavitt St - Milwaukee Ave (10/09/2017)",
+  "address": "Leavitt St - Milwaukee Ave",
   "commissioned_at": "2018/01/02 15:35:44",
   "coords": {
    "lat": 41.9102658,
@@ -469,7 +469,7 @@
   "vsn": "04D"
  },
  {
-  "address": "Chicago Ave - Noble St. (02/06/2018)",
+  "address": "Chicago Ave - Noble St.",
   "commissioned_at": "2018/02/07 20:46:12",
   "coords": {
    "lat": 41.8960695,
@@ -480,7 +480,7 @@
   "vsn": "089"
  },
  {
-  "address": "Cottage Grove Ave - 111th St [NWC] (02/08/2018)",
+  "address": "Cottage Grove Ave - 111th St [NWC]",
   "commissioned_at": "2018/02/16 00:17:34",
   "coords": {
    "lat": 41.6931379,
@@ -491,7 +491,7 @@
   "vsn": "08E"
  },
  {
-  "address": "Ashland - 63rd St [SWC] (02/13/2018)",
+  "address": "Ashland - 63rd St [SWC]",
   "commissioned_at": "2018/02/16 00:22:28",
   "coords": {
    "lat": 41.77886000000001,
