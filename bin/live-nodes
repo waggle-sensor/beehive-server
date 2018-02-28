@@ -20,7 +20,7 @@ def run_command(command):
 ###### Main  Function ######
 ############################
 
-entries = run_command("get-node-entries")
+entries = run_command("/usr/lib/waggle/beehive-server/bin/get-node-entries")
 ports_dict = {}
 field_names = ("id", "node_id", "project", "description", "reverse_ssh_port", "hostname", "hardware", "name", "location",
               "last_updated", "opmode")
@@ -36,7 +36,7 @@ print("Name  Port       Node ID                Description                      
 print("----  -----  ----------------  ------------------------------  ------------------------------")
 
 ### get live ports ###
-live_ports = sorted([int(port) for port in run_command(["live-ports"])])
+live_ports = sorted([int(port) for port in run_command(["/usr/lib/waggle/beehive-server/bin/live-ports"])])
 for port in live_ports:
   try:
     node_id = ports_dict[port]['node_id']

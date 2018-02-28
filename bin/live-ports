@@ -1,4 +1,4 @@
 #!/bin/sh
 
-#docker exec -t beehive-sshd netstat -lp | grep -e '^tcp ..*localhost:10..*sshd: root' -e '^tcp ..*localhost:50..*sshd: root' | awk '{print $4}' | sed 's/localhost://'
-docker exec -t beehive-sshd netstat -lp | grep -e '^tcp ..*localhost:[0-9][0-9][0-9][0-9][0-9]..*sshd: root' | awk '{print $4}' | sed 's/localhost://'
+#docker exec -t beehive-sshd netstat -lp | grep -e '^tcp ..*localhost:[0-9][0-9][0-9][0-9][0-9]..*sshd: root' | awk '{print $4}' | sed 's/localhost://'
+docker exec -i beehive-sshd netstat -lp | grep -e '^tcp ..*localhost:[0-9][0-9][0-9][0-9][0-9]..*sshd: root' | awk '{print $4}' | sed 's/localhost://'
