@@ -289,23 +289,6 @@ CREATE TABLE waggle.nodes (
     AND speculative_retry = '99PERCENTILE';
 ```
 
-
-### Beehive2:
-
-```
- Host beehive-prod
-  ProxyCommand ssh -q mcs nc -q0 beehive01.cels.anl.gov 22
-  User moose
-
-Host beehive-dev
-  ProxyCommand ssh -q mcs nc -q0 beehive01-dev.cels.anl.gov 22
-  User moose
-
-Host beehive-test
-  ProxyCommand ssh -q mcs nc -q0 beehive01-test.cels.anl.gov 22
-  User moose
-  ```
-
 #### MySQL
 
 Stores node management and metadata.
@@ -387,4 +370,20 @@ MySQL [waggle]> describe nodes;
 +------------------+--------------+------+-----+----------+----------------+
 12 rows in set (0.11 sec)
 
+```
+
+### Beehive2
+
+```
+ Host beehive-prod
+  ProxyCommand ssh -q mcs nc -q0 beehive01.cels.anl.gov 22
+  User moose
+
+Host beehive-dev
+  ProxyCommand ssh -q mcs nc -q0 beehive01-dev.cels.anl.gov 22
+  User moose
+
+Host beehive-test
+  ProxyCommand ssh -q mcs nc -q0 beehive01-test.cels.anl.gov 22
+  User moose
 ```
