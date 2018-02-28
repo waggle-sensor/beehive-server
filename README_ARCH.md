@@ -1,5 +1,6 @@
-## Current Server:
-### Beehive1:
+# Current Server
+
+## Beehive1
 
 ```
 Base OS: CentOS Linux release 7.2.1511 (Core)
@@ -8,7 +9,7 @@ Kernel: Linux beehive1.mcs.anl.gov 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 
 Public IP: `40.221.47.67 (67.47.221.140.in-addr.arpa	name = beehive1.mcs.anl.gov.)
 ```
 
-#### FS of Beehive:
+### FS of Beehive
 ```
 /dev/mapper/centos_beehive1-root on / type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
 /dev/vda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
@@ -64,9 +65,10 @@ All the Beehive processess are run either in docker containers or as jobs direct
 ```
 
 
-#### Docker:
+### Docker
 
-##### Version:
+#### Version
+
 ```
 Client:
  Version:      1.10.2
@@ -84,7 +86,9 @@ Server:
  Built:        Mon Feb 22 16:16:33 2016
  OS/Arch:      linux/amd64
 ```
-##### Containers:
+
+#### Containers
+
 ```
 1. waggle/beehive-worker-coresense
 2. waggle/beehive-flask
@@ -99,7 +103,7 @@ Server:
 11. waggle/beehive-rabbitmq
 ```
 
-##### Where are the docker images created?
+#### Where are the docker images created?
 
 **Base_Dir** is root of the [beehive-server](https://github.com/waggle-sensor/beehive-server) repo.  
 
@@ -122,7 +126,7 @@ Some images are generated using the Dockerfile in their respective directories -
 [Base_Dir]/beehive-rabbitmq/Dockerfile
 ```
 
-##### Deployment
+#### How are containers built and deployed?
 
 Service directories all contain a Makefile with commands:
 
