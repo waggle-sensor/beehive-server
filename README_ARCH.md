@@ -122,6 +122,20 @@ Some images are generated using the Dockerfile in their respective directories -
 [Base_Dir]/beehive-rabbitmq/Dockerfile
 ```
 
+##### Deployment
+
+Service directories all contain a Makefile with commands:
+
+* `make build` - build Docker image from directory
+* `make deploy` - deploy latest Docker built image
+
+For example, the following we build the currently checked out `beehive-loader-raw` image and deploy it.
+
+```
+$ cd beehive-server/beehive-loader-raw
+$ make build && make deploy
+```
+
 #### Cassandra:
 
 ##### Deployment
