@@ -329,3 +329,62 @@ Default Database `waggle`
 Use `beehive-server/bin/beehive-mysql` to connect to `waggle` database inside container.
 
 ##### Tables
+
+Currently, have many tables (mostly unused):
+
+```
+MySQL [waggle]> show tables;
++----------------------+
+| Tables_in_waggle     |
++----------------------+
+| calibration          |
+| hardware             |
+| node_config          |
+| node_management      |
+| node_management0     |
+| node_meta            |
+| node_notes           |
+| node_offline         |
+| nodes                |
+| nodes0               |
+| nodes1               |
+| nodes2               |
+| nodesApril7          |
+| nodes_2017_06_21     |
+| nodes_2017_08_10     |
+| nodes_May16_2017     |
+| nodes_May3           |
+| role                 |
+| roles_users          |
+| software             |
+| ssh_status           |
+| testing_groups       |
+| testing_nodes        |
+| testing_nodes_groups |
+| user                 |
++----------------------+
+```
+
+AFAIK `nodes` is the only table in active use:
+
+```
+MySQL [waggle]> describe nodes;
++------------------+--------------+------+-----+----------+----------------+
+| Field            | Type         | Null | Key | Default  | Extra          |
++------------------+--------------+------+-----+----------+----------------+
+| id               | int(11)      | NO   | PRI | NULL     | auto_increment |
+| node_id          | varchar(16)  | YES  |     | NULL     |                |
+| project          | int(11)      | YES  | MUL | NULL     |                |
+| description      | varchar(255) | YES  |     | NULL     |                |
+| reverse_ssh_port | mediumint(9) | YES  |     | NULL     |                |
+| hostname         | varchar(64)  | YES  |     | NULL     |                |
+| hardware         | json         | YES  |     | NULL     |                |
+| name             | varchar(64)  | YES  |     | NULL     |                |
+| location         | varchar(255) | YES  |     | NULL     |                |
+| last_updated     | timestamp    | YES  |     | NULL     |                |
+| opmode           | varchar(64)  | YES  |     | testing. |                |
+| groups           | varchar(128) | YES  |     |          |                |
++------------------+--------------+------+-----+----------+----------------+
+12 rows in set (0.11 sec)
+
+```
