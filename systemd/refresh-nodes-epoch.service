@@ -1,0 +1,6 @@
+[Unit]
+Description=Refresh epoch for live nodes
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/waggle/beehive-server/scripts/epoch_update.sh

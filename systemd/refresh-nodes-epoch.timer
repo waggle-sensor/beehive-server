@@ -1,0 +1,10 @@
+[Unit]
+Description=Refresh live nodes every minute
+
+[Timer]
+OnBootSec=1min
+OnCalendar=*:*:0/10
+AccuracySec=1sec
+
+[Install]
+WantedBy=timers.target
