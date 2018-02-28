@@ -1,22 +1,22 @@
-## Current Server: 
-### Beehive1: 
+## Current Server:
+### Beehive1:
 
 ```
 Base OS: CentOS Linux release 7.2.1511 (Core)
-Kernel: Linux beehive1.mcs.anl.gov 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 17:03:50 UTC 
+Kernel: Linux beehive1.mcs.anl.gov 3.10.0-327.10.1.el7.x86_64 #1 SMP Tue Feb 16 17:03:50 UTC
         2016 x86_64 x86_64 x86_64 GNU/Linux
 Public IP: `40.221.47.67 (67.47.221.140.in-addr.arpa	name = beehive1.mcs.anl.gov.)
 ```
 
-#### FS of Beehive: 
+#### FS of Beehive:
 ```
 /dev/mapper/centos_beehive1-root on / type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
 /dev/vda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
 ```
 
-_All the data is in /mnt which is **not** a separately mounted partition, but part of root._ - Is root of Beehive backed up? If so how often? 
+_All the data is in /mnt which is **not** a separately mounted partition, but part of root._ - Is root of Beehive backed up? If so how often?
 
-All the Beehive processess are run either in docker containers or as jobs directly on the base Cent OS. 
+All the Beehive processess are run either in docker containers or as jobs directly on the base Cent OS.
 
 
 ##### FS Usage (27 Feb 2017): Top Users
@@ -41,17 +41,17 @@ All the Beehive processess are run either in docker containers or as jobs direct
                         1.6G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/ACZI56741375WMFLVFPQSXZ67
                         1.3G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/1JE88H3ZUXZ2PM8VCY1Z7TVDP
                         1.3G    /mnt/rabbitmq/data/mnesia/rabbitmq/queues/1M6BCTH8SNGEKZL68LZBPMWQL
-        
+
         7.4G    /mnt/cassandra
             7.1G    /mnt/cassandra/data
                 7.1G    /mnt/cassandra/data/waggle
                     4.5G    /mnt/cassandra/data/waggle/sensor_data_raw-6a36efb090be11e68f941fe22eacf844
                     2.6G    /mnt/cassandra/data/waggle/sensor_data-9abd35e0c44f11e59521091830ac5256
 
-        
+
         1.3G    /mnt/beehive
             1.3G    /mnt/beehive/node-logs
-        
+
 
     7.4G    /homes
         7.1G    /homes/moose
@@ -64,9 +64,9 @@ All the Beehive processess are run either in docker containers or as jobs direct
 ```
 
 
-#### Docker: 
+#### Docker:
 
-##### Version: 
+##### Version:
 ```
 Client:
  Version:      1.10.2
@@ -84,7 +84,7 @@ Server:
  Built:        Mon Feb 22 16:16:33 2016
  OS/Arch:      linux/amd64
 ```
-##### Containers: 
+##### Containers:
 ```
 1. waggle/beehive-worker-coresense
 2. waggle/beehive-flask
@@ -99,12 +99,12 @@ Server:
 11. waggle/beehive-rabbitmq
 ```
 
-##### Where are the docker images created? 
+##### Where are the docker images created?
 
 **Base_Dir** is root of the [beehive-server](https://github.com/waggle-sensor/beehive-server) repo.  
 
-Some images are generated using the Dockerfile in their respective directories - 
-`make build` and `make deploy` 
+Some images are generated using the Dockerfile in their respective directories -
+`make build` and `make deploy`
 ```
 [Base_Dir]/beehive-loader-decoded/Dockerfile
 [Base_Dir]/beehive-sshd/Dockerfile
@@ -122,7 +122,7 @@ Some images are generated using the Dockerfile in their respective directories -
 [Base_Dir]/beehive-rabbitmq/Dockerfile
 ```
 
-#### Cassandra: 
+#### Cassandra:
 
 1. Docker Container: cassandra:3.2
 	* This image is pulled from the public docker image repo? (Need to confirm)
@@ -130,9 +130,9 @@ Some images are generated using the Dockerfile in their respective directories -
 
 
 
-##### What do we have in Cassandra on the FS? 
+##### What do we have in Cassandra on the FS?
 ```
-[Tue Feb 27 10:43:50 root@beehive1:/mnt/cassandra/data/waggle ] $ du -sc * | sort -k 1 -n 
+[Tue Feb 27 10:43:50 root@beehive1:/mnt/cassandra/data/waggle ] $ du -sc * | sort -k 1 -n
 
 0	abc-624f05e090c211e68f941fe22eacf844
 0	admin_messages-8ab478e07c2b11e68f941fe22eacf844
@@ -174,7 +174,7 @@ Some images are generated using the Dockerfile in their respective directories -
 4710712	sensor_data_raw-6a36efb090be11e68f941fe22eacf844
 
 ```
-##### what do we have in the Cassandra DB - Tables? 
+##### what do we have in the Cassandra DB - Tables?
 _Command:_ `/bin/beehive-cqlsh`
 
 ```
@@ -194,7 +194,7 @@ cqlsh:waggle> DESCRIBE tables;
 3. nodes  
 ```
 
-#### Table Details: 
+#### Table Details:
 **1. sensor_data:** (This is where the old ASCII sensor data from the old nodes went. These should be early 2015 to mid-2017)
 ```
 cqlsh:waggle> DESCRIBE TABLE sensor_data ;
@@ -290,7 +290,7 @@ CREATE TABLE waggle.nodes (
 ```
 
 
-### Beehive2: 
+### Beehive2:
 
 ```
  Host beehive-prod
@@ -305,3 +305,19 @@ Host beehive-test
   ProxyCommand ssh -q mcs nc -q0 beehive01-test.cels.anl.gov 22
   User moose
   ```
+
+#### MySQL
+
+Stores node management and metadata.
+
+##### Deployment
+
+Docker container: `beehive-mysql`
+
+Docker image: `mysql:5.7.10`
+
+Listening: `127.0.0.1:3306`
+
+##### Access
+
+Use `beehive-server/bin/beehive-mysql` to connect to `waggle` database inside container.
