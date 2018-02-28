@@ -12,7 +12,6 @@ deploy:
 		--net beehive \
 		--restart=always \
 		-p 80:80 \
-		-p 443:443 \
 		-v /mnt/datasets/mcs/epoch:/www/epoch:ro \
 		--name $(name) \
 		$(image)
