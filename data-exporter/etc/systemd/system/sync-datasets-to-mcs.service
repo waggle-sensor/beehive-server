@@ -3,4 +3,4 @@ Description=Sync datasets to MCS
 
 [Service]
 Type=oneshot
-ExecStart=/bin/sh -c 'rsync -v -a /mnt/datasets/mcs/datasets mcswww:/mcs/www.mcs.anl.gov/research/projects/waggle/downloads/datasets'
+ExecStart=/bin/sh -c 'rsync -v -a /mnt/datasets/mcs/datasets/ mcswww:/mcs/www.mcs.anl.gov/research/projects/waggle/downloads/datasets'
