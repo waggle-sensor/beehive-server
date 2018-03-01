@@ -435,7 +435,7 @@ Docker container: `beehive-cert`
 
 Docker image: `beehive-cert`
 
-Listening: `127.0.0.1:24181`
+Listening: `127.0.0.1:24181` (but only used via `beehive-sshd` proxy command)
 
 ##### Summary
 
