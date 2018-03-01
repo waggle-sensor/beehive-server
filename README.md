@@ -424,6 +424,35 @@ MySQL [waggle]> select * from nodes where description like '%aot chicago (s)%' l
 10 rows in set (0.00 sec)
 ```
 
+#### Cert
+
+Manages node registration, node credentials and generating authorized_keys file
+used by `beehive-sshd`.
+
+##### Deployment
+
+Docker container: `beehive-cert`
+
+Docker image: `beehive-cert`
+
+Listening: `127.0.0.1:24181`
+
+##### Summary
+
+Runs an HTTP server responsible for:
+
+* Generating authorized_keys file used by `beehive-sshd`. (!!)
+* Getting node entry from MySQL + certs / keys from `/mnt/SSL`.
+* Creating node entry in MySQL + certs / keys in `/mnt/SSL`.
+
+Some of this is done using scripts in `beehive-cert/SSL`:
+
+* Generating CA cert / key.
+* Generating server cert / key signed by CA.
+* Generating client cert / key signed by CA.
+
+The rest of the functionality is implemented by the API calls.
+
 ### Beehive2
 
 ```
