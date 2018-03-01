@@ -442,8 +442,8 @@ Listening: `127.0.0.1:24181` (but only used via `beehive-sshd` proxy command)
 Runs an HTTP server responsible for:
 
 * Generating authorized_keys file used by `beehive-sshd` from MySQL. Adds entry for reg proxy command. (!!)
-* Getting node entry from MySQL + certs / keys from `/mnt/SSL`.
-* Creating node entry in MySQL + certs / keys in `/mnt/SSL`.
+* Getting node entry from MySQL + certs / keys from `/mnt/waggle/SSL`.
+* Creating node entry in MySQL + certs / keys in `/mnt/waggle/SSL`.
 
 Some of this is done using scripts in `beehive-cert/SSL`:
 
