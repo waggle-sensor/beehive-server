@@ -1,29 +1,32 @@
 #!/usr/bin/env python3
-import subprocess
-import xml.etree.ElementTree as ET
 import json
+import sys
+import pymysql.cursors
 
-output = subprocess.check_output([
-    'mysql',
-    '--xml',
-    '-h', '127.0.0.1',
-    '-u', 'waggle',
-    '--password=waggle',
-    '-D', 'waggle',
-    '-e', 'SELECT node_id, name, description, location, reverse_ssh_port, groups FROM nodes',
-])
+conn = pymysql.connect(host='localhost',
+                       user='waggle',
+                       passwd='waggle',
+                       db='waggle')
 
-tree = ET.fromstring(output)
+try:
+    c = conn.cursor()
 
-docs = []
+    c.execute('SELECT node_id, name, description, location, reverse_ssh_port, opmode, groups, project FROM nodes')
 
-for child in tree.getchildren():
-    doc = {}
+    nodes = []
 
-    for field in child.getchildren():
-        doc[field.attrib['name']] = field.text or ''
+    for row in c.fetchall():
+        nodes.append({
+            'node_id': row[0].lower()[-12:],
+            'name': row[1],
+            'description': row[2],
+            'location': row[3],
+            'reverse_ssh_port': int(row[4]),
+            'opmode': row[5],
+            'groups': sorted(row[6].split()),
+            'project': row[7],
+        })
 
-    doc['groups'] = doc['groups'].split()
-    docs.append(doc)
-
-print(json.dumps(docs))
+    json.dump(nodes, sys.stdout, separators=(',', ':'))
+finally:
+    conn.close()
