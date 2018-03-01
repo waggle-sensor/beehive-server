@@ -16,7 +16,7 @@ nodes = []
 
 for item in get_node_info():
     nodes.append({
-        'id': item['node_id'][-12:],
+        'id': item['node_id'][-12:].lower(),
         'name': item.get('name', ''),
         'description': item.get('description', ''),
         'location': item.get('location', ''),
