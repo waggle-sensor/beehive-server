@@ -427,7 +427,7 @@ MySQL [waggle]> select * from nodes where description like '%aot chicago (s)%' l
 #### Cert
 
 Manages node registration, node credentials and generating authorized_keys file
-used by `beehive-sshd`.
+(`/mnt/waggle/SSL/nodes/authorized_keys`) used by `beehive-sshd`.
 
 ##### Deployment
 
@@ -441,7 +441,7 @@ Listening: `127.0.0.1:24181` (but only used via `beehive-sshd` proxy command)
 
 Runs an HTTP server responsible for:
 
-* Generating authorized_keys file used by `beehive-sshd` from MySQL. Adds entry for reg proxy command. (!!)
+* Generating authorized_keys file (`/mnt/waggle/SSL/nodes/authorized_keys`) used by `beehive-sshd` from MySQL. Adds entry for reg proxy command. (!!)
 * Getting node entry from MySQL + certs / keys from `/mnt/waggle/SSL`.
 * Creating node entry in MySQL + certs / keys in `/mnt/waggle/SSL`.
 
