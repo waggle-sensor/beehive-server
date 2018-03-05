@@ -1,8 +1,15 @@
 #!/bin/bash
-date +'Updated on %a %b %d %H:%M' > /mnt/datasets/mcs/static/live-nodes.txt
-echo >> /mnt/datasets/mcs/static/live-nodes.txt
-/usr/lib/waggle/beehive-server/bin/live-nodes >> /mnt/datasets/mcs/static/live-nodes.txt
 
-date +'Updated on %a %b %d %H:%M' > /mnt/datasets/mcs/static/node-info.txt
-echo >> /mnt/datasets/mcs/static/node-info.txt
-/usr/lib/waggle/beehive-server/bin/node-info >> /mnt/datasets/mcs/static/node-info.txt
+# build new live nodes page
+date +'Updated on %a %b %d %H:%M' > /tmp/live-nodes.txt
+echo >> /tmp/live-nodes.txt
+/usr/lib/waggle/beehive-server/bin/live-nodes >> /tmp/live-nodes.txt
+
+# build new node info page
+date +'Updated on %a %b %d %H:%M' > /tmp/node-info.txt
+echo >> /tmp/node-info.txt
+/usr/lib/waggle/beehive-server/bin/node-info >> /tmp/node-info.txt
+
+# replace current page with complete versions
+mv /tmp/live-nodes.txt > /mnt/datasets/mcs/static/live-nodes.txt
+mv /tmp/node-info.txt > /mnt/datasets/mcs/static/node-info.txt
