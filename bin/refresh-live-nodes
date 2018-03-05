@@ -11,5 +11,5 @@ echo >> /tmp/node-info.txt
 /usr/lib/waggle/beehive-server/bin/node-info >> /tmp/node-info.txt
 
 # replace current page with complete versions
-mv /tmp/live-nodes.txt > /mnt/datasets/mcs/static/live-nodes.txt
-mv /tmp/node-info.txt > /mnt/datasets/mcs/static/node-info.txt
+mv /tmp/live-nodes.txt /mnt/datasets/mcs/static/live-nodes.txt
+mv /tmp/node-info.txt /mnt/datasets/mcs/static/node-info.txt
