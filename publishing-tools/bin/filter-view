@@ -4,6 +4,21 @@ from datetime import datetime
 import json
 import sys
 
+
+class Interval:
+
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def __contains__(self, dt):
+        if self.start is not None and self.start > dt:
+            return False
+        if self.end is not None and self.end <= dt:
+            return False
+        return True
+
+
 datetime_format = '%Y/%m/%d %H:%M:%S'
 
 
@@ -13,9 +28,12 @@ def read_metadata(filename):
 
     for node in nodes:
         # convert commission_date to datetime
+        node['commissioned'] = []
+
         if 'commissioned_at' in node:
-            node['commissioned_at'] = datetime.strptime(node['commissioned_at'],
-                                                        datetime_format)
+            start = datetime.strptime(node['commissioned_at'], datetime_format)
+            interval = Interval(start, None)
+            node['commissioned'].append(interval)
 
     return nodes
 
@@ -38,7 +56,7 @@ if __name__ == '__main__':
 
         node = nodes_by_id[node_id]
 
-        return 'commissioned_at' in node and timestamp >= node['commissioned_at']
+        return any(timestamp in interval for interval in node['commissioned'])
 
     for line in filter(isviewable, sys.stdin.readlines()):
         sys.stdout.write(line)
