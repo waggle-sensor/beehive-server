@@ -744,5 +744,38 @@
         "node_id": "001e061135cb",
         "project_id": "AoT Chicago",
         "vsn": "052"
+    },
+    {
+        "events": [
+            {
+                "event": "commissioned",
+                "timestamp": "2020/01/01 10:00:00"
+            },
+            {
+                "event": "decommissioned",
+                "timestamp": "2020/02/01 12:00:00"
+            },
+            {
+                "event": "commissioned",
+                "timestamp": "2020/03/01 10:00:00"
+            },
+            {
+                "event": "decommissioned",
+                "timestamp": "2020/04/01 07:00:00"
+            },
+            {
+                "event": "retired",
+                "timestamp": "2020/05/01 13:00:00"
+            },
+        ],
+        "description": "Metadata example node.",
+        "location": {
+            "address": "Ashland & 63rd St",
+            "lat": 41.77886000000001,
+            "lon": -87.663766
+        },
+        "node_id": "000000000000",
+        "project_id": "AoT Chicago",
+        "vsn": "ABC"
     }
 ]
