@@ -12,11 +12,8 @@ class Interval:
         self.end = end
 
     def __contains__(self, dt):
-        if self.start is not None and self.start > dt:
-            return False
-        if self.end is not None and self.end <= dt:
-            return False
-        return True
+        return ((self.start is None or self.start < dt) and
+                (self.end is None or dt <= self.end))
 
 
 datetime_format = '%Y/%m/%d %H:%M:%S'
