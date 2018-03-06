@@ -1,11 +1,16 @@
 # Sensor Filter
 
+This tool filters sample lines from stdin to only include sensors in config file passing all sanity checks.
+
 ## Usage
 
-`filter-sensor` filters sample lines from stdin to only include:
+```
+# process file
+filter-sensor config < input.csv
 
-* allowed sensors from config file
-* values from allowed sensors in config file passing sanity checks
+# process stream
+sample stream | filter-sensor config
+```
 
 ## Config
 
