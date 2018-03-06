@@ -8,7 +8,7 @@ import subprocess
 
 
 def get_node_info():
-    output = subprocess.check_output('node-info-json').decode()
+    output = subprocess.check_output('/usr/lib/waggle/beehive-server/bin/node-info-json').decode()
     return json.loads(output)
 
 
