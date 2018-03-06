@@ -38,17 +38,21 @@ def make_interval_list(events):
     return intervals
 
 
+def convert_event_timestamps(node):
+    if 'events' not in node:
+        return
+
+    for event in node['events']:
+        event['timestamp'] = datetime.strptime(event['timestamp'], datetime_format)
+
+
 def read_metadata(filename):
     with open(filename) as f:
         nodes = json.load(f)
 
     for node in nodes:
-        if 'events' in node:
-            for event in node['events']:
-                event['timestamp'] = datetime.strptime(event['timestamp'],
-                                                       datetime_format)
+        convert_event_timestamps(node)
 
-    for node in nodes:
         # support for new commissioned tracking
         if 'events' in node:
             node['commissioned'] = make_interval_list(node['events'])
