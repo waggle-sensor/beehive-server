@@ -765,7 +765,8 @@
             },
             {
                 "event": "retired",
-                "timestamp": "2020/05/01 13:00:00"
+                "timestamp": "2020/05/01 13:00:00",
+                "comment": "Cameras and sensors failed."
             }
         ],
         "description": "Metadata example node.",
