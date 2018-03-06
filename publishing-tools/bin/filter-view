@@ -15,8 +15,27 @@ class Interval:
         return ((self.start is None or self.start < dt) and
                 (self.end is None or dt <= self.end))
 
+    def __repr__(self):
+        return repr((self.start, self.end))
+
 
 datetime_format = '%Y/%m/%d %H:%M:%S'
+
+
+def make_interval_list(events):
+    intervals = []
+
+    for event in events:
+        if event['event'] in ['commissioned']:
+            start = event['timestamp']
+            intervals.append(Interval(start, None))
+
+        if event['event'] in ['decommissioned', 'retired']:
+            end = event['timestamp']
+            if len(intervals) > 0 and intervals[-1].end is None:
+                intervals[-1].end = end
+
+    return intervals
 
 
 def read_metadata(filename):
@@ -24,13 +43,19 @@ def read_metadata(filename):
         nodes = json.load(f)
 
     for node in nodes:
-        # convert commission_date to datetime
-        node['commissioned'] = []
+        if 'events' in node:
+            for event in node['events']:
+                event['timestamp'] = datetime.strptime(event['timestamp'],
+                                                       datetime_format)
 
-        if 'commissioned_at' in node:
+    for node in nodes:
+        # support for new commissioned tracking
+        if 'events' in node:
+            node['commissioned'] = make_interval_list(node['events'])
+        # maintain support for old timestamp - will remove
+        elif 'commissioned_at' in node:
             start = datetime.strptime(node['commissioned_at'], datetime_format)
-            interval = Interval(start, None)
-            node['commissioned'].append(interval)
+            node['commissioned'] = [Interval(start, None)]
 
     return nodes
 
