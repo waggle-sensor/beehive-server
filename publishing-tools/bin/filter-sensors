@@ -14,7 +14,9 @@ def read_config(filename):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='''
+    Filters sensor stream to only include sensors in config with values passing sanity checks.
+    ''')
     parser.add_argument('-v', action='store_true', help='invert')
     parser.add_argument('config', help='config file to use')
     args = parser.parse_args()
