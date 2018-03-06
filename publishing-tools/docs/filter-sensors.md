@@ -66,4 +66,4 @@ HTU21D.temperature
 BMP180.temperature
 ```
 
-must have values which pass the specified range check.
+must have values which pass the specified range check. `BMP180.pressure` will be allowed regardless of value, since we didn't include any sanity checks.
