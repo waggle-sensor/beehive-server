@@ -121,7 +121,7 @@ if __name__ == '__main__':
     def isviewable(line):
         fields = line.split(';')
         node_id = fields[0]
-        timestamp = datetime.strptime(fields[1], datetime_format)
+        timestamp = load_timestamp(fields[1])
 
         if node_id not in nodes_by_id:
             return False
