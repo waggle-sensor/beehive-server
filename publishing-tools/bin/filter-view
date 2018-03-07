@@ -2,6 +2,7 @@
 import argparse
 from datetime import datetime
 import json
+import csv
 import sys
 
 
@@ -25,7 +26,7 @@ datetime_format = '%Y/%m/%d %H:%M:%S'
 def make_interval_list(events):
     intervals = []
 
-    for event in events:
+    for event in sorted(events, key=lambda e: e['timestamp']):
         if event['event'] in ['commissioned']:
             start = event['timestamp']
             intervals.append(Interval(start, None))
@@ -46,7 +47,7 @@ def convert_event_timestamps(node):
         event['timestamp'] = datetime.strptime(event['timestamp'], datetime_format)
 
 
-def read_metadata(filename):
+def load_metadata_json(filename):
     with open(filename) as f:
         nodes = json.load(f)
 
@@ -64,25 +65,108 @@ def read_metadata(filename):
     return nodes
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('meta', help='metadata config file for view')
-    args = parser.parse_args()
+def load_nodes_metadata(filename):
+    events = []
 
-    nodes = read_metadata(args.meta)
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile)
+
+        for row in reader:
+            try:
+                lat = float(row[4])
+                lon = float(row[5])
+            except ValueError:
+                continue
+
+            events.append({
+                'node_id': row[0],
+                'project_id': row[1],
+                'vsn': row[2],
+                'address': row[3],
+                'lat': lat,
+                'lon': lon,
+                'description': row[6],
+            })
+
+    return events
+
+
+def load_timestamp(timestamp):
+    return datetime.strptime(timestamp, '%Y/%m/%d %H:%M:%S')
+
+
+def load_events_metadata(filename):
+    events = []
+
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile)
+
+        for row in reader:
+            events.append({
+                'node_id': row[0],
+                'timestamp': load_timestamp(row[1]),
+                'event': row[2],
+                'comment': row[3],
+            })
+
+    return events
+
+
+# just build filter instead??? then we can only include things which
+# pass other info checks.
+def join_metadata(nodes, events):
     nodes_by_id = {node['node_id']: node for node in nodes}
 
-    def isviewable(line):
-        fields = line.split(';')
-        node_id = fields[0]
-        timestamp = datetime.strptime(fields[1], datetime_format)
+    for node in nodes:
+        node['events'] = []
 
-        if node_id not in nodes_by_id:
-            return False
+    for event in events:
+        try:
+            node = nodes_by_id[event['node_id']]
+        except KeyError:
+            continue
 
-        node = nodes_by_id[node_id]
+        node['events'].append(event)
 
-        return any(timestamp in interval for interval in node['commissioned'])
+    for node in nodes:
+        node['commissioned'] = make_interval_list(node['events'])
 
-    for line in filter(isviewable, sys.stdin.readlines()):
-        sys.stdout.write(line)
+    return nodes
+
+
+import pprint
+
+
+def read_metadata(basepath):
+    nodes = load_nodes_metadata(basepath + '/nodes.csv')
+    events = load_events_metadata(basepath + '/events.csv')
+
+    nodes = join_metadata(nodes, events)
+
+    pprint.pprint(nodes)
+
+
+read_metadata('../examples/plenario')
+
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('meta', help='metadata config file for view')
+#     args = parser.parse_args()
+#
+#     nodes = read_metadata(args.meta)
+#     nodes_by_id = {node['node_id']: node for node in nodes}
+#
+#     def isviewable(line):
+#         fields = line.split(';')
+#         node_id = fields[0]
+#         timestamp = datetime.strptime(fields[1], datetime_format)
+#
+#         if node_id not in nodes_by_id:
+#             return False
+#
+#         node = nodes_by_id[node_id]
+#
+#         return any(timestamp in interval for interval in node['commissioned'])
+#
+#     for line in filter(isviewable, sys.stdin.readlines()):
+#         sys.stdout.write(line)
