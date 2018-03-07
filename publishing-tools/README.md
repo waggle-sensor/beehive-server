@@ -5,8 +5,8 @@ from beehive.
 
 ## Overview
 
-The `filter-view` and `filter-sensors` tools accept a line-by-line sensor stream
-and can be combined to drop invalid values.
+The `filter-view` and `filter-sensors` tools input / output line-by-line sensor
+streams and can be used to drop invalid values.
 
 ### Filter View Diagram
 
@@ -32,7 +32,18 @@ and can be combined to drop invalid values.
 
 ### Example
 
-A concrete example is given here. Given the following sensor stream:
+A concrete example is given here. Suppose we build a complete pipeline:
+
+```
+                  project metadata
+                         v
+[Sensor Stream] -> [Filter View] -> [Filter Sensors] -> [Sensor Stream]
+                                          ^
+                                    sensors metadata
+```
+
+
+Given the following sensor stream:
 
 ```
 001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
@@ -53,9 +64,34 @@ A concrete example is given here. Given the following sensor stream:
 001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.z;-0.04
 001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
 001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
+001e0610c2db;2018/02/26 16:53:30;coresense:3;frame;HIH6130;temperature;321.41
 ```
 
-The output consists of filtered stream _in the same format_. For example:
+Suppose `filter-view` is configured to only allow `001e0610e537` and `001e0610c2db`.
+Then, the output from `filter-view` will look like:
+
+```
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;h2s;63
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;co;5238
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;so2;634
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;o3;5198
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;oxidizing_gases;22637
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;reducing_gases;6992
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;TSL260RD;intensity;49
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.y;-0.99
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;rms;0.99
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.x;-0.04
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.z;-0.04
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
+001e0610c2db;2018/02/26 16:53:30;coresense:3;frame;HIH6130;temperature;321.41
+```
+
+Suppose `filter-sensors` only allows reasonable temperature and humidity sensors.
+Then, the output from `filter-sensors` may look like:
 
 ```
 001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
@@ -64,7 +100,8 @@ The output consists of filtered stream _in the same format_. For example:
 001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
 ```
 
-In this case, we filtered out both nodes and specific sensors.
+In this case, we filtered out both nodes and specific sensors _and the data format
+is the same throughout the pipeline_.
 
 ## Tools
 
