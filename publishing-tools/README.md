@@ -6,7 +6,7 @@ from beehive.
 ## Overview
 
 The `filter-view` and `filter-sensors` tools accept a line-by-line sensor stream
-and drop invalid values.
+and can be combined to drop invalid values.
 
 ### Filter View Diagram
 
