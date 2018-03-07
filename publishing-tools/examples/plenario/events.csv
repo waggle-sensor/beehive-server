@@ -47,4 +47,4 @@ node_id,timestamp,event,comment
 000000000000,2020/02/01 12:00:00,decommissioned,
 000000000000,2020/03/01 10:00:00,commissioned,
 000000000000,2020/04/01 07:00:00,decommissioned,
-000000000000,2020/05/01 13:00:00,retired,Cameras and sensors failed.
+000000000000,2020/05/01 13:00:00,retired,Decided to move to Florida.
