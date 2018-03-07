@@ -13,13 +13,14 @@ These can be used to build publishing pipelines. For example:
 
 ```sh
 cat sensor-data.csv |
-filter-view plenario |
-filter-sensors climate.csv >
+filter-view project-metadata |
+filter-sensors sensor-metadata.csv >
 filtered-sensor-data.csv
 ```
 
 ## Metadata
 
+Each tool requires an argument specifying which metadata file it should use.
 
 ### Project Metadata
 
@@ -98,3 +99,5 @@ BMP180.temperature,-40,50
 BMP180.pressure,300,1100
 TSYS01.temperature,-40,50
 ```
+
+_The header is required!_
