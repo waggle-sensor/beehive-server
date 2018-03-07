@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 import publishing
 import argparse
+from datetime import datetime
 import sys
+
+
+def load_timestamp(timestamp):
+    return datetime.strptime(timestamp, '%Y/%m/%d %H:%M:%S')
 
 
 if __name__ == '__main__':
@@ -15,7 +20,7 @@ if __name__ == '__main__':
     def isviewable(line):
         fields = line.split(';')
         node_id = fields[0]
-        timestamp = publishing.load_timestamp(fields[1])
+        timestamp = load_timestamp(fields[1])
 
         if node_id not in nodes_by_id:
             return False
