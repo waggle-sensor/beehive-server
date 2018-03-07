@@ -13,10 +13,10 @@ if __name__ == '__main__':
     Filters sensor stream to only include sensors in config with values passing sanity checks.
     ''')
     parser.add_argument('-v', action='store_true', help='invert')
-    parser.add_argument('config', help='config file to use')
+    parser.add_argument('metadata', help='path to sensor metadata')
     args = parser.parse_args()
 
-    config = publishing.load_sensor_metadata(args.config)
+    config = publishing.load_sensor_metadata(args.metadata)
 
     def isvalid(line):
         fields = line.split(';')

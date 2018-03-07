@@ -10,11 +10,13 @@ def load_timestamp(timestamp):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('metapath', help='path for project metadata files')
+    parser = argparse.ArgumentParser(description='''
+    Filters sensor stream to only include data within a project's valid node commissioning intervals.
+    ''')
+    parser.add_argument('metadata', help='path to project metadata')
     args = parser.parse_args()
 
-    nodes = publishing.load_project_metadata(args.metapath)
+    nodes = publishing.load_project_metadata(args.metadata)
     nodes_by_id = {node['node_id']: node for node in nodes}
 
     def isviewable(line):
