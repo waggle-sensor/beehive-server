@@ -3,3 +3,4 @@
 TestServer.py
 /protocol
 /utilities
+__pycache__/
