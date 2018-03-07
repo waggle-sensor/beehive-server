@@ -12,8 +12,9 @@ from beehive.
                                            ^
                                   only data from nodes in view
                                    during commissioning date
+```
 
-
+```
                      sensor metadata
                            v
  [Sensor Stream] -> [Filter Sensors] -> [Sensor Stream]
