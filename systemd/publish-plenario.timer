@@ -1,0 +1,9 @@
+[Unit]
+Description=Generate publishable data for Plenario every 5 minutes.
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
