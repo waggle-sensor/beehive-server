@@ -14,20 +14,23 @@ These can be used to build publishing pipelines. For example:
 ```sh
 cat sensor-data.csv |
 filter-view plenario |
-filter-sensors climate.json >
+filter-sensors climate.csv >
 filtered-sensor-data.csv
 ```
 
 ## Metadata
 
-The metadata for a project consists of a directory `project/` with the following items:
+
+### Project Metadata
+
+Project metadata consists of a directory `project/` with the following items:
 
 * `project/nodes.csv`: Table of node information.
 * `project/events.csv`: Table of node events.
 
 Each of these will be described below.
 
-### Node Table
+#### Node Table
 
 The node information table is a CSV file with the following fields:
 
@@ -51,7 +54,7 @@ node_id,project_id,vsn,address,lat,lon,description
 
 _The header is required!_
 
-### Events Table
+#### Events Table
 
 The node events table is a CSV file with the following fields:
 
@@ -76,3 +79,22 @@ node_id,timestamp,event,comment
 ```
 
 _The header is required!_
+
+### Sensor Metadata
+
+Sensor metadata is a CSV file with the following fields:
+
+1. Sensor ID
+2. Min Value
+3. Max Value
+
+For example, valid file contents would look like:
+
+```
+sensor_id,minval,maxval
+HTU21D.humidity,-1,101
+HTU21D.temperature,-40,50
+BMP180.temperature,-40,50
+BMP180.pressure,300,1100
+TSYS01.temperature,-40,50
+```
