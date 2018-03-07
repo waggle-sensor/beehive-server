@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('metapath', help='path for project metadata files')
     args = parser.parse_args()
 
-    nodes = publishing.load_metadata(args.metapath)
+    nodes = publishing.load_project_metadata(args.metapath)
     nodes_by_id = {node['node_id']: node for node in nodes}
 
     results = []

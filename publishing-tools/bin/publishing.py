@@ -106,7 +106,7 @@ def join_metadata(nodes, events):
     return nodes
 
 
-def load_metadata(basepath):
+def load_project_metadata(basepath):
     nodes = load_nodes_metadata(basepath + '/nodes.csv')
     events = load_events_metadata(basepath + '/events.csv')
     return join_metadata(nodes, events)
