@@ -82,8 +82,7 @@ def load_events_metadata(filename):
     return events
 
 
-# just build filter instead??? then we can only include things which
-# pass other info checks.
+# NOTE mutates nodes. may change in future.
 def join_metadata(nodes, events):
     nodes_by_id = {node['node_id']: node for node in nodes}
 
