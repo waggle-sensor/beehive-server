@@ -1,6 +1,22 @@
-# Publishing Tools
+# Publishing Tools and Metadata
 
-Tools to help publish approved project and sensor data.
+This document describes a set of tools which produce consumer ready sensor data from beehive.
+
+## Tools
+
+The main building blocks are:
+
+* `filter-view`: Filter commissioned data for a project.
+* `filter-sensors`: Filter "sane" sensors and values.
+
+These can be used to build publishing pipelines. For example:
+
+```sh
+cat sensor-data.csv |
+filter-view plenario |
+filter-sensors climate.json >
+filtered-sensor-data.csv
+```
 
 ## Metadata
 
