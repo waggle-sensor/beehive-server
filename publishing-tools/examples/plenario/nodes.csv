@@ -43,4 +43,3 @@ node_id,project_id,vsn,address,lat,lon,description
 001e061130f4,AoT Chicago,089,Chicago Ave & Noble St.,41.8960695,-87.6607112,AoT Chicago (S) [C]
 001e06113100,AoT Chicago,08E,Cottage Grove Ave & 111th St,41.6931379,-87.6094919,AoT Chicago (S) [C]
 001e061135cb,AoT Chicago,052,Ashland & 63rd St,41.77886000000001,-87.663766,AoT Chicago (S) [C]
-000000000000,AoT Chicago,ABC,Ashland & 63rd St,41.77886000000001,-87.663766,Metadata example node.
