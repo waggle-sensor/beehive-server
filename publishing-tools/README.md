@@ -58,3 +58,5 @@ node_id,timestamp,event,comment
 001e0610ba3b,2017/11/21 16:33:16,commissioned,
 001e0610ba57,2018/01/02 15:04:46,commissioned,
 ```
+
+_The header is required!_
