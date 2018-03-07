@@ -29,6 +29,14 @@ class TestPublishing(unittest.TestCase):
         self.assertTrue(datetime(2019, 7, 17) not in interval)
         self.assertTrue(datetime(2020, 8, 19) not in interval)
 
+    def test_infinite_interval(self):
+        interval = publishing.Interval(None, None)
+
+        self.assertTrue(datetime(1910, 5, 13) in interval)
+        self.assertTrue(datetime(2018, 6, 13) in interval)
+        self.assertTrue(datetime(2019, 7, 17) in interval)
+        self.assertTrue(datetime(2200, 8, 19) in interval)
+
     def test_make_intervals_open(self):
         intervals = publishing.make_interval_list([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},

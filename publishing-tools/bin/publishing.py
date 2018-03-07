@@ -112,6 +112,30 @@ def load_metadata(basepath):
     return join_metadata(nodes, events)
 
 
+def load_sensor_metadata(filename):
+    sensors = {}
+
+    with open(filename) as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        for row in reader:
+            try:
+                minval = float(row['minval'])
+            except ValueError:
+                minval = None
+
+            try:
+                maxval = float(row['maxval'])
+            except ValueError:
+                maxval = None
+
+            sensors[row['sensor_id']] = {
+                'range': Interval(minval, maxval)
+            }
+
+    return sensors
+
+
 def itersamples(csvfile):
     reader = csv.reader(csvfile, delimiter=';')
 
@@ -127,10 +151,3 @@ def itersamples(csvfile):
             'sensor': fields[4] + '.' + fields[5],
             'value': value,
         }
-
-
-if __name__ == '__main__':
-    import sys
-
-    for row in itersamples(sys.stdin):
-        print(row)

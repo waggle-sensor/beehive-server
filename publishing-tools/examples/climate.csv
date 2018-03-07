@@ -1,0 +1,6 @@
+sensor_id,minval,maxval
+HTU21D.humidity,-1,101
+HTU21D.temperature,-40,50
+BMP180.temperature,-40,50
+BMP180.pressure,300,1100
+TSYS01.temperature,-40,50

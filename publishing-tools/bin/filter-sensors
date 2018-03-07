@@ -1,16 +1,11 @@
 #!/usr/bin/env python3
 import argparse
-import json
+import publishing
 import sys
 
 
 def invert(f):
     return lambda x: not f(x)
-
-
-def read_config(filename):
-    with open(filename) as f:
-        return json.load(f)
 
 
 if __name__ == '__main__':
@@ -21,24 +16,25 @@ if __name__ == '__main__':
     parser.add_argument('config', help='config file to use')
     args = parser.parse_args()
 
-    config = read_config(args.config)
+    config = publishing.load_sensor_metadata(args.config)
 
     def isvalid(line):
         fields = line.split(';')
         sensor = fields[4]
         param = fields[5]
-        value = fields[6]
+
+        try:
+            value = float(fields[6])
+        except ValueError:
+            return False
+
         name = '.'.join([sensor, param])
 
         if name not in config:
             return False
 
         params = config[name]
-
-        if 'range' in params and not (params['range'][0] <= float(value) <= params['range'][1]):
-            return False
-
-        return True
+        return value in params['range']
 
     if args.v:
         isvalid = invert(isvalid)
