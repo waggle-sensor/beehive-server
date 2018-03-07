@@ -29,27 +29,22 @@ class TestPublishing(unittest.TestCase):
         self.assertTrue(datetime(2019, 7, 17) not in interval)
         self.assertTrue(datetime(2020, 8, 19) not in interval)
 
-    def test_make_intervals(self):
-        # check simple open
-        intervals = publishing.make_interval_list([
-            {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
-        ])
-
-        self.assertEqual(intervals, [
-            publishing.Interval(datetime(2018, 3, 5), None),
-        ])
-
-        # check simple open -> close
+    def test_make_intervals_open(self):
         intervals = publishing.make_interval_list([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 3, 11), 'event': 'decommissioned'},
+            {'timestamp': datetime(2018, 4, 10), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 4, 15), 'event': 'decommissioned'},
+            {'timestamp': datetime(2018, 7, 20), 'event': 'commissioned'},
         ])
 
         self.assertEqual(intervals, [
             publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 11)),
+            publishing.Interval(datetime(2018, 4, 10), datetime(2018, 4, 15)),
+            publishing.Interval(datetime(2018, 7, 20), None),
         ])
 
-        # check multiple open -> close
+    def test_make_intervals_closed(self):
         intervals = publishing.make_interval_list([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 3, 11), 'event': 'decommissioned'},
@@ -65,7 +60,7 @@ class TestPublishing(unittest.TestCase):
             publishing.Interval(datetime(2018, 7, 20), datetime(2018, 7, 21)),
         ])
 
-        # check proper start union
+    def test_make_intervals_open_union(self):
         intervals = publishing.make_interval_list([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 3, 11), 'event': 'commissioned'},
@@ -75,7 +70,7 @@ class TestPublishing(unittest.TestCase):
             publishing.Interval(datetime(2018, 3, 5), None),
         ])
 
-        # check proper end union
+    def test_make_intervals_closed_union(self):
         intervals = publishing.make_interval_list([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 3, 11), 'event': 'decommissioned'},
