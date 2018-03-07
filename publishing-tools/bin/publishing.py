@@ -12,6 +12,11 @@ class Interval:
         return ((self.start is None or self.start < dt) and
                 (self.end is None or dt <= self.end))
 
+    def __eq__(self, obj):
+        return (isinstance(obj, Interval) and
+                self.start == obj.start and
+                self.end == obj.end)
+
     def __repr__(self):
         return repr((self.start, self.end))
 
@@ -22,7 +27,8 @@ def make_interval_list(events):
     for event in sorted(events, key=lambda e: e['timestamp']):
         if event['event'] in ['commissioned']:
             start = event['timestamp']
-            intervals.append(Interval(start, None))
+            if len(intervals) == 0 or intervals[-1].end is not None:
+                intervals.append(Interval(start, None))
 
         if event['event'] in ['decommissioned', 'retired']:
             end = event['timestamp']
