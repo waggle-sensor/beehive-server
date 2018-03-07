@@ -32,7 +32,7 @@ and drop invalid values.
 
 ### Example
 
-These tools accept a line-by-line sensor stream, for example:
+A concrete example is given here. Given the following sensor stream:
 
 ```
 001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
@@ -55,7 +55,7 @@ These tools accept a line-by-line sensor stream, for example:
 001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
 ```
 
-And output a filtered version, for example:
+The output consists of filtered stream _in the same format_. For example:
 
 ```
 001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
