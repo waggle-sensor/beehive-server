@@ -1,6 +1,60 @@
 # Publishing Tools and Metadata
 
-This document describes a set of tools which produce consumer ready sensor data from beehive.
+This document describes a set of tools which produce consumer ready sensor data
+from beehive.
+
+## Overview
+
+```
+                    project metadata
+                          v
+[Sensor Stream] -> [Filter View] -> [Sensor Stream]
+                                           ^
+                                  only data from nodes in view
+                                   during commissioning date
+
+
+                     sensor metadata
+                           v
+ [Sensor Stream] -> [Filter Sensors] -> [Sensor Stream]
+                                               ^
+                                   only data from specified sensors
+                                    with values in sanity range
+```
+
+These tools accept a line-by-line sensor stream, for example:
+
+```
+001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
+001e06109f62;2018/02/26 17:00:56;coresense:4;frame;SPV1840LR5H-B;intensity;63.03
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;h2s;63
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;co;5238
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;so2;634
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;o3;5198
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;oxidizing_gases;22637
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;reducing_gases;6992
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;TSL260RD;intensity;49
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.y;-0.99
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;rms;0.99
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.x;-0.04
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.z;-0.04
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
+```
+
+And output a filtered version, for example:
+
+```
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
+001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
+001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
+```
+
+In this case, we filtered out both nodes and specific sensors.
 
 ## Tools
 
@@ -9,7 +63,8 @@ The main building blocks are:
 * `filter-view`: Filter commissioned data for a project.
 * `filter-sensors`: Filter "sane" sensors and values.
 
-These can be used to build publishing pipelines. For example:
+These can be used to build publishing pipelines which take a stream of CSV format
+lines and output only those satisfying... . For example:
 
 ```sh
 cat sensor-data.csv |
