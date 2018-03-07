@@ -89,6 +89,18 @@ class TestPublishing(unittest.TestCase):
             publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 11)),
         ])
 
+    def test_make_intervals_start_before_end(self):
+        intervals = publishing.make_interval_list([
+            {'timestamp': datetime(2018, 3, 1), 'event': 'decommissioned'},
+            {'timestamp': datetime(2018, 3, 2), 'event': 'decommissioned'},
+            {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 3, 17), 'event': 'decommissioned'},
+        ])
+
+        self.assertEqual(intervals, [
+            publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 17)),
+        ])
+
 
 if __name__ == '__main__':
     unittest.main()
