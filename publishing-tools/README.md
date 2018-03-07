@@ -5,6 +5,11 @@ from beehive.
 
 ## Overview
 
+The `filter-view` and `filter-sensors` tools accept a line-by-line sensor stream
+and drop invalid values.
+
+### Filter View Diagram
+
 ```
                     project metadata
                           v
@@ -14,6 +19,8 @@ from beehive.
                                    during commissioning date
 ```
 
+### Filter Sensors Diagram
+
 ```
                      sensor metadata
                            v
@@ -22,6 +29,8 @@ from beehive.
                                    only data from specified sensors
                                     with values in sanity range
 ```
+
+### Example
 
 These tools accept a line-by-line sensor stream, for example:
 
