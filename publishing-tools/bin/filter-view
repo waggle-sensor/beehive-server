@@ -39,23 +39,23 @@ def load_nodes_metadata(filename):
     events = []
 
     with open(filename) as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.DictReader(csvfile)
 
         for row in reader:
             try:
-                lat = float(row[4])
-                lon = float(row[5])
+                lat = float(row['lat'])
+                lon = float(row['lon'])
             except ValueError:
                 continue
 
             events.append({
-                'node_id': row[0],
-                'project_id': row[1],
-                'vsn': row[2],
-                'address': row[3],
+                'node_id': row['node_id'],
+                'project_id': row['project_id'],
+                'vsn': row['vsn'],
+                'address': row['address'],
                 'lat': lat,
                 'lon': lon,
-                'description': row[6],
+                'description': row['description'],
             })
 
     return events
@@ -69,14 +69,14 @@ def load_events_metadata(filename):
     events = []
 
     with open(filename) as csvfile:
-        reader = csv.reader(csvfile)
+        reader = csv.DictReader(csvfile)
 
         for row in reader:
             events.append({
-                'node_id': row[0],
-                'timestamp': load_timestamp(row[1]),
-                'event': row[2],
-                'comment': row[3],
+                'node_id': row['node_id'],
+                'timestamp': load_timestamp(row['timestamp']),
+                'event': row['event'],
+                'comment': row['comment'],
             })
 
     return events
@@ -111,10 +111,10 @@ def read_metadata(basepath):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('meta', help='metadata config file for view')
+    parser.add_argument('metapath', help='path for project metadata files')
     args = parser.parse_args()
 
-    nodes = read_metadata(args.meta)
+    nodes = read_metadata(args.metapath)
     nodes_by_id = {node['node_id']: node for node in nodes}
 
     def isviewable(line):
