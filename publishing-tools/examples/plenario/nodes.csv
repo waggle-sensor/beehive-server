@@ -1,6 +1,6 @@
 node_id,project_id,vsn,address,lat,lon,description
-001e0610bc10,AoT Chicago,01F,"State St & 87th ,(02/22/2018)",,,AoT Chicago (S) [C]
-001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St ,(02/26/2018)",,,AoT Chicago (S) [C]
+001e0610bc10,AoT Chicago,01F,"State St & 87th ,(02/22/2018)",41.7370294,-87.5769231,AoT Chicago (S) [C]
+001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St ,(02/26/2018)",41.780468,-87.58650659999999,AoT Chicago (S) [C]
 001e0610ba18,AoT Chicago,01D,"Damen Ave & Cermak ,[SEC] ,(12/15/2017)",42.0024119,-87.6796016,AoT Chicago (S)
 001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St ,(11/29/2017)",41.4632047,-87.4677561,AoT Chicago (S)
 001e0610ba16,AoT Chicago,010,"Ohio St & Grand Ave ,[NEX] ,(12/01/2017)",41.891897,-87.627507,AoT Chicago (S) [C]
@@ -13,12 +13,12 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610b9e5,AoT Chicago,02F,"Sheridan Rd & Granville Ave ,(11/28/2017)",41.994454,-87.6553316,AoT Chicago (S) [C]
 001e0610bc12,AoT Chicago,085,"Ashland Ave & 79th St ,[SEC] ,(02/08/2018)",41.75044219999999,-87.6639672,AoT Chicago (S) [C]
 001e0610ba57,AoT Chicago,041,"Western Ave & Madison St ,(11/20/2017)",41.88051970000001,-87.6856644,AoT Chicago (S)
-001e0610ba15,AoT Chicago,02A,"Jeffrey Ave & 95th St ,(02/22/2018)",,,AoT Chicago (S) [C]
+001e0610ba15,AoT Chicago,02A,"Jeffrey Ave & 95th St ,(02/22/2018)",41.7225206,-87.5699351,AoT Chicago (S) [C]
 001e0610f668,AoT Chicago,038,"Damen Ave & Archer ,[SEC] ,(12/15/2017)",41.7957436,-87.67435859999999,AoT Chicago (S)
 001e0610fb4c,AoT Chicago,04D,"Leavitt St & Milwaukee Ave ,(10/09/2017)",41.9102658,-87.68229769999999,AoT Chicago (S)
-001e0610ef29,AoT Chicago,037,"Martin Luther King Dr & 83rd St ,(02/16/2018)",,,AoT Chicago (S)
+001e0610ef29,AoT Chicago,037,"Martin Luther King Dr & 83rd St ,(02/16/2018)",41.7440434,-87.61445519999999,AoT Chicago (S)
 001e0610ef27,AoT Chicago,04C,"Western Ave & 25th St ,[NWC] ,(12/15/2017)",41.8457656,-87.8057614,AoT Chicago (S) [C]
-001e0610f730,AoT Chicago,039,"Wood St & Warren Blvd ,[NEC] ,(03/31/2017)",,,AoT Chicago (S)
+001e0610f730,AoT Chicago,039,"Wood St & Warren Blvd ,[NEC] ,(03/31/2017)",41.9625047,-87.99789260000001,AoT Chicago (S)
 001e0610eef4,AoT Chicago,034,"Milwaukee Ave & Wabansia Ave ,[NWX] ,(10/09/2017)",41.912624,-87.681488,AoT Chicago (S)
 001e0610eef0,AoT Chicago,03B,"Lake Shore Drive & Fullerton Ave ,(NWC) ,(11/28/2017)",41.9270782,-87.6306335,AoT Chicago (S) [C]
 001e0610e540,AoT Chicago,05A,"Fort Dearborn Dr & 31st St ,[NEC] ,(11/29/2017)",41.838483,-87.60820919999999,AoT Chicago (S) [C]
@@ -32,17 +32,17 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610eee9,AoT Chicago,03A,"Wood St & Milwaukee Ave ,[NEX] ,(10/09/2017)",41.9067303,-87.6722312,AoT Chicago (S)
 001e0610ea5a,AoT Chicago,03E,"606 Path & Milwaukee Ave ,(01/11/2018)",41.8923213,-87.6493665,AoT Chicago (S)
 001e0610ef26,AoT Chicago,03D,"Halsted St & Randolph St ,[NEC] ,(12/1/2017)",41.8846582,-87.6476668,AoT Chicago (S)
-001e0610ee36,AoT Chicago,051,"Cottage Grove Ave & 79th St ,(02/22/2018)",,,AoT Chicago (S) [C]
+001e0610ee36,AoT Chicago,051,"Cottage Grove Ave & 79th St ,(02/22/2018)",41.7514615,-87.6049795,AoT Chicago (S) [C]
 001e061135cb,AoT Chicago,052,"Ashland & 63rd St ,[SWC] ,(02/13/2018)",41.77886000000001,-87.663766,AoT Chicago (S) [C]
 001e0610ee82,AoT Chicago,048,"Damen Ave & Webster ,(02/15/2018)",41.921213,-87.677387,AoT Chicago (S) [C]
 001e0610e532,AoT Chicago,053,"Racine Ave & 18th St ,[SEC] ,(12/15/2017)",41.85818,-87.65648999999999,AoT Chicago (S) [C]
-001e0610ee5d,AoT Chicago,056,"Long Ave & Fullerton Ave ,(02/23/2018)",,,AoT Chicago (S) [C]
+001e0610ee5d,AoT Chicago,056,"Long Ave & Fullerton Ave ,(02/23/2018)",41.9237601,-87.76076019999999,AoT Chicago (S) [C]
 001e0610f6dd,AoT Chicago,05D,"Pulaski Rd & Chicago Ave ,(02/06/2018)",41.9389559,-87.727173,AoT Chicago (S) [C]
 001e0610e538,AoT Chicago,087,"Cottage Grove Ave & 87th St ,(02/16/2018)",41.7378844,-87.6056006,AoT Chicago (S) [C]
 001e0610f05c,AoT Chicago,08C,"Western Ave & Fullerton Ave ,[NWC] ,(02/07/2018)",41.9251177,-87.6882583,AoT Chicago (S) [C]
 001e0610f732,AoT Chicago,08D,"Cicero Ave & Chicago Ave ,(02/05/2018)",41.89538110000001,-87.7453841,AoT Chicago (S) [C]
 001e0610f8f4,AoT Chicago,030,"Halsted St & 34th St ,[NEC] ,(02/13/2018)",41.8324363,-87.6458069,AoT Chicago (S) [C]
-001e0610f513,AoT Chicago,090,"Clybourn Ave & Cortland St ,(02/28/2018)",,,AoT Chicago (S) [C]
+001e0610f513,AoT Chicago,090,"Clybourn Ave & Cortland St ,(02/28/2018)",41.9169768,-87.66422129999999,AoT Chicago (S) [C]
 001e061130f4,AoT Chicago,089,"Chicago Ave & Noble St ,(02/06/2018)",41.8960695,-87.6607112,AoT Chicago (S) [C]
 001e0610e537,AoT Chicago,08F,"Clark St & Montrose Ave ,[NWC] ,(02/14/2018)",41.9608272,-87.73886689999999,AoT Chicago (S) [C]
 001e06113100,AoT Chicago,08E,"Cottage Grove Ave & 111th St ,[NWC] ,(02/08/2018)",41.6931379,-87.6094919,AoT Chicago (S) [C]
@@ -50,7 +50,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610eef2,AoT Chicago,088,"Clark St & Wilson Ave ,[SEC] ,(02/14/2018)",41.9660259,-87.667487,AoT Chicago (S) [C]
 001e0610f703,AoT Chicago,07F,"Damen Ave & Polk St ,(02/06/2018)",41.872133,-87.64137269999999,AoT Chicago (S) [C]
 001e0610e539,AoT Chicago,07E,"Cicero Ave & Madison St ,(02/05/2018)",41.879763,-87.7954683,AoT Chicago (S) [C]
-001e06113d83,AoT Chicago,06A,"Clybourn Ave & North Ave ,(02/23/2018)",,,AoT Chicago (S) [C]
+001e06113d83,AoT Chicago,06A,"Clybourn Ave & North Ave ,(02/23/2018)",41.9173784,-87.6582171,AoT Chicago (S) [C]
 001e06113ad8,AoT Chicago,062,"Ashland Ave & Roosevelt Rd ,(02/27/2018)",,,AoT Chicago (S) [C]
 001e06113107,AoT Chicago,072,"7801 S Lawndale Ave, Chicago",,,AoT Chicago (S) [CA] {ComEd}
 001e06112e77,AoT Chicago,06B,"Ashland Ave & 59th St ,(02/26/2018)",,,AoT Chicago (S) [C]
