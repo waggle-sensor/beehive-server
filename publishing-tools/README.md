@@ -9,11 +9,13 @@ order to generate a personalized view of the data for each consumer. For example
 ```
                                        +-> [Publishing Filter] -> [Data ready for MCS]
                                        |           ^
-                                       |      MCS Metadata
+                                       |      MCS metadata (all nodes / all sensors)
+                                       |
                                        |
 [Converted / Calibrated Sensor Data] --+-> [Publishing Filter] -> [Data ready for Plenario]
                                        |          ^
-                                       |    Plenario Metadata
+                                       |    Plenario metadata (aot nodes / environment sensors)
+                                       |
                                        |
                                        +-> [...]
 ```
