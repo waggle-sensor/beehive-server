@@ -7,11 +7,11 @@ They are intended to be used with different project / sensor metadata in
 order to generate a personalized view of the data for each consumer. For example:
 
 ```
-                                       +-> [Publishing Filter] -> [Data Ready for MCS]
+                                       +-> [Publishing Filter] -> [Data ready for MCS]
                                        |           ^
                                        |      MCS Metadata
                                        |
-[Converted / Calibrated Sensor Data] --+-> [Publishing Filter] -> [Data Ready for Plenario]
+[Converted / Calibrated Sensor Data] --+-> [Publishing Filter] -> [Data ready for Plenario]
                                        |          ^
                                        |    Plenario Metadata
                                        |
