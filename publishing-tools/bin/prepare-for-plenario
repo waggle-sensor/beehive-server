@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
         node = nodes_by_id[node_id]
 
-        if 'lat' not in node or 'lon' not in node:
+        if not node.get('lat') or not node.get('lon'):
             continue
 
         for sensor, sensorsamples in groupby(groupsamples, key=lambda s: s[2]):
