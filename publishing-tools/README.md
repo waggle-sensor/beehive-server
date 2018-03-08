@@ -1,7 +1,10 @@
 # Publishing Filter Tools and Metadata
 
-This document describes a set of tools which can be used to produce per-consumer
+This document describes a set of tools which can be used to produce consumer
 ready data from beehive.
+
+They are intended to be used with per-consumer configurations to generate multiple
+views of the data.
 
 ```
                                        +-> [Publishing Filter] -> [Data Ready for MCS]
@@ -12,7 +15,7 @@ ready data from beehive.
                                        |          ^
                                        |    Plenario Metadata
                                        |
-                                       +-> ...
+                                       +-> [...]
 ```
 
 ## Overview
