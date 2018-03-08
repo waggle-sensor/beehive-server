@@ -102,7 +102,7 @@ class TestPublishing(unittest.TestCase):
             publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 17)),
         ])
 
-    def test_make_intervals_sort(self):
+    def test_make_intervals_unordered(self):
         input_permutations = permutations([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 4, 10), 'event': 'commissioned'},
