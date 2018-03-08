@@ -1,7 +1,6 @@
 import unittest
 import publishing
 from datetime import datetime
-from itertools import permutations
 
 
 class TestPublishing(unittest.TestCase):
@@ -103,6 +102,8 @@ class TestPublishing(unittest.TestCase):
         ])
 
     def test_make_intervals_unordered(self):
+        from itertools import permutations
+
         input_permutations = permutations([
             {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
             {'timestamp': datetime(2018, 4, 10), 'event': 'commissioned'},
