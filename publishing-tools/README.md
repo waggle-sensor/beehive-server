@@ -3,8 +3,8 @@
 This document describes a set of tools which can be used to produce consumer
 ready data from beehive.
 
-They are intended to be used with per-consumer configurations to generate multiple
-views of the data. For example:
+They are intended to be used with different project / sensor configurations in
+order to generate a personalized view of the data for each consumer. For example:
 
 ```
                                        +-> [Publishing Filter] -> [Data Ready for MCS]
