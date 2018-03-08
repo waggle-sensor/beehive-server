@@ -113,14 +113,14 @@ class TestPublishing(unittest.TestCase):
             {'timestamp': datetime(2020, 1, 1), 'event': 'retired'},
         ])
 
-        for p in input_permutations:
-            intervals = publishing.make_interval_list(p)
+        output_intervals = [
+            publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 11)),
+            publishing.Interval(datetime(2018, 4, 10), datetime(2018, 4, 15)),
+            publishing.Interval(datetime(2018, 7, 20), datetime(2020, 1, 1)),
+        ]
 
-            self.assertEqual(intervals, [
-                publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 11)),
-                publishing.Interval(datetime(2018, 4, 10), datetime(2018, 4, 15)),
-                publishing.Interval(datetime(2018, 7, 20), datetime(2020, 1, 1)),
-            ])
+        for p in input_permutations:
+            self.assertEqual(publishing.make_interval_list(p), output_intervals)
 
 
 if __name__ == '__main__':
