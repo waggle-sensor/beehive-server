@@ -14,7 +14,7 @@ order to generate a personalized view of the data for each consumer. For example
                                        |
 [Converted / Calibrated Sensor Data] --+-> [Publishing Filter] -> [Data ready for Plenario]
                                        |          ^
-                                       |    Plenario metadata (aot nodes / environment sensors)
+                                       |    Plenario metadata (aot nodes / environmental sensors)
                                        |
                                        |
                                        +-> [...]
@@ -22,7 +22,8 @@ order to generate a personalized view of the data for each consumer. For example
 
 ## Overview
 
-The `filter-view` and `filter-sensors` tools input / output lines of sensor data with invalid values filtered out.
+The `filter-view` and `filter-sensors` tools input / output lines of sensor
+data with invalid values filtered out.
 
 The `filter-view` tool only allows data from a set of nodes during valid
 commissioning intervals.
