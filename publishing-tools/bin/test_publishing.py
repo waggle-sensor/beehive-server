@@ -1,6 +1,7 @@
 import unittest
 import publishing
 from datetime import datetime
+from itertools import permutations
 
 
 class TestPublishing(unittest.TestCase):
@@ -100,6 +101,25 @@ class TestPublishing(unittest.TestCase):
         self.assertEqual(intervals, [
             publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 17)),
         ])
+
+    def test_make_intervals_sort(self):
+        input_permutations = permutations([
+            {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 4, 10), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 7, 20), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 3, 11), 'event': 'decommissioned'},
+            {'timestamp': datetime(2018, 4, 15), 'event': 'decommissioned'},
+            {'timestamp': datetime(2020, 1, 1), 'event': 'retired'},
+        ])
+
+        for p in input_permutations:
+            intervals = publishing.make_interval_list(p)
+
+            self.assertEqual(intervals, [
+                publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 11)),
+                publishing.Interval(datetime(2018, 4, 10), datetime(2018, 4, 15)),
+                publishing.Interval(datetime(2018, 7, 20), datetime(2020, 1, 1)),
+            ])
 
 
 if __name__ == '__main__':
