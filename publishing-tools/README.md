@@ -1,14 +1,26 @@
-# Publishing Tools and Metadata
+# Publishing Filter Tools and Metadata
 
-This document describes a set of tools which produce consumer ready sensor data
-from beehive.
+This document describes a set of tools which can be used to produce per-consumer
+ready data from beehive.
+
+```
+                                       +-> [Publishing Filter] -> [Data Ready for MCS]
+                                       |           ^
+                                       |      MCS Metadata
+                                       |
+[Converted / Calibrated Sensor Data] --+-> [Publishing Filter] -> [Data Ready for Plenario]
+                                       |          ^
+                                       |    Plenario Metadata
+                                       |
+                                       +-> ...
+```
 
 ## Overview
 
-The `filter-view` and `filter-sensors` tools input / output line-by-line sensor
-streams and can be used to drop invalid values.
+The `filter-view` and `filter-sensors` tools input / output lines of sensor data with invalid values filtered out.
 
-### Filter View Diagram
+The `filter-view` tool only allows data from a set of nodes during valid
+commissioning intervals.
 
 ```
                     project metadata
@@ -19,7 +31,8 @@ streams and can be used to drop invalid values.
                                    during commissioning date
 ```
 
-### Filter Sensors Diagram
+The `filter-sensors` tool only allows data from a set of sensors passing a
+sanity check.
 
 ```
                      sensor metadata
