@@ -8,34 +8,37 @@ class TestPublishing(unittest.TestCase):
     def test_closed_interval(self):
         interval = publishing.Interval(datetime(2018, 6, 1), datetime(2018, 8, 1))
 
-        self.assertTrue(datetime(2018, 5, 13) not in interval)
-        self.assertTrue(datetime(2018, 6, 17) in interval)
-        self.assertTrue(datetime(2018, 7, 19) in interval)
-        self.assertTrue(datetime(2018, 8, 19) not in interval)
+        self.assertNotIn(datetime(2018, 5, 13), interval)
+        self.assertIn(datetime(2018, 6, 17), interval)
+        self.assertIn(datetime(2018, 7, 19), interval)
+        self.assertNotIn(datetime(2018, 8, 19), interval)
 
     def test_right_open_interval(self):
         interval = publishing.Interval(datetime(2018, 6, 1), None)
 
-        self.assertTrue(datetime(2018, 5, 13) not in interval)
-        self.assertTrue(datetime(2018, 6, 13) in interval)
-        self.assertTrue(datetime(2019, 7, 17) in interval)
-        self.assertTrue(datetime(2020, 8, 19) in interval)
+        self.assertNotIn(datetime(2018, 5, 13), interval)
+        self.assertIn(datetime(2018, 6, 13), interval)
+        self.assertIn(datetime(2019, 7, 17), interval)
+        self.assertIn(datetime(2020, 8, 19), interval)
 
     def test_left_open_interval(self):
         interval = publishing.Interval(None, datetime(2018, 6, 1))
 
-        self.assertTrue(datetime(2018, 5, 13) in interval)
-        self.assertTrue(datetime(2018, 6, 13) not in interval)
-        self.assertTrue(datetime(2019, 7, 17) not in interval)
-        self.assertTrue(datetime(2020, 8, 19) not in interval)
+        self.assertIn(datetime(2018, 5, 13), interval)
+        self.assertNotIn(datetime(2018, 6, 13), interval)
+        self.assertNotIn(datetime(2019, 7, 17), interval)
+        self.assertNotIn(datetime(2020, 8, 19), interval)
 
     def test_infinite_interval(self):
         interval = publishing.Interval(None, None)
 
-        self.assertTrue(datetime(1910, 5, 13) in interval)
-        self.assertTrue(datetime(2018, 6, 13) in interval)
-        self.assertTrue(datetime(2019, 7, 17) in interval)
-        self.assertTrue(datetime(2200, 8, 19) in interval)
+        self.assertIn(datetime(1910, 5, 13), interval)
+        self.assertIn(datetime(2018, 6, 13), interval)
+        self.assertIn(datetime(2019, 7, 17), interval)
+        self.assertIn(datetime(2200, 8, 19), interval)
+
+    def test_make_intervals_empty(self):
+        self.assertEqual(publishing.make_interval_list([]), [])
 
     def test_make_intervals_open(self):
         intervals = publishing.make_interval_list([
@@ -99,6 +102,16 @@ class TestPublishing(unittest.TestCase):
 
         self.assertEqual(intervals, [
             publishing.Interval(datetime(2018, 3, 5), datetime(2018, 3, 17)),
+        ])
+
+    def test_make_intervals_unknown_event(self):
+        intervals = publishing.make_interval_list([
+            {'timestamp': datetime(2018, 3, 5), 'event': 'commissioned'},
+            {'timestamp': datetime(2018, 3, 17), 'event': 'unknown'},
+        ])
+
+        self.assertEqual(intervals, [
+            publishing.Interval(datetime(2018, 3, 5), None),
         ])
 
     def test_make_intervals_unordered(self):
