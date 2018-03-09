@@ -4,10 +4,13 @@ import argparse
 from datetime import datetime, timedelta
 
 
+def daterange(start, end):
+    for i in range((end - start).days + 1):
+        yield start + timedelta(days=i)
+
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='''
-    Prints each valid date for each node
-    ''')
+    parser = argparse.ArgumentParser()
     parser.add_argument('metadata', help='path to project metadata')
     args = parser.parse_args()
 
@@ -17,6 +20,5 @@ if __name__ == '__main__':
         for interval in node['commissioned']:
             start = interval.start.date()
             end = (interval.end or datetime.now()).date()
-
-            for i in range((end - start).days + 1):
-                print(node['node_id'], start + timedelta(days=i))
+            for date in daterange(start, end):
+                print(node['node_id'], date)
