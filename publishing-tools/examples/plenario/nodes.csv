@@ -18,14 +18,14 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610fb4c,AoT Chicago,04D,"Leavitt St & Milwaukee Ave ,(10/09/2017)",41.9102658,-87.68229769999999,AoT Chicago (S)
 001e0610ef29,AoT Chicago,037,"Martin Luther King Dr & 83rd St ,(02/16/2018)",41.7440434,-87.61445519999999,AoT Chicago (S)
 001e0610ef27,AoT Chicago,04C,"Western Ave & 25th St ,[NWC] ,(12/15/2017)",41.8457656,-87.8057614,AoT Chicago (S) [C]
-001e0610f730,AoT Chicago,039,"Wood St & Warren Blvd ,[NEC] ,(03/31/2017)",41.9625047,-87.99789260000001,AoT Chicago (S)
+001e0610f730,AoT Chicago,039,"Wood St & Warren Blvd ,[NEC] ,(03/31/2017)",41.8823915,-87.6716749,AoT Chicago (S)
+001e0610ee41,AoT Chicago,032,"Wood St & Warren Blvd ,[NEC] ,(12/1/2017)",41.8823915,-87.6716749,AoT Chicago (S) [C]
 001e0610eef4,AoT Chicago,034,"Milwaukee Ave & Wabansia Ave ,[NWX] ,(10/09/2017)",41.912624,-87.681488,AoT Chicago (S)
 001e0610eef0,AoT Chicago,03B,"Lake Shore Drive & Fullerton Ave ,(NWC) ,(11/28/2017)",41.9270782,-87.6306335,AoT Chicago (S) [C]
 001e0610e540,AoT Chicago,05A,"Fort Dearborn Dr & 31st St ,[NEC] ,(11/29/2017)",41.838483,-87.60820919999999,AoT Chicago (S) [C]
 001e0610bc07,AoT Chicago,03C,"Kedzie Ave & 5th Ave ,[NEC] ,(11&12/2017)",41.876372,-87.7072464,AoT Chicago (S)
 001e0610ef68,AoT Chicago,04F,"Ashland Ave & 18th St ,[SWC] ,(11/20/2017)",41.857535,-87.666295,AoT Chicago (S)
 001e0610ee61,AoT Chicago,03F,"Pulaski Rd & Madison St ,(11/20/2017)",41.8804622,-87.72582609999999,AoT Chicago (S)
-001e0610ee41,AoT Chicago,032,"Wood St & Warren Blv ,[NEC] ,(12/1/2017)",41.9625047,-87.99789260000001,AoT Chicago (S) [C]
 001e0610ee33,AoT Chicago,02D,"Damen Ave & Wilson Ave ,(02/15/2018)",41.964821,-87.67853099999999,AoT Chicago (S) [C]
 001e0610e809,AoT Chicago,050,"Ashland Ave & Division St ,(10/09/2017)",41.903456,-87.66776999999999,AoT Chicago (S)
 001e0610ee6f,AoT Chicago,04E,"Damen Ave & Chicago Int'l Produce Mkt ,(11/20/2017)",42.0024119,-87.6796016,AoT Chicago (S)
