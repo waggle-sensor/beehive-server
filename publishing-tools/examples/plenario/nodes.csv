@@ -51,13 +51,13 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610f703,AoT Chicago,07F,"Damen Ave & Polk St ,(02/06/2018)",41.872133,-87.64137269999999,AoT Chicago (S) [C]
 001e0610e539,AoT Chicago,07E,"Cicero Ave & Madison St ,(02/05/2018)",41.879763,-87.7954683,AoT Chicago (S) [C]
 001e06113d83,AoT Chicago,06A,"Clybourn Ave & North Ave ,(02/23/2018)",41.9173784,-87.6582171,AoT Chicago (S) [C]
-001e06113ad8,AoT Chicago,062,"Ashland Ave & Roosevelt Rd ,(02/27/2018)",,,AoT Chicago (S) [C]
-001e06113107,AoT Chicago,072,"7801 S Lawndale Ave, Chicago",,,AoT Chicago (S) [CA] {ComEd}
-001e06112e77,AoT Chicago,06B,"Ashland Ave & 59th St ,(02/26/2018)",,,AoT Chicago (S) [C]
-001e0611441e,AoT Chicago,067,"Ashland Ave & 47th ,(02/27/2018)",,,AoT Chicago (S) [C]
-001e0611462f,AoT Chicago,081,"Wallace St & Pershing Rd ,(02/27/2018)",,,AoT Chicago (S) [C]
-001e06115369,AoT Chicago,082,"Pulaski Rd & Addison St ,(02/23/2018)",,,AoT Chicago (S) [C]
+001e06113ad8,AoT Chicago,062,"Ashland Ave & Roosevelt Rd ,(02/27/2018)",41.867107,-87.66655,AoT Chicago (S) [C]
+001e06113107,AoT Chicago,072,"7801 S Lawndale Ave, Chicago",41.7543926,-87.71377029999999,AoT Chicago (S) [CA] {ComEd}
+001e06112e77,AoT Chicago,06B,"Ashland Ave & 59th St ,(02/26/2018)",41.786854,-87.6643744,AoT Chicago (S) [C]
+001e0611441e,AoT Chicago,067,"Ashland Ave & 47th ,(02/27/2018)",41.808392,-87.6651,AoT Chicago (S) [C]
+001e0611462f,AoT Chicago,081,"Wallace St & Pershing Rd ,(02/27/2018)",41.823509,-87.64107199999999,AoT Chicago (S) [C]
+001e06115369,AoT Chicago,082,"Pulaski Rd & Addison St ,(02/23/2018)",41.9463158,-87.7269424,AoT Chicago (S) [C]
 001e06113d78,AoT Chicago,083,"CDOT,02/22/2018",,,AoT Chicago (S) [C]
-001e06113cff,AoT Chicago,070,"7801 S Lawndale Ave, Chicago",,,AoT Chicago (S) [CA] {ComEd}
+001e06113cff,AoT Chicago,070,"7801 S Lawndale Ave, Chicago",41.7511419,-87.71298980000002,AoT Chicago (S) [CA] {ComEd}
 001e06109416,AoT Chicago,090,Surya,,,AoT Node (S) [C]
-001e061146bc,AoT Chicago,079,"Ashland Ave & Clybourn Ave ,(02/28/2018)",,,AoT Chicago (S) [C]
+001e061146bc,AoT Chicago,079,"Ashland Ave & Clybourn Ave ,(02/28/2018)",41.923774,-87.6686804,AoT Chicago (S) [C]
