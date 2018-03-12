@@ -178,7 +178,7 @@ filtered-sensor-data.csv
 This will take the data in `recent.csv`, which includes sample data from many different
 nodes and sensors:
 
-```
+```sh
 $ cat examples/recent.csv | head
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
@@ -190,7 +190,6 @@ $ cat examples/recent.csv | head
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
-...
 
 $ cat examples/recent.csv | wc -l
    67767
@@ -200,7 +199,7 @@ First, we apply `filter-view` which only keeps data from nodes in
 `examples/plenario/nodes.csv` during a valid commissioning interval in
 `examples/plenario/events.csv`:
 
-```
+```sh
 $ cat examples/recent.csv | bin/filter-view examples/plenario | head
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
@@ -212,7 +211,6 @@ $ cat examples/recent.csv | bin/filter-view examples/plenario | head
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
-...
 
 $ cat examples/recent.csv | bin/filter-view examples/plenario | wc -l
    19293
@@ -221,7 +219,7 @@ $ cat examples/recent.csv | bin/filter-view examples/plenario | wc -l
 Second, we apply `filter-sensors` which only keeps data from sensors in
 `examples/climate.csv`:
 
-```
+```sh
 $ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-sensors examples/climate.csv | head
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
 001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
