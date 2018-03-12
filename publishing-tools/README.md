@@ -51,7 +51,7 @@ The expected sensor stream format is just a semicolon delimited, CSV-like format
 * Plugin Name _(Not used internally.)_
 * Plugin Key _(Not used internally.)_
 * Sensor Name
-* Sensor Parameter _(Not used internally.)_
+* Sensor Parameter
 * Sensor Value
 
 For example:
