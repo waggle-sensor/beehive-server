@@ -149,10 +149,8 @@ _The header is required!_
 
 A complete example is given at `examples/example-plenario.sh`. It uses the
 `examples/plenario` project metadata, the `examples/climate.csv` sensor metadata
-and sample data `examples/recent.csv`.
-
-We will reference this example, as we walk through the details of building a
-complete pipeline here.
+and sample data `examples/recent.csv`. We will reference this example, as we
+walk through the details of building the following complete pipeline:
 
 ```
                   project metadata
@@ -162,7 +160,7 @@ complete pipeline here.
                                     sensors metadata
 ```
 
-This translates into the shell script:
+First, we'll translate this into the shell script:
 
 ```sh
 #!/bin/sh
@@ -174,8 +172,8 @@ bin/filter-sensors examples/climate.csv >
 filtered-sensor-data.csv
 ```
 
-This will take the data in `recent.csv`, which includes sample data from many different
-nodes and sensors:
+This will take the data in `recent.csv`, which includes sample data from many
+different nodes and sensors:
 
 ```sh
 $ cat examples/recent.csv | head
