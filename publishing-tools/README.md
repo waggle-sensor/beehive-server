@@ -247,3 +247,12 @@ $ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-senso
 
 Finally, we write the result to `filtered-sensor-data.csv` which is ready for
 further packaging or pushing to a consumer.
+
+## Utilities
+
+In addition to the main pipeline tools, the following utilities are included for
+debugging or more efficiently interfacing with other components:
+
+* `published-dates`: Takes project metadata and prints all commissioned nodes /
+dates pairs up to and including today. May be useful for debugging or efficiently
+selecting datasets for a digest.
