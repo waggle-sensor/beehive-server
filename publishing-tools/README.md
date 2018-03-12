@@ -44,8 +44,8 @@ A complete publishing filter is composed of the following more specific tools:
                                     with values in sanity range
 ```
 
-The expected sensor stream format is just a newline separated, CSV-like format of sensor
-values, with fields:
+The expected sensor stream format is just a CSV-like format of sensor values,
+with fields:
 
 * `Node ID`
 * `Timestamp`
