@@ -147,7 +147,7 @@ _The header is required!_
 
 ## Usage
 
-A complete example is given at `examples/examples-plenario.sh`. It uses the
+A complete example is given at `examples/example-plenario.sh`. It uses the
 `examples/plenario` project metadata, the `examples/climate.csv` sensor metadata
 and sample data `examples/recent.csv`.
 
@@ -167,9 +167,11 @@ This translates to a literal pipeline as follows:
 ```sh
 #!/bin/sh
 
-cat sensor-data.csv |
-filter-view project-metadata |
-filter-sensors sensor-metadata.csv >
+# from publishing-tools
+
+cat examples/recent.csv |
+bin/filter-view examples/plenario |
+bin/filter-sensors examples/climate.csv >
 filtered-sensor-data.csv
 ```
 
