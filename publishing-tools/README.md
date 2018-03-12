@@ -145,7 +145,11 @@ _The header is required!_
 
 ## Usage
 
-A concrete example is given here. Suppose we build a complete pipeline:
+A complete example is given under `examples/examples-plenario.sh`. It uses the
+`examples/plenario` project metadata and the `examples/climate.csv` sensor metadata.
+
+We will reference this example, as we walk through the details of building a
+complete pipeline here.
 
 ```
                   project metadata
