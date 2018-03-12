@@ -162,13 +162,12 @@ complete pipeline here.
                                     sensors metadata
 ```
 
-This translates to a literal pipeline as follows:
+This translates into the shell script:
 
 ```sh
 #!/bin/sh
 
 # working directory is publishing-tools
-
 cat examples/recent.csv |
 bin/filter-view examples/plenario |
 bin/filter-sensors examples/climate.csv >
