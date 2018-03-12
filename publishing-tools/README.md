@@ -167,7 +167,7 @@ This translates to a literal pipeline as follows:
 ```sh
 #!/bin/sh
 
-# from publishing-tools
+# working directory is publishing-tools
 
 cat examples/recent.csv |
 bin/filter-view examples/plenario |
@@ -175,62 +175,68 @@ bin/filter-sensors examples/climate.csv >
 filtered-sensor-data.csv
 ```
 
-Given the following sensor stream:
+This will take the data in `recent.csv`, which includes sample data from many different
+nodes and sensors:
 
 ```
-001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
-001e06109f62;2018/02/26 17:00:56;coresense:4;frame;SPV1840LR5H-B;intensity;63.03
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;h2s;63
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;co;5238
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;so2;634
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;o3;5198
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;oxidizing_gases;22637
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;reducing_gases;6992
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;TSL260RD;intensity;49
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.y;-0.99
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;rms;0.99
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.x;-0.04
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.z;-0.04
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
-001e0610c2db;2018/02/26 16:53:30;coresense:3;frame;HIH6130;temperature;321.41
+$ cat examples/recent.csv | head
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HIH4030;humidity;459
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MLX75305;intensity;31162
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;pressure;100301
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL250RD-LS;intensity;21952
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
+...
+
+$ cat examples/recent.csv | wc -l
+   67767
 ```
 
-Suppose `filter-view` is configured to only allow `001e0610e537` and `001e0610c2db`.
-Then, the output from `filter-view` will look like:
+First, we apply `filter-view` which only keeps data from nodes in
+`examples/plenario/nodes.csv` during a valid commissioning interval in
+`examples/plenario/events.csv`:
 
 ```
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;h2s;63
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;co;5238
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;so2;634
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;o3;5198
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;oxidizing_gases;22637
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;reducing_gases;6992
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;TSL260RD;intensity;49
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.y;-0.99
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;rms;0.99
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.x;-0.04
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;MMA8452Q;acceleration.z;-0.04
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
-001e0610c2db;2018/02/26 16:53:30;coresense:3;frame;HIH6130;temperature;321.41
+$ cat examples/recent.csv | bin/filter-view examples/plenario | head
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HIH4030;humidity;459
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MLX75305;intensity;31162
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;pressure;100301
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL250RD-LS;intensity;21952
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
+...
+
+$ cat examples/recent.csv | bin/filter-view examples/plenario | wc -l
+   19293
 ```
 
-Suppose `filter-sensors` only allows reasonable temperature and humidity sensors.
-Then, the output from `filter-sensors` may look like:
+Second, we apply `filter-sensors` which only keeps data from sensors in
+`examples/climate.csv`:
 
 ```
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;humidity;42.55
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;SHT25;temperature;11.34
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;humidity;28.47
-001e0610c2db;2018/02/26 16:53:27;coresense:3;frame;HIH6130;temperature;41.41
+$ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-sensors examples/climate.csv | head
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HTU21D;humidity;36.72
+001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HTU21D;temperature;9.39
+001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;TSYS01;temperature;9.05
+001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;BMP180;temperature;9.3
+001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;HTU21D;humidity;37.08
+001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;HTU21D;temperature;9.41
+001e0610ef29;2018/02/26 16:49:37;coresense:3;frame;TSYS01;temperature;9.04
+001e0610ef29;2018/02/26 16:49:37;coresense:3;frame;BMP180;temperature;9.3
+
+$ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-sensors examples/climate.csv | wc -l
+    2256
 ```
 
-In this case, we filtered out both nodes and specific sensors _and the data format
-is the same throughout the pipeline_.
+Finally, we write the result to `filtered-sensor-data.csv` which is ready for
+further packaging or pushing to a consumer.
