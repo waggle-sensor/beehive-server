@@ -44,8 +44,7 @@ A complete publishing filter is composed of the following more specific tools:
                                     with values in sanity range
 ```
 
-The expected sensor stream format is just a CSV-like format of sensor values,
-with fields:
+The expected sensor stream format is just a CSV-like format with fields:
 
 * `Node ID`
 * `Timestamp`
@@ -54,6 +53,8 @@ with fields:
 * `Sensor Name`
 * `Sensor Parameter`
 * `Sensor Value`
+
+For example:
 
 ```
 001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
