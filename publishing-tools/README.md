@@ -70,6 +70,9 @@ For example:
 
 _Input and output are in the same format, but output will usually contain a subset of the input._
 
+_Expected usage is in a pipeline, so valid sensor stream input may be produced by another tool,
+not just a file._
+
 ## Metadata
 
 Each tool requires an argument specifying which metadata file it should use.
