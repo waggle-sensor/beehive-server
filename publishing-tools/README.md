@@ -44,8 +44,16 @@ A complete publishing filter is composed of the following more specific tools:
                                     with values in sanity range
 ```
 
-Concretely, a sensor stream IO format is just a newline separated, CSV-like format of sensor
-values:
+The expected sensor stream format is just a newline separated, CSV-like format of sensor
+values, with fields:
+
+* `Node ID`
+* `Timestamp`
+* `Plugin Name`
+* `Plugin Key`
+* `Sensor Name`
+* `Sensor Parameter`
+* `Value`
 
 ```
 001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
@@ -59,7 +67,7 @@ values:
 001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
 ```
 
-_Output is in the same format, but can contain only a subset of the lines._
+_Input and output are in the same format, but output will usually contain a subset of the input._
 
 ## Metadata
 
