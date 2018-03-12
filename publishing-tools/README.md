@@ -59,6 +59,8 @@ values:
 001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
 ```
 
+_Output is in the same format, but can contain only a subset of the lines._
+
 ## Metadata
 
 Each tool requires an argument specifying which metadata file it should use.
