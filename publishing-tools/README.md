@@ -53,7 +53,7 @@ values, with fields:
 * `Plugin Key`
 * `Sensor Name`
 * `Sensor Parameter`
-* `Value`
+* `Sensor Value`
 
 ```
 001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
