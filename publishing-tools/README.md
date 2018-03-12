@@ -46,13 +46,13 @@ A complete publishing filter is composed of the following more specific tools:
 
 The expected sensor stream format is just a CSV-like format with fields:
 
-* `Node ID`
-* `Timestamp`
-* `Plugin Name`
-* `Plugin Key`
-* `Sensor Name`
-* `Sensor Parameter`
-* `Sensor Value`
+* Node ID
+* UTC Timestamp
+* Plugin Name _(Not used internally.)_
+* Plugin Key _(Not used internally.)_
+* Sensor Name
+* Sensor Parameter
+* Sensor Value
 
 For example:
 
