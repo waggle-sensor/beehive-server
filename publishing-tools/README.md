@@ -75,7 +75,7 @@ not just a file._
 
 ## Metadata
 
-Each tool requires an argument specifying which metadata file it should use.
+Each tool accepts metadata to determine what values it will filter.
 
 ### Project Metadata
 
