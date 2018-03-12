@@ -147,7 +147,7 @@ _The header is required!_
 
 ## Usage
 
-A complete example is given under `examples/examples-plenario.sh`. It uses the
+A complete example is given at `examples/examples-plenario.sh`. It uses the
 `examples/plenario` project metadata, the `examples/climate.csv` sensor metadata
 and sample data `examples/recent.csv`.
 
