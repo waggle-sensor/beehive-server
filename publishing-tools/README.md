@@ -22,11 +22,9 @@ to produce a personalized view of the data for each consumer. For example:
                                        +-> [...]
 ```
 
-A complete publishing filter is composed out the following more specific tools:
+A complete publishing filter is composed of the following more specific tools:
 
 * `filter-view`: Filters a sensor stream, only allowing data from a set of nodes during their commissioning dates.
-* `filter-sensors`: Filters a sensor stream, only allowing "sane" sensors and values.
-
 ```
                     project metadata
                           v
@@ -36,9 +34,7 @@ A complete publishing filter is composed out the following more specific tools:
                                    during commissioning date
 ```
 
-The `filter-sensors` tool only allows data from a set of sensors passing a
-sanity check.
-
+* `filter-sensors`: Filters a sensor stream, only allowing "sane" sensors and values.
 ```
                      sensor metadata
                            v
