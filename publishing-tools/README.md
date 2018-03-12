@@ -153,11 +153,11 @@ and sample data `examples/recent.csv`. We will reference this example, as we
 walk through the details of building the following complete pipeline:
 
 ```
-                  project metadata
-                         v
-[Sensor Stream] -> [Filter View] -> [Filter Sensors] -> [Sensor Stream]
-                                          ^
-                                    sensors metadata
+                          project metadata
+                                v
+[Recent Sensor Stream] -> [Filter View] -> [Filter Sensors] -> [Filtered Sensor Stream]
+                                                ^
+                                         sensors metadata
 ```
 
 First, we'll translate this into the shell script:
