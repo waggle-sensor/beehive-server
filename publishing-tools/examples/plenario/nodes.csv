@@ -66,8 +66,8 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06114fd4,AoT Chicago,073,"Martin Luther King Dr & Garfield Blvd ,(03/08/2018)",41.7947769,-87.6168442,AoT Chicago (S) [C]
 001e06113ace,AoT Chicago,077,"Martin Luther King Dr & 35th St ,(03/08/2018)",41.8323252,-87.61605449999999,AoT Chicago (S) [C]
 001e061146cb,AoT Chicago,07C,"Lake Shore Drive & Fullerton Ave ,(03/09/2018)",41.8313252,-87.61705449999999,AoT Chicago (S) [C]
-001e06114503,AoT Chicago,095,"Ave 0 & 126th ,(03/02/2018)",,,AoT Chicago (S) [C]
-001e061146d6,AoT Chicago,091,"Halsted St & Division St ,(02/28/2018)",,,AoT Chicago (S) [C]
-001e06113dbc,AoT Chicago,096,"Ave L & 100th St ,(03/01/2018)",,,AoT Chicago (S) [C]
+001e06114503,AoT Chicago,095,"Ave O & 126th ,(03/02/2018)",41.666470,-87.539331,AoT Chicago (S) [C]
+001e061146d6,AoT Chicago,091,"Halsted St & Division St ,(02/28/2018)",41.903528,-87.648259,AoT Chicago (S) [C]
+001e06113dbc,AoT Chicago,096,"Ave L & 100th St ,(03/01/2018)",41.714266,-87.536473,AoT Chicago (S) [C]
 001e06113d22,AoT Chicago,092,"Kedzie Ave & 51st St ,(03/02/2018)",41.8007092,-87.7039084,AoT Chicago (S) [C]
 001e0610ee43,AoT Chicago,08B,"UChicago, delivered 02/23/2018",,,AoT Chicago (S) [C] {UChicago}
