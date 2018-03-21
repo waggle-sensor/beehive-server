@@ -28,7 +28,7 @@ node_id,project_id,vsn,address,lat,lon,description
 0000001E0610EE33,AoT Chicago,02D," Damen Ave & Wilson Ave Chicago IL",41.965089,-87.679076,AoT Chicago (S) [C]
 0000001E0610E809,AoT Chicago,050," Ashland Ave & Division St Chicago IL",41.903335,-87.6674,AoT Chicago (S)
 0000001E0610EE6F,AoT Chicago,04E," Damen Ave & Chicago Int'l Produce Mkt Chicago IL",42.002412,-87.679602,AoT Chicago (S)
-0000001E0610EA5A,AoT Chicago,03E," 606 Path & Milwaukee Ave Chicago IL",41.913655,-87.720168,AoT Chicago (S)
+0000001E0610EA5A,AoT Chicago,03E," 606 Path & Milwaukee Ave Chicago IL",41.914202, -87.683048,AoT Chicago (S)
 0000001E0610EF26,AoT Chicago,03D," Halsted St & Randolph St Chicago IL",41.88431,-87.647431,AoT Chicago (S)
 0000001E0610EE36,AoT Chicago,051," Cottage Grove Ave & 79th St Chicago IL",41.751295,-87.605288,AoT Chicago (S) [C]
 0000001E061135CB,AoT Chicago,052," Ashland & 63rd St Chicago IL",41.779369,-87.664421,AoT Chicago (S) [C]
@@ -49,7 +49,7 @@ node_id,project_id,vsn,address,lat,lon,description
 0000001E0610EEF2,AoT Chicago,088," Clark St & Wilson Ave Chicago IL",41.965256,-87.66672,AoT Chicago (S) [C]
 0000001E0610F703,AoT Chicago,07F," Damen Ave & Polk St Chicago IL",41.87148,-87.67644,AoT Chicago (S) [C]
 0000001E0610E539,AoT Chicago,07E," Cicero Ave & Madison St Chicago IL",41.880497,-87.745268,AoT Chicago (S) [C]
-0000001E06113D83,AoT Chicago,06A," Clybourn Ave & North Ave Chicago IL",41.921317,-87.663965,AoT Chicago (S) [C]
+0000001E06113D83,AoT Chicago,06A," Clybourn Ave & North Ave Chicago IL",41.910922, -87.649518,AoT Chicago (S) [C]
 0000001E06113AD8,AoT Chicago,062," Ashland Ave & Roosevelt Rd Chicago IL",41.866786,-87.666306,AoT Chicago (S) [C]
 0000001E06113107,AoT Chicago,072," 7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
 0000001E06112E77,AoT Chicago,06B," Ashland Ave & 59th St Chicago IL",41.786756,-87.664343,AoT Chicago (S) [C]
@@ -65,6 +65,6 @@ node_id,project_id,vsn,address,lat,lon,description
 0000001E06113D22,AoT Chicago,092," Kedzie Ave & 51st St Chicago IL",41.800846,-87.703739,AoT Chicago (S) [C]
 0000001E061146BC,AoT Chicago,079," Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
 0000001E06113ACE,AoT Chicago,077," Martin Luther King Dr & 35th St Chicago IL",41.83107,-87.617298,AoT Chicago (S) [C]
-0000001E061146CB,AoT Chicago,07C," Lake Shore Drive & Fullerton Ave Chicago IL",41.925408,-87.661493,AoT Chicago (S) [C]
+0000001E061146CB,AoT Chicago,07C," Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
 0000001E06114FD4,AoT Chicago,073," Martin Luther King Dr & Garfield Blvd Chicago IL",41.794477,-87.615957,AoT Chicago (S) [C]
 0000001E06113AD6,AoT Chicago,075," Milwaukee Ave & Wood St Chicago IL",41.906481,-87.671373,AoT Chicago (S) [C]
