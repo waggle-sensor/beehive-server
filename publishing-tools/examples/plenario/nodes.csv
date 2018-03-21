@@ -2,7 +2,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610bc10,AoT Chicago,01F,"State St & 87th ,(02/22/2018)",41.7370294,-87.5769231,AoT Chicago (S) [C]
 001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St ,(02/26/2018)",41.780468,-87.58650659999999,AoT Chicago (S) [C]
 001e0610ba18,AoT Chicago,01D,"Damen Ave & Cermak ,[SEC] ,(12/15/2017)",42.0024119,-87.6796016,AoT Chicago (S)
-001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St ,(11/29/2017)",41.4632047,-87.4677561,AoT Chicago (S)
+001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St ,(11/29/2017)",41.741315, -87.540643,AoT Chicago (S)
 001e0610ba16,AoT Chicago,010,"Ohio St & Grand Ave ,[NEX] ,(12/01/2017)",41.891897,-87.627507,AoT Chicago (S) [C]
 001e0610bbf9,AoT Chicago,020,"Western Ave & 69th St ,[SEC] ,(02/13/2018)",41.7681762,-87.68260310000001,AoT Chicago (S) [C]
 001e0610ba8f,AoT Chicago,00D,"Cornell & 47th St ,(08/08/2017)",41.8023916,-87.6710583,AoT Chicago (S)
