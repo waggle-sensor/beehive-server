@@ -44,7 +44,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610f8f4,AoT Chicago,030,"Halsted St & 34th St ,[NEC] ,(02/13/2018)",41.8324363,-87.6458069,AoT Chicago (S) [C]
 001e0610f513,AoT Chicago,090,"Clybourn Ave & Cortland St ,(02/28/2018)",41.9169768,-87.66422129999999,AoT Chicago (S) [C]
 001e061130f4,AoT Chicago,089,"Chicago Ave & Noble St ,(02/06/2018)",41.8960695,-87.6607112,AoT Chicago (S) [C]
-001e0610e537,AoT Chicago,08F,"Clark St & Montrose Ave ,[NWC] ,(02/14/2018)",41.9608272,-87.73886689999999,AoT Chicago (S) [C]
+001e0610e537,AoT Chicago,08F,"Clark St & Montrose Ave ,[NWC] ,(02/14/2018)",41.9618,-87.6662,AoT Chicago (S) [C]
 001e06113100,AoT Chicago,08E,"Cottage Grove Ave & 111th St ,[NWC] ,(02/08/2018)",41.6931379,-87.6094919,AoT Chicago (S) [C]
 001e0610e835,AoT Chicago,086,"Damen Ave & Lawrence Ave ,(02/15/2018)",41.9689086,-87.67939059999999,AoT Chicago (S) [C]
 001e0610eef2,AoT Chicago,088,"Clark St & Wilson Ave ,[SEC] ,(02/14/2018)",41.9660259,-87.667487,AoT Chicago (S) [C]
