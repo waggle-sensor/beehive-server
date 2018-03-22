@@ -9,4 +9,4 @@ args = parser.parse_args()
 metadata = publishing.load_project_metadata(args.metadata)
 
 for node, date in publishing.published_dates(metadata):
-    print(node['node_id'], date)
+    print(node['node_id'], date.strftime('%Y-%m-%d'))
