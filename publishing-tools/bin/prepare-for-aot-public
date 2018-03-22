@@ -17,12 +17,12 @@ args = parser.parse_args()
 
 def needs_refresh(src, dst):
     try:
-        src_mtime = os.stat(src).st_mtime
+        src_mtime = os.path.getmtime(src)
     except FileNotFoundError:
         return False
 
     try:
-        dst_mtime = os.stat(dst).st_mtime
+        dst_mtime = os.path.getmtime(dst)
     except FileNotFoundError:
         return True
 
