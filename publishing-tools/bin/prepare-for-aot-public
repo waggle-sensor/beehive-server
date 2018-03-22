@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+import csv
+import os
+import re
+import subprocess
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('src')
+parser.add_argument('dst')
+args = parser.parse_args()
+
+
+root = '/Users/Sean/beehive-server'
+# root = '/homes/waggle/beehive-server'
+
+
+def needs_refresh(src, dst):
+    try:
+        src_mtime = os.stat(src).st_mtime
+    except FileNotFoundError:
+        return False
+
+    try:
+        dst_mtime = os.stat(dst).st_mtime
+    except FileNotFoundError:
+        return True
+
+    return dst_mtime < src_mtime
+
+
+def build_file_index():
+    index = [filename for filename in os.listdir(args.dst) if filename.endswith('.csv')]
+
+    with open(os.path.join(args.dst, 'index'), 'w') as file:
+        for filename in sorted(index):
+            print(filename, file=file)
+
+
+nodes = []
+
+with open(os.path.join(root, 'publishing-tools/examples/plenario/nodes.csv')) as f:
+    reader = csv.DictReader(f)
+
+    for r in reader:
+        r['node_id'] = r['node_id'][-12:].lower()
+
+        if not r['vsn']:
+            continue
+
+        try:
+            lat = float(r['lat'])
+            lon = float(r['lon'])
+        except ValueError:
+            continue
+
+        nodes.append(r)
+
+nodes_by_id = {node['node_id']: node for node in nodes}
+
+output = subprocess.check_output([
+    os.path.join(root, 'publishing-tools/bin/published-dates'),
+    os.path.join(root, 'publishing-tools/examples/plenario'),
+]).decode()
+
+items = []
+
+for line in output.splitlines():
+    node_id, date = line.split()
+    node = nodes_by_id[node_id]
+    if re.match('\d+-\d+-\d+', date):
+        items.append((node, date))
+
+# prioritize recent data
+items.sort(key=lambda item: item[1], reverse=True)
+
+for (node, date) in items:
+    src = os.path.join(args.src, '{}/{}.csv.gz'.format(node['node_id'], date))
+    dst = os.path.join(args.dst, 'node.{}.{}.csv'.format(node['node_id'], date.replace('-', '.')))
+
+    if not needs_refresh(src, dst):
+        continue
+
+    try:
+        subprocess.check_output('''
+        gzip -dc {src} |
+        {root}/publishing-tools/bin/filter-sensors {root}/publishing-tools/examples/climate.csv |
+        {root}/publishing-tools/bin/filter-view {root}/publishing-tools/examples/plenario > {dst}.tmp
+        '''.format(src=src, dst=dst, root=root), shell=True)
+
+        subprocess.check_output('mv {}.tmp {}'.format(dst, dst), shell=True)
+
+        print('ok', src)
+    except Exception as exc:
+        print('err', src)
+        continue
+
+build_file_index()
