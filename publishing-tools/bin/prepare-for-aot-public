@@ -30,10 +30,6 @@ def needs_refresh(src, dst):
     return dst_mtime < src_mtime
 
 
-def move_completed(filename):
-    os.rename(filename + '.tmp', filename)
-
-
 def build_file_index():
     index = [filename for filename in os.listdir(args.dst) if filename.endswith('.csv')]
 
@@ -77,7 +73,7 @@ for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
         {root}/publishing-tools/bin/filter-view {root}/publishing-tools/examples/plenario > {dst}.tmp
         '''.format(src=src, dst=dst, root=root), shell=True)
 
-        move_completed(dst)
+        os.rename(dst + '.tmp', dst)
 
         print('ok', src)
     except Exception as exc:
