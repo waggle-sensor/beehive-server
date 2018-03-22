@@ -31,7 +31,7 @@ def needs_refresh(src, dst):
 
 
 def move_completed(filename):
-    os.move(filename + '.tmp', filename)
+    os.rename(filename + '.tmp', filename)
 
 
 def build_file_index():
@@ -81,7 +81,7 @@ for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
 
         print('ok', src)
     except Exception as exc:
-        print('err', src)
+        print('err', src, exc)
         continue
 
 build_file_index()
