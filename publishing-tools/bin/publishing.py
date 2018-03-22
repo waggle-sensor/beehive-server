@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import csv
 
 
@@ -134,3 +134,17 @@ def load_sensor_metadata(filename):
             }
 
     return sensors
+
+
+def daterange(start, end):
+    for i in range((end - start).days + 1):
+        yield start + timedelta(days=i)
+
+
+def published_dates(project_metadata):
+    for node in project_metadata:
+        for interval in node['commissioned']:
+            start = interval.start.date()
+            end = (interval.end or datetime.now()).date()
+            for date in daterange(start, end):
+                yield node, date

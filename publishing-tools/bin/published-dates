@@ -1,24 +1,12 @@
 #!/usr/bin/env python3
-import publishing
 import argparse
-from datetime import datetime, timedelta
+import publishing
 
+parser = argparse.ArgumentParser()
+parser.add_argument('metadata', help='path to project metadata')
+args = parser.parse_args()
 
-def daterange(start, end):
-    for i in range((end - start).days + 1):
-        yield start + timedelta(days=i)
+metadata = publishing.load_project_metadata(args.metadata)
 
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('metadata', help='path to project metadata')
-    args = parser.parse_args()
-
-    nodes = publishing.load_project_metadata(args.metadata)
-
-    for node in nodes:
-        for interval in node['commissioned']:
-            start = interval.start.date()
-            end = (interval.end or datetime.now()).date()
-            for date in daterange(start, end):
-                print(node['node_id'], date)
+for node, date in publishing.published_dates(metadata):
+    print(node['node_id'], date)

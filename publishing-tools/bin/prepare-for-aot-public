@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import re
 import subprocess
 import argparse
 import publishing
@@ -38,32 +37,19 @@ def build_file_index():
             print(filename, file=file)
 
 
-nodes = publishing.load_nodes_metadata(os.path.join(root, 'publishing-tools/examples/plenario/nodes.csv'))
-
+nodes = publishing.load_project_metadata(os.path.join(root, 'publishing-tools/examples/plenario'))
 nodes_by_id = {node['node_id']: node for node in nodes}
 
-output = subprocess.check_output([
-    os.path.join(root, 'publishing-tools/bin/published-dates'),
-    os.path.join(root, 'publishing-tools/examples/plenario'),
-]).decode()
-
-candidates = []
-
-for line in output.splitlines():
-    node_id, date = line.split()
-    node = nodes_by_id[node_id]
-    if re.match('\d+-\d+-\d+', date):
-        candidates.append((node, date))
-
-# prioritize recent data
-candidates.sort(key=lambda item: item[1], reverse=True)
+candidates = sorted(publishing.published_dates(nodes),
+                    key=lambda item: item[1], reverse=True)
 
 mapping = []
 
-for (node, date) in candidates:
-    src = os.path.join(args.src, '{}/{}.csv.gz'.format(node['node_id'], date))
-    dst = os.path.join(args.dst, 'node.{}.{}.csv'.format(node['node_id'], date.replace('-', '.')))
+for node, date in candidates:
+    src = os.path.join(args.src, '{}/{}.csv.gz'.format(node['node_id'], date.strftime('%Y-%m-%d')))
+    dst = os.path.join(args.dst, 'node.{}.{}.csv'.format(node['node_id'], date.strftime('%Y.%m.%d')))
     mapping.append((src, dst))
+
 
 for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
     try:
