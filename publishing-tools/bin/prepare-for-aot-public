@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
+import sys
 import os
 import subprocess
 import argparse
 import publishing
 
+# resolve repo paths
+program = os.path.abspath(sys.argv[0])
+pubdir = os.path.dirname(os.path.dirname(program))
 
 parser = argparse.ArgumentParser()
 parser.add_argument('src')
 parser.add_argument('dst')
 args = parser.parse_args()
-
-
-root = '/Users/Sean/beehive-server'
-# root = '/homes/waggle/beehive-server'
 
 
 def needs_refresh(src, dst):
@@ -37,7 +37,7 @@ def build_file_index():
             print(filename, file=file)
 
 
-nodes = publishing.load_project_metadata(os.path.join(root, 'publishing-tools/examples/plenario'))
+nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
 nodes_by_id = {node['node_id']: node for node in nodes}
 
 candidates = sorted(publishing.published_dates(nodes),
@@ -55,9 +55,9 @@ for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
     try:
         subprocess.check_output('''
         gzip -dc {src} |
-        {root}/publishing-tools/bin/filter-sensors {root}/publishing-tools/examples/climate.csv |
-        {root}/publishing-tools/bin/filter-view {root}/publishing-tools/examples/plenario > {dst}.tmp
-        '''.format(src=src, dst=dst, root=root), shell=True)
+        {pubdir}/bin/filter-sensors {pubdir}/examples/climate.csv |
+        {pubdir}/bin/filter-view {pubdir}/examples/plenario > {dst}.tmp
+        '''.format(src=src, dst=dst, pubdir=pubdir), shell=True)
 
         os.rename(dst + '.tmp', dst)
 
