@@ -52,9 +52,9 @@ def load_nodes_metadata(filename):
                 continue
 
             events.append({
-                'node_id': row['node_id'],
+                'node_id': row['node_id'][-12:].lower(),
                 'project_id': row['project_id'],
-                'vsn': row['vsn'],
+                'vsn': row['vsn'].upper(),
                 'address': row['address'],
                 'lat': lat,
                 'lon': lon,
@@ -76,9 +76,9 @@ def load_events_metadata(filename):
 
         for row in reader:
             events.append({
-                'node_id': row['node_id'],
+                'node_id': row['node_id'][-12:].lower(),
                 'timestamp': load_timestamp(row['timestamp']),
-                'event': row['event'],
+                'event': row['event'].lower(),
                 'comment': row['comment'],
             })
 
@@ -134,20 +134,3 @@ def load_sensor_metadata(filename):
             }
 
     return sensors
-
-
-def itersamples(csvfile):
-    reader = csv.reader(csvfile, delimiter=';')
-
-    for fields in reader:
-        try:
-            value = float(fields[6])
-        except ValueError:
-            continue
-
-        yield {
-            'node_id': fields[0],
-            'timestamp': load_timestamp(fields[1]),
-            'sensor': fields[4] + '.' + fields[5],
-            'value': value,
-        }

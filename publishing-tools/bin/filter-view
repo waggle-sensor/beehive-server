@@ -3,6 +3,7 @@ import publishing
 import argparse
 from datetime import datetime
 import sys
+import csv
 
 
 def load_timestamp(timestamp):
@@ -19,8 +20,7 @@ if __name__ == '__main__':
     nodes = publishing.load_project_metadata(args.metadata)
     nodes_by_id = {node['node_id']: node for node in nodes}
 
-    def isviewable(line):
-        fields = line.split(';')
+    def isviewable(fields):
         node_id = fields[0]
         timestamp = load_timestamp(fields[1])
 
@@ -31,5 +31,6 @@ if __name__ == '__main__':
 
         return any(timestamp in interval for interval in node['commissioned'])
 
-    for line in filter(isviewable, sys.stdin.readlines()):
-        sys.stdout.write(line)
+    reader = csv.reader(sys.stdin, delimiter=';')
+    writer = csv.writer(sys.stdout, delimiter=';')
+    writer.writerows(filter(isviewable, reader))

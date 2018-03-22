@@ -2,6 +2,7 @@
 import argparse
 import publishing
 import sys
+import csv
 
 
 def invert(f):
@@ -18,8 +19,7 @@ if __name__ == '__main__':
 
     config = publishing.load_sensor_metadata(args.metadata)
 
-    def isvalid(line):
-        fields = line.split(';')
+    def isvalid(fields):
         sensor = fields[4]
         param = fields[5]
 
@@ -39,5 +39,6 @@ if __name__ == '__main__':
     if args.v:
         isvalid = invert(isvalid)
 
-    for line in filter(isvalid, sys.stdin.readlines()):
-        sys.stdout.write(line)
+    reader = csv.reader(sys.stdin, delimiter=';')
+    writer = csv.writer(sys.stdout, delimiter=';')
+    writer.writerows(filter(isvalid, reader))
