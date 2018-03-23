@@ -29,14 +29,6 @@ def needs_refresh(src, dst):
     return dst_mtime < src_mtime
 
 
-def build_file_index():
-    index = [filename for filename in os.listdir(args.dst) if filename.endswith('.csv')]
-
-    with open(os.path.join(args.dst, 'index'), 'w') as file:
-        for filename in sorted(index):
-            print(filename, file=file)
-
-
 nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
 nodes_by_id = {node['node_id']: node for node in nodes}
 
@@ -46,8 +38,10 @@ candidates = sorted(publishing.published_dates(nodes),
 mapping = []
 
 for node, date in candidates:
-    src = os.path.join(args.src, '{}/{}.csv.gz'.format(node['node_id'], date.strftime('%Y-%m-%d')))
-    dst = os.path.join(args.dst, 'node.{}.{}.csv'.format(node['node_id'], date.strftime('%Y.%m.%d')))
+    src = os.path.join(args.src, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+    os.makedirs(os.path.join(args.dst, 'staging', node['node_id']), exist_ok=True)
+
+    dst = os.path.join(args.dst, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv'))
     mapping.append((src, dst))
 
 
@@ -65,5 +59,3 @@ for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
     except Exception as exc:
         print('err', src, exc)
         continue
-
-build_file_index()
