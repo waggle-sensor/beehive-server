@@ -15,7 +15,9 @@ parser.add_argument('dst')
 args = parser.parse_args()
 
 
-def needs_refresh(src, dst):
+def needs_refresh(pair):
+    src, dst = pair
+
     try:
         src_mtime = os.path.getmtime(src)
     except FileNotFoundError:
@@ -29,28 +31,13 @@ def needs_refresh(src, dst):
     return dst_mtime < src_mtime
 
 
-nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
-nodes_by_id = {node['node_id']: node for node in nodes}
-
-candidates = sorted(publishing.published_dates(nodes),
-                    key=lambda item: item[1], reverse=True)
-
-mapping = []
-
-for node, date in candidates:
-    src = os.path.join(args.src, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
-    os.makedirs(os.path.join(args.dst, 'staging', node['node_id']), exist_ok=True)
-
-    dst = os.path.join(args.dst, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv'))
-    mapping.append((src, dst))
-
-
-for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
+def transform_dataset(src, dst):
     try:
         subprocess.check_output('''
         gzip -dc {src} |
         {pubdir}/bin/filter-sensors {pubdir}/examples/climate.csv |
-        {pubdir}/bin/filter-view {pubdir}/examples/plenario > {dst}.tmp
+        {pubdir}/bin/filter-view {pubdir}/examples/plenario |
+        gzip > {dst}.tmp
         '''.format(src=src, dst=dst, pubdir=pubdir), shell=True)
 
         os.rename(dst + '.tmp', dst)
@@ -58,4 +45,23 @@ for src, dst in filter(lambda pair: needs_refresh(*pair), mapping):
         print('ok', src)
     except Exception as exc:
         print('err', src, exc)
-        continue
+
+
+nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
+nodes_by_id = {node['node_id']: node for node in nodes}
+
+candidates = sorted(publishing.published_dates(nodes),
+                    key=lambda item: item[1], reverse=True)
+
+file_pairs = []
+
+for node, date in candidates:
+    src = os.path.join(args.src, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+
+    os.makedirs(os.path.join(args.dst, 'staging', node['node_id']), exist_ok=True)
+    dst = os.path.join(args.dst, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+    file_pairs.append((src, dst))
+
+
+for src, dst in filter(needs_refresh, file_pairs):
+    transform_dataset(src, dst)
