@@ -73,6 +73,12 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610ba16,AoT Chicago,010," Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
 ```
 
+Additional details about a node are contained in the description field. The letters
+inside the brackets `[ ]` indicate:
+
+* `C` - Node equipped with a chemical sensor.
+* `A` - Node equipped with a particular matter sensor.
+
 ### Sensor Metadata
 
 The sensor metadata provides additional information about each of the sensors published
