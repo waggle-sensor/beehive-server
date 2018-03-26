@@ -10,8 +10,9 @@ This project digest contains the following files:
 
 These files will be described in-depth in the following sections.
 
-All data here is collected by nodes which are part of Argonne's Waggle project. More
-information about this project can be found at the Waggle project's [web page](http://wa8.gl/).
+All data here is collected by nodes which are part of Argonne National Lab's Waggle
+project. More information about this project can be found at the Waggle project's
+[web page](http://wa8.gl/).
 
 ### Sensor Data
 
