@@ -81,4 +81,14 @@ by the project. This file is a CSV with the following fields:
 * `maxval` - Maximum value according to datasheet.
 * `datasheet` - Reference to sensor's datasheet.
 
+For example:
+```
+sensor,parameter,unit,minval,maxval,datasheet
+HTU21D,humidity,RH,0,100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
+HTU21D,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
+BMP180,temperature,C,-40,85,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
+BMP180,pressure,hPa,300,1100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
+TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf"
+```
+
 More in-depth information can be found at: https://github.com/waggle-sensor/sensors
