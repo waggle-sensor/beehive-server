@@ -22,12 +22,12 @@ nodes. By published, we mean:
 
 This file is a CSV with the following fields:
 
-* `node_id` - ID of node which produced the reading.
-* `timestamp` - UTC timestamp when reading was produced.
-* `plugin` - Plugin which produced reading.
-* `sensor` - Sensor which produced reading.
-* `parameter` - Specific parameter from sensor.
-* `value` - Reading value.
+* `node_id` - ID of node doing the measurement.
+* `timestamp` - UTC timestamp of when the measurement was taken.
+* `plugin` - Plugin doing the measurement.
+* `sensor` - Sensor being measured.
+* `parameter` - Sensor parameter being measured.
+* `value` - Measurement value.
 
 For example:
 ```
@@ -40,7 +40,6 @@ node_id,timestamp,plugin,sensor,parameter,value
 ```
 
 More information about nodes and sensors is discussed in the next two sections.
-
 
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
 filtering. For example, a damaged sensor _could_ repeat an error value over and over if
