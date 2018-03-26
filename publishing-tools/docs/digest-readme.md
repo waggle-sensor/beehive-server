@@ -1,7 +1,6 @@
 # Data Digest Readme
 
-The CSV file in this folder contains publishable data from all the nodes associated with the 
-AoT Chicago project. 
+The files in this directory contain sensor data and the associated meta-data that will enable parsing the sensor values.
 
 ## Overview
 
@@ -101,3 +100,8 @@ TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/mast
 ```
 
 More in-depth information about each sensor can be found at: https://github.com/waggle-sensor/sensors
+
+### Useful Links:
+* Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
+* Array of Things: https://arrayofthings.github.io/
+* Waggle: http://wa8.gl/
