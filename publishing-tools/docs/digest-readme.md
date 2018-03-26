@@ -12,13 +12,13 @@ These files are described in-depth in the following sections.
 
 ### Sensor Data
 
-The sensor data file is an aggregate of all _published_ data from a project's
+The sensor data file is an aggregate of all published data from a project's
 nodes. By published, we mean:
 
 * Data was read from a whitelisted node belonging to the project.
 * Data was read during that node's commissioning time.
 * Data was read from a whitelisted sensor.
-* Data value passed a simple range check. (Range is specified in sensor metadata.)
+* Data value passed a simple range check.
 
 This file is a CSV with the following fields:
 
@@ -77,8 +77,8 @@ by the project. This file is a CSV with the following fields:
 * `sensor` - Sensor name.
 * `parameter` - Sensor parameter.
 * `unit` - Physical units of sensor value.
-* `minval` - Minimum value according to datasheet.
-* `maxval` - Maximum value according to datasheet.
+* `minval` - Minimum value according to datasheet. Used as lower bound in range filter.
+* `maxval` - Maximum value according to datasheet. Used as upper bound in range filter.
 * `datasheet` - Reference to sensor's datasheet.
 
 For example:
