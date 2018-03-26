@@ -22,12 +22,12 @@ nodes. By published, we mean:
 
 This file is a CSV with the following fields:
 
-* `node_id` - ID of node doing the measurement.
-* `timestamp` - UTC timestamp of when the measurement was taken.
-* `plugin` - Plugin doing the measurement.
-* `sensor` - Sensor being measured.
-* `parameter` - Sensor parameter being measured.
-* `value` - Measurement value.
+* `node_id` - ID of node which did the measurement.
+* `timestamp` - UTC timestamp of when the measurement was done.
+* `plugin` - Plugin which did the measurement.
+* `sensor` - Sensor that was measured.
+* `parameter` - Sensor parameter that was measured.
+* `value` - Measured value.
 
 For example:
 ```
