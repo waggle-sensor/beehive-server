@@ -1,7 +1,6 @@
 # Data Digest
 
-The files in this directory contain sensor data and the associated meta-data that will enable parsing the sensor values 
-and making sense of them 
+The files in this directory contain sensor data and the associated meta-data that will enable parsing the sensor values.
 
 ## Overview
 
