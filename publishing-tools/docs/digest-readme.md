@@ -43,8 +43,8 @@ More information about nodes and sensors is discussed in the next two sections.
 
 
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
-filtering. For example, a damaged sensor _could_ repeat an error value over and over in
-an acceptable range.*
+filtering. For example, a damaged sensor _could_ repeat an error value over and over if
+in the accepted range or a node _could_ have a sensor deviate from its neighbors.*
 
 ### Node Metadata
 
