@@ -33,7 +33,7 @@ The `data.csv` file is a CSV with the following fields:
 * `parameter` - Sensor parameter that was measured.
 * `value` - Measured value.
 
-These fields will always be provided in the header, for example:
+These fields will always be provided as a header, for example:
 ```
 node_id,timestamp,plugin,sensor,parameter,value
 001e0610b9e5,2017/11/28 17:20:58,coresense:3,BMP180,temperature,14.1
@@ -63,7 +63,7 @@ file is a CSV with the following fields:
 * `lon` - Longitude of node.
 * `description` - More detailed description of node's build and configuration.
 
-These fields will always be provided in the header, for example:
+These fields will always be provided as a header, for example:
 ```
 node_id,project_id,vsn,address,lat,lon,description
 001e0610bc10,AoT Chicago,01F," State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
@@ -85,7 +85,7 @@ by the project. This file is a CSV with the following fields:
 * `maxval` - Maximum value according to datasheet. Used as upper bound in range filter.
 * `datasheet` - Reference to sensor's datasheet.
 
-These fields will always be provided in the header, for example:
+These fields will always be provided as a header, for example:
 ```
 sensor,parameter,unit,minval,maxval,datasheet
 HTU21D,humidity,RH,0,100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
