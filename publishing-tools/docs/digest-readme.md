@@ -24,7 +24,7 @@ nodes. By published, we mean:
 * Data was read from a whitelisted sensor.
 * Data value passed a simple range check.
 
-This file is a CSV with the following fields:
+The `data.csv` file is a CSV with the following fields:
 
 * `node_id` - ID of node which did the measurement.
 * `timestamp` - UTC timestamp of when the measurement was done.
