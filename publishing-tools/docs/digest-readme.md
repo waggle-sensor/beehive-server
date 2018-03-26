@@ -39,8 +39,8 @@ node_id,timestamp,plugin,sensor,parameter,value
 001e0610b9e5,2017/11/28 17:21:22,coresense:3,TSYS01,temperature,14.56
 ```
 
-Additional information such as sensor units or valid ranges can be found in the metadata.
-More information about this is provided in the next two sections.
+Additional information such each nodes' coordinates or each sensor units can be found
+in the metadata. More information about these will be provided in the next two sections.
 
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
 filtering. For example, a damaged sensor _could_ repeat an error value over and over if
