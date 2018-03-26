@@ -12,18 +12,19 @@ These files are described in-depth in the following sections.
 
 ### Sensor Data - `data.csv`
 
-This file is the aggregate of all _published_ data from a project. Specifically, published means:
+`data.csv` is an aggregate of all _published_ data from a project's nodes.
+By published, we mean:
 
 * Data was read from whitelisted node.
 * Data was read during node's commissioning time.
 * Data was read from whitelisted sensor.
 * Data passes simple range check.
 
-Note that we're not doing automatic, in-depth sensor checks. For example, a damaged sensor _could_ produce values in an accepted range, but repeat the same default value over and over.
+*Note: We do not do automatic, detailed sensor filtering. For example, a damaged sensor _could_ produce values in an accepted range, but repeat the same default value over and over.*
 
-The file follows a CSV format with columns:
+`data.csv` follows a CSV format with the following fields:
 
-* `node_id` - Node which produced the reading.
+* `node_id` - ID of node which produced the reading.
 * `timestamp` - UTC timestamp when reading was produced.
 * `plugin` - Plugin which produced reading.
 * `sensor` - Sensor which produced reading.
@@ -40,6 +41,8 @@ node_id,timestamp,plugin,sensor,parameter,value
 001e0610b9e5,2017/11/28 17:21:22,coresense:3,TSYS01,temperature,14.56
 001e0610b9e5,2017/11/28 17:21:22,coresense:3,HTU21D,temperature,14.92
 ```
+
+More information about nodes and sensors is discussed in the next two sections.
 
 ### Node Metadata - `metadata/nodes.csv`
 
