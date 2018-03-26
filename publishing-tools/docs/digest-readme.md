@@ -2,11 +2,11 @@
 
 ## Overview
 
-This digest should contain the following data files:
+This digest contains the following data files:
 
-* `data.csv`
-* `metadata/nodes.csv`
-* `metadata/sensors.csv`
+* Sensor Data - `data.csv`
+* Node Metadata - `metadata/nodes.csv`
+* Sensor Metadata - `metadata/sensors.csv`
 
 These files are described in-depth in the following sections.
 
