@@ -129,7 +129,13 @@ def load_sensor_metadata(filename):
             except ValueError:
                 maxval = None
 
-            sensors[row['sensor_id']] = {
+            # hold over until after field conversion
+            try:
+                sensor_id = row['sensor_id']
+            except KeyError:
+                sensor_id = row['sensor'] + '.' + row['parameter']
+
+            sensors[sensor_id] = {
                 'range': Interval(minval, maxval)
             }
 
