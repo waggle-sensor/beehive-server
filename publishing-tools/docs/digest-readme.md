@@ -18,7 +18,7 @@ nodes. By published, we mean:
 * Data was read from a whitelisted node belonging to the project.
 * Data was read during that node's commissioning time.
 * Data was read from a whitelisted sensor.
-* Data value passed a simple range check.
+* Data value passed a simple range check. (Range is specified in sensor metadata.)
 
 This file is a CSV with the following fields:
 
