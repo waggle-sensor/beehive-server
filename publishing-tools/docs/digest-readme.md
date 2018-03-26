@@ -4,13 +4,13 @@
 
 This digest contains the following data files:
 
-* Sensor Data - `data.csv`
-* Node Metadata - `metadata/nodes.csv`
-* Sensor Metadata - `metadata/sensors.csv`
+* `data.csv` - Sensor data.
+* `metadata/nodes.csv` - Node metadata.
+* `metadata/sensors.csv` - Sensor metadata.
 
 These files are described in-depth in the following sections.
 
-### Sensor Data - `data.csv`
+### Sensor Data
 
 The sensor data file is an aggregate of all _published_ data from a project's
 nodes. By published, we mean:
@@ -45,14 +45,13 @@ node_id,timestamp,plugin,sensor,parameter,value
 
 More information about nodes and sensors is discussed in the next two sections.
 
-### Node Metadata - `metadata/nodes.csv`
+### Node Metadata
 
-The node metadata provides additional information about each of a project's nodes.
-This file follows a CSV format with the following fields:
+The node metadata provides additional information about each of a project's nodes. This file is a CSV format with the following fields:
 
 * `node_id` - ID of node.
 * `project_id` - ID of project which manages node.
-* `vsn` - Friendly name for node. The VSN is visible on the physical enclosure.
+* `vsn` - Public name for node. The VSN is visible on the physical enclosure.
 * `address` - Street address of node.
 * `lat` - Latitude of node.
 * `lon` - Longitude of node.
@@ -68,6 +67,6 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610ba16,AoT Chicago,010," Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
 ```
 
-### Sensor Metadata - `metadata/sensors.csv`
+### Sensor Metadata
 
 More in-depth information can be found at: https://github.com/waggle-sensor/sensors
