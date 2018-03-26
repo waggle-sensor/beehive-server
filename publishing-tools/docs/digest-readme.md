@@ -6,7 +6,7 @@ web page at: http://wa8.gl/
 
 ## Overview
 
-This project digest contains the following files:
+This sensor data digest contains the following files:
 
 * `data.csv` - Sensor data.
 * `metadata/nodes.csv` - Node metadata.
