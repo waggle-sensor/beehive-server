@@ -20,11 +20,7 @@ nodes. By published, we mean:
 * Data was read from a whitelisted sensor.
 * Data value passed a simple range check.
 
-Note: We currently _do not_ do automatic, in-depth sensor filtering. For example,
-a damaged sensor _could_ produce values in an accepted range, but repeat the same
-default value over and over.
-
-This file follows a CSV format with the following fields:
+This file is a CSV with the following fields:
 
 * `node_id` - ID of node which produced the reading.
 * `timestamp` - UTC timestamp when reading was produced.
@@ -44,6 +40,11 @@ node_id,timestamp,plugin,sensor,parameter,value
 ```
 
 More information about nodes and sensors is discussed in the next two sections.
+
+
+*Note: We currently _do not_ do automatic, in-depth sensor filtering. For example,
+a damaged sensor _could_ produce values in an accepted range, but repeat the same
+default value over and over.*
 
 ### Node Metadata
 
