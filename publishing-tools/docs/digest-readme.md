@@ -1,28 +1,27 @@
 # Data Digest Readme
 
-All data published for this project was collected as part of Argonne National Lab's
-Waggle project. For more information, visit the Waggle project's
-web page at: http://wa8.gl/
+The CSV file in this folder contains publishable data from all the nodes associated with the 
+AoT Chicago project. 
 
 ## Overview
 
 This sensor data digest contains the following files:
 
 * `data.csv` - Sensor data.
-* `metadata/nodes.csv` - Node metadata.
+* `metadata/nodes.csv` - Nodes metadata.
 * `metadata/sensors.csv` - Sensor metadata.
 
 These files will be described in-depth in the following sections.
 
 ### Sensor Data
 
-The sensor data file is an aggregate of all published data from a project's
+The sensor data file is an aggregate of all published data from the project's
 nodes. By published, we mean:
 
 * Data was read from a whitelisted node belonging to the project.
 * Data was read during that node's commissioning time.
 * Data was read from a whitelisted sensor.
-* Data value passed a simple range check.
+* Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate. 
 
 The `data.csv` file is a CSV with the following fields:
 
@@ -47,7 +46,7 @@ Additional information such each node's coordinates or each sensor units can be 
 in the metadata. More information about these will be provided in the next two sections.
 
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
-filtering. For example, a damaged sensor _could_ repeat an error value over and over if
+filtering. For example, a damaged sensor _could_ repeat an error value over and over if it is
 in the accepted range or a node _could_ have a sensor value deviate from its neighbors.*
 
 ### Node Metadata
@@ -76,8 +75,8 @@ node_id,project_id,vsn,address,lat,lon,description
 Additional details about a node are contained in the description field. The letters
 inside the brackets `[ ]` indicate:
 
-* `C` - Node is equipped with a chemical sensor.
-* `A` - Node is equipped with an air quality sensor.
+* `C` - Node is equipped with chemical sensors.
+* `A` - Node is equipped with an Alphasense OPN-N2 air quality sensor.
 
 ### Sensor Metadata
 
