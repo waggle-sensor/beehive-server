@@ -2,13 +2,16 @@
 
 ## Overview
 
-This digest contains the following data files:
+This project digest contains the following files:
 
 * `data.csv` - Sensor data.
 * `metadata/nodes.csv` - Node metadata.
 * `metadata/sensors.csv` - Sensor metadata.
 
-These files are described in-depth in the following sections.
+These files will be described in-depth in the following sections.
+
+All data here is collected by Waggle nodes. More information about this project can be
+found at the Waggle project's [web page](http://wa8.gl/).
 
 ### Sensor Data
 
@@ -39,12 +42,12 @@ node_id,timestamp,plugin,sensor,parameter,value
 001e0610b9e5,2017/11/28 17:21:22,coresense:3,TSYS01,temperature,14.56
 ```
 
-Additional information such each nodes' coordinates or each sensor units can be found
+Additional information such each node's coordinates or each sensor units can be found
 in the metadata. More information about these will be provided in the next two sections.
 
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
 filtering. For example, a damaged sensor _could_ repeat an error value over and over if
-in the accepted range or a node _could_ have a sensor deviate from its neighbors.*
+in the accepted range or a node _could_ have a sensor value deviate from its neighbors.*
 
 ### Node Metadata
 
@@ -91,4 +94,4 @@ BMP180,pressure,hPa,300,1100,"https://github.com/waggle-sensor/sensors/blob/mast
 TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf"
 ```
 
-More in-depth information can be found at: https://github.com/waggle-sensor/sensors
+More in-depth information about each sensor can be found at: https://github.com/waggle-sensor/sensors
