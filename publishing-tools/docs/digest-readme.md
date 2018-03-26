@@ -15,10 +15,10 @@ These files are described in-depth in the following sections.
 The sensor data file is an aggregate of all _published_ data from a project's
 nodes. By published, we mean:
 
-* Data was read from whitelisted node.
-* Data was read during node's commissioning time.
-* Data was read from whitelisted sensor.
-* Data value passes simple range check.
+* Data was read from a whitelisted node belonging to the project.
+* Data was read during that node's commissioning time.
+* Data was read from a whitelisted sensor.
+* Data value passed a simple range check.
 
 Note: We currently _do not_ do automatic, in-depth sensor filtering. For example,
 a damaged sensor _could_ produce values in an accepted range, but repeat the same
