@@ -47,7 +47,8 @@ More information about nodes and sensors is discussed in the next two sections.
 
 ### Node Metadata
 
-The node metadata provides additional information about each of a project's nodes. This file is a CSV format with the following fields:
+The node metadata provides additional information about each of a project's nodes. This
+file is a CSV with the following fields:
 
 * `node_id` - ID of node.
 * `project_id` - ID of project which manages node.
@@ -68,5 +69,15 @@ node_id,project_id,vsn,address,lat,lon,description
 ```
 
 ### Sensor Metadata
+
+The sensor metadata provides additional information about each of the sensors published
+by the project. This file is a CSV with the following fields:
+
+* `sensor` - Sensor name.
+* `parameter` - Sensor parameter.
+* `unit` - Physical units of sensor value.
+* `minval` - Minimum value according to datasheet.
+* `maxval` - Maximum value according to datasheet.
+* `datasheet` - Reference to sensor's datasheet.
 
 More in-depth information can be found at: https://github.com/waggle-sensor/sensors
