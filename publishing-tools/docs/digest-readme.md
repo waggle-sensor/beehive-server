@@ -1,5 +1,9 @@
 # Data Digest
 
+All data published for this project was collected as part of Argonne National Lab's
+Waggle project. For more information, visit the Waggle project's
+web page at: http://wa8.gl/
+
 ## Overview
 
 This project digest contains the following files:
@@ -9,10 +13,6 @@ This project digest contains the following files:
 * `metadata/sensors.csv` - Sensor metadata.
 
 These files will be described in-depth in the following sections.
-
-All data here is collected by nodes which are part of Argonne National Lab's Waggle
-project. More information about this project can be found at the Waggle project's
-[web page](http://wa8.gl/).
 
 ### Sensor Data
 
