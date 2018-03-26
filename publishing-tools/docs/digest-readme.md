@@ -76,8 +76,8 @@ node_id,project_id,vsn,address,lat,lon,description
 Additional details about a node are contained in the description field. The letters
 inside the brackets `[ ]` indicate:
 
-* `C` - Node equipped with a chemical sensor.
-* `A` - Node equipped with a particular matter sensor.
+* `C` - Node is equipped with a chemical sensor.
+* `A` - Node is equipped with an air quality sensor.
 
 ### Sensor Metadata
 
