@@ -1,4 +1,4 @@
-# Data Digest
+# Data Digest Readme
 
 All data published for this project was collected as part of Argonne National Lab's
 Waggle project. For more information, visit the Waggle project's
