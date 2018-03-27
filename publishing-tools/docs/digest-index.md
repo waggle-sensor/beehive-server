@@ -1,8 +1,8 @@
-# Project Landing Page
+# Project Overview
 
-This page provides links to all of the published data and metadata for this project. Descriptions of each items are given below.
+This page provides links to all of the published data and metadata for this project.
 
-## Overview
+## Project Data
 
 The following items are available here:
 
@@ -15,7 +15,7 @@ The following items are available here:
 *If you're unsure where to start, you most likely want the Complete Project Digest - it contains everything you need to get started.*
 
 
-## Useful Links
+## Additional Links
 
 Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
 
