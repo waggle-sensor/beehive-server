@@ -17,8 +17,8 @@ The following data items are available:
 
 ## Additional Links
 
-Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
+* [Array of Things](https://arrayofthings.github.io/)
 
-Array of Things: https://arrayofthings.github.io/
+* [Waggle Project](http://wa8.gl/)
 
-Waggle: http://wa8.gl/
+* [Waggle Sensor Info](https://github.com/waggle-sensor/sensors/blob/develop/README.md)
