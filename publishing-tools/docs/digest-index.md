@@ -1,6 +1,6 @@
 # Project Landing Page
 
-This page provides links to all of the published data and metadata for this project.
+This page provides links to all of the published data and metadata for this project. Descriptions of each items are given below.
 
 ## Overview
 
