@@ -1,4 +1,4 @@
-# Data Digest Readme
+# Project Digest Readme
 
 The files in this directory contain sensor data and the associated meta-data that will enable parsing the sensor values.
 
@@ -20,7 +20,7 @@ nodes. By published, we mean:
 * Data was read from a whitelisted node belonging to the project.
 * Data was read during that node's commissioning time.
 * Data was read from a whitelisted sensor.
-* Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate. 
+* Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate.
 
 The `data.csv` file is a CSV with the following fields:
 
@@ -101,7 +101,8 @@ TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/mast
 
 More in-depth information about each sensor can be found at: https://github.com/waggle-sensor/sensors
 
-### Useful Links:
+### Useful Links
+
 * Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
 * Array of Things: https://arrayofthings.github.io/
 * Waggle: http://wa8.gl/
