@@ -1,5 +1,7 @@
 # Project Landing Page
 
+This page provides links to all of the published data and metadata for this project.
+
 ## Overview
 
 The following items are available here:
@@ -11,3 +13,12 @@ The following items are available here:
 * [Metadata Only](metadata.tar.gz) - Contains just the metadata from Complete Project Digest.
 
 *If you're unsure where to start, you most likely want the Complete Project Digest - it contains everything you need to get started.*
+
+
+## Useful Links
+
+Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
+
+Array of Things: https://arrayofthings.github.io/
+
+Waggle: http://wa8.gl/
