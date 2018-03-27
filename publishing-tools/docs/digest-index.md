@@ -4,7 +4,7 @@ This page provides links to all of the published data and metadata for this proj
 
 ## Project Data
 
-The following items are available here:
+The following data items are available:
 
 * [Complete Project Digest](digest-aot-chicago.tar.gz) - Contains latest aggregate of all sensor data from this project, along with node and sensor metadata. Details are available in the [README](https://github.com/waggle-sensor/beehive-server/blob/master/publishing-tools/docs/digest-readme.md).
 
