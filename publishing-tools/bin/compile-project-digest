@@ -8,6 +8,7 @@ import publishing
 import gzip
 import csv
 from datetime import datetime
+from jinja2 import Template
 
 # resolve repo paths
 program = os.path.abspath(sys.argv[0])
@@ -46,13 +47,24 @@ def make_project_digest(data_dir, project_dir, build_dir):
 
     print('[{}] Copy metadata.'.format(project_id))
 
-    shutil.copy(os.path.join(program_dir, 'docs', 'digest-readme.md'), os.path.join(digest_dir, 'README.md'))
+    with open(os.path.join(program_dir, 'docs', 'digest-readme.md')) as f:
+        template = Template(f.read())
+
+    try:
+        with open(os.path.join(project_dir, 'header.md')) as f:
+            header = f.read()
+    except FileNotFoundError:
+        header = ''
+
+    with open(os.path.join(digest_dir, 'README.md'), 'w') as f:
+        f.write(template.render(header=header, project_id=project_id))
+
     shutil.copy(os.path.join(project_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
     shutil.copy(os.path.join(project_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
 
     print('[{}] Staging data files.'.format(project_id))
 
-    nodes = publishing.load_project_metadata(os.path.join(program_dir, 'examples/plenario'))
+    nodes = publishing.load_project_metadata(project_dir)
 
     # sort candinate files in latest first order
     candidates = sorted(publishing.published_dates(nodes),
@@ -136,7 +148,7 @@ def make_project_digest(data_dir, project_dir, build_dir):
             'project_id',
             'data_start_date',
             'data_end_date',
-            'created_at',
+            'creation_date',
             'url',
         ])
 
