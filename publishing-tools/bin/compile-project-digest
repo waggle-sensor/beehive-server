@@ -6,6 +6,8 @@ import argparse
 import shutil
 import publishing
 import gzip
+import csv
+from datetime import datetime
 
 # resolve repo paths
 program = os.path.abspath(sys.argv[0])
@@ -28,27 +30,27 @@ def needs_refresh(pair):
     return dst_mtime < src_mtime
 
 
-def make_project_digest(data_dir, base_dir, build_dir):
-    projectID = os.path.basename(base_dir)
+def make_project_digest(data_dir, project_dir, build_dir):
+    project_id = os.path.basename(project_dir)
 
-    print('[{}] Preparing build tree.'.format(projectID))
+    print('[{}] Preparing build tree.'.format(project_id))
 
-    projdir = os.path.join(build_dir, projectID)
+    projdir = os.path.join(build_dir, project_id)
     os.makedirs(projdir, exist_ok=True)
 
-    digest_dir = os.path.join(projdir, '{}.latest'.format(projectID))
+    digest_dir = os.path.join(projdir, '{}.latest'.format(project_id))
     os.makedirs(digest_dir, exist_ok=True)
 
     staging_dir = os.path.join(projdir, 'staging')
     os.makedirs(staging_dir, exist_ok=True)
 
-    print('[{}] Copy metadata.'.format(projectID))
+    print('[{}] Copy metadata.'.format(project_id))
 
     shutil.copy(os.path.join(program_dir, 'docs', 'digest-readme.md'), os.path.join(digest_dir, 'README.md'))
-    shutil.copy(os.path.join(base_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
-    shutil.copy(os.path.join(base_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
+    shutil.copy(os.path.join(project_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
+    shutil.copy(os.path.join(project_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
 
-    print('[{}] Staging data files.'.format(projectID))
+    print('[{}] Staging data files.'.format(project_id))
 
     nodes = publishing.load_project_metadata(os.path.join(program_dir, 'examples/plenario'))
 
@@ -67,8 +69,8 @@ def make_project_digest(data_dir, base_dir, build_dir):
 
     for src, dst in filter(needs_refresh, file_pairs):
         try:
-            sensors_metadata = os.path.join(base_dir, 'sensors.csv')
-            project_metadata = os.path.join(base_dir)
+            sensors_metadata = os.path.join(project_dir, 'sensors.csv')
+            project_metadata = os.path.join(project_dir)
 
             script_template = '''
             gzip -dc '{src}' |
@@ -80,7 +82,7 @@ def make_project_digest(data_dir, base_dir, build_dir):
             script = script_template.format(src=src,
                                             dst=dst,
                                             program_dir=program_dir,
-                                            base_dir=base_dir,
+                                            project_dir=project_dir,
                                             sensors_metadata=sensors_metadata,
                                             project_metadata=project_metadata)
 
@@ -88,11 +90,11 @@ def make_project_digest(data_dir, base_dir, build_dir):
 
             os.rename(dst + '.tmp', dst)
 
-            print('[{}] Prepared file {}.'.format(projectID, src))
+            print('[{}] Prepared file {}.'.format(project_id, src))
         except Exception as exc:
-            print('[{}] Failed to prepare file {}!'.format(projectID, src))
+            print('[{}] Failed to prepare file {}!'.format(project_id, src))
 
-    print('[{}] Compiling staged files.'.format(projectID))
+    print('[{}] Compiling staged files.'.format(project_id))
 
     with open(os.path.join(digest_dir, 'data.csv'), 'wb') as outfile:
         outfile.write(b'node_id,timestamp,plugin,sensor,parameter,value\n')
@@ -118,9 +120,36 @@ def make_project_digest(data_dir, base_dir, build_dir):
                     outfile.write(fields[6])
                     outfile.write(b'\n')
 
-    print('[{}] Compiling archive.'.format(projectID))
+    print('[{}] Compiling archive.'.format(project_id))
 
-    shutil.make_archive(base_name=os.path.join(projdir, '{}.latest'.format(projectID)),
+    now = datetime.now()
+    intervals = [interval for node in nodes for interval in node['commissioned']]
+
+    data_start_date = min(interval.start for interval in intervals)
+    data_end_date = max(interval.end or now for interval in intervals)
+
+    with open(os.path.join(digest_dir, 'provenance.csv'), 'w') as outfile:
+        writer = csv.writer(outfile)
+
+        writer.writerow([
+            'data_format_version',
+            'project_id',
+            'data_start_date',
+            'data_end_date',
+            'created_at',
+            'url',
+        ])
+
+        writer.writerow([
+            '1',
+            project_id,
+            data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
+            data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
+            now.strftime('%Y/%m/%d %H:%M:%S'),
+            'http://mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
+        ])
+
+    shutil.make_archive(base_name=os.path.join(projdir, '{}.latest'.format(project_id)),
                         format='gztar',
                         root_dir=digest_dir)
 
@@ -128,10 +157,10 @@ def make_project_digest(data_dir, base_dir, build_dir):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('data_dir', help='data_dir is a directory containing the datasets tree.')
-    parser.add_argument('base_dir', help='base_dir is a directory containing supporting READMEs and metadata.')
+    parser.add_argument('project_dir', help='project_dir is a directory containing supporting READMEs and metadata.')
     parser.add_argument('build_dir', help='build_dir is a directory that will be used to stage data files and compile digests.')
     args = parser.parse_args()
 
     make_project_digest(data_dir=args.data_dir,
-                        base_dir=args.base_dir,
+                        project_dir=args.project_dir,
                         build_dir=args.build_dir)
