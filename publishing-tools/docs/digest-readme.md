@@ -1,14 +1,18 @@
 # Project Digest Readme
 
-The files in this directory contain sensor data and the associated meta-data that will enable parsing the sensor values.
+{{ header }}
+
+The files in this directory contain sensor data and the associated meta-data that
+will enable parsing the sensor values.
 
 ## Overview
 
 This sensor data digest contains the following files:
 
 * `data.csv` - Sensor data.
-* `metadata/nodes.csv` - Nodes metadata.
-* `metadata/sensors.csv` - Sensor metadata.
+* `nodes.csv` - Nodes metadata.
+* `sensors.csv` - Sensor metadata.
+* `provenance.csv` - Provenance metadata.
 
 These files will be described in-depth in the following sections.
 
@@ -100,6 +104,24 @@ TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/mast
 ```
 
 More in-depth information about each sensor can be found at: https://github.com/waggle-sensor/sensors
+
+### Provenance Metadata
+
+The provenance metadata provides additional information about the origin of this
+project digest. This file is a CSV with the following fields:
+
+* `data_format_version` - Data format version.
+* `project_id` - Project ID.
+* `data_start_date` - Minimum possible publishing date.
+* `data_end_date` - Maximum possible publishing date. If no explicit date exists, then creation date is used.
+* `creation_date` - Date this digest was created.
+* `url` - URL where this digest was provided.
+
+These fields will always be provide as a header, for example:
+```
+data_format_version,project_id,data_start_date,data_end_date,creation_date,url
+1,AoT Chicago,2017/03/31 00:00:00,2018/03/28 12:10:48,2018/03/28 12:10:48,http://mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT Chicago.latest.tar.gz
+```
 
 ### Useful Links
 
