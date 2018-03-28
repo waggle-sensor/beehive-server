@@ -88,9 +88,9 @@ def make_project_digest(data_dir, base_dir, build_dir):
 
             os.rename(dst + '.tmp', dst)
 
-            print('ok', src)
+            print('[{}] Prepared file {}.'.format(projectID, src))
         except Exception as exc:
-            print('err', src, exc)
+            print('[{}] Failed to prepare file {}!'.format(projectID, src))
 
     print('[{}] Compiling staged files.'.format(projectID))
 
@@ -127,9 +127,9 @@ def make_project_digest(data_dir, base_dir, build_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('data_dir')
-    parser.add_argument('base_dir')
-    parser.add_argument('build_dir')
+    parser.add_argument('data_dir', help='data_dir is a directory containing the datasets tree.')
+    parser.add_argument('base_dir', help='base_dir is a directory containing supporting READMEs and metadata.')
+    parser.add_argument('build_dir', help='build_dir is a directory that will be used to stage data files and compile digests.')
     args = parser.parse_args()
 
     make_project_digest(data_dir=args.data_dir,
