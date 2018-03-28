@@ -37,6 +37,10 @@ except KeyError:
     sys.exit(1)
 
 
+def ensure_exists(dir):
+    os.mkdirs(dir, exist_ok=True)
+
+
 def needs_refresh(pair):
     src, dst = pair
 
@@ -54,18 +58,19 @@ def needs_refresh(pair):
 
 
 def make_project_digest(project_id):
-    project_dir = os.path.join(projects_dir, project_id)
-
     print('[{}] Preparing build tree.'.format(project_id))
 
+    project_dir = os.path.join(projects_dir, project_id)
+    ensure_exists(program_dir)
+
     build_dir = os.path.join(digests_dir, project_id)
-    os.makedirs(build_dir, exist_ok=True)
+    ensure_exists(build_dir)
 
     digest_dir = os.path.join(build_dir, '{}.latest'.format(project_id), '{}.{}'.format(project_id, datetime.utcnow().strftime('%Y-%m-%d')))
-    os.makedirs(digest_dir, exist_ok=True)
+    ensure_exists(digest_dir)
 
     staging_dir = os.path.join(build_dir, 'staging')
-    os.makedirs(staging_dir, exist_ok=True)
+    ensure_exists(staging_dir)
 
     print('[{}] Copy metadata.'.format(project_id))
 
@@ -80,6 +85,11 @@ def make_project_digest(project_id):
 
     with open(os.path.join(digest_dir, 'README.md'), 'w') as f:
         f.write(template.render(header=header, project_id=project_id))
+
+    try:
+        shutil.copy(os.path.join(project_dir, 'DUA.txt'), os.path.join(digest_dir, 'DUA.txt'))
+    except Exception:
+        pass
 
     shutil.copy(os.path.join(project_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
     shutil.copy(os.path.join(project_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
@@ -157,6 +167,7 @@ def make_project_digest(project_id):
     print('[{}] Compiling archive.'.format(project_id))
 
     now = datetime.now()
+
     intervals = [interval for node in nodes for interval in node['commissioned']]
 
     try:
