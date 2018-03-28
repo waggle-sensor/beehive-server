@@ -29,7 +29,7 @@ def needs_refresh(pair):
 
 
 def make_project_digest(data_dir, base_dir, build_dir):
-    projectID = os.path.split(os.path.split(base_dir)[0])[1]
+    projectID = os.path.basename(base_dir)
 
     print('[{}] Preparing build tree.'.format(projectID))
 
