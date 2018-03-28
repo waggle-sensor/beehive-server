@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+import sys
+import os
+import subprocess
+import argparse
+import shutil
+import publishing
+import gzip
+
+# resolve repo paths
+program = os.path.abspath(sys.argv[0])
+pubdir = os.path.dirname(os.path.dirname(program))
+
+
+def needs_refresh(pair):
+    src, dst = pair
+
+    try:
+        src_mtime = os.path.getmtime(src)
+    except FileNotFoundError:
+        return False
+
+    try:
+        dst_mtime = os.path.getmtime(dst)
+    except FileNotFoundError:
+        return True
+
+    return dst_mtime < src_mtime
+
+
+def make_project_digest(datadir, basedir, builddir):
+    projectID = os.path.split(os.path.split(basedir)[0])[1]
+
+    print('[{}] Preparing build tree.'.format(projectID))
+
+    projdir = os.path.join(builddir, projectID)
+    os.makedirs(projdir, exist_ok=True)
+
+    digest_dir = os.path.join(projdir, '{}.latest'.format(projectID))
+    os.makedirs(digest_dir, exist_ok=True)
+
+    staging_dir = os.path.join(projdir, 'staging')
+    os.makedirs(staging_dir, exist_ok=True)
+
+    print('[{}] Staging data files.'.format(projectID))
+
+    for metafile in ['nodes.csv', 'sensors.csv']:
+        shutil.copy(os.path.join(basedir, metafile), os.path.join(projdir, metafile))
+
+    nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
+
+    candidates = sorted(publishing.published_dates(nodes),
+                        key=lambda item: item[1], reverse=True)
+
+    file_pairs = []
+
+    for node, date in candidates:
+        src = os.path.join(args.datadir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+
+        os.makedirs(os.path.join(projdir, 'staging', node['node_id']), exist_ok=True)
+        dst = os.path.join(projdir, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+        file_pairs.append((src, dst))
+
+    for src, dst in filter(needs_refresh, file_pairs):
+        try:
+            subprocess.check_output('''
+            gzip -dc '{src}' |
+            {pubdir}/bin/filter-sensors '{basedir}sensors.csv' |
+            {pubdir}/bin/filter-view '{basedir}' |
+            gzip > '{dst}.tmp'
+            '''.format(src=src, dst=dst, pubdir=pubdir, basedir=basedir), shell=True)
+
+            os.rename(dst + '.tmp', dst)
+
+            print('ok', src)
+        except Exception as exc:
+            print('err', src, exc)
+
+    print('[{}] Building project digest.'.format(projectID))
+
+    with open(os.path.join(projdir, 'data.csv'), 'wb') as outfile:
+        outfile.write(b'node_id,timestamp\n')
+
+        for root, _, filenames in os.walk(staging_dir):
+            for filename in filenames:
+                if not filename.endswith('.csv.gz'):
+                    continue
+                with open(os.path.join(root, filename), 'rb') as infile:
+                    data = gzip.decompress(infile.read())
+                for line in data.splitlines():
+                    fields = line.split(b';')
+                    outfile.write(fields[0])
+                    outfile.write(b',')
+                    outfile.write(fields[1])
+                    outfile.write(b',')
+                    outfile.write(fields[2])
+                    outfile.write(b',')
+                    outfile.write(fields[4])
+                    outfile.write(b',')
+                    outfile.write(fields[5])
+                    outfile.write(b',')
+                    outfile.write(fields[6])
+                    outfile.write(b'\n')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('datadir')
+    parser.add_argument('basedir')
+    parser.add_argument('builddir')
+    args = parser.parse_args()
+
+    make_project_digest(args.datadir, args.basedir, args.builddir)
