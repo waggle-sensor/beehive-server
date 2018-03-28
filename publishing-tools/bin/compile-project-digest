@@ -9,7 +9,7 @@ import gzip
 
 # resolve repo paths
 program = os.path.abspath(sys.argv[0])
-pubdir = os.path.dirname(os.path.dirname(program))
+program_dir = os.path.dirname(os.path.dirname(program))
 
 
 def needs_refresh(pair):
@@ -28,12 +28,12 @@ def needs_refresh(pair):
     return dst_mtime < src_mtime
 
 
-def make_project_digest(datadir, basedir, builddir):
-    projectID = os.path.split(os.path.split(basedir)[0])[1]
+def make_project_digest(data_dir, base_dir, build_dir):
+    projectID = os.path.split(os.path.split(base_dir)[0])[1]
 
     print('[{}] Preparing build tree.'.format(projectID))
 
-    projdir = os.path.join(builddir, projectID)
+    projdir = os.path.join(build_dir, projectID)
     os.makedirs(projdir, exist_ok=True)
 
     digest_dir = os.path.join(projdir, '{}.latest'.format(projectID))
@@ -44,21 +44,22 @@ def make_project_digest(datadir, basedir, builddir):
 
     print('[{}] Copy metadata.'.format(projectID))
 
-    shutil.copy(os.path.join(pubdir, 'docs', 'digest-readme.md'), os.path.join(digest_dir, 'README.md'))
-    shutil.copy(os.path.join(basedir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
-    shutil.copy(os.path.join(basedir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
+    shutil.copy(os.path.join(program_dir, 'docs', 'digest-readme.md'), os.path.join(digest_dir, 'README.md'))
+    shutil.copy(os.path.join(base_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
+    shutil.copy(os.path.join(base_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
 
     print('[{}] Staging data files.'.format(projectID))
 
-    nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
+    nodes = publishing.load_project_metadata(os.path.join(program_dir, 'examples/plenario'))
 
+    # sort candinate files in latest first order
     candidates = sorted(publishing.published_dates(nodes),
                         key=lambda item: item[1], reverse=True)
 
     file_pairs = []
 
     for node, date in candidates:
-        src = os.path.join(args.datadir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+        src = os.path.join(data_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
 
         os.makedirs(os.path.join(projdir, 'staging', node['node_id']), exist_ok=True)
         dst = os.path.join(projdir, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
@@ -68,10 +69,10 @@ def make_project_digest(datadir, basedir, builddir):
         try:
             subprocess.check_output('''
             gzip -dc '{src}' |
-            {pubdir}/bin/filter-sensors '{basedir}sensors.csv' |
-            {pubdir}/bin/filter-view '{basedir}' |
+            {program_dir}/bin/filter-sensors '{base_dir}sensors.csv' |
+            {program_dir}/bin/filter-view '{base_dir}' |
             gzip > '{dst}.tmp'
-            '''.format(src=src, dst=dst, pubdir=pubdir, basedir=basedir), shell=True)
+            '''.format(src=src, dst=dst, program_dir=program_dir, base_dir=base_dir), shell=True)
 
             os.rename(dst + '.tmp', dst)
 
@@ -114,9 +115,11 @@ def make_project_digest(datadir, basedir, builddir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('datadir')
-    parser.add_argument('basedir')
-    parser.add_argument('builddir')
+    parser.add_argument('data_dir')
+    parser.add_argument('base_dir')
+    parser.add_argument('build_dir')
     args = parser.parse_args()
 
-    make_project_digest(args.datadir, args.basedir, args.builddir)
+    make_project_digest(data_dir=args.data_dir,
+                        base_dir=args.base_dir,
+                        build_dir=args.build_dir)
