@@ -67,12 +67,24 @@ def make_project_digest(data_dir, base_dir, build_dir):
 
     for src, dst in filter(needs_refresh, file_pairs):
         try:
-            subprocess.check_output('''
+            sensors_metadata = os.path.join(base_dir, 'sensors.csv')
+            project_metadata = os.path.join(base_dir)
+
+            script_template = '''
             gzip -dc '{src}' |
-            {program_dir}/bin/filter-sensors '{base_dir}sensors.csv' |
-            {program_dir}/bin/filter-view '{base_dir}' |
+            {program_dir}/bin/filter-sensors '{sensors_metadata}' |
+            {program_dir}/bin/filter-view '{project_metadata}' |
             gzip > '{dst}.tmp'
-            '''.format(src=src, dst=dst, program_dir=program_dir, base_dir=base_dir), shell=True)
+            '''
+
+            script = script_template.format(src=src,
+                                            dst=dst,
+                                            program_dir=program_dir,
+                                            base_dir=base_dir,
+                                            sensors_metadata=sensors_metadata,
+                                            project_metadata=project_metadata)
+
+            subprocess.check_output(script, shell=True)
 
             os.rename(dst + '.tmp', dst)
 
