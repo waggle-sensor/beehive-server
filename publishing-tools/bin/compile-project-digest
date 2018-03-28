@@ -43,7 +43,7 @@ def make_project_digest(project_id):
     build_dir = os.path.join(digests_dir, project_id)
     os.makedirs(build_dir, exist_ok=True)
 
-    digest_dir = os.path.join(build_dir, '{}.latest'.format(project_id))
+    digest_dir = os.path.join(build_dir, '{}.latest'.format(project_id), '{}.{}'.format(project_id, datetime.utcnow().strftime('%Y-%m-%d')))
     os.makedirs(digest_dir, exist_ok=True)
 
     staging_dir = os.path.join(build_dir, 'staging')
@@ -174,7 +174,8 @@ def make_project_digest(project_id):
 
     shutil.make_archive(base_name=os.path.join(build_dir, '{}.latest'.format(project_id)),
                         format='gztar',
-                        root_dir=digest_dir)
+                        root_dir=os.path.join(digest_dir, '..'),
+                        base_dir=os.path.basename(digest_dir))
 
 
 if __name__ == '__main__':
