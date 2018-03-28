@@ -14,6 +14,10 @@ from jinja2 import Template
 program = os.path.abspath(sys.argv[0])
 program_dir = os.path.dirname(os.path.dirname(program))
 
+datasets_dir = os.environ['DATASETS_DIR']
+projects_dir = os.environ['PROJECTS_DIR']
+digests_dir = os.environ['DIGESTS_DIR']
+
 
 def needs_refresh(pair):
     src, dst = pair
@@ -31,18 +35,18 @@ def needs_refresh(pair):
     return dst_mtime < src_mtime
 
 
-def make_project_digest(data_dir, project_dir, build_dir):
-    project_id = os.path.basename(project_dir)
+def make_project_digest(project_id):
+    project_dir = os.path.join(projects_dir, project_id)
 
     print('[{}] Preparing build tree.'.format(project_id))
 
-    projdir = os.path.join(build_dir, project_id)
-    os.makedirs(projdir, exist_ok=True)
+    build_dir = os.path.join(digests_dir, project_id)
+    os.makedirs(build_dir, exist_ok=True)
 
-    digest_dir = os.path.join(projdir, '{}.latest'.format(project_id))
+    digest_dir = os.path.join(build_dir, '{}.latest'.format(project_id))
     os.makedirs(digest_dir, exist_ok=True)
 
-    staging_dir = os.path.join(projdir, 'staging')
+    staging_dir = os.path.join(build_dir, 'staging')
     os.makedirs(staging_dir, exist_ok=True)
 
     print('[{}] Copy metadata.'.format(project_id))
@@ -73,10 +77,10 @@ def make_project_digest(data_dir, project_dir, build_dir):
     file_pairs = []
 
     for node, date in candidates:
-        src = os.path.join(data_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+        src = os.path.join(datasets_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
 
-        os.makedirs(os.path.join(projdir, 'staging', node['node_id']), exist_ok=True)
-        dst = os.path.join(projdir, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+        os.makedirs(os.path.join(build_dir, 'staging', node['node_id']), exist_ok=True)
+        dst = os.path.join(build_dir, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
         file_pairs.append((src, dst))
 
     for src, dst in filter(needs_refresh, file_pairs):
@@ -137,8 +141,15 @@ def make_project_digest(data_dir, project_dir, build_dir):
     now = datetime.now()
     intervals = [interval for node in nodes for interval in node['commissioned']]
 
-    data_start_date = min(interval.start for interval in intervals)
-    data_end_date = max(interval.end or now for interval in intervals)
+    try:
+        data_start_date = min(interval.start for interval in intervals)
+    except ValueError:
+        data_start_date = now
+
+    try:
+        data_end_date = max(interval.end or now for interval in intervals)
+    except ValueError:
+        data_end_date = now
 
     with open(os.path.join(digest_dir, 'provenance.csv'), 'w') as outfile:
         writer = csv.writer(outfile)
@@ -161,18 +172,14 @@ def make_project_digest(data_dir, project_dir, build_dir):
             'http://mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
         ])
 
-    shutil.make_archive(base_name=os.path.join(projdir, '{}.latest'.format(project_id)),
+    shutil.make_archive(base_name=os.path.join(build_dir, '{}.latest'.format(project_id)),
                         format='gztar',
                         root_dir=digest_dir)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('data_dir', help='data_dir is a directory containing the datasets tree.')
-    parser.add_argument('project_dir', help='project_dir is a directory containing supporting READMEs and metadata.')
-    parser.add_argument('build_dir', help='build_dir is a directory that will be used to stage data files and compile digests.')
+    parser.add_argument('project_id', help='Project ID to compile digest for.')
     args = parser.parse_args()
 
-    make_project_digest(data_dir=args.data_dir,
-                        project_dir=args.project_dir,
-                        build_dir=args.build_dir)
+    make_project_digest(args.project_id)
