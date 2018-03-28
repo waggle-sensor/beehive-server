@@ -10,13 +10,31 @@ import csv
 from datetime import datetime
 from jinja2 import Template
 
-# resolve repo paths
+parser = argparse.ArgumentParser()
+parser.add_argument('project_ids', nargs='*', help='Project IDs to compile digest for.')
+args = parser.parse_args()
+
+# resolve environment paths
 program = os.path.abspath(sys.argv[0])
 program_dir = os.path.dirname(os.path.dirname(program))
 
-datasets_dir = os.environ['DATASETS_DIR']
-projects_dir = os.environ['PROJECTS_DIR']
-digests_dir = os.environ['DIGESTS_DIR']
+try:
+    datasets_dir = os.environ['DATASETS_DIR']
+except KeyError:
+    print('Please set the environmental variable DATASETS_DIR to a datasets base directory.')
+    sys.exit(1)
+
+try:
+    projects_dir = os.environ['PROJECTS_DIR']
+except KeyError:
+    print('Please set the environmental variable PROJECTS_DIR to a projects base directory.')
+    sys.exit(1)
+
+try:
+    digests_dir = os.environ['DIGESTS_DIR']
+except KeyError:
+    print('Please set the environmental variable DIGESTS_DIR to a digests build directory.')
+    sys.exit(1)
 
 
 def needs_refresh(pair):
@@ -174,13 +192,10 @@ def make_project_digest(project_id):
 
     shutil.make_archive(base_name=os.path.join(build_dir, '{}.latest'.format(project_id)),
                         format='gztar',
-                        root_dir=os.path.join(digest_dir, '..'),
+                        root_dir=os.path.dirname(digest_dir),
                         base_dir=os.path.basename(digest_dir))
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('project_id', help='Project ID to compile digest for.')
-    args = parser.parse_args()
-
-    make_project_digest(args.project_id)
+    for project_id in args.project_ids:
+        make_project_digest(project_id)
