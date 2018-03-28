@@ -79,8 +79,8 @@ def make_project_digest(project_id):
     for node, date in candidates:
         src = os.path.join(datasets_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
 
-        os.makedirs(os.path.join(build_dir, 'staging', node['node_id']), exist_ok=True)
-        dst = os.path.join(build_dir, 'staging', node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+        os.makedirs(os.path.join(staging_dir, node['node_id']), exist_ok=True)
+        dst = os.path.join(staging_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
         file_pairs.append((src, dst))
 
     for src, dst in filter(needs_refresh, file_pairs):
@@ -169,7 +169,7 @@ def make_project_digest(project_id):
             data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
             data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
             now.strftime('%Y/%m/%d %H:%M:%S'),
-            'http://mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
+            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
         ])
 
     shutil.make_archive(base_name=os.path.join(build_dir, '{}.latest'.format(project_id)),
