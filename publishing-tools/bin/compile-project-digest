@@ -38,7 +38,7 @@ except KeyError:
 
 
 def ensure_exists(dir):
-    os.mkdirs(dir, exist_ok=True)
+    os.makedirs(dir, exist_ok=True)
 
 
 def needs_refresh(pair):
