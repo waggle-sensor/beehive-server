@@ -112,9 +112,9 @@ project digest. This file is a CSV with the following fields:
 
 * `data_format_version` - Data format version.
 * `project_id` - Project ID.
-* `data_start_date` - Minimum possible publishing date.
-* `data_end_date` - Maximum possible publishing date. If no explicit date exists, then creation date is used.
-* `creation_date` - Date this digest was created.
+* `data_start_date` - Minimum possible publishing UTC timestamp.
+* `data_end_date` - Maximum possible publishing UTC timestamp. If no explicit date exists, the creation date is used.
+* `creation_date` - UTC timestamp this digest was created.
 * `url` - URL where this digest was provided.
 
 These fields will always be provide as a header, for example:
