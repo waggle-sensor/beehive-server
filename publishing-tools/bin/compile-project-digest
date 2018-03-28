@@ -45,7 +45,7 @@ def make_project_digest(datadir, basedir, builddir):
     print('[{}] Staging data files.'.format(projectID))
 
     for metafile in ['nodes.csv', 'sensors.csv']:
-        shutil.copy(os.path.join(basedir, metafile), os.path.join(projdir, metafile))
+        shutil.copy(os.path.join(basedir, metafile), os.path.join(digest_dir, metafile))
 
     nodes = publishing.load_project_metadata(os.path.join(pubdir, 'examples/plenario'))
 
@@ -78,8 +78,8 @@ def make_project_digest(datadir, basedir, builddir):
 
     print('[{}] Building project digest.'.format(projectID))
 
-    with open(os.path.join(projdir, 'data.csv'), 'wb') as outfile:
-        outfile.write(b'node_id,timestamp\n')
+    with open(os.path.join(digest_dir, 'data.csv'), 'wb') as outfile:
+        outfile.write(b'node_id,timestamp,plugin,sensor,parameter,value\n')
 
         for root, _, filenames in os.walk(staging_dir):
             for filename in filenames:
