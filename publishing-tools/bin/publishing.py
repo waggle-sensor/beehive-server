@@ -154,3 +154,45 @@ def published_dates(project_metadata):
             end = (interval.end or datetime.now()).date()
             for date in daterange(start, end):
                 yield node, date
+
+
+def filter_view(metadata, reader, writer):
+    nodes_by_id = {node['node_id']: node for node in metadata}
+
+    def isviewable(fields):
+        node_id = fields[0]
+        timestamp = load_timestamp(fields[1])
+
+        if node_id not in nodes_by_id:
+            return False
+
+        node = nodes_by_id[node_id]
+
+        return any(timestamp in interval for interval in node['commissioned'])
+
+    csvreader = csv.reader(reader, delimiter=';')
+    csvwriter = csv.writer(writer, delimiter=';')
+    csvwriter.writerows(filter(isviewable, csvreader))
+
+
+def filter_sensors(metadata, reader, writer):
+    def isvalid(fields):
+        sensor = fields[4]
+        param = fields[5]
+
+        try:
+            value = float(fields[6])
+        except ValueError:
+            return False
+
+        name = '.'.join([sensor, param])
+
+        if name not in metadata:
+            return False
+
+        params = metadata[name]
+        return value in params['range']
+
+    csvreader = csv.reader(reader, delimiter=';')
+    csvwriter = csv.writer(writer, delimiter=';')
+    csvwriter.writerows(filter(isvalid, csvreader))

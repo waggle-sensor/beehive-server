@@ -2,43 +2,14 @@
 import argparse
 import publishing
 import sys
-import csv
-
-
-def invert(f):
-    return lambda x: not f(x)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='''
     Filters sensor stream to only include sensors in config with values passing sanity checks.
     ''')
-    parser.add_argument('-v', action='store_true', help='invert')
     parser.add_argument('metadata', help='path to sensor metadata')
     args = parser.parse_args()
 
-    config = publishing.load_sensor_metadata(args.metadata)
-
-    def isvalid(fields):
-        sensor = fields[4]
-        param = fields[5]
-
-        try:
-            value = float(fields[6])
-        except ValueError:
-            return False
-
-        name = '.'.join([sensor, param])
-
-        if name not in config:
-            return False
-
-        params = config[name]
-        return value in params['range']
-
-    if args.v:
-        isvalid = invert(isvalid)
-
-    reader = csv.reader(sys.stdin, delimiter=';')
-    writer = csv.writer(sys.stdout, delimiter=';')
-    writer.writerows(filter(isvalid, reader))
+    metadata = publishing.load_sensor_metadata(args.metadata)
+    publishing.filter_sensors(metadata, sys.stdin, sys.stdout)

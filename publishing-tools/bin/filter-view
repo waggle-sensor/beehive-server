@@ -1,13 +1,7 @@
 #!/usr/bin/env python3
-import publishing
 import argparse
-from datetime import datetime
+import publishing
 import sys
-import csv
-
-
-def load_timestamp(timestamp):
-    return datetime.strptime(timestamp, '%Y/%m/%d %H:%M:%S')
 
 
 if __name__ == '__main__':
@@ -17,20 +11,5 @@ if __name__ == '__main__':
     parser.add_argument('metadata', help='path to project metadata')
     args = parser.parse_args()
 
-    nodes = publishing.load_project_metadata(args.metadata)
-    nodes_by_id = {node['node_id']: node for node in nodes}
-
-    def isviewable(fields):
-        node_id = fields[0]
-        timestamp = load_timestamp(fields[1])
-
-        if node_id not in nodes_by_id:
-            return False
-
-        node = nodes_by_id[node_id]
-
-        return any(timestamp in interval for interval in node['commissioned'])
-
-    reader = csv.reader(sys.stdin, delimiter=';')
-    writer = csv.writer(sys.stdout, delimiter=';')
-    writer.writerows(filter(isviewable, reader))
+    metadata = publishing.load_project_metadata(args.metadata)
+    publishing.filter_view(metadata, sys.stdin, sys.stdout)
