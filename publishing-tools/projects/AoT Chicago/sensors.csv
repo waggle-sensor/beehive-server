@@ -1,6 +1,6 @@
-sensor,parameter,unit,minval,maxval,datasheet
-HTU21D,humidity,RH,0,100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
-HTU21D,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
-BMP180,temperature,C,-40,85,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
-BMP180,pressure,hPa,300,1100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
-TSYS01,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf"
+sensor,type,parameter,unit,minval,maxval,datasheet
+HTU21D,converted,humidity,RH,0,100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
+HTU21D,converted,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
+BMP180,converted,temperature,C,-40,85,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
+BMP180,converted,pressure,hPa,300,1100,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
+TSYS01,converted,temperature,C,-40,125,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf"
