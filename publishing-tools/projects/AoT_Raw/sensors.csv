@@ -1,67 +1,67 @@
 sensor,parameter,unit,minval,maxval,datasheet
-APDS-9006-020,intensity,,,,
-Alphasense,bins,,,,
-Alphasense,fw,,,,
-Alphasense,id,,,,
-Alphasense,pm1,,,,
-Alphasense,pm10,,,,
-Alphasense,pm2.5,,,,
-Alphasense,sample flow rate,,,,
-Alphasense,sampling period,,,,
-BMI160,acceleration.x,,,,
-BMI160,acceleration.y,,,,
-BMI160,acceleration.z,,,,
-BMI160,index,,,,
-BMI160,orientation.x,,,,
-BMI160,orientation.y,,,,
-BMI160,orientation.z,,,,
-BMP180,pressure,hPa,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
-BMP180,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
-CO ADC Temp,adc_temperature,,,,
-CO LMP Temp,adc_temperature,,,,
-Chemsense ID,mac_address,,,,
-Chemsense,at0,,,,
-Chemsense,at1,,,,
-Chemsense,at2,,,,
-Chemsense,at3,,,,
-Chemsense,co,,,,
-Chemsense,h2s,,,,
-Chemsense,no2,,,,
-Chemsense,o3,,,,
-Chemsense,oxidizing_gases,,,,
-Chemsense,reducing_gases,,,,
-Chemsense,so2,,,,
-Coresense ID,mac_address,,,,
-HIH4030,humidity,RH,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu4030.pdf"
-HIH6130,humidity,,,,
-HIH6130,temperature,,,,
-HMC5883L,magnetic_field.x,,,,
-HMC5883L,magnetic_field.y,,,,
-HMC5883L,magnetic_field.z,,,,
-HTU21D,humidity,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
-HTU21D,temperature,RH,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
-IAQ/IRR Temp,adc_temperature,,,,
-LPS25H,pressure,,,,
-LPS25H,temperature,,,,
-ML8511,intensity,,,,
-MLX75305,intensity,,,,
-MMA8452Q,acceleration.x,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
-MMA8452Q,acceleration.y,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
-MMA8452Q,acceleration.z,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
-MMA8452Q,rms,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
-O3/NO2 Temp,adc_temperature,,,,
-PR103J2,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/pr103j2.pdf"
-SHT25,humidity,,,,
-SHT25,temperature,,,,
-SO2/H2S Temp,adc_temperature,,,,
+APDS-9006-020,intensity,lux,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/apd9006020.pdf
+Alphasense,bins,counts,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,fw,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,id,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,pm1,mg/m^3,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,pm10,mg/m^3,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,pm2.5,mg/m^3,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,sample flow rate,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+Alphasense,sampling period,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
+BMI160,acceleration.x,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,acceleration.y,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,acceleration.z,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,index,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,orientation.x,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,orientation.y,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMI160,orientation.z,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/bmi160.pdf
+BMP180,pressure,hPa,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf
+BMP180,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf
+CO ADC Temp,adc_temperature,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+CO LMP Temp,adc_temperature,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense ID,mac_address,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,at0,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,at1,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,at2,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,at3,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,co,ppm,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,h2s,ppm,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,no2,ppm,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,o3,ppm,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,oxidizing_gases,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,reducing_gases,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Chemsense,so2,ppm,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+Coresense ID,mac_address,,,,https://github.com/waggle-sensor/sensors
+HIH4030,humidity,RH,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu4030.pdf
+HIH6130,humidity,RH,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hih6130.pdf
+HIH6130,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hih6130.pdf
+HMC5883L,magnetic_field.x,gauss,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
+HMC5883L,magnetic_field.y,gauss,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
+HMC5883L,magnetic_field.z,gauss,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
+HTU21D,humidity,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
+HTU21D,temperature,RH,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
+IAQ/IRR Temp,adc_temperature,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+LPS25H,pressure,hPa,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
+LPS25H,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
+ML8511,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/ml8511.pdf
+MLX75305,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/mlx75305c.pdf
+MMA8452Q,acceleration.x,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
+MMA8452Q,acceleration.y,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
+MMA8452Q,acceleration.z,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
+MMA8452Q,rms,g,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
+O3/NO2 Temp,adc_temperature,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
+PR103J2,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/pr103j2.pdf
+SHT25,humidity,RH,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/sht25.pdf
+SHT25,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/sht25.pdf
+SO2/H2S Temp,adc_temperature,,,,https://github.com/waggle-sensor/sensors#chemsense-hw-ver-passamaquoddy-bay
 SPV1840LR5H-B,intensity,dB,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/spv1840lr5h-b.pdf
-Si1145,intensity,,,,
-Si1145,ir_count,,,,
-Si1145,uv_count,,,,
-Si1145,visible_light_count,,,,
-TMP112,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tmp112.pdf"
-TMP421,temperature,,,,
-TSL250RD-AS,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
-TSL250RD-LS,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
-TSL260RD,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
+Si1145,intensity,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
+Si1145,ir_count,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
+Si1145,uv_count,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
+Si1145,visible_light_count,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
+TMP112,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tmp112.pdf
+TMP421,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/tmp421.pdf
+TSL250RD-AS,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
+TSL250RD-LS,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
+TSL260RD,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
 TSYS01,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf
