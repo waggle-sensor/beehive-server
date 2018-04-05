@@ -15,8 +15,8 @@ BMI160,index,,,,
 BMI160,orientation.x,,,,
 BMI160,orientation.y,,,,
 BMI160,orientation.z,,,,
-BMP180,pressure,,,,
-BMP180,temperature,,,,
+BMP180,pressure,hPa,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
+BMP180,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
 CO ADC Temp,adc_temperature,,,,
 CO LMP Temp,adc_temperature,,,,
 Chemsense ID,mac_address,,,,
@@ -32,36 +32,36 @@ Chemsense,oxidizing_gases,,,,
 Chemsense,reducing_gases,,,,
 Chemsense,so2,,,,
 Coresense ID,mac_address,,,,
-HIH4030,humidity,,,,
+HIH4030,humidity,RH,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu4030.pdf"
 HIH6130,humidity,,,,
 HIH6130,temperature,,,,
 HMC5883L,magnetic_field.x,,,,
 HMC5883L,magnetic_field.y,,,,
 HMC5883L,magnetic_field.z,,,,
-HTU21D,humidity,,,,
-HTU21D,temperature,,,,
+HTU21D,humidity,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
+HTU21D,temperature,RH,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf"
 IAQ/IRR Temp,adc_temperature,,,,
 LPS25H,pressure,,,,
 LPS25H,temperature,,,,
 ML8511,intensity,,,,
 MLX75305,intensity,,,,
-MMA8452Q,acceleration.x,,,,
-MMA8452Q,acceleration.y,,,,
-MMA8452Q,acceleration.z,,,,
-MMA8452Q,rms,,,,
+MMA8452Q,acceleration.x,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
+MMA8452Q,acceleration.y,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
+MMA8452Q,acceleration.z,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
+MMA8452Q,rms,g,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf"
 O3/NO2 Temp,adc_temperature,,,,
-PR103J2,temperature,,,,
+PR103J2,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/pr103j2.pdf"
 SHT25,humidity,,,,
 SHT25,temperature,,,,
 SO2/H2S Temp,adc_temperature,,,,
-SPV1840LR5H-B,intensity,,,,
+SPV1840LR5H-B,intensity,dB,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/spv1840lr5h-b.pdf
 Si1145,intensity,,,,
 Si1145,ir_count,,,,
 Si1145,uv_count,,,,
 Si1145,visible_light_count,,,,
-TMP112,temperature,,,,
+TMP112,temperature,C,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tmp112.pdf"
 TMP421,temperature,,,,
-TSL250RD-AS,intensity,,,,
-TSL250RD-LS,intensity,,,,
-TSL260RD,intensity,,,,
-TSYS01,temperature,,,,
+TSL250RD-AS,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
+TSL250RD-LS,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
+TSL260RD,intensity,mW/cm^2,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
+TSYS01,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf
