@@ -29,7 +29,7 @@ def trim_python_repr(s):
 def trim_coresense_packet(source):
     start = source.index(b'\xaa')
     end = source.rindex(b'\x55')
-    return source[start:end+1]
+    return source[start:end + 1]
 
 
 def reunpack_if_needed(source):
@@ -48,13 +48,31 @@ def decode_coresense_4(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
 
-    results = {}
+    unpacked_data = decode_frame_v5(source)
 
-    for sensor_id, parameters in decode_frame_v5(source).items():
-        results.update(convert_v5(parameters, sensor_id))
+    raw_results = {}
 
-    results = dict((name, value) for name, (value, unit) in results.items())
-    return map_readings_4to3(results)
+    for sensor_id, sensor_data in unpacked_data.items():
+        raw_results.update(sensor_data)
+
+    converted_results = {}
+
+    for sensor_id, sensor_data in unpacked_data.items():
+        for key, (value, unit) in convert_v5(sensor_data, sensor_id).items():
+            converted_results[key] = value
+
+    all_results = {}
+
+    for k, v in map_readings_4to3(raw_results).items():
+        all_results[('raw', k)] = v
+
+    for k, v in map_readings_4to3(converted_results).items():
+        if k.startswith('Chemsense'):
+            all_results[('raw', k)] = v
+        else:
+            all_results[('converted', k)] = v
+
+    return all_results
 
 
 def decode18(data):
@@ -194,12 +212,40 @@ template_4to3 = {
         'id': 'alpha_serial',
         'fw': 'alpha_firmware',
     },
+    'PMS7003': {
+        '10um_particle': 'pms7003_10um_particle',
+        '1um_particle': 'pms7003_1um_particle',
+        '2_5um_particle': 'pms7003_2_5um_particle',
+        '5um_particle': 'pms7003_5um_particle',
+        'pm10_atm': 'pms7003_pm10_atm',
+        'pm10_cf1': 'pms7003_pm10_cf1',
+        'pm1_atm': 'pms7003_pm1_atm',
+        'pm1_cf1': 'pms7003_pm1_cf1',
+        'pm25_atm': 'pms7003_pm25_atm',
+        'pm25_cf1': 'pms7003_pm25_cf1',
+        'point_3um_particle': 'pms7003_point_3um_particle',
+        'point_5um_particle': 'pms7003_point_5um_particle',
+    },
+    'Net Broadband': {
+        'rx': 'net_broadband_rx',
+        'tx': 'net_broadband_tx',
+    },
+    'Net LAN': {
+        'rx': 'net_lan_rx',
+        'tx': 'net_lan_tx',
+    },
+    'Net USB': {
+        'rx': 'net_usb_rx',
+        'tx': 'net_usb_tx',
+    },
 }
 
 
 def stringify(x):
     if isinstance(x, tuple) or isinstance(x, list):
         return ','.join([stringify(xi) for xi in x])
+    if isinstance(x, bytes) or isinstance(x, bytearray):
+        return binascii.hexlify(x).decode()
     return str(x)
 
 

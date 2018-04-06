@@ -4,6 +4,7 @@ from cassandra.cluster import Cluster
 import os
 import pipeline
 import logging
+import csv
 
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
@@ -32,6 +33,8 @@ for i, line in enumerate(lines):
         logger.info('{} [{:.0%}]'.format(filename, i / len(lines)))
 
         with open(filename, 'w') as outfile:
+            writer = csv.writer(outfile, delimiter=';')
+
             for row in rows:
                 try:
                     results = pipeline.decode(row)
@@ -42,6 +45,12 @@ for i, line in enumerate(lines):
                     continue
 
                 for sensor, values in results.items():
+                    if isinstance(sensor, tuple):
+                        # unpack typed (raw / converted / etc) sensor
+                        type, sensor = sensor
+                    else:
+                        type = row.parameter
+
                     if isinstance(values, dict):
                         enum = values.items()
                     elif isinstance(values, list) or isinstance(values, tuple):
@@ -50,17 +59,15 @@ for i, line in enumerate(lines):
                         continue
 
                     for name, value in enum:
-                        columns = [
+                        writer.writerow([
                             node_id,
                             row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
                             ':'.join([row.plugin_name, row.plugin_version]),
-                            row.parameter,
+                            type,
                             sensor,
                             str(name),
                             str(value),
-                        ]
-
-                        print(';'.join(columns), file=outfile)
+                        ])
 
     except KeyboardInterrupt:
         break
