@@ -44,6 +44,12 @@ def decode_coresense_3(source):
     return decode_frame_v3(source)
 
 
+still_raw_sensors = {
+    'Chemsense',
+    'Si1145',
+}
+
+
 def decode_coresense_4(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
@@ -67,7 +73,7 @@ def decode_coresense_4(source):
         all_results[('raw', k)] = v
 
     for k, v in map_readings_4to3(converted_results).items():
-        if k.startswith('Chemsense'):
+        if k in still_raw_sensors:
             all_results[('raw', k)] = v
         else:
             all_results[('converted', k)] = v
