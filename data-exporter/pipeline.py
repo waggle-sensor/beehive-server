@@ -44,41 +44,31 @@ def decode_coresense_3(source):
     return decode_frame_v3(source)
 
 
-still_raw_sensors = {
-    'Chemsense',
-    'Si1145',
-}
-
-
 def decode_coresense_4(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
 
     unpacked_data = decode_frame_v5(source)
 
-    raw_results = {}
+    results = {}
 
     for sensor_id, sensor_data in unpacked_data.items():
-        raw_results.update(sensor_data)
-
-    converted_results = {}
+        for key, value in sensor_data.items():
+            results[key] = {'raw': value}
 
     for sensor_id, sensor_data in unpacked_data.items():
         for key, (value, unit) in convert_v5(sensor_data, sensor_id).items():
-            converted_results[key] = value
+            if unit == 'raw':
+                results[key] = {'raw': value}
+            elif key.startswith('chemsense_at') or key.startswith('chemsense_sh') or key.startswith('chemsense_lp'):
+                results[key] = {'raw': int(value * 100), 'hrf': value, 'hrf_units': unit}
+            else:
+                if key not in results:
+                    results[key] = {}
+                results[key]['hrf'] = value
+                results[key]['hrf_units'] = unit
 
-    all_results = {}
-
-    for k, v in map_readings_4to3(raw_results).items():
-        all_results[('raw', k)] = v
-
-    for k, v in map_readings_4to3(converted_results).items():
-        if k in still_raw_sensors:
-            all_results[('raw', k)] = v
-        else:
-            all_results[('converted', k)] = v
-
-    return all_results
+    return map_readings_4to3(results)
 
 
 def decode18(data):
@@ -102,7 +92,7 @@ def decode_alphasense_1(source):
 decoders = {
     'coresense:3': decode_coresense_3,
     'coresense:4': decode_coresense_4,
-    'alphasense:1': decode_alphasense_1,
+    # 'alphasense:1': decode_alphasense_1,
 }
 
 
@@ -248,6 +238,8 @@ template_4to3 = {
 
 
 def stringify(x):
+    if x is None:
+        return ''
     if isinstance(x, tuple) or isinstance(x, list):
         return ','.join([stringify(xi) for xi in x])
     if isinstance(x, bytes) or isinstance(x, bytearray):
@@ -259,7 +251,8 @@ def map_parameters_4to3(readings, parameters):
     output = {}
 
     for p, k in parameters.items():
-        output[p] = stringify(readings[k])
+        output[p] = readings[k]
+        # output[p] = stringify(readings[k])
 
     return output
 

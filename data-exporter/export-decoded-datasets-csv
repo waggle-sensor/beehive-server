@@ -5,6 +5,19 @@ import os
 import pipeline
 import logging
 import csv
+import binascii
+import time
+
+
+def stringify(x):
+    if x is None:
+        return ''
+    if isinstance(x, tuple) or isinstance(x, list):
+        return ','.join(map(stringify, x))
+    if isinstance(x, bytes) or isinstance(x, bytearray):
+        return binascii.hexlify(x).decode()
+    return str(x)
+
 
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
@@ -17,6 +30,8 @@ query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sen
 
 lines = list(fileinput.input())
 
+start_time = time.time()
+
 for i, line in enumerate(lines):
     try:
         fields = line.split()
@@ -28,9 +43,13 @@ for i, line in enumerate(lines):
         os.makedirs(prefix, exist_ok=True)
         filename = '{}/{}.csv'.format(prefix, date)
 
-        rows = session.execute(query, partition_key)
-
         logger.info('{} [{:.0%}]'.format(filename, i / len(lines)))
+
+        fetch_start = time.time()
+        rows = list(session.execute(query, partition_key))
+        fetch_elapsed = time.time() - fetch_start
+
+        dataset_start_time = time.time()
 
         with open(filename, 'w') as outfile:
             writer = csv.writer(outfile, delimiter=';')
@@ -44,32 +63,39 @@ for i, line in enumerate(lines):
                     logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
                     continue
 
-                for sensor, values in results.items():
-                    if isinstance(sensor, tuple):
-                        # unpack typed (raw / converted / etc) sensor
-                        type, sensor = sensor
-                    else:
-                        type = row.parameter
+                for sensor, sensor_values in results.items():
+                    for key, value in sensor_values.items():
+                        raw_value = value.get('raw', None)
+                        raw_units = value.get('raw_units', None)
+                        hrf_value = value.get('hrf', None)
+                        hrf_units = value.get('hrf_units', None)
 
-                    if isinstance(values, dict):
-                        enum = values.items()
-                    elif isinstance(values, list) or isinstance(values, tuple):
-                        enum = enumerate(values)
-                    else:
-                        continue
-
-                    for name, value in enum:
                         writer.writerow([
                             node_id,
                             row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
                             ':'.join([row.plugin_name, row.plugin_version]),
-                            type,
+                            '7a45cdf',
                             sensor,
-                            str(name),
-                            str(value),
+                            key,
+                            stringify(raw_value),
+                            raw_units,
+                            stringify(hrf_value),
+                            hrf_units,
                         ])
+
+        elapsed_time = time.time() - start_time
+        dataset_elapsed_time = time.time() - dataset_start_time
+        count = i + 1
+        mean_time = elapsed_time / count
+        expected_time_left = mean_time * (len(lines) - count)
+
+        logger.info('Total time is {:0.2f} seconds.'.format(elapsed_time))
+        logger.info('Fetch time is {:0.2f} seconds.'.format(fetch_elapsed))
+        logger.info('Decode time is {:0.2f} seconds.'.format(dataset_elapsed_time))
+        logger.info('Mean decode time is {:0.2f} seconds.'.format(mean_time))
+        logger.info('Excepted time left is {:0.2f} seconds.'.format(expected_time_left))
 
     except KeyboardInterrupt:
         break
     except Exception as exc:
-        logger.exception('failed to decode row: {}'.format(row))
+        logger.exception('Failed to decode row: {}'.format(row))
