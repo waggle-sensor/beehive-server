@@ -239,6 +239,24 @@ template_4to3 = {
         'rx': 'net_usb_rx',
         'tx': 'net_usb_tx',
     },
+    'NC': {
+        'uptime': 'nc_uptime',
+        'idletime': 'nc_idletime',
+    },
+    'EP': {
+        'uptime': 'ep_uptime',
+        'idletime': 'ep_idletime',
+    },
+    'Wagman': {
+        'boot_count': 'wagman_boot_count',
+        'current_wagman': 'wagman_current_wagman',
+        'current_nc': 'wagman_current_nc',
+        'current_ep': 'wagman_current_ep',
+        'current_cs': 'wagman_current_cs',
+        'fails_nc': 'wagman_failcount_nc',
+        'fails_ep': 'wagman_failcount_ep',
+        'fails_cs': 'wagman_failcount_cs',
+    }
 }
 
 
@@ -257,7 +275,6 @@ def map_parameters_4to3(readings, parameters):
 
     for p, k in parameters.items():
         output[p] = readings[k]
-        # output[p] = stringify(readings[k])
 
     return output
 
