@@ -41,7 +41,12 @@ def reunpack_if_needed(source):
 def decode_coresense_3(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
-    return decode_frame_v3(source)
+    decoded = decode_frame_v3(source)
+
+    # wrap as raw values
+    return {sensor: {key: {'raw': value}}
+            for sensor, sensor_data in decoded.items()
+            for key, value in sensor_data.items()}
 
 
 def decode_coresense_4(source):
@@ -92,7 +97,7 @@ def decode_alphasense_1(source):
 decoders = {
     'coresense:3': decode_coresense_3,
     'coresense:4': decode_coresense_4,
-    # 'alphasense:1': decode_alphasense_1,
+    'status:0': decode_coresense_4,
 }
 
 
