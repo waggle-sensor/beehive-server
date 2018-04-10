@@ -120,7 +120,7 @@ project digest. This file is a CSV with the following fields:
 These fields will always be provide as a header, for example:
 ```
 data_format_version,project_id,data_start_date,data_end_date,creation_date,url
-1,AoT Chicago,2017/03/31 00:00:00,2018/03/28 12:10:48,2018/03/28 12:10:48,http://mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT Chicago.latest.tar.gz
+1,AoT_Chicago.complete,2017/03/31 00:00:00,2018/04/10 15:34:36,2018/04/10 15:34:36,http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT_Chicago.complete.latest.tar.gz
 ```
 
 ### Useful Links
