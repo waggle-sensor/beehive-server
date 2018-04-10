@@ -67,3 +67,5 @@ node_id,timestamp,event,comment
 001e06113dbc,2018/03/01 00:00:00,commissioned,
 001e06113d22,2018/03/02 00:00:00,commissioned,
 001e0610ee43,2018/02/23 00:00:00,commissioned,
+001e06113107,2018/01/01 00:00:00,commissioned,
+001e06113cff,2018/01/01 00:00:00,commissioned,
