@@ -16,6 +16,8 @@ def stringify(x):
         return ','.join(map(stringify, x))
     if isinstance(x, bytes) or isinstance(x, bytearray):
         return binascii.hexlify(x).decode()
+    if isinstance(x, float):
+        return str(round(x, 4))
     return str(x)
 
 
