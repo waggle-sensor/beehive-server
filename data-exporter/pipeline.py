@@ -62,16 +62,19 @@ def decode_coresense_4(source):
             results[key] = {'raw': value}
 
     for sensor_id, sensor_data in unpacked_data.items():
-        for key, (value, unit) in convert_v5(sensor_data, sensor_id).items():
-            if unit == 'raw':
-                results[key] = {'raw': value}
-            elif key.startswith('chemsense_at') or key.startswith('chemsense_sh') or key.startswith('chemsense_lp'):
-                results[key] = {'raw': int(value * 100), 'hrf': value, 'hrf_units': unit}
-            else:
-                if key not in results:
-                    results[key] = {}
-                results[key]['hrf'] = value
-                results[key]['hrf_units'] = unit
+        try:
+            for key, (value, unit) in convert_v5(sensor_data, sensor_id).items():
+                if unit == 'raw':
+                    results[key] = {'raw': value}
+                elif key.startswith('chemsense_at') or key.startswith('chemsense_sh') or key.startswith('chemsense_lp'):
+                    results[key] = {'raw': int(value * 100), 'hrf': value, 'hrf_units': unit}
+                else:
+                    if key not in results:
+                        results[key] = {}
+                    results[key]['hrf'] = value
+                    results[key]['hrf_units'] = unit
+        except Exception:
+            continue
 
     return map_readings_4to3(results)
 
@@ -227,27 +230,27 @@ template_4to3 = {
         'point_3um_particle': 'pms7003_point_3um_particle',
         'point_5um_particle': 'pms7003_point_5um_particle',
     },
-    'Net Broadband': {
+    'net_broadband': {
         'rx': 'net_broadband_rx',
         'tx': 'net_broadband_tx',
     },
-    'Net LAN': {
+    'net_lan': {
         'rx': 'net_lan_rx',
         'tx': 'net_lan_tx',
     },
-    'Net USB': {
+    'net_usb': {
         'rx': 'net_usb_rx',
         'tx': 'net_usb_tx',
     },
-    'NC': {
+    'nc': {
         'uptime': 'nc_uptime',
         'idletime': 'nc_idletime',
     },
-    'EP': {
+    'ep': {
         'uptime': 'ep_uptime',
         'idletime': 'ep_idletime',
     },
-    'Wagman': {
+    'wagman': {
         'boot_count': 'wagman_boot_count',
         'current_wagman': 'wagman_current_wagman',
         'current_nc': 'wagman_current_nc',
