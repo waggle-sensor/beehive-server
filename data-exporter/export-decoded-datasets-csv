@@ -53,6 +53,8 @@ for i, line in enumerate(lines):
 
         dataset_start_time = time.time()
 
+        node_id = node_id[-12:].lower()
+
         with open(filename, 'w') as outfile:
             writer = csv.writer(outfile, delimiter=';')
 
