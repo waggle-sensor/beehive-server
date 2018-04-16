@@ -1,9 +1,14 @@
 import binascii
+import logging
 import re
 import struct
 from waggle.coresense.utils import decode_frame as decode_frame_v3
 from waggle.protocol.v5.decoder import decode_frame as decode_frame_v5
 from waggle.protocol.v5.decoder import convert as convert_v5
+
+
+logger = logging.getLogger('pipeline')
+logger.setLevel(logging.INFO)
 
 
 def normalize_key(k):
@@ -74,7 +79,7 @@ def decode_coresense_4(source):
                     results[key]['hrf'] = value
                     results[key]['hrf_units'] = unit
         except Exception:
-            continue
+            logger.exception('failed to decode {}'.format(source))
 
     return map_readings_4to3(results)
 
@@ -100,6 +105,7 @@ def decode_alphasense_1(source):
 decoders = {
     'coresense:3': decode_coresense_3,
     'coresense:4': decode_coresense_4,
+    'sysmon:1': decode_coresense_4,
     'status:0': decode_coresense_4,
 }
 
@@ -245,20 +251,56 @@ template_4to3 = {
     'nc': {
         'uptime': 'nc_uptime',
         'idletime': 'nc_idletime',
+        'load_1': 'nc_load_1',
+        'load_5': 'nc_load_5',
+        'load_10': 'nc_load_10',
+        'mem_total': 'nc_ram_total',
+        'mem_free': 'nc_ram_free',
     },
     'ep': {
         'uptime': 'ep_uptime',
         'idletime': 'ep_idletime',
+        'load_1': 'ep_load_1',
+        'load_5': 'ep_load_5',
+        'load_10': 'ep_load_10',
+        'mem_total': 'ep_ram_total',
+        'mem_free': 'ep_ram_free',
     },
     'wagman': {
+        'uptime': 'wagman_uptime',
+
         'boot_count': 'wagman_boot_count',
+
         'current_wagman': 'wagman_current_wagman',
         'current_nc': 'wagman_current_nc',
         'current_ep': 'wagman_current_ep',
         'current_cs': 'wagman_current_cs',
+
         'fails_nc': 'wagman_failcount_nc',
         'fails_ep': 'wagman_failcount_ep',
         'fails_cs': 'wagman_failcount_cs',
+
+        'temperature_nc_heatsink': 'wagman_temperature_ncheatsink',
+        'temperature_ep_heatsink': 'wagman_temperature_epheatsink',
+        'temperature_battery': 'wagman_temperature_battery',
+        'temperature_brainplate': 'wagman_temperature_brainplate',
+        'temperature_powersupply': 'wagman_temperature_powersupply',
+
+        # 'boot_flags': 'wagman_boot_flag',
+        # 'nc_bootloader_flags': 'wagman_bootloader_nc_flag',
+
+        # 'htu21d_temperature': 'wagman_htu21d_temperature',
+        # 'htu21d_humidity': 'wagman_htu21d_humidity',
+        # 'hih4030_humidity': 'wagman_hih4030_humidity',
+        # 'light': 'wagman_light',
+
+        'enabled_nc': 'wagman_enabled_nc',
+        'enabled_ep': 'wagman_enabled_ep',
+        'enabled_cs': 'wagman_enabled_cs',
+
+        'heartbeat_nc': 'wagman_heartbeat_nc',
+        'heartbeat_ep': 'wagman_heartbeat_ep',
+        'heartbeat_cs': 'wagman_heartbeat_cs',
     }
 }
 
@@ -277,7 +319,10 @@ def map_parameters_4to3(readings, parameters):
     output = {}
 
     for p, k in parameters.items():
-        output[p] = readings[k]
+        try:
+            output[p] = readings[k]
+        except KeyError:
+            continue
 
     return output
 
@@ -286,9 +331,6 @@ def map_readings_4to3(readings):
     output = {}
 
     for sensor, parameters in template_4to3.items():
-        try:
-            output[sensor] = map_parameters_4to3(readings, parameters)
-        except KeyError:
-            continue
+        output[sensor] = map_parameters_4to3(readings, parameters)
 
     return output

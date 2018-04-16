@@ -7,6 +7,7 @@ import logging
 import csv
 import binascii
 import time
+from collections import Counter
 
 
 def stringify(x):
@@ -37,9 +38,14 @@ start_time = time.time()
 for i, line in enumerate(lines):
     try:
         fields = line.split()
-        node_id = fields[0]
+
+        node_id = fields[0][-12:].lower()
         date = fields[2]
         partition_key = (fields[1], fields[2])
+
+        fetch_start = time.time()
+        rows = list(session.execute(query, partition_key))
+        fetch_elapsed = time.time() - fetch_start
 
         prefix = 'datasets/2/{}'.format(node_id)
         os.makedirs(prefix, exist_ok=True)
@@ -47,18 +53,16 @@ for i, line in enumerate(lines):
 
         logger.info('{} [{:.0%}]'.format(filename, i / len(lines)))
 
-        fetch_start = time.time()
-        rows = list(session.execute(query, partition_key))
-        fetch_elapsed = time.time() - fetch_start
-
         dataset_start_time = time.time()
-
-        node_id = node_id[-12:].lower()
 
         with open(filename, 'w') as outfile:
             writer = csv.writer(outfile, delimiter=';')
 
+            row_plugins = []
+
             for row in rows:
+                row_plugins.append(':'.join([row.plugin_name, row.plugin_version]))
+
                 try:
                     results = pipeline.decode(row)
                 except KeyboardInterrupt:
@@ -98,6 +102,7 @@ for i, line in enumerate(lines):
         logger.info('Decode time is {:0.2f} seconds.'.format(dataset_elapsed_time))
         logger.info('Mean decode time is {:0.2f} seconds.'.format(mean_time))
         logger.info('Excepted time left is {:0.2f} seconds.'.format(expected_time_left))
+        logger.info('Plugin stats: {}'.format(Counter(row_plugins)))
 
     except KeyboardInterrupt:
         break
