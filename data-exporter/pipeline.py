@@ -49,7 +49,7 @@ def decode_coresense_3(source):
     decoded = decode_frame_v3(source)
 
     # wrap as raw values
-    return {sensor: {key: {'hrf': value}}
+    return {sensor: {key: value}
             for sensor, sensor_data in decoded.items()
             for key, value in sensor_data.items()}
 

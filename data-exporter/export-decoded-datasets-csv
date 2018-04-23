@@ -39,6 +39,10 @@ lines = list(fileinput.input())
 
 start_time = time.time()
 
+old_plugins = ['coresense:3', 'alphasense:1', 'gps:1']
+
+opened = set()
+
 for i, line in enumerate(lines):
     try:
         fields = line.split()
@@ -59,13 +63,21 @@ for i, line in enumerate(lines):
 
         dataset_start_time = time.time()
 
-        with open(filename, 'w') as outfile:
+        if filename in opened:
+            mode = 'a'
+        else:
+            mode = 'w'
+
+        opened.add(filename)
+
+        with open(filename, mode) as outfile:
             writer = csv.writer(outfile, delimiter=';')
 
             row_plugins = []
 
             for row in rows:
-                row_plugins.append(':'.join([row.plugin_name, row.plugin_version]))
+                plugin = ':'.join([row.plugin_name, row.plugin_version])
+                row_plugins.append(plugin)
 
                 try:
                     results = pipeline.decode(row)
@@ -77,16 +89,18 @@ for i, line in enumerate(lines):
 
                 for sensor, sensor_values in results.items():
                     for key, value in sensor_values.items():
-
-                        if 'Chem' in sensor:
-                            value = value.get('raw', None)
-                        else:
-                            value = value.get('hrf', None)
+                        if plugin not in old_plugins:
+                            if 'Chem' in sensor or 'APDS' in sensor or 'intensity' in key:
+                                raw_value = value.get('raw', None)
+                                raw_units = value.get('raw_units', None)
+                            else:
+                                hrf_value = value.get('hrf', None)
+                                hrf_units = value.get('hrf_units', None)
 
                         writer.writerow([
                             node_id,
                             row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                            ':'.join([row.plugin_name, row.plugin_version]),
+                            plugin,
                             row.parameter,
                             sensor,
                             key,
