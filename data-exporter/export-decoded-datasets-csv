@@ -90,12 +90,10 @@ for i, line in enumerate(lines):
                 for sensor, sensor_values in results.items():
                     for key, value in sensor_values.items():
                         if plugin not in old_plugins:
-                            if 'Chem' in sensor or 'APDS' in sensor or 'intensity' in key:
-                                raw_value = value.get('raw', None)
-                                raw_units = value.get('raw_units', None)
+                            if 'Chem' in sensor or 'APDS' in sensor or ('SPV1840LR5H' not in sensor and 'intensity' in key):
+                                value = value.get('raw', None)
                             else:
-                                hrf_value = value.get('hrf', None)
-                                hrf_units = value.get('hrf_units', None)
+                                value = value.get('hrf', None)
 
                         writer.writerow([
                             node_id,
