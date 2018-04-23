@@ -107,6 +107,8 @@ decoders = {
     'coresense:4': decode_coresense_4,
     'sysmon:1': decode_coresense_4,
     'status:0': decode_coresense_4,
+    'image_example:0': decode_coresense_4,
+    'spl:0': decode_coresense_4,
 }
 
 
@@ -289,8 +291,8 @@ template_4to3 = {
         # 'boot_flags': 'wagman_boot_flag',
         # 'nc_bootloader_flags': 'wagman_bootloader_nc_flag',
 
-        # 'htu21d_temperature': 'wagman_htu21d_temperature',
-        # 'htu21d_humidity': 'wagman_htu21d_humidity',
+        'htu21d_temperature': 'wagman_htu21d_temperature',
+        'htu21d_humidity': 'wagman_htu21d_humidity',
         # 'hih4030_humidity': 'wagman_hih4030_humidity',
         # 'light': 'wagman_light',
 
@@ -301,6 +303,15 @@ template_4to3 = {
         'heartbeat_nc': 'wagman_heartbeat_nc',
         'heartbeat_ep': 'wagman_heartbeat_ep',
         'heartbeat_cs': 'wagman_heartbeat_cs',
+    },
+    'image_example': {
+        'device': 'image_device',
+        'average_color_r': 'image_average_color_r',
+        'average_color_g': 'image_average_color_g',
+        'average_color_b': 'image_average_color_b',
+        'histogram_r': 'image_histogram_r',
+        'histogram_g': 'image_histogram_g',
+        'histogram_b': 'image_histogram_b',
     }
 }
 

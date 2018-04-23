@@ -29,6 +29,8 @@ logging.basicConfig(level=logging.ERROR)
 
 cluster = Cluster()
 session = cluster.connect('waggle')
+session.default_fetch_size = 50000
+
 query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
 
 lines = list(fileinput.input())
