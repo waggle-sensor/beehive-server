@@ -19,6 +19,8 @@ def stringify(x):
         return binascii.hexlify(x).decode()
     if isinstance(x, float):
         return str(round(x, 4))
+    if isinstance(x, bool):
+        return int(x)
     return str(x)
 
 
@@ -75,22 +77,20 @@ for i, line in enumerate(lines):
 
                 for sensor, sensor_values in results.items():
                     for key, value in sensor_values.items():
-                        raw_value = value.get('raw', None)
-                        raw_units = value.get('raw_units', None)
-                        hrf_value = value.get('hrf', None)
-                        hrf_units = value.get('hrf_units', None)
+
+                        if 'Chem' in sensor:
+                            value = value.get('raw', None)
+                        else:
+                            value = value.get('hrf', None)
 
                         writer.writerow([
                             node_id,
                             row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
                             ':'.join([row.plugin_name, row.plugin_version]),
-                            '7a45cdf',
+                            row.parameter,
                             sensor,
                             key,
-                            stringify(raw_value),
-                            raw_units,
-                            stringify(hrf_value),
-                            hrf_units,
+                            stringify(value)
                         ])
 
         elapsed_time = time.time() - start_time
