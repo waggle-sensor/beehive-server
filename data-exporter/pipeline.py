@@ -46,12 +46,7 @@ def reunpack_if_needed(source):
 def decode_coresense_3(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
-    decoded = decode_frame_v3(source)
-
-    # wrap as raw values
-    return {sensor: {key: value}
-            for sensor, sensor_data in decoded.items()
-            for key, value in sensor_data.items()}
+    return decode_frame_v3(source)
 
 
 def decode_coresense_4(source):
