@@ -41,7 +41,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610f05c,AoT Chicago,08C," Western Ave & Fullerton Ave Chicago IL",41.924903,-87.687703,AoT Chicago (S) [C]
 001e0610f732,AoT Chicago,08D," Cicero Ave & Chicago Ave Chicago IL",41.895005,-87.745817,AoT Chicago (S) [C]
 001e0610f8f4,AoT Chicago,030," Halsted St & 34th St Chicago IL",41.832579,-87.646133,AoT Chicago (S) [C]
-001e0610f513,AoT Chicago,090," Milwaukee & Belmont Chicago IL",41.939121, -87.723801,AoT Chicago (S) [C]
+001e0610f513,AoT Chicago,090A," Milwaukee & Belmont Chicago IL",41.939121, -87.723801,AoT Chicago (S) [C]
 001e061130f4,AoT Chicago,089," Chicago Ave & Noble St Chicago IL",41.896157,-87.662391,AoT Chicago (S) [C]
 001e0610e537,AoT Chicago,08F," Clark St & Montrose Ave Chicago IL",41.961622,-87.665948,AoT Chicago (S) [C]
 001e06113100,AoT Chicago,08E," Cottage Grove Ave & 111th St Chicago IL",41.692769,-87.609852,AoT Chicago (S) [C]
@@ -60,7 +60,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06113cff,AoT Chicago,070," 7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
 001e06109f62,AoT Chicago,076," LSD Marine Dr & Irving Park Rd Chicago IL",41.954626,-87.645247,AoT Chicago (S) [C]
 001e061144c0,AoT Chicago,097," Pulaski Rd & 71st St Chicago IL",41.764122,-87.72242,AoT Chicago (S) [C]
-001e061146d6,AoT Chicago,091," Halsted St & Division St Chicago IL",41.903632,-87.648093,AoT Chicago (S) [C]
+001e061146d6,AoT Chicago,091A," Halsted St & Division St Chicago IL",41.903632,-87.648093,AoT Chicago (S) [C]
 001e06113dbc,AoT Chicago,096," Ave L & 100th St Chicago IL",41.713867,-87.536509,AoT Chicago (S) [C]
 001e06113d22,AoT Chicago,092," Kedzie Ave & 51st St Chicago IL",41.800846,-87.703739,AoT Chicago (S) [C]
 001e061146bc,AoT Chicago,079," Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
