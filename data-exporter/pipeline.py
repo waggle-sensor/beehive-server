@@ -373,17 +373,17 @@ template_4to3 = {
     },
     'audio': {
         'microphone': {
-            'octave_1_db': 'audio_spl_octave1',
-            'octave_2_db': 'audio_spl_octave2',
-            'octave_3_db': 'audio_spl_octave3',
-            'octave_4_db': 'audio_spl_octave4',
-            'octave_5_db': 'audio_spl_octave5',
-            'octave_6_db': 'audio_spl_octave6',
-            'octave_7_db': 'audio_spl_octave7',
-            'octave_8_db': 'audio_spl_octave8',
-            'octave_9_db': 'audio_spl_octave9',
-            'octave_10_db': 'audio_spl_octave10',
-            'octave_total_db': 'audio_spl_octave_total',
+            'octave_1_intensity': 'audio_spl_octave1',
+            'octave_2_intensity': 'audio_spl_octave2',
+            'octave_3_intensity': 'audio_spl_octave3',
+            'octave_4_intensity': 'audio_spl_octave4',
+            'octave_5_intensity': 'audio_spl_octave5',
+            'octave_6_intensity': 'audio_spl_octave6',
+            'octave_7_intensity': 'audio_spl_octave7',
+            'octave_8_intensity': 'audio_spl_octave8',
+            'octave_9_intensity': 'audio_spl_octave9',
+            'octave_10_intensity': 'audio_spl_octave10',
+            'octave_total_intensity': 'audio_spl_octave_total',
         }
     }
 }
