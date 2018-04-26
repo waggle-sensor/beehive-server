@@ -7,6 +7,7 @@ import logging
 import csv
 import binascii
 import time
+import sys
 from collections import Counter
 
 
@@ -24,6 +25,41 @@ def stringify(x):
     return str(x)
 
 
+old_plugins = ['coresense:3', 'alphasense:1', 'gps:1']
+
+
+def convertrows(rows, writer):
+    for row in rows:
+        plugin = row.plugin_name + ':' + row.plugin_version
+
+        try:
+            results = pipeline.decode(row)
+        except KeyboardInterrupt:
+            break
+        except Exception as exc:
+            logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
+            continue
+
+        for (subsystem, sensor), sensor_values in results.items():
+            for key, value in sensor_values.items():
+                if plugin in old_plugins:
+                    raw_value = ''
+                    hrf_value = value
+                else:
+                    raw_value = value.get('raw', None)
+                    hrf_value = value.get('hrf', None)
+
+                writer.writerow([
+                    row.timestamp.strftime('%Y/%m/%d %H:%M:%S.%f'),
+                    node_id,
+                    subsystem,
+                    sensor,
+                    key,
+                    stringify(raw_value),
+                    stringify(hrf_value),
+                ])
+
+
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
 
@@ -37,11 +73,7 @@ query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sen
 
 lines = list(fileinput.input())
 
-start_time = time.time()
-
-old_plugins = ['coresense:3', 'alphasense:1', 'gps:1']
-
-opened = set()
+# opened = set()
 
 for i, line in enumerate(lines):
     try:
@@ -51,72 +83,23 @@ for i, line in enumerate(lines):
         date = fields[2]
         partition_key = (fields[1], fields[2])
 
-        fetch_start = time.time()
-        rows = list(session.execute(query, partition_key))
-        fetch_elapsed = time.time() - fetch_start
-
         prefix = 'datasets/2/{}'.format(node_id)
         os.makedirs(prefix, exist_ok=True)
         filename = '{}/{}.csv'.format(prefix, date)
 
-        logger.info('{} [{:.0%}]'.format(filename, i / len(lines)))
+        rows = session.execute(query, partition_key)
+        writer = csv.writer(sys.stdout)
+        convertrows(rows, writer)
 
-        dataset_start_time = time.time()
-
-        if filename in opened:
-            mode = 'a'
-        else:
-            mode = 'w'
-
-        opened.add(filename)
-
-        with open(filename, mode) as outfile:
-            writer = csv.writer(outfile, delimiter=';')
-
-            row_plugins = []
-
-            for row in rows:
-                plugin = ':'.join([row.plugin_name, row.plugin_version])
-                row_plugins.append(plugin)
-
-                try:
-                    results = pipeline.decode(row)
-                except KeyboardInterrupt:
-                    break
-                except Exception as exc:
-                    logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
-                    continue
-
-                for sensor, sensor_values in results.items():
-                    for key, value in sensor_values.items():
-                        if plugin not in old_plugins:
-                            if 'Chem' in sensor or 'APDS' in sensor or ('SPV1840LR5H' not in sensor and 'intensity' in key):
-                                value = value.get('raw', None)
-                            else:
-                                value = value.get('hrf', None)
-
-                        writer.writerow([
-                            node_id,
-                            row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                            plugin,
-                            row.parameter,
-                            sensor,
-                            key,
-                            stringify(value)
-                        ])
-
-        elapsed_time = time.time() - start_time
-        dataset_elapsed_time = time.time() - dataset_start_time
-        count = i + 1
-        mean_time = elapsed_time / count
-        expected_time_left = mean_time * (len(lines) - count)
-
-        logger.info('Total time is {:0.2f} seconds.'.format(elapsed_time))
-        logger.info('Fetch time is {:0.2f} seconds.'.format(fetch_elapsed))
-        logger.info('Decode time is {:0.2f} seconds.'.format(dataset_elapsed_time))
-        logger.info('Mean decode time is {:0.2f} seconds.'.format(mean_time))
-        logger.info('Excepted time left is {:0.2f} seconds.'.format(expected_time_left))
-        logger.info('Plugin stats: {}'.format(Counter(row_plugins)))
+        # if filename in opened:
+        #     mode = 'a'
+        # else:
+        #     mode = 'w'
+        #
+        # opened.add(filename)
+        #
+        # with open(filename, mode) as outfile:
+        #     writer = csv.writer(outfile, delimiter=';')
 
     except KeyboardInterrupt:
         break
