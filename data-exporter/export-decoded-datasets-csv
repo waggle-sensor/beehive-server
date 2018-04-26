@@ -89,6 +89,15 @@ for i, line in enumerate(lines):
 
         rows = session.execute(query, partition_key)
         writer = csv.writer(sys.stdout)
+        writer.writerow([
+            'timestamp',
+            'node',
+            'subsystem',
+            'sensor',
+            'parameter',
+            'value_raw',
+            'value_hrf',
+        ])
         convertrows(rows, writer)
 
         # if filename in opened:

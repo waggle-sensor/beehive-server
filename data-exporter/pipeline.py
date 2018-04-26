@@ -233,8 +233,8 @@ template_4to3 = {
             'pm2_5': 'alphasense_pm2.5',
             'pm10': 'alphasense_pm10',
             'bins': 'alphasense_bins',
-            'sample flow rate': 'alphasense_sample_flow_rate',
-            'sampling period': 'alphasense_sampling_period',
+            'sample_flow_rate': 'alphasense_sample_flow_rate',
+            'sampling_period': 'alphasense_sampling_period',
             'id': 'alpha_serial',
             'fw': 'alpha_firmware',
         }
