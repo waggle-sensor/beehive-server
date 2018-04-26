@@ -49,6 +49,8 @@ def decode_coresense_3(source):
     return decode_frame_v3(source)
 
 
+drop_raw = ['metsense_spv1840lr5h-b']
+
 def decode_coresense_4(source):
     source = trim_coresense_packet(source)
     source = reunpack_if_needed(source)
@@ -76,6 +78,12 @@ def decode_coresense_4(source):
         except Exception:
             logger.exception('failed to decode {}'.format(source))
 
+    for key in drop_raw:
+        try:
+            del results[key]['raw']
+        except KeyError:
+            continue
+
     return map_readings_4to3(results)
 
 
@@ -102,6 +110,7 @@ decoders = {
     'coresense:4': decode_coresense_4,
     'status:0': decode_coresense_4,
     'image_example:0': decode_coresense_4,
+    'spl:0': decode_coresense_4,
 }
 
 
@@ -347,26 +356,37 @@ template_4to3 = {
     #     # 'nc_bootloader_flags': 'wagman_bootloader_nc_flag',
 
     # },
-    # 'image_example': {
-    #     'device': 'image_device',
-    #     'average_color_r': 'image_average_color_r',
-    #     'average_color_g': 'image_average_color_g',
-    #     'average_color_b': 'image_average_color_b',
-    #     'histogram_r': 'image_histogram_r',
-    #     'histogram_g': 'image_histogram_g',
-    #     'histogram_b': 'image_histogram_b',
-    # }
+    'image': {
+        'device': {
+            'device': 'image_device',
+        },
+        'avg': {
+            'r': 'image_average_color_r',
+            'g': 'image_average_color_g',
+            'b': 'image_average_color_b',
+        },
+        'hist': {
+            'r': 'image_histogram_r',
+            'g': 'image_histogram_g',
+            'b': 'image_histogram_b',
+        }
+    },
+    'audio': {
+        'octave': {
+            '1': 'audio_spl_octave1',
+            '2': 'audio_spl_octave2',
+            '3': 'audio_spl_octave3',
+            '4': 'audio_spl_octave4',
+            '5': 'audio_spl_octave5',
+            '6': 'audio_spl_octave6',
+            '7': 'audio_spl_octave7',
+            '8': 'audio_spl_octave8',
+            '9': 'audio_spl_octave9',
+            '10': 'audio_spl_octave10',
+            'total': 'audio_spl_octave_total',
+        }
+    }
 }
-
-
-def stringify(x):
-    if x is None:
-        return ''
-    if isinstance(x, tuple) or isinstance(x, list):
-        return ','.join([stringify(xi) for xi in x])
-    if isinstance(x, bytes) or isinstance(x, bytearray):
-        return binascii.hexlify(x).decode()
-    return str(x)
 
 
 def map_parameters_4to3(readings, parameters):
