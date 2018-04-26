@@ -227,17 +227,17 @@ template_4to3 = {
             '3': 'chemsense_at3',
         },
     },
-    'Alphasense': {
-        'pm': {
+    'alphasense': {
+        'opc_n2': {
             'pm1': 'alphasense_pm1',
             'pm2_5': 'alphasense_pm2.5',
             'pm10': 'alphasense_pm10',
+            'bins': 'alphasense_bins',
+            'sample flow rate': 'alphasense_sample_flow_rate',
+            'sampling period': 'alphasense_sampling_period',
+            'id': 'alpha_serial',
+            'fw': 'alpha_firmware',
         }
-        # 'bins': 'alphasense_bins',
-        # 'sample flow rate': 'alphasense_sample_flow_rate',
-        # 'sampling period': 'alphasense_sampling_period',
-        # 'id': 'alpha_serial',
-        # 'fw': 'alpha_firmware',
     },
     'plantower': {
         'pms7003': {
@@ -335,16 +335,16 @@ template_4to3 = {
             'temperature': 'wagman_htu21d_temperature',
             'humidity': 'wagman_htu21d_humidity',
         },
+        'hih4030': {
+            'humidity': 'wagman_hih4030_humidity',
+        },
+        'light': {
+            'intensity': 'wagman_light',
+        },
     },
 
     #     # 'boot_flags': 'wagman_boot_flag',
     #     # 'nc_bootloader_flags': 'wagman_bootloader_nc_flag',
-    #
-    #     # 'hih4030_humidity': 'wagman_hih4030_humidity',
-    #     # 'light': 'wagman_light',
-    #
-
-    #
 
     # },
     # 'image_example': {
