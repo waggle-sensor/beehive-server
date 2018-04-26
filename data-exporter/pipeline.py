@@ -230,10 +230,10 @@ template_4to3 = {
             'concentration': 'chemsense_iaq',
         },
         'at': {
-            '0': 'chemsense_at0',
-            '1': 'chemsense_at1',
-            '2': 'chemsense_at2',
-            '3': 'chemsense_at3',
+            'at0': 'chemsense_at0',
+            'at1': 'chemsense_at1',
+            'at2': 'chemsense_at2',
+            'at3': 'chemsense_at3',
         },
     },
     'alphasense': {
@@ -372,18 +372,18 @@ template_4to3 = {
         }
     },
     'audio': {
-        'octave': {
-            '1': 'audio_spl_octave1',
-            '2': 'audio_spl_octave2',
-            '3': 'audio_spl_octave3',
-            '4': 'audio_spl_octave4',
-            '5': 'audio_spl_octave5',
-            '6': 'audio_spl_octave6',
-            '7': 'audio_spl_octave7',
-            '8': 'audio_spl_octave8',
-            '9': 'audio_spl_octave9',
-            '10': 'audio_spl_octave10',
-            'total': 'audio_spl_octave_total',
+        'microphone': {
+            'octave_1_db': 'audio_spl_octave1',
+            'octave_2_db': 'audio_spl_octave2',
+            'octave_3_db': 'audio_spl_octave3',
+            'octave_4_db': 'audio_spl_octave4',
+            'octave_5_db': 'audio_spl_octave5',
+            'octave_6_db': 'audio_spl_octave6',
+            'octave_7_db': 'audio_spl_octave7',
+            'octave_8_db': 'audio_spl_octave8',
+            'octave_9_db': 'audio_spl_octave9',
+            'octave_10_db': 'audio_spl_octave10',
+            'octave_total_db': 'audio_spl_octave_total',
         }
     }
 }
