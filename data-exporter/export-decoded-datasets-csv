@@ -8,7 +8,6 @@ import csv
 import binascii
 import time
 import sys
-from collections import Counter
 
 
 def stringify(x):
@@ -29,11 +28,8 @@ old_plugins = ['coresense:3', 'alphasense:1', 'gps:1']
 
 
 def convertrows(rows, writer):
-    plugins = Counter()
-
     for row in rows:
         plugin = row.plugin_name + ':' + row.plugin_version
-        plugins[plugin] += 1
 
         try:
             results = pipeline.decode(row)
@@ -62,13 +58,10 @@ def convertrows(rows, writer):
                     stringify(hrf_value),
                 ])
 
-    print(plugins)
-
 
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
-
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 cluster = Cluster(connect_timeout=30, control_connection_timeout=30)
 session = cluster.connect('waggle')
