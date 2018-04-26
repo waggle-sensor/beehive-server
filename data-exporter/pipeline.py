@@ -214,12 +214,18 @@ template_4to3 = {
         'so2': {
             'concentration': 'chemsense_so2',
         },
-        # 'reducing_gases': 'chemsense_irr',
-        # 'oxidizing_gases': 'chemsense_iaq',
-        # 'at0': 'chemsense_at0',
-        # 'at1': 'chemsense_at1',
-        # 'at2': 'chemsense_at2',
-        # 'at3': 'chemsense_at3',
+        'reducing_gases': {
+            'concentration': 'chemsense_irr',
+        },
+        'oxidizing_gases': {
+            'concentration': 'chemsense_iaq',
+        },
+        'at': {
+            '0': 'chemsense_at0',
+            '1': 'chemsense_at1',
+            '2': 'chemsense_at2',
+            '3': 'chemsense_at3',
+        },
     },
     'Alphasense': {
         'pm': {
