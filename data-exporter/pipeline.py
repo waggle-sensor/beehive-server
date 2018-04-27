@@ -11,20 +11,6 @@ logger = logging.getLogger('pipeline')
 logger.setLevel(logging.INFO)
 
 
-def normalize_key(k):
-    return re.sub('[-_.]+', '_', k).lower()
-
-
-def normalize_value(v):
-    if isinstance(v, dict):
-        return {normalize_key(k2): normalize_value(v2) for k2, v2 in v.items()}
-    if isinstance(v, list):
-        return [normalize_value(v2) for v2 in v]
-    if isinstance(v, float):
-        return round(v, 3)
-    return v
-
-
 def trim_python_repr(s):
     if s.startswith("b'"):
         return s[2:-1]
@@ -49,7 +35,12 @@ def decode_coresense_3(source):
     return decode_frame_v3(source)
 
 
-drop_raw = ['metsense_spv1840lr5h-b']
+drop_raw = [
+    'metsense_spv1840lr5h-b',
+    'image_histogram_r',
+    'image_histogram_g',
+    'image_histogram_b',
+]
 
 def decode_coresense_4(source):
     source = trim_coresense_packet(source)
@@ -201,9 +192,9 @@ template_4to3 = {
             'temperature': 'chemsense_sht',
         },
         'si1145': {
-            'ir_count': 'chemsense_sir',
-            'uv_count': 'chemsense_suv',
-            'visible_light_count': 'chemsense_svl',
+            'ir_intensity': 'chemsense_sir',
+            'uv_intensity': 'chemsense_suv',
+            'visible_light_intensity': 'chemsense_svl',
         },
         'id': {
             'id': 'chemsense_id',
@@ -230,10 +221,10 @@ template_4to3 = {
             'concentration': 'chemsense_iaq',
         },
         'at': {
-            'at0': 'chemsense_at0',
-            'at1': 'chemsense_at1',
-            'at2': 'chemsense_at2',
-            'at3': 'chemsense_at3',
+            'at0_temperature': 'chemsense_at0',
+            'at1_temperature': 'chemsense_at1',
+            'at2_temperature': 'chemsense_at2',
+            'at3_temperature': 'chemsense_at3',
         },
     },
     'alphasense': {
