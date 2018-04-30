@@ -11,7 +11,7 @@ session = cluster.connect('waggle')
 rows = list(session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw'))
 rows.sort(key=lambda r: r.date, reverse=True)
 
-for date, datasets in groupby(rows, key=lambda r: r[1]):
+for date, datasets in groupby(rows, key=lambda r: r.date):
     with open(os.path.join('tasks', date), 'w') as file:
         for r in datasets:
             print(r.node_id[-12:].lower(), r.node_id, r.date, file=file)
