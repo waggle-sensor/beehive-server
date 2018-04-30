@@ -149,7 +149,7 @@ template_4to3 = {
         'tsys01': {
             'temperature': 'metsense_tsys01_temperature',
         },
-        'id': {
+        'metsense': {
             'id': 'metsense_id',
         },
     },

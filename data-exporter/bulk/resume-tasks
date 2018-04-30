@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+for task in $(ls tasks | sort -r); do
+  echo starting $task
+  ../export-decoded-datasets-csv < tasks/$task
+  echo completed $task
+  rm tasks/$task
+done

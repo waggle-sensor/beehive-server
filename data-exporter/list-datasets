@@ -3,7 +3,6 @@ from cassandra.cluster import Cluster
 
 cluster = Cluster(connect_timeout=30, control_connection_timeout=30)
 session = cluster.connect('waggle')
-session.default_fetch_size = 10000
 
 rows = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
 
