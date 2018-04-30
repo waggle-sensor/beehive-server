@@ -196,7 +196,7 @@ template_4to3 = {
             'uv_intensity': 'chemsense_suv',
             'visible_light_intensity': 'chemsense_svl',
         },
-        'id': {
+        'chemsense': {
             'id': 'chemsense_id',
         },
         'co': {
@@ -220,11 +220,17 @@ template_4to3 = {
         'oxidizing_gases': {
             'concentration': 'chemsense_iaq',
         },
-        'at': {
-            'at0_temperature': 'chemsense_at0',
-            'at1_temperature': 'chemsense_at1',
-            'at2_temperature': 'chemsense_at2',
-            'at3_temperature': 'chemsense_at3',
+        'at0': {
+            'temperature': 'chemsense_at0',
+        },
+        'at1': {
+            'temperature': 'chemsense_at1',
+        },
+        'at2': {
+            'temperature': 'chemsense_at2',
+        },
+        'at3': {
+            'temperature': 'chemsense_at3',
         },
     },
     'alphasense': {
