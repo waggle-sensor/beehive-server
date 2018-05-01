@@ -65,3 +65,5 @@ TSL250RD-AS,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/ma
 TSL250RD-LS,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
 TSL260RD,intensity,mW/cm^2,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
 TSYS01,temperature,C,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsys01.pdf
+lan,rx,bytes,,,
+lan,tx,bytes,,,

@@ -129,13 +129,9 @@ def load_sensor_metadata(filename):
             except ValueError:
                 maxval = None
 
-            # hold over until after field conversion
-            try:
-                sensor_id = row['sensor_id']
-            except KeyError:
-                sensor_id = row['sensor'] + '.' + row['parameter']
+            key = (row['sensor'], row['parameter'])
 
-            sensors[sensor_id] = {
+            sensors[key] = {
                 'range': Interval(minval, maxval)
             }
 
@@ -160,8 +156,8 @@ def filter_view(metadata, reader, writer):
     nodes_by_id = {node['node_id']: node for node in metadata}
 
     def isviewable(fields):
-        node_id = fields[0]
-        timestamp = load_timestamp(fields[1])
+        node_id = fields['node_id']
+        timestamp = load_timestamp(fields['timestamp'])
 
         if node_id not in nodes_by_id:
             return False
@@ -170,29 +166,29 @@ def filter_view(metadata, reader, writer):
 
         return any(timestamp in interval for interval in node['commissioned'])
 
-    csvreader = csv.reader(reader, delimiter=';')
-    csvwriter = csv.writer(writer, delimiter=';')
+    csvreader = csv.DictReader(reader)
+    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
     csvwriter.writerows(filter(isviewable, csvreader))
 
 
 def filter_sensors(metadata, reader, writer):
     def isvalid(fields):
-        sensor = fields[4]
-        param = fields[5]
+        sensor = fields['sensor']
+        param = fields['parameter']
 
         try:
-            value = float(fields[6])
+            value = float(fields['value_hrf'])
         except ValueError:
             return False
 
-        name = '.'.join([sensor, param])
+        key = (sensor, param)
 
-        if name not in metadata:
+        if key not in metadata:
             return False
 
-        params = metadata[name]
+        params = metadata[key]
         return value in params['range']
 
-    csvreader = csv.reader(reader, delimiter=';')
-    csvwriter = csv.writer(writer, delimiter=';')
+    csvreader = csv.DictReader(reader)
+    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
     csvwriter.writerows(filter(isvalid, csvreader))
