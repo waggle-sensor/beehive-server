@@ -140,29 +140,15 @@ def make_project_digest(project_id):
 
     print('[{}] Compiling staged files.'.format(project_id))
 
-    with open(os.path.join(digest_dir, 'data.csv'), 'wb') as outfile:
-        outfile.write(b'node_id,timestamp,plugin,sensor,parameter,value\n')
+    with open(os.path.join(digest_dir, 'data.csv'), 'w') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=['timestamp', 'node_id', 'subsystem', 'sensor', 'parameter', 'value_raw', 'value_hrf'])
+        writer.writeheader()
 
         for root, _, filenames in os.walk(staging_dir):
-            for filename in filenames:
-                if not filename.endswith('.csv.gz'):
-                    continue
-                with open(os.path.join(root, filename), 'rb') as infile:
-                    data = gzip.decompress(infile.read())
-                for line in data.splitlines():
-                    fields = line.split(b';')
-                    outfile.write(fields[0])
-                    outfile.write(b',')
-                    outfile.write(fields[1])
-                    outfile.write(b',')
-                    outfile.write(fields[2])
-                    outfile.write(b',')
-                    outfile.write(fields[4])
-                    outfile.write(b',')
-                    outfile.write(fields[5])
-                    outfile.write(b',')
-                    outfile.write(fields[6])
-                    outfile.write(b'\n')
+            for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
+                with gzip.open(os.path.join(root, filename), 'rt') as infile:
+                    reader = csv.DictReader(infile)
+                    writer.writerows(reader)
 
     print('[{}] Compiling archive.'.format(project_id))
 

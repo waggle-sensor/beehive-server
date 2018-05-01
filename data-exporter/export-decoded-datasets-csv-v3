@@ -42,11 +42,10 @@ def convertrows(rows, writer):
         for (subsystem, sensor), sensor_values in results.items():
             for key, value in sensor_values.items():
                 if plugin in old_plugins:
-                    raw_value = ''
-                    hrf_value = value
-                else:
-                    raw_value = value.get('raw', None)
-                    hrf_value = value.get('hrf', None)
+                    continue
+
+                raw_value = value.get('raw', None)
+                hrf_value = value.get('hrf', None)
 
                 writer.writerow([
                     row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
