@@ -22,7 +22,7 @@ def process_message(ch, method, properties, body):
     sampleDatetime = datetime.utcfromtimestamp(float(properties.timestamp) / 1000.0)
     sampleDate = sampleDatetime.strftime('%Y-%m-%d')
     # TODO Validate / santize node_id here.
-    node_id = properties.reply_to
+    node_id = properties.reply_to[-12:].lower()
     plugin_name = versionStrings[0]
     plugin_version = versionStrings[1]
     plugin_instance = '0' if (len(versionStrings) < 3) else versionStrings[2]
