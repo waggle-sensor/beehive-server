@@ -1,3 +1,3 @@
-FROM rabbitmq:3.5.6
+FROM rabbitmq:3
 
 ADD configs /etc/rabbitmq

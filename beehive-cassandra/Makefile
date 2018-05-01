@@ -1,5 +1,5 @@
 name = beehive-cassandra
-image = cassandra:3.2
+image = cassandra:3
 
 deploy:
 	docker network create beehive || true

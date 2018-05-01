@@ -1,5 +1,5 @@
 name = beehive-mysql
-image = mysql:5.7.10
+image = mysql:5
 
 deploy:
 	docker network create beehive || true
