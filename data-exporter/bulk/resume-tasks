@@ -4,7 +4,7 @@ set -e
 
 for task in $(ls tasks | sort -r); do
   echo starting $task
-  ../export-decoded-datasets-csv < tasks/$task
+  ../export-decoded-datasets-csv-v3 < tasks/$task
   gzip -f datasets/2/*/*.csv || true
   rm tasks/$task
   echo completed $task
