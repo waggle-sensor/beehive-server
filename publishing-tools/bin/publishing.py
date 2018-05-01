@@ -168,6 +168,7 @@ def filter_view(metadata, reader, writer):
 
     csvreader = csv.DictReader(reader)
     csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
+    csvwriter.writeheader()
     csvwriter.writerows(filter(isviewable, csvreader))
 
 
@@ -191,4 +192,5 @@ def filter_sensors(metadata, reader, writer):
 
     csvreader = csv.DictReader(reader)
     csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
+    csvwriter.writeheader()
     csvwriter.writerows(filter(isvalid, csvreader))
