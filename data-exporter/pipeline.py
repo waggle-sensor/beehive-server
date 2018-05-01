@@ -261,20 +261,6 @@ template_4to3 = {
             'point_5um_particle': 'pms7003_point_5um_particle',
         },
     },
-    'net': {
-        'broadband': {
-            'rx': 'net_broadband_rx',
-            'tx': 'net_broadband_tx',
-        },
-        'lan': {
-            'rx': 'net_lan_rx',
-            'tx': 'net_lan_tx',
-        },
-        'usb': {
-            'rx': 'net_usb_rx',
-            'tx': 'net_usb_tx',
-        },
-    },
     'nc': {
         'uptime': {
             'uptime': 'nc_uptime',
@@ -288,6 +274,18 @@ template_4to3 = {
         'mem': {
             'total': 'nc_ram_total',
             'free': 'nc_ram_free',
+        },
+        'net_broadband': {
+            'rx': 'net_broadband_rx',
+            'tx': 'net_broadband_tx',
+        },
+        'net_lan': {
+            'rx': 'net_lan_rx',
+            'tx': 'net_lan_tx',
+        },
+        'net_usb': {
+            'rx': 'net_usb_rx',
+            'tx': 'net_usb_tx',
         },
     },
     'ep': {
