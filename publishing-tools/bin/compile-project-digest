@@ -141,7 +141,17 @@ def make_project_digest(project_id):
     print('[{}] Compiling staged files.'.format(project_id))
 
     with open(os.path.join(digest_dir, 'data.csv'), 'w') as outfile:
-        writer = csv.DictWriter(outfile, fieldnames=['timestamp', 'node_id', 'subsystem', 'sensor', 'parameter', 'value_raw', 'value_hrf'])
+        fieldnames = [
+            'timestamp',
+            'node_id',
+            'subsystem',
+            'sensor',
+            'parameter',
+            'value_raw',
+            'value_hrf',
+        ]
+
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
 
         for root, _, filenames in os.walk(staging_dir):
@@ -179,7 +189,7 @@ def make_project_digest(project_id):
         ])
 
         writer.writerow([
-            '1',
+            '2',
             project_id,
             data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
             data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
