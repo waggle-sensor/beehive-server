@@ -1,4 +1,0 @@
-#!/bin/sh
-
-python3 beehive-shovel.py 0000001E06107D72 2016-08-26 &
-python3 beehive-shovel.py 0000001E06108875 2016-09-05
