@@ -75,6 +75,10 @@ for i, line in enumerate(lines):
     try:
         fields = line.split()
 
+        if len(fields) != 3:
+            logger.warning('skipping invalid line: {}'.format(line))
+            continue
+
         node_id = fields[0][-12:].lower()
         date = fields[2]
         partition_key = (fields[1], fields[2])
