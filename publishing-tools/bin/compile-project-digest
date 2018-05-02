@@ -140,25 +140,16 @@ def make_project_digest(project_id):
 
     print('[{}] Compiling staged files.'.format(project_id))
 
-    with open(os.path.join(digest_dir, 'data.csv'), 'w') as outfile:
-        fieldnames = [
-            'timestamp',
-            'node_id',
-            'subsystem',
-            'sensor',
-            'parameter',
-            'value_raw',
-            'value_hrf',
-        ]
-
-        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
-        writer.writeheader()
+    with open(os.path.join(digest_dir, 'data.csv'), 'wb') as outfile:
+        outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_hrf,value_raw\n')
 
         for root, _, filenames in os.walk(staging_dir):
             for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
-                with gzip.open(os.path.join(root, filename), 'rt') as infile:
-                    reader = csv.DictReader(infile)
-                    writer.writerows(reader)
+                with open(os.path.join(root, filename), 'rb') as infile:
+                    indata = infile.read()
+                data = gzip.decompress(indata)
+                header, _, body = data.partition(b'\n')
+                outfile.write(body)
 
     print('[{}] Compiling archive.'.format(project_id))
 
