@@ -27,7 +27,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610ee41,AoT Chicago,032," Wood St & Warren Blv Chicago IL",41.882304,-87.671773,AoT Chicago (S) [C]
 001e0610ee33,AoT Chicago,02D," Damen Ave & Wilson Ave Chicago IL",41.965089,-87.679076,AoT Chicago (S) [C]
 001e0610e809,AoT Chicago,050," Ashland Ave & Division St Chicago IL",41.903335,-87.6674,AoT Chicago (S)
-001e0610ee6f,AoT Chicago,04E," Damen Ave & Chicago Int'l Produce Mkt Chicago IL",42.002412,-87.679602,AoT Chicago (S)
+001e0610ee6f,AoT Chicago,04E," Damen Ave & Chicago Int'l Produce Mkt Chicago IL",41.846712,87.673124,AoT Chicago (S)
 001e0610ea5a,AoT Chicago,03E," 606 Path & Milwaukee Ave Chicago IL",41.914202, -87.683048,AoT Chicago (S)
 001e0610ef26,AoT Chicago,03D," Halsted St & Randolph St Chicago IL",41.88431,-87.647431,AoT Chicago (S)
 001e0610ee36,AoT Chicago,051," Cottage Grove Ave & 79th St Chicago IL",41.751295,-87.605288,AoT Chicago (S) [C]
