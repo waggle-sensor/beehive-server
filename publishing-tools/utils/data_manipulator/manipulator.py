@@ -13,6 +13,7 @@ def get_key(keys, values):
     key = tuple(key)
     return key
 
+
 def grep(values, keywords):
     count = 0
     for keyword in keywords:
@@ -73,7 +74,7 @@ def load_lookups(add_op, nodes_path, sensors_path):
         nodes_add_fields, node_lookup_table = fill_lookup(nodes_add_fields, nodes_path, keys=['node_id'])
 
     if len(sensors_add_fields) > 0:
-        sensors_add_fields, sensor_lookup_table = fill_lookup(sensors_add_fields, sensors_path, keys=['sensor', 'parameter'])        
+        sensors_add_fields, sensor_lookup_table = fill_lookup(sensors_add_fields, sensors_path, keys=['sensor', 'parameter'])
 
     return nodes_add_fields, node_lookup_table, sensors_add_fields, sensor_lookup_table
 
@@ -143,8 +144,12 @@ if __name__ == '__main__':
     parser.add_argument('-g', '--grep', dest='grep_op')
     parser.add_argument('-c', '--cut', dest='cut_op')
     parser.add_argument('-a', '--add', dest='add_op')
-    
+
     args = parser.parse_args()
+    if args.input is None:
+        print('[ ERROR ] No input is specified.')
+        parser.print_help()
+        exit(1)
     if not os.path.exists(args.input):
         print('[ ERROR ] Input file path is invalid.')
         exit(1)
