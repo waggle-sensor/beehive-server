@@ -6,6 +6,13 @@ import argparse
 from csv import DictReader, DictWriter
 
 
+def get_key(keys, values):
+    key = []
+    for field in keys:
+        key.append(values[field])
+    key = tuple(key)
+    return key
+
 def grep(values, keywords):
     count = 0
     for keyword in keywords:
@@ -35,10 +42,7 @@ def fill_lookup(add_fields, source_path, keys):
             add_fields.remove(field)
 
         for row in csv_handler:
-            key = []
-            for field in keys:
-                key.append(row[field])
-            key = tuple(key)
+            key = get_key(keys, row)
             if key not in lookup_table:
                 lookup_table[key] = {}
 
@@ -49,7 +53,10 @@ def fill_lookup(add_fields, source_path, keys):
 
 def load_lookups(add_op, nodes_path, sensors_path):
     nodes_add_fields = []
+    node_lookup_table = {}
     sensors_add_fields = []
+    sensor_lookup_table = {}
+
     for field in add_op:
         sp = field.strip().split('.')
         if len(sp) != 2:
@@ -72,6 +79,11 @@ def load_lookups(add_op, nodes_path, sensors_path):
 
 
 def perform(input_path, output_path, grep_op, cut_op, add_op, nodes_path, sensors_path):
+    nodes_lookup_header = []
+    nodes_lookup = {}
+    sensors_lookup_header = []
+    sensors_lookup = {}
+
     if add_op != []:
         nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup = load_lookups(add_op, nodes_path, sensors_path)
 
@@ -108,19 +120,18 @@ def perform(input_path, output_path, grep_op, cut_op, add_op, nodes_path, sensor
                         output_row[header] = row[header]
 
                 # Add nodes app_op fields to the output row
-                key = row['node_id']
+                key = get_key(['node_id'], row)
                 if len(nodes_lookup_header) > 0:
                     if key in nodes_lookup:
                         for node_add_op_header in nodes_lookup_header:
                             output_row[node_add_op_header] = nodes_lookup[key][node_add_op_header]
 
                 # Add sensors app_op fields to the output row
-                key = (row['sensor'], row['parameter'])
+                key = get_key(['sensor', 'parameter'], row)
                 if len(sensors_lookup_header) > 0:
                     if key in sensors_lookup:
                         for sensor_add_op_header in sensors_lookup_header:
                             output_row[sensor_add_op_header] = sensors_lookup[key][sensor_add_op_header]
-
 
                 csv_output.writerow(output_row)
 
