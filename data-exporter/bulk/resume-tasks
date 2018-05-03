@@ -2,10 +2,17 @@
 
 set -e
 
-for task in $(ls tasks | sort -r); do
+if [ $# -eq 0 ]; then
+  echo 'please specify a task directory'
+  exit 1
+fi
+
+taskdir=$1
+
+for task in $(ls $taskdir | sort -r); do
   echo starting $task
-  ../export-decoded-datasets-csv-v3 < tasks/$task
+  ../export-decoded-datasets-csv-v3 < $taskdir/$task
   gzip -f datasets/3/*/*.csv || true
-  rm tasks/$task
+  rm $taskdir/$task
   echo completed $task
 done

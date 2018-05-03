@@ -1,17 +1,22 @@
 #!/usr/bin/env python3
+import argparse
 from cassandra.cluster import Cluster
 from itertools import groupby
 import os
 
-os.makedirs('tasks', exist_ok=True)
+parser = argparse.ArgumentParser()
+parser.add_argument('taskdir', help='directory where tasks will be stored')
+args = parser.parse_args()
 
-cluster = Cluster(connect_timeout=30, control_connection_timeout=30)
+os.makedirs(args.taskdir, exist_ok=True)
+
+cluster = Cluster()
 session = cluster.connect('waggle')
 
 rows = list(session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw'))
 rows.sort(key=lambda r: r.date, reverse=True)
 
 for date, datasets in groupby(rows, key=lambda r: r.date):
-    with open(os.path.join('tasks', date), 'w') as file:
+    with open(os.path.join(args.taskdir, date), 'w') as file:
         for r in datasets:
             print(r.node_id[-12:].lower(), r.node_id, r.date, file=file)

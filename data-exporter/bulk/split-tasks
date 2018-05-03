@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import shutil
+from itertools import cycle
+
+parser = argparse.ArgumentParser()
+parser.add_argument('taskdir', help='directory where tasks are be stored')
+parser.add_argument('groupdirs', nargs='+', help='directories tasks will be split into')
+args = parser.parse_args()
+
+for dir in args.groupdirs:
+    os.makedirs(dir, exist_ok=True)
+
+for groupdir, filename in zip(cycle(args.groupdirs), os.listdir(args.taskdir)):
+    src = os.path.join(args.taskdir, filename)
+    dst = os.path.join(groupdir, filename)
+    shutil.copyfile(src, dst)
