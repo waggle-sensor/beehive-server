@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# get latest copy of publishing data
+cd /homes/waggle/beehive-server
+git pull
+cd
+
+export DATASETS_DIR=/mcs/www.mcs.anl.gov/research/projects/waggle/downloads/datasets/3
+export PROJECTS_DIR=/homes/waggle/beehive-server/publishing-tools/projects
+export DIGESTS_DIR=/mcs/www.mcs.anl.gov/research/projects/waggle/downloads/datasets/digests
+
+# compile digests for all projects
+/homes/waggle/beehive-server/publishing-tools/bin/compile-project-digest $(ls $PROJECTS_DIR)
+
+# move to public space
+mv $DIGESTS_DIR/*/*.tar.gz /mcs/www.mcs.anl.gov/research/projects/waggle/downloads/datasets/
+
+# clean up intermediate files
+rm -rf $(ls -d $DIGESTS_DIR/*/*.latest)
