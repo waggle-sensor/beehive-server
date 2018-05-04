@@ -129,7 +129,7 @@ def load_sensor_metadata(filename):
             except ValueError:
                 maxval = None
 
-            key = (row['sensor'], row['parameter'])
+            key = (row['subsystem'], row['sensor'], row['parameter'])
 
             sensors[key] = {
                 'range': Interval(minval, maxval)
@@ -174,15 +174,12 @@ def filter_view(metadata, reader, writer):
 
 def filter_sensors(metadata, reader, writer):
     def isvalid(fields):
-        sensor = fields['sensor']
-        param = fields['parameter']
-
         try:
             value = float(fields['value_hrf'])
         except ValueError:
             return False
 
-        key = (sensor, param)
+        key = (fields['subsystem'], fields['sensor'], fields['parameter'])
 
         if key not in metadata:
             return False
