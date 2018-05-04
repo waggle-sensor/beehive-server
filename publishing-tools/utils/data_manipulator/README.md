@@ -24,24 +24,27 @@ Supported commands are `grep`, `cut`, and `add`.
 
 Synopsis:
 ```
-$ python3 wg_datatool.py -h
-usage: wg_datatool.py [-h] [-i INPUT] [-o OUTPUT] [-g GREP_OP] [-c CUT_OP]
-                      [-a ADD_OP]
+$ python3 wg_datatool.py --help
+usage: wg_datatool.py [-h] [-v] [-i INPUT] [-o OUTPUT] [-g GREP_OP]
+                      [-c CUT_OP] [-a ADD_OP] [-j CPU] [--all_cpu]
 
 Manipulate csv dataset
 
 optional arguments:
   -h, --help            show this help message and exit
+  -v, --version
   -i INPUT, --input INPUT
   -o OUTPUT, --output OUTPUT
   -g GREP_OP, --grep GREP_OP
   -c CUT_OP, --cut CUT_OP
   -a ADD_OP, --add ADD_OP
+  -j CPU, --cpu CPU
+  --all_cpu
 ```
 
 Example 1: Get all records timestamped on a particular date
 ```
-$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv --all_cpu
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
@@ -51,9 +54,9 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 2018/04/29 00:02:07,001e06107c9e,net,usb,tx,287997173,287997173
 ```
 
-Example 2: Get `uptime` and `loadavg` at the time `23:54:54` on `2018/04/29'
+Example 2: Get `uptime` and `loadavg` at the time `23:54:54` on `2018/04/29`
 ```
-$ python3 manipulator.py -i medium.csv -g "2018/04/29 and 23:54:54 and uptime or 2018/04/29 and 23:54:54 and loadavg"
+$ python3 manipulator.py -i medium.csv -g "2018/04/29 and 23:54:54 and uptime or 2018/04/29 and 23:54:54 and loadavg" --all_cpu
 [WARNING] Output file is not specified.
 [ INFO  ] Output will be output.csv
 [ INFO  ] took 0.71 seconds for the manipulation
@@ -74,7 +77,7 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 
 Example 3: Get All records timestamped on a particular date and add `vsn`
 ```
-$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn --all_cpu
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
@@ -86,7 +89,7 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
 
 Example 4: Do the same with __Example 2__ and additionally add `lat`, `lon` and remove `node_id`
 ```
-$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id --all_cpu
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
@@ -98,7 +101,7 @@ timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
 
 Example 5: Get temperature sensor readings only, add `unit`, `lat`, `lon`, and remove `value_raw` and `node_id`
 ```
-$ python3 wg_datatool.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id"
+$ python3 wg_datatool.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id" --all_cpu
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head output.csv
 timestamp,subsystem,sensor,parameter,value_hrf,lat,lon,unit
