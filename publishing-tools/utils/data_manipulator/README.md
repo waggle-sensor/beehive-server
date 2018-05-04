@@ -1,25 +1,22 @@
-## Data manipulation utility
+## wg_datatool: Waggle CSV Data Manipulation Tool
 
-This tool is designed particularly to manipulate a large amount of data and provides a subset of the data that users are mostly interested in.
+All systems which build on the Waggle Platform share a common archive format for exported data.  This python tool helps manipulate the large comma-separated format (CSV) data from sensors: `data.csv`
 
 ### Design diagram
 
-The tool takes a csv that contains field headers and corresponding field data as input and manipulates it based on given operations. This process can be interative such that users can run this tool multiple times to get a narrower/smaller set of data of their interest.
+The program takes a CSV that contains field headers and corresponding rows of data and manipulates it based on command-line options. The tool can be applied repeatedly to extract data or build larger data products.
 
 ```
- [Sensor data] --------> [ Manipulator ] --> [ Output sensor data ] ---> [ Manipulator ] --- << repeatable >>
-   including        ^                                                ^
-   nodes.csv        |                                                |
-  sensors.csv   operations                                   another operations
+ [data.csv] ---> [wg_datatool] ---> [Output File1] ---> [wg_datatool] --- [Output File2] ---> ...
 ```
 
 ### Commands
 
 Supported commands are `grep`, `cut`, and `add`.
 
-- `grep` is a command to filter data records
-- `cut` is a command to remove fields
-- `add` is a command to add fields
+- `grep` selects rows from the input file, such as by `timestamp` or `node_id`
+- `cut` removes a column of data
+- `add` adds a new column of data
 
 ### How to use
 
@@ -27,8 +24,8 @@ Supported commands are `grep`, `cut`, and `add`.
 
 Synopsis:
 ```
-$ python3 manipulator.py -h
-usage: manipulator.py [-h] [-i INPUT] [-o OUTPUT] [-g GREP_OP] [-c CUT_OP]
+$ python3 wg_datatool.py -h
+usage: wg_datatool.py [-h] [-i INPUT] [-o OUTPUT] [-g GREP_OP] [-c CUT_OP]
                       [-a ADD_OP]
 
 Manipulate csv dataset
@@ -44,7 +41,7 @@ optional arguments:
 
 Example 1: Get all records timestamped on a particular date
 ```
-$ python3 manipulator.py -i dataset.csv -g 2018/04/29 -o output.csv
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
@@ -56,7 +53,7 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 
 Example 2: Get All records timestamped on a particular date and add `vsn`
 ```
-$ python3 manipulator.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
@@ -68,7 +65,7 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
 
 Example 3: Do the same with __Example 2__ and additionally add `lat`, `lon` and remove `node_id`
 ```
-$ python3 manipulator.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id
+$ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head -n 5 output.csv
 timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
@@ -80,7 +77,7 @@ timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
 
 Example 4: Get temperature sensor readings only, add `unit`, `lat`, `lon`, and remove `value_raw` and `node_id`
 ```
-$ python3 manipulator.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id"
+$ python3 wg_datatool.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id"
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head output.csv
 timestamp,subsystem,sensor,parameter,value_hrf,lat,lon,unit
