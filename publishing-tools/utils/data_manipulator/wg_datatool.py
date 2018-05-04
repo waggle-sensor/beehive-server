@@ -12,7 +12,6 @@
 # raw data dunmps from CSV files, to reduce your data set into
 # something easy to plot or inspect.
 
-
 import os
 import time
 import argparse
@@ -53,12 +52,13 @@ def grep(values, keywords):
     # Each element in the keywords represents "or" group
     # Each tuple represents "and" group
     for or_groups in keywords:
-        for keyword in or_groups:
-            count = 0
+        result = [False] * len(or_groups)
+        for i in range(len(or_groups)):
+            keyword = or_groups[i]
             for value in values:
                 if keyword in value:
-                    count = count + 1
-            if len(or_groups) == count:
+                    result[i] = True
+            if all(result):
                 return True
     return False
 
