@@ -33,22 +33,22 @@ decoders = {
 }
 
 
-def decoderow(row):
+def decode_row(row):
     plugin = (row.plugin_name, row.plugin_version)
 
     if plugin not in decoders:
-        return {}
+        return []
 
     source = binascii.unhexlify(row.data)
     return decoders[plugin](source)
 
 
-def convertrows(rows, writer):
+def decode_rows(rows, writer):
     for row in rows:
         plugin = (row.plugin_name, row.plugin_version)
 
         try:
-            samples = decoderow(row)
+            samples = decode_row(row)
         except KeyboardInterrupt:
             raise
         except Exception as exc:
@@ -75,7 +75,7 @@ def convertrows(rows, writer):
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
 
-cluster = Cluster(connect_timeout=30, control_connection_timeout=30)
+cluster = Cluster()
 session = cluster.connect('waggle')
 
 query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
@@ -109,26 +109,22 @@ for i, line in enumerate(lines):
 
         print(filename, mode)
 
-        rows = session.execute(query, partition_key)
-        writer = csv.writer(sys.stdout)
-        convertrows(rows, writer)
+        with open(filename, mode) as outfile:
+            writer = csv.writer(outfile)
 
-        # with open(filename, mode) as outfile:
-        #     writer = csv.writer(outfile)
-        #
-        #     if outfile.tell() == 0:
-        #         writer.writerow([
-        #             'timestamp',
-        #             'node_id',
-        #             'subsystem',
-        #             'sensor',
-        #             'parameter',
-        #             'value_raw',
-        #             'value_hrf',
-        #         ])
-        #
-        #     rows = session.execute(query, partition_key)
-            # convertrows(rows, writer)
+            if outfile.tell() == 0:
+                writer.writerow([
+                    'timestamp',
+                    'node_id',
+                    'subsystem',
+                    'sensor',
+                    'parameter',
+                    'value_raw',
+                    'value_hrf',
+                ])
+
+            rows = session.execute(query, partition_key)
+            decode_rows(rows, writer)
     except KeyboardInterrupt:
         raise
     except Exception as exc:
