@@ -40,7 +40,7 @@ for node in nodes:
     try:
         datasets = []
 
-        for filename in glob('datasets/2/{}/*.csv.gz'.format(node['id'])):
+        for filename in glob('datasets/3/{}/*.csv.gz'.format(node['id'])):
             if 'recent' in filename:
                 continue
 
@@ -53,7 +53,7 @@ for node in nodes:
                 datasets.append({
                     'url': filename,
                     'date': date,
-                    'version': '2',
+                    'version': '3',
                 })
 
         node['datasets'] = sorted(datasets, key=lambda r: (r['version'], r['date']))
