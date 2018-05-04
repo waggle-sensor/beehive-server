@@ -11,7 +11,7 @@
 # Platform system.  With this tool, you can slice and dice and join
 # raw data dunmps from CSV files, to reduce your data set into
 # something easy to plot or inspect.
-#
+
 
 import os
 import time
@@ -27,17 +27,40 @@ def get_key(keys, values):
     return key
 
 
+def prep_grep(grep_op):
+    expression = []
+    current_op_group = []
+    for i in range(len(grep_op)):
+        if grep_op[i].lower() == 'and':
+            continue
+        elif grep_op[i].lower() == 'or':
+            if current_op_group == []:
+                continue
+            else:
+                expression.append(tuple(current_op_group))
+                current_op_group = []
+        else:
+            current_op_group.append(grep_op[i])
+
+    if current_op_group != []:
+        expression.append(tuple(current_op_group))
+    return expression
+
+
 def grep(values, keywords):
-    count = 0
-    for keyword in keywords:
-        for value in values:
-            if keyword in value:
-                count = count + 1
-                break
-    if len(keywords) == count:
-        return True
-    else:
-        return False
+    # keywords looks like
+    # [('a', 'b'), ('c', 'd'), ('e', 'f', 'g'), ('h',), ('i',)]
+    # Each element in the keywords represents "or" group
+    # Each tuple represents "and" group
+    for or_groups in keywords:
+        for keyword in or_groups:
+            count = 0
+            for value in values:
+                if keyword in value:
+                    count = count + 1
+            if len(or_groups) == count:
+                return True
+    return False
 
 
 def fill_lookup(add_fields, source_path, keys):
@@ -97,6 +120,9 @@ def perform(input_path, output_path, grep_op, cut_op, add_op, nodes_path, sensor
     nodes_lookup = {}
     sensors_lookup_header = []
     sensors_lookup = {}
+
+    if grep_op != []:
+        grep_op = prep_grep(grep_op)
 
     if add_op != []:
         nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup = load_lookups(add_op, nodes_path, sensors_path)
