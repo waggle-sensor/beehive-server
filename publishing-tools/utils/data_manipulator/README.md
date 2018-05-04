@@ -14,7 +14,7 @@ The program takes a CSV that contains field headers and corresponding rows of da
 
 Supported commands are `grep`, `cut`, and `add`.
 
-- `grep` selects rows from the input file, such as by `timestamp` or `node_id`
+- `grep` selects rows from the input file, such as by `timestamp` and/or `node_id`
 - `cut` removes a column of data
 - `add` adds a new column of data
 
@@ -51,7 +51,28 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 2018/04/29 00:02:07,001e06107c9e,net,usb,tx,287997173,287997173
 ```
 
-Example 2: Get All records timestamped on a particular date and add `vsn`
+Example 2: Get `uptime` and `loadavg` at the time `23:54:54` on `2018/04/29'
+```
+$ python3 manipulator.py -i medium.csv -g "2018/04/29 and 23:54:54 and uptime or 2018/04/29 and 23:54:54 and loadavg"
+[WARNING] Output file is not specified.
+[ INFO  ] Output will be output.csv
+[ INFO  ] took 0.71 seconds for the manipulation
+$ head output.csv
+timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
+2018/04/29 23:54:54,001e06107c9e,nc,uptime,uptime,889172,889172
+2018/04/29 23:54:54,001e06107c9e,nc,uptime,idletime,3353470,3353470
+2018/04/29 23:54:54,001e06107c9e,nc,loadavg,load_1,0.33,0.33
+2018/04/29 23:54:54,001e06107c9e,nc,loadavg,load_5,0.37,0.37
+2018/04/29 23:54:54,001e06107c9e,nc,loadavg,load_10,0.35,0.35
+2018/04/29 23:54:54,001e06107c9e,ep,uptime,uptime,265854,265854
+2018/04/29 23:54:54,001e06107c9e,ep,uptime,idletime,1226464,1226464
+2018/04/29 23:54:54,001e06107c9e,ep,loadavg,load_1,0.13,0.13
+2018/04/29 23:54:54,001e06107c9e,ep,loadavg,load_5,0.06,0.06
+2018/04/29 23:54:54,001e06107c9e,ep,loadavg,load_10,0.07,0.07
+2018/04/29 23:54:54,001e06107c9e,wagman,uptime,uptime,889823,889823
+```
+
+Example 3: Get All records timestamped on a particular date and add `vsn`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn
 [ INFO  ] took 0.00 seconds for the manipulation
@@ -63,7 +84,7 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
 2018/04/29 00:02:07,001e06107c9e,net,usb,tx,287997173,287997173,BRT
 ```
 
-Example 3: Do the same with __Example 2__ and additionally add `lat`, `lon` and remove `node_id`
+Example 4: Do the same with __Example 2__ and additionally add `lat`, `lon` and remove `node_id`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id
 [ INFO  ] took 0.00 seconds for the manipulation
@@ -75,7 +96,7 @@ timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
 2018/04/29 00:02:07,net,usb,tx,287997173,287997173,BRT,41.906481,-87.671373
 ```
 
-Example 4: Get temperature sensor readings only, add `unit`, `lat`, `lon`, and remove `value_raw` and `node_id`
+Example 5: Get temperature sensor readings only, add `unit`, `lat`, `lon`, and remove `value_raw` and `node_id`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id"
 [ INFO  ] took 0.00 seconds for the manipulation
