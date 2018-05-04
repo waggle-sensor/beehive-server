@@ -16,6 +16,13 @@ import os
 import time
 import argparse
 from csv import DictReader, DictWriter
+from multiprocessing import cpu_count, Process
+
+VERSION = '0.1.0'
+
+
+def print_version():
+    print(os.path.basename(__file__), VERSION)
 
 
 def get_key(keys, values):
@@ -115,17 +122,8 @@ def load_lookups(add_op, nodes_path, sensors_path):
     return nodes_add_fields, node_lookup_table, sensors_add_fields, sensor_lookup_table
 
 
-def perform(input_path, output_path, grep_op, cut_op, add_op, nodes_path, sensors_path):
-    nodes_lookup_header = []
-    nodes_lookup = {}
-    sensors_lookup_header = []
-    sensors_lookup = {}
-
-    if grep_op != []:
-        grep_op = prep_grep(grep_op)
-
-    if add_op != []:
-        nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup = load_lookups(add_op, nodes_path, sensors_path)
+def perform(input_path, output_path, grep_op, cut_op, add_op,
+            nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup):
 
     with open(output_path, 'w') as output:
         # csv_output = DictWriter(output)
@@ -176,15 +174,62 @@ def perform(input_path, output_path, grep_op, cut_op, add_op, nodes_path, sensor
                 csv_output.writerow(output_row)
 
 
+def merge_output(output_path, final_output_path):
+    if len(output_path) == 1:
+        os.rename(output_path[0], final_output_path)
+        return
+
+    with open(final_output_path, 'w') as output:
+        csv_output = None
+        for path in output_path:
+            with open(path, 'r') as file:
+                csv_input = DictReader(file)
+                if csv_output is None:
+                    csv_output = DictWriter(output, fieldnames=csv_input.fieldnames)
+                    csv_output.writeheader()
+                for line in csv_input:
+                    csv_output.writerow(line)
+
+
+def divide_input(input_path, divide):
+    if divide == 1:
+        return [input_path]
+
+    with open(input_path, 'r') as file:
+        csv_input = DictReader(file)
+        total_num_of_line = sum(1 for line in csv_input)
+
+    num_of_lines = [int(total_num_of_line / divide)] * divide
+    num_of_lines[-1] += total_num_of_line % divide
+    file_path = []
+    with open(input_path, 'r') as file:
+        csv_input = DictReader(file)
+        for index, num_of_line in enumerate(num_of_lines):
+            with open(input_path + str(index), 'w') as output:
+                csv_output = DictWriter(output, fieldnames=csv_input.fieldnames)
+                csv_output.writeheader()
+                for _ in range(num_of_line):
+                    csv_output.writerow(next(csv_input))
+            file_path.append(input_path + str(index))
+
+    return file_path
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Manipulate csv dataset')
+    parser.add_argument('-v', '--version', dest='version', action='store_true')
     parser.add_argument('-i', '--input', dest='input')
     parser.add_argument('-o', '--output', dest='output')
     parser.add_argument('-g', '--grep', dest='grep_op')
     parser.add_argument('-c', '--cut', dest='cut_op')
     parser.add_argument('-a', '--add', dest='add_op')
+    parser.add_argument('-j', '--cpu', dest='cpu')
+    parser.add_argument('--all_cpu', dest='all_cpu', action='store_true')
 
     args = parser.parse_args()
+    if args.version is True:
+        print_version()
+        exit(0)
+
     if args.input is None:
         print('[ ERROR ] No input is specified.')
         parser.print_help()
@@ -232,15 +277,75 @@ if __name__ == '__main__':
         else:
             print('[WARNING] sensors.csv not exist under %s. Ignore \"sensors.*\" operations...' % (base_path,))
 
+    nodes_lookup_header = []
+    nodes_lookup = {}
+    sensors_lookup_header = []
+    sensors_lookup = {}
+
+    if grep_op != []:
+        grep_op = prep_grep(grep_op)
+
+    if add_op != []:
+        nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup = load_lookups(add_op, nodes_path, sensors_path)
+
+    number_of_workers = 1
+    MAX_WORKERS = cpu_count()
+    if args.all_cpu:
+        number_of_workers = MAX_WORKERS
+    elif args.cpu is not None:
+        try:
+            number_of_workers = int(args.cpu)
+            if number_of_workers > MAX_WORKERS:
+                print('[WARNING] Number of threads on the system is %d. %d is selected' % (MAX_WORKERS, MAX_WORKERS))
+                number_of_workers = MAX_WORKERS
+        except Exception:
+            print('[ ERROR ] Could not parse number of cpu: only integer is acceptable')
+            exit(1)
+
     start_t = time.time()
-    perform(
-        input_path,
-        output_path,
-        grep_op,
-        cut_op,
-        add_op,
-        nodes_path=nodes_path,
-        sensors_path=sensors_path
-    )
+
+    chunks_input_path = divide_input(input_path, number_of_workers)
+    chunks_output_path = [x + '_output' for x in chunks_input_path]
     end_t = time.time()
-    print('[ INFO  ] took %.2f seconds for the manipulation' % ((end_t - start_t),))
+    print('[ INFO  ] Took %.2f seconds for dividing input' % ((end_t - start_t),))
+    start_t = time.time()
+
+    workers = []
+    for _input_path, _output_path in zip(chunks_input_path, chunks_output_path):
+        worker = Process(
+            target=perform,
+            args=(
+                _input_path,
+                _output_path,
+                grep_op,
+                cut_op,
+                add_op,
+                nodes_lookup_header,
+                nodes_lookup,
+                sensors_lookup_header,
+                sensors_lookup))
+        worker.start()
+        workers.append(worker)
+
+    for worker in workers:
+        worker.join()
+
+    end_t = time.time()
+    print('[ INFO  ] Took %.2f seconds for the manipulation' % ((end_t - start_t),))
+    start_t = time.time()
+
+    merge_output(chunks_output_path, output_path)
+
+    if number_of_workers > 1:
+        for x, y in zip(chunks_input_path, chunks_output_path):
+            if os.path.exists(x):
+                os.remove(x)
+            if os.path.exists(y):
+                os.remove(y)
+
+    end_t = time.time()
+    print('[ INFO  ] Took %.2f seconds for merging output' % ((end_t - start_t),))
+    start_t = time.time()
+
+    print('[ INFO  ] Manipulation is completed.')
+    exit(0)
