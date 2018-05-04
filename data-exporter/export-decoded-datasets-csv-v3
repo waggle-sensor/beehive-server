@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-import fileinput
 from cassandra.cluster import Cluster
 import os
-import pipeline
 import logging
 import csv
 import binascii
 import time
 import sys
+from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
+from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v4
 
 
 def stringify(x):
@@ -24,38 +24,52 @@ def stringify(x):
     return str(x)
 
 
-old_plugins = ['coresense:3', 'alphasense:1', 'gps:1']
+decoders = {
+    ('coresense', '3'): unpack_sensors_v3,
+    ('coresense', '4'): unpack_sensors_v4,
+    ('status', '0'): unpack_sensors_v4,
+    ('image_example', '0'): unpack_sensors_v4,
+    ('spl', '0'): unpack_sensors_v4,
+}
+
+
+def decoderow(row):
+    plugin = (row.plugin_name, row.plugin_version)
+
+    if plugin not in decoders:
+        return {}
+
+    source = binascii.unhexlify(row.data)
+    return decoders[plugin](source)
 
 
 def convertrows(rows, writer):
     for row in rows:
-        plugin = row.plugin_name + ':' + row.plugin_version
+        plugin = (row.plugin_name, row.plugin_version)
 
         try:
-            results = pipeline.decode(row)
+            samples = decoderow(row)
         except KeyboardInterrupt:
             raise
         except Exception as exc:
             logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
             continue
 
-        for (subsystem, sensor), sensor_values in results.items():
-            for key, value in sensor_values.items():
-                if plugin in old_plugins:
-                    continue
+        for sample in samples:
+            if sample.timestamp == 0:
+                timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
+            else:
+                timestamp = sample.timestamp
 
-                raw_value = value.get('raw', None)
-                hrf_value = value.get('hrf', None)
-
-                writer.writerow([
-                    row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                    node_id,
-                    subsystem,
-                    sensor,
-                    key,
-                    stringify(raw_value),
-                    stringify(hrf_value),
-                ])
+            writer.writerow([
+                timestamp,
+                node_id,
+                sample.subsystem,
+                sample.sensor,
+                sample.parameter,
+                stringify(sample.value_raw),
+                stringify(sample.value_hrf),
+            ])
 
 
 logger = logging.getLogger('export')
@@ -66,7 +80,7 @@ session = cluster.connect('waggle')
 
 query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
 
-lines = list(fileinput.input())
+lines = sys.stdin.readlines()
 
 opened = set()
 
@@ -95,22 +109,26 @@ for i, line in enumerate(lines):
 
         print(filename, mode)
 
-        with open(filename, mode) as outfile:
-            writer = csv.writer(outfile)
+        rows = session.execute(query, partition_key)
+        writer = csv.writer(sys.stdout)
+        convertrows(rows, writer)
 
-            if outfile.tell() == 0:
-                writer.writerow([
-                    'timestamp',
-                    'node_id',
-                    'subsystem',
-                    'sensor',
-                    'parameter',
-                    'value_raw',
-                    'value_hrf',
-                ])
-
-            rows = session.execute(query, partition_key)
-            convertrows(rows, writer)
+        # with open(filename, mode) as outfile:
+        #     writer = csv.writer(outfile)
+        #
+        #     if outfile.tell() == 0:
+        #         writer.writerow([
+        #             'timestamp',
+        #             'node_id',
+        #             'subsystem',
+        #             'sensor',
+        #             'parameter',
+        #             'value_raw',
+        #             'value_hrf',
+        #         ])
+        #
+        #     rows = session.execute(query, partition_key)
+            # convertrows(rows, writer)
     except KeyboardInterrupt:
         raise
     except Exception as exc:
