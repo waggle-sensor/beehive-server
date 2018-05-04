@@ -1,5 +1,18 @@
 #! /usr/bin/python3
 
+# ANL:waggle-license
+#  This file is part of the Waggle Platform.  Please see the file
+#  LICENSE.waggle.txt for the legal details of the copyright and software
+#  license.  For more details on the Waggle project, visit:
+#           http://www.wa8.gl
+# ANL:waggle-license
+#
+# A simple data manipulation tool for *Raw CSV* data from a Waggle
+# Platform system.  With this tool, you can slice and dice and join
+# raw data dunmps from CSV files, to reduce your data set into
+# something easy to plot or inspect.
+#
+
 import os
 import time
 import argparse
