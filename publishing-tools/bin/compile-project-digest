@@ -11,6 +11,7 @@ from datetime import datetime
 from jinja2 import Template
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--no-sensor-check', action='store_true', help='Skip sensor check.')
 parser.add_argument('project_ids', nargs='*', help='Project IDs to compile digest for.')
 args = parser.parse_args()
 
@@ -116,12 +117,19 @@ def make_project_digest(project_id):
             sensors_metadata = os.path.join(project_dir, 'sensors.csv')
             project_metadata = os.path.join(project_dir)
 
-            script_template = '''
-            gzip -dc '{src}' |
-            {program_dir}/bin/filter-sensors '{sensors_metadata}' |
-            {program_dir}/bin/filter-view '{project_metadata}' |
-            gzip > '{dst}.tmp'
-            '''
+            if args.no_sensor_check:
+                script_template = '''
+                gzip -dc '{src}' |
+                {program_dir}/bin/filter-view '{project_metadata}' |
+                gzip > '{dst}.tmp'
+                '''
+            else:
+                script_template = '''
+                gzip -dc '{src}' |
+                {program_dir}/bin/filter-sensors '{sensors_metadata}' |
+                {program_dir}/bin/filter-view '{project_metadata}' |
+                gzip > '{dst}.tmp'
+                '''
 
             script = script_template.format(src=src,
                                             dst=dst,

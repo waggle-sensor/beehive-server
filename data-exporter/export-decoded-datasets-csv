@@ -7,7 +7,11 @@ import binascii
 import time
 import sys
 from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
-from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v4
+from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
+
+
+logger = logging.getLogger('export')
+logger.setLevel(logging.INFO)
 
 
 def stringify(x):
@@ -26,10 +30,10 @@ def stringify(x):
 
 decoders = {
     ('coresense', '3'): unpack_sensors_v3,
-    ('coresense', '4'): unpack_sensors_v4,
-    ('status', '0'): unpack_sensors_v4,
-    ('image_example', '0'): unpack_sensors_v4,
-    ('spl', '0'): unpack_sensors_v4,
+    ('coresense', '4'): unpack_sensors_v5,
+    ('status', '0'): unpack_sensors_v5,
+    ('image_example', '0'): unpack_sensors_v5,
+    ('spl', '0'): unpack_sensors_v5,
 }
 
 
@@ -71,10 +75,6 @@ def decode_rows(rows, writer):
                 stringify(sample.value_hrf),
             ])
 
-
-logger = logging.getLogger('export')
-logger.setLevel(logging.INFO)
-
 cluster = Cluster()
 session = cluster.connect('waggle')
 
@@ -112,7 +112,7 @@ for i, line in enumerate(lines):
         with open(filename, mode) as outfile:
             writer = csv.writer(outfile)
 
-            if outfile.tell() == 0:
+            if mode == 'w':
                 writer.writerow([
                     'timestamp',
                     'node_id',

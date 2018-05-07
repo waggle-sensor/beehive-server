@@ -11,7 +11,7 @@ taskdir=$1
 
 for task in $(ls $taskdir | sort -r); do
   echo starting $task
-  ../export-decoded-datasets-csv < $taskdir/$task
+  ./export-decoded-datasets-csv < $taskdir/$task
   gzip -f datasets/3/*/*.csv || true
   rm $taskdir/$task
   echo completed $task
