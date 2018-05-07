@@ -2,13 +2,17 @@
 
 set -e
 
-project=$1
+project=$(basename $1)
+
+cd $(dirname $1)
 
 today=$(date +'%Y-%m-%d')
 cd $project.$today
 
-grep -m 1 'Project Digest' README.md
-grep -m 1 'node_id' data.csv
-grep -m 1 'node_id' nodes.csv
-grep -m 1 'sensor' sensors.csv
-grep $project provenance.csv
+grep -m 1 'Project Digest' README.md > /dev/null
+grep -m 1 'node_id' data.csv > /dev/null
+grep -m 1 'node_id' nodes.csv > /dev/null
+grep -m 1 'sensor' sensors.csv > /dev/null
+grep $project provenance.csv > /dev/null
+
+echo Digest OK
