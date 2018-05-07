@@ -34,18 +34,26 @@ optional arguments:
   -h, --help            show this help message and exit
   -v, --version
   -i INPUT, --input INPUT
+                        Input file path
   -o OUTPUT, --output OUTPUT
+                        Output file path
   -g GREP_OP, --grep GREP_OP
+                        Grep operations
   -c CUT_OP, --cut CUT_OP
+                        Cut operations
   -a ADD_OP, --add ADD_OP
-  -j CPU, --cpu CPU
+                        Add operations
+  -j CPU, --cpu CPU     Number of CPUs to use
   --all_cpu
 ```
 
 Example 1: Get all records timestamped on a particular date
 ```
 $ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv --all_cpu
-[ INFO  ] took 0.00 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for input file indexing
+[ INFO  ] Took 0.01 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for merging output
+[ INFO  ] Manipulation is completed.
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 2018/04/29 00:02:07,001e06107c9e,net,lan,rx,109803285,109803285
@@ -56,11 +64,14 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 
 Example 2: Get `uptime` and `loadavg` at the time `23:54:54` on `2018/04/29`
 ```
-$ python3 manipulator.py -i medium.csv -g "2018/04/29 and 23:54:54 and uptime or 2018/04/29 and 23:54:54 and loadavg" --all_cpu
+$ python3 wg_datatool.py -i medium.csv -g "2018/04/29 and 23:54:54 and uptime or 2018/04/29 and 23:54:54 and loadavg" --all_cpu
 [WARNING] Output file is not specified.
 [ INFO  ] Output will be output.csv
-[ INFO  ] took 0.71 seconds for the manipulation
-$ head output.csv
+[ INFO  ] Took 0.37 seconds for input file indexing
+[ INFO  ] Took 0.56 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for merging output
+[ INFO  ] Manipulation is completed.
+$ cat output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 2018/04/29 23:54:54,001e06107c9e,nc,uptime,uptime,889172,889172
 2018/04/29 23:54:54,001e06107c9e,nc,uptime,idletime,3353470,3353470
@@ -78,7 +89,10 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 Example 3: Get All records timestamped on a particular date and add `vsn`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a nodes.vsn --all_cpu
-[ INFO  ] took 0.00 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for input file indexing
+[ INFO  ] Took 0.01 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for merging output
+[ INFO  ] Manipulation is completed.
 $ head -n 5 output.csv
 timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
 2018/04/29 00:02:07,001e06107c9e,net,lan,rx,109803285,109803285,BRT
@@ -90,8 +104,11 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf,vsn
 Example 4: Do the same with __Example 2__ and additionally add `lat`, `lon` and remove `node_id`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g 2018/04/29 -o output.csv -a "nodes.vsn nodes.lat nodes.lon" -c node_id --all_cpu
-[ INFO  ] took 0.00 seconds for the manipulation
-$ head -n 5 output.csv
+[ INFO  ] Took 0.00 seconds for input file indexing
+[ INFO  ] Took 0.01 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for merging output
+[ INFO  ] Manipulation is completed.
+$ $ head -n 5 output.csv
 timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
 2018/04/29 00:02:07,net,lan,rx,109803285,109803285,BRT,41.906481,-87.671373
 2018/04/29 00:02:07,net,lan,tx,102549843,102549843,BRT,41.906481,-87.671373
@@ -102,17 +119,20 @@ timestamp,subsystem,sensor,parameter,value_raw,value_hrf,vsn,lat,lon
 Example 5: Get temperature sensor readings only, add `unit`, `lat`, `lon`, and remove `value_raw` and `node_id`
 ```
 $ python3 wg_datatool.py -i dataset.csv -g temperature -o output.csv -a "sensors.unit nodes.lat nodes.lon" -c "value_raw node_id" --all_cpu
+[ INFO  ] Took 0.00 seconds for input file indexing
+[ INFO  ] Took 0.01 seconds for the manipulation
+[ INFO  ] Took 0.00 seconds for merging output
+[ INFO  ] Manipulation is completed.
 [ INFO  ] took 0.00 seconds for the manipulation
 $ head output.csv
 timestamp,subsystem,sensor,parameter,value_hrf,lat,lon,unit
-2018/04/29 23:59:12,metsense,tsys01,temperature,25.46,41.906481,-87.671373,
-2018/04/29 23:59:12,lightsense,hih6130,temperature,26.77,41.906481,-87.671373,
-2018/04/29 23:59:12,lightsense,tmp421,temperature,22.69,41.906481,-87.671373,
-2018/04/29 23:59:37,metsense,bmp180,temperature,29.0,41.906481,-87.671373,
-2018/04/29 23:59:37,metsense,htu21d,temperature,24.14,41.906481,-87.671373,
-2018/04/29 23:59:37,metsense,pr103j2,temperature,24.9,41.906481,-87.671373,
-2018/04/29 23:59:37,metsense,tmp112,temperature,24.69,41.906481,-87.671373,
-2018/04/29 23:59:37,metsense,tsys01,temperature,25.17,41.906481,-87.671373,
-2018/04/29 23:59:37,lightsense,hih6130,temperature,26.71,41.906481,-87.671373,
-2018/04/29 23:59:37,lightsense,tmp421,temperature,22.62,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,temperatures,nc_heatsink,NA,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,temperatures,ep_heatsink,NA,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,temperatures,battery,NA,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,temperatures,brainplate,NA,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,temperatures,powersupply,NA,41.906481,-87.671373,
+2018/04/29 00:02:07,wagman,htu21d,temperature,25,41.906481,-87.671373,
+2018/04/29 00:07:18,wagman,temperatures,nc_heatsink,NA,41.906481,-87.671373,
+2018/04/29 00:07:18,wagman,temperatures,ep_heatsink,NA,41.906481,-87.671373,
+2018/04/29 00:07:18,wagman,temperatures,battery,NA,41.906481,-87.671373,
 ```
