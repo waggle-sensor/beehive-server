@@ -16,9 +16,10 @@ import os
 import time
 import argparse
 from csv import DictReader, DictWriter
+from itertools import islice
 from multiprocessing import cpu_count, Process
 
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 
 
 def print_version():
@@ -122,11 +123,9 @@ def load_lookups(add_op, nodes_path, sensors_path):
     return nodes_add_fields, node_lookup_table, sensors_add_fields, sensor_lookup_table
 
 
-def perform(input_path, output_path, grep_op, cut_op, add_op,
+def perform(input_range, input_path, output_path, grep_op, cut_op, add_op,
             nodes_lookup_header, nodes_lookup, sensors_lookup_header, sensors_lookup):
-
     with open(output_path, 'w') as output:
-        # csv_output = DictWriter(output)
         with open(input_path, 'r') as file:
             csv_handler = DictReader(file)
 
@@ -146,7 +145,9 @@ def perform(input_path, output_path, grep_op, cut_op, add_op,
 
             csv_output = DictWriter(output, headers)
             csv_output.writeheader()
-            for row in csv_handler:
+
+            lower, upper = input_range
+            for row in islice(csv_handler, lower, upper):
                 # Grep operation
                 if grep(list(row.values()), grep_op) is False:
                     continue
@@ -214,15 +215,16 @@ def divide_input(input_path, divide):
 
     return file_path
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Manipulate csv dataset')
     parser.add_argument('-v', '--version', dest='version', action='store_true')
-    parser.add_argument('-i', '--input', dest='input')
-    parser.add_argument('-o', '--output', dest='output')
-    parser.add_argument('-g', '--grep', dest='grep_op')
-    parser.add_argument('-c', '--cut', dest='cut_op')
-    parser.add_argument('-a', '--add', dest='add_op')
-    parser.add_argument('-j', '--cpu', dest='cpu')
+    parser.add_argument('-i', '--input', dest='input', help='Input file path')
+    parser.add_argument('-o', '--output', dest='output', help='Output file path')
+    parser.add_argument('-g', '--grep', dest='grep_op', help='Grep operations')
+    parser.add_argument('-c', '--cut', dest='cut_op', help='Cut operations')
+    parser.add_argument('-a', '--add', dest='add_op', help='Add operations')
+    parser.add_argument('-j', '--cpu', dest='cpu', help='Number of CPUs to use')
     parser.add_argument('--all_cpu', dest='all_cpu', action='store_true')
 
     args = parser.parse_args()
@@ -303,19 +305,38 @@ if __name__ == '__main__':
             exit(1)
 
     start_t = time.time()
+    with open(input_path, 'r') as file:
+        csv_input = DictReader(file)
+        total_num_of_line = sum(1 for line in csv_input)
 
-    chunks_input_path = divide_input(input_path, number_of_workers)
-    chunks_output_path = [x + '_output' for x in chunks_input_path]
+    num_of_lines = [int(total_num_of_line / number_of_workers)] * number_of_workers
+    num_of_lines[-1] += total_num_of_line % number_of_workers
+    slices = [(0, 0)] * number_of_workers
+    for i in range(len(num_of_lines)):
+        if i == 0:
+            lower, upper = slices[i]
+            upper = lower + num_of_lines[i]
+        else:
+            pre_lower, pre_upper = slices[i - 1]
+            lower = pre_upper
+            upper = lower + num_of_lines[i]
+        slices[i] = (lower, upper)
+
+    chunks_output_path = []
+    for i in range(number_of_workers):
+        chunks_output_path.append(input_path + str(i))
+
     end_t = time.time()
-    print('[ INFO  ] Took %.2f seconds for dividing input' % ((end_t - start_t),))
+    print('[ INFO  ] Took %.2f seconds for input file indexing' % ((end_t - start_t),))
     start_t = time.time()
 
     workers = []
-    for _input_path, _output_path in zip(chunks_input_path, chunks_output_path):
+    for index, _output_path in enumerate(chunks_output_path):
         worker = Process(
             target=perform,
             args=(
-                _input_path,
+                slices[index],
+                input_path,
                 _output_path,
                 grep_op,
                 cut_op,
@@ -337,11 +358,9 @@ if __name__ == '__main__':
     merge_output(chunks_output_path, output_path)
 
     if number_of_workers > 1:
-        for x, y in zip(chunks_input_path, chunks_output_path):
+        for x in chunks_output_path:
             if os.path.exists(x):
                 os.remove(x)
-            if os.path.exists(y):
-                os.remove(y)
 
     end_t = time.time()
     print('[ INFO  ] Took %.2f seconds for merging output' % ((end_t - start_t),))
