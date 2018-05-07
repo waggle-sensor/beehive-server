@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+project=$1
+
+today=$(date +'%Y-%m-%d')
+cd $project.$today
+
+grep -m 1 'Project Digest' README.md
+grep -m 1 'node_id' data.csv
+grep -m 1 'node_id' nodes.csv
+grep -m 1 'sensor' sensors.csv
+grep $project provenance.csv
