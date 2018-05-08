@@ -120,12 +120,12 @@ def load_sensor_metadata(filename):
 
         for row in reader:
             try:
-                minval = float(row['minval'])
+                minval = float(row['hrf_minval'])
             except ValueError:
                 minval = None
 
             try:
-                maxval = float(row['maxval'])
+                maxval = float(row['hrf_maxval'])
             except ValueError:
                 maxval = None
 

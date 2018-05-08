@@ -78,10 +78,9 @@ class DigestCompiler:
 
         self.build_dir = os.path.join(digests_dir, self.project_id)
 
-        self.digest_dir = os.path.join(
-            self.build_dir,
-            '{}.latest'.format(self.project_id),
-            '{}.{}'.format(self.project_id, datetime.utcnow().strftime('%Y-%m-%d')))
+        self.digest_dir = os.path.join(self.build_dir,
+                                       '{}.latest'.format(self.project_id),
+                                       '{}.{}'.format(self.project_id, datetime.utcnow().strftime('%Y-%m-%d')))
 
         self.staging_dir = os.path.join(self.build_dir, 'staging')
 
@@ -92,7 +91,10 @@ class DigestCompiler:
 
     def setup(self):
         print('[{}] Setting up.'.format(self.project_id))
-        ensure_exists(self.build_dir, self.digest_dir, self.staging_dir)
+
+        ensure_exists(self.build_dir,
+                      self.digest_dir,
+                      self.staging_dir)
 
     def cleanup(self):
         print('[{}] Cleaning up.'.format(self.project_id))
