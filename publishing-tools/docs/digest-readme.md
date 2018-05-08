@@ -128,3 +128,9 @@ data_format_version,project_id,data_start_date,data_end_date,creation_date,url
 * Sensors: https://github.com/waggle-sensor/sensors/blob/develop/README.md
 * Array of Things: https://arrayofthings.github.io/
 * Waggle: http://wa8.gl/
+
+## Disclaimer
+
+Although our goal is to provide stable metadata files, please consider these as
+in-development. If you do write tools which process them, we *strongly* recommend
+taking advantage of the metadata headers in order to accommodate future changes.
