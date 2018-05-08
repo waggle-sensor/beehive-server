@@ -244,12 +244,11 @@ class DigestCompiler:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-    description='''
+    parser = argparse.ArgumentParser(description='''
     Compiles a digest for each specified project from datasets. For each project
     "path/to/project" in project_dirs, a digest is compiled at
     "digests_dir/project/project.latest.tar.gz".
-    ''',
+    ''')
     parser.add_argument('--skip-sensor-check', action='store_true', help='Skip sensor check.')
     parser.add_argument('--skip-pubtime-check', action='store_true', help='Skip commissioned time check.')
     parser.add_argument('datasets_dir', help='Root directory of dataset tree.')
