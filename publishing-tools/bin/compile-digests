@@ -100,8 +100,8 @@ class DigestCompiler:
     def copy_metadata(self):
         print('[{}] Copy metadata.'.format(self.project_id))
 
-        render_template(os.path.join(program_dir, 'docs', 'digest-readme.md'),
-                        os.path.join(self.digest_dir, 'README.md'),
+        render_template(os.path.join(self.digest_dir, 'README.md'),
+                        os.path.join(program_dir, 'docs', 'digest-readme.md'),
                         header=read_file_or_empty(os.path.join(self.project_dir, 'header.md')))
 
         copy_file(os.path.join(self.project_dir, 'nodes.csv'),
