@@ -24,7 +24,7 @@ ontology,subsystem,sensor,parameter,unit,minval,maxval,datasheet
 ,lightsense,tmp421,temperature,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/tmp421.pdf"
 ,lightsense,tsl250rd,intensity,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf"
 ,lightsense,tsl260rd,intensity,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/tsl260rd.pdf"
-chemsense,lps25h,pressure,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf"
+,chemsense,lps25h,pressure,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf"
 ,chemsense,lps25h,temperature,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf"
 ,chemsense,sht25,humidity,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/sht25.pdf"
 ,chemsense,sht25,temperature,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/sht25.pdf"
