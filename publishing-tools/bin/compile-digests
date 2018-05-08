@@ -163,7 +163,6 @@ class DigestCompiler:
                 print('[{}] Prepared file {}.'.format(self.project_id, src))
             except Exception as exc:
                 print('[{}] Failed to prepare file {}!'.format(self.project_id, src))
-                raise
 
     def merge_data_files(self):
         print('[{}] Compiling staged files.'.format(self.project_id))
