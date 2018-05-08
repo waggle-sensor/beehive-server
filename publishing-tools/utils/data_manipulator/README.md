@@ -1,8 +1,8 @@
-## wg_datatool: Waggle CSV Data Manipulation Tool
+# wg_datatool: Waggle CSV Data Manipulation Tool
 
 All systems which build on the Waggle Platform share a common archive format for exported data.  This python tool helps manipulate the large comma-separated format (CSV) data from sensors: `data.csv`
 
-### Design diagram
+## Design diagram
 
 The program takes a CSV that contains field headers and corresponding rows of data and manipulates it based on command-line options. The tool can be applied repeatedly to extract data or build larger data products.
 
@@ -10,7 +10,7 @@ The program takes a CSV that contains field headers and corresponding rows of da
  [data.csv] ---> [wg_datatool] ---> [Output File1] ---> [wg_datatool] --- [Output File2] ---> ...
 ```
 
-### Commands
+## Commands
 
 Supported commands are `grep`, `cut`, and `add`.
 
@@ -18,7 +18,7 @@ Supported commands are `grep`, `cut`, and `add`.
 - `cut` removes a column of data
 - `add` adds a new column of data
 
-### How to use
+## How to use
 
 *Note: the tool looks for `nodes.csv` and `sensors.csv` at the same directory that `data.csv` is located*
 
