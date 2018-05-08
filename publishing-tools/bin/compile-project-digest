@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys
+import re
 import os
 import subprocess
 import argparse
@@ -10,39 +10,49 @@ import csv
 from datetime import datetime
 from jinja2 import Template
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--no-sensor-check', action='store_true', help='Skip sensor check.')
-parser.add_argument('project_ids', nargs='*', help='Project IDs to compile digest for.')
-args = parser.parse_args()
-
 # resolve environment paths
-program = os.path.abspath(sys.argv[0])
+program = os.path.abspath(__file__)
 program_dir = os.path.dirname(os.path.dirname(program))
 
-try:
-    datasets_dir = os.environ['DATASETS_DIR']
-except KeyError:
-    print('Please set the environmental variable DATASETS_DIR to a datasets base directory.')
-    sys.exit(1)
 
-try:
-    projects_dir = os.environ['PROJECTS_DIR']
-except KeyError:
-    print('Please set the environmental variable PROJECTS_DIR to a projects base directory.')
-    sys.exit(1)
-
-try:
-    digests_dir = os.environ['DIGESTS_DIR']
-except KeyError:
-    print('Please set the environmental variable DIGESTS_DIR to a digests build directory.')
-    sys.exit(1)
+def ensure_exists(*dirs):
+    for dir in dirs:
+        os.makedirs(dir, exist_ok=True)
 
 
-def ensure_exists(dir):
-    os.makedirs(dir, exist_ok=True)
+def read_file(filename):
+    with open(filename) as file:
+        return file.read()
 
 
-def needs_refresh(pair):
+def render_template(filename, template, *args, **kwargs):
+    write_file(filename, Template(read_file(filename)).render(*args, **kwargs))
+
+
+def read_file_or_empty(filename):
+    try:
+        return read_file(filename)
+    except FileNotFoundError:
+        return ''
+
+
+def write_file(filename, contents):
+    with open(filename, 'w') as file:
+        file.write(contents)
+
+
+def copy_file(src, dst):
+    shutil.copy(src, dst)
+
+
+def copy_file_if_exists(src, dst):
+    try:
+        shutil.copy(src, dst)
+    except Exception:
+        pass
+
+
+def newer_than(pair):
     src, dst = pair
 
     try:
@@ -58,150 +68,194 @@ def needs_refresh(pair):
     return dst_mtime < src_mtime
 
 
-def make_project_digest(project_id):
-    print('[{}] Preparing build tree.'.format(project_id))
+class DigestCompiler:
 
-    project_dir = os.path.join(projects_dir, project_id)
-    ensure_exists(program_dir)
+    def __init__(self, datasets_dir, digests_dir, project_dir, skip_sensor_check=False, skip_pubtime_check=False):
+        self.datasets_dir = datasets_dir
+        self.digests_dir = digests_dir
 
-    build_dir = os.path.join(digests_dir, project_id)
-    ensure_exists(build_dir)
+        self.project_dir = project_dir
+        self.project_id = os.path.basename(os.path.abspath(project_dir))
 
-    digest_dir = os.path.join(build_dir, '{}.latest'.format(project_id), '{}.{}'.format(project_id, datetime.utcnow().strftime('%Y-%m-%d')))
-    ensure_exists(digest_dir)
+        self.build_dir = os.path.join(digests_dir, self.project_id)
 
-    staging_dir = os.path.join(build_dir, 'staging')
-    ensure_exists(staging_dir)
+        self.digest_dir = os.path.join(
+            self.build_dir,
+            '{}.latest'.format(self.project_id),
+            '{}.{}'.format(self.project_id, datetime.utcnow().strftime('%Y-%m-%d')))
 
-    print('[{}] Copy metadata.'.format(project_id))
+        self.staging_dir = os.path.join(self.build_dir, 'staging')
 
-    with open(os.path.join(program_dir, 'docs', 'digest-readme.md')) as f:
-        template = Template(f.read())
+        self.skip_sensor_check = skip_sensor_check
+        self.skip_pubtime_check = skip_pubtime_check
 
-    try:
-        with open(os.path.join(project_dir, 'header.md')) as f:
-            header = f.read()
-    except FileNotFoundError:
-        header = ''
+        self.nodes = publishing.load_project_metadata(self.project_dir)
 
-    with open(os.path.join(digest_dir, 'README.md'), 'w') as f:
-        f.write(template.render(header=header, project_id=project_id))
+    def setup(self):
+        print('[{}] Setting up.'.format(self.project_id))
+        ensure_exists(self.build_dir, self.digest_dir, self.staging_dir)
 
-    try:
-        shutil.copy(os.path.join(project_dir, 'DUA.txt'), os.path.join(digest_dir, 'DUA.txt'))
-    except Exception:
-        pass
+    def cleanup(self):
+        print('[{}] Cleaning up.'.format(self.project_id))
 
-    shutil.copy(os.path.join(project_dir, 'nodes.csv'), os.path.join(digest_dir, 'nodes.csv'))
-    shutil.copy(os.path.join(project_dir, 'sensors.csv'), os.path.join(digest_dir, 'sensors.csv'))
+    def copy_metadata(self):
+        print('[{}] Copy metadata.'.format(self.project_id))
 
-    print('[{}] Staging data files.'.format(project_id))
+        render_template(os.path.join(program_dir, 'docs', 'digest-readme.md'),
+                        os.path.join(self.digest_dir, 'README.md'),
+                        header=read_file_or_empty(os.path.join(self.project_dir, 'header.md')))
 
-    nodes = publishing.load_project_metadata(project_dir)
+        copy_file(os.path.join(self.project_dir, 'nodes.csv'),
+                  os.path.join(self.digest_dir, 'nodes.csv'))
 
-    # sort candinate files in latest first order
-    candidates = sorted(publishing.published_dates(nodes),
-                        key=lambda item: item[1], reverse=True)
+        copy_file(os.path.join(self.project_dir, 'sensors.csv'),
+                  os.path.join(self.digest_dir, 'sensors.csv'))
 
-    file_pairs = []
+        copy_file_if_exists(os.path.join(self.project_dir, 'DUA.txt'),
+                            os.path.join(self.digest_dir, 'DUA.txt'))
 
-    for node, date in candidates:
-        src = os.path.join(datasets_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+    def stage_data_files(self):
+        print('[{}] Staging data files.'.format(self.project_id))
 
-        os.makedirs(os.path.join(staging_dir, node['node_id']), exist_ok=True)
-        dst = os.path.join(staging_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
-        file_pairs.append((src, dst))
+        # sort candinate files in latest first order
+        candidates = sorted(publishing.published_dates(self.nodes),
+                            key=lambda item: item[1], reverse=True)
 
-    for src, dst in filter(needs_refresh, file_pairs):
+        file_pairs = []
+
+        for node, date in candidates:
+            src = os.path.join(self.datasets_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+
+            ensure_exists(os.path.join(self.staging_dir, node['node_id']))
+            dst = os.path.join(self.staging_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+            file_pairs.append((src, dst))
+
+        for src, dst in filter(newer_than, file_pairs):
+            try:
+                sensors_metadata = os.path.join(self.project_dir, 'sensors.csv')
+                project_metadata = os.path.join(self.project_dir)
+
+                script_steps = ["gzip -dc '{src}'"]
+
+                if not self.skip_sensor_check:
+                    script_steps.append("{program_dir}/bin/filter-sensors '{sensors_metadata}'")
+
+                if not self.skip_pubtime_check:
+                    script_steps.append("{program_dir}/bin/filter-view '{project_metadata}'")
+
+                script_steps.append("sed '/^time/d'")
+                script_steps.append("gzip > '{dst}.tmp'")
+
+                script_template = ' | '.join(script_steps)
+
+                script = script_template.format(src=src,
+                                                dst=dst,
+                                                program_dir=program_dir,
+                                                sensors_metadata=sensors_metadata,
+                                                project_metadata=project_metadata)
+
+                subprocess.check_output(script, shell=True)
+
+                os.rename(dst + '.tmp', dst)
+
+                print('[{}] Prepared file {}.'.format(self.project_id, src))
+            except Exception as exc:
+                print('[{}] Failed to prepare file {}!'.format(self.project_id, src))
+                raise
+
+    def merge_data_files(self):
+        print('[{}] Compiling staged files.'.format(self.project_id))
+
+        # can reduce to: find . -name '*.csv.gz' | xargs gzcat >> data.csv
+        with open(os.path.join(self.digest_dir, 'data.csv'), 'wb') as outfile:
+            outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf\n')
+            for root, _, filenames in os.walk(self.staging_dir):
+                for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
+                    with open(os.path.join(root, filename), 'rb') as infile:
+                        indata = infile.read()
+                    outfile.write(gzip.decompress(indata))
+
+    def sort_data_files(self):
+        print('[{}] Sorting data file.'.format(self.project_id))
+
+        subprocess.check_output([
+            'sort',
+            '-o',
+            os.path.join(self.digest_dir, 'data.csv.sorted'),
+            os.path.join(self.digest_dir, 'data.csv'),
+        ])
+
+        # os.rename(os.path.join(self.digest_dir, 'data.csv.sorted'),
+        #           os.path.join(self.digest_dir, 'data.csv'))
+
+    def compile_archive(self):
+        print('[{}] Compiling archive.'.format(self.project_id))
+
+        now = datetime.now()
+
+        intervals = [interval for node in self.nodes for interval in node['commissioned']]
+
         try:
-            sensors_metadata = os.path.join(project_dir, 'sensors.csv')
-            project_metadata = os.path.join(project_dir)
+            data_start_date = min(interval.start for interval in intervals)
+        except ValueError:
+            data_start_date = now
 
-            if args.no_sensor_check:
-                script_template = '''
-                gzip -dc '{src}' |
-                {program_dir}/bin/filter-view '{project_metadata}' |
-                gzip > '{dst}.tmp'
-                '''
-            else:
-                script_template = '''
-                gzip -dc '{src}' |
-                {program_dir}/bin/filter-sensors '{sensors_metadata}' |
-                {program_dir}/bin/filter-view '{project_metadata}' |
-                gzip > '{dst}.tmp'
-                '''
+        try:
+            data_end_date = max(interval.end or now for interval in intervals)
+        except ValueError:
+            data_end_date = now
 
-            script = script_template.format(src=src,
-                                            dst=dst,
-                                            program_dir=program_dir,
-                                            project_dir=project_dir,
-                                            sensors_metadata=sensors_metadata,
-                                            project_metadata=project_metadata)
+        with open(os.path.join(self.digest_dir, 'provenance.csv'), 'w') as outfile:
+            writer = csv.writer(outfile)
 
-            subprocess.check_output(script, shell=True)
+            writer.writerow([
+                'data_format_version',
+                'project_id',
+                'data_start_date',
+                'data_end_date',
+                'creation_date',
+                'url',
+            ])
 
-            os.rename(dst + '.tmp', dst)
+            writer.writerow([
+                '2',
+                self.project_id,
+                data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
+                data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
+                now.strftime('%Y/%m/%d %H:%M:%S'),
+                'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(self.project_id),
+            ])
 
-            print('[{}] Prepared file {}.'.format(project_id, src))
-        except Exception as exc:
-            print('[{}] Failed to prepare file {}!'.format(project_id, src))
+        shutil.make_archive(base_name=os.path.join(self.build_dir, '{}.latest'.format(self.project_id)),
+                            format='gztar',
+                            root_dir=os.path.dirname(self.digest_dir),
+                            base_dir=os.path.basename(self.digest_dir))
 
-    print('[{}] Compiling staged files.'.format(project_id))
-
-    with open(os.path.join(digest_dir, 'data.csv'), 'wb') as outfile:
-        outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_hrf,value_raw\n')
-
-        for root, _, filenames in os.walk(staging_dir):
-            for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
-                with open(os.path.join(root, filename), 'rb') as infile:
-                    indata = infile.read()
-                data = gzip.decompress(indata)
-                header, _, body = data.partition(b'\n')
-                outfile.write(body)
-
-    print('[{}] Compiling archive.'.format(project_id))
-
-    now = datetime.now()
-
-    intervals = [interval for node in nodes for interval in node['commissioned']]
-
-    try:
-        data_start_date = min(interval.start for interval in intervals)
-    except ValueError:
-        data_start_date = now
-
-    try:
-        data_end_date = max(interval.end or now for interval in intervals)
-    except ValueError:
-        data_end_date = now
-
-    with open(os.path.join(digest_dir, 'provenance.csv'), 'w') as outfile:
-        writer = csv.writer(outfile)
-
-        writer.writerow([
-            'data_format_version',
-            'project_id',
-            'data_start_date',
-            'data_end_date',
-            'creation_date',
-            'url',
-        ])
-
-        writer.writerow([
-            '2',
-            project_id,
-            data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
-            data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
-            now.strftime('%Y/%m/%d %H:%M:%S'),
-            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
-        ])
-
-    shutil.make_archive(base_name=os.path.join(build_dir, '{}.latest'.format(project_id)),
-                        format='gztar',
-                        root_dir=os.path.dirname(digest_dir),
-                        base_dir=os.path.basename(digest_dir))
+    def compile(self):
+        self.setup()
+        self.copy_metadata()
+        self.stage_data_files()
+        self.merge_data_files()
+        # self.sort_data_files()
+        self.compile_archive()
+        self.cleanup()
 
 
 if __name__ == '__main__':
-    for project_id in args.project_ids:
-        make_project_digest(project_id)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--skip-sensor-check', action='store_true', help='Skip sensor check.')
+    parser.add_argument('--skip-pubtime-check', action='store_true', help='Skip commissioned time check.')
+    parser.add_argument('datasets_dir', help='Root directory of dataset tree.')
+    parser.add_argument('digests_dir', help='Root directory to build and store digests in.')
+    parser.add_argument('project_dirs', nargs='*', help='Root directories for each project to compile digest for.')
+    args = parser.parse_args()
+
+    for project_dir in args.project_dirs:
+        compiler = DigestCompiler(
+            datasets_dir=args.datasets_dir,
+            digests_dir=args.digests_dir,
+            project_dir=project_dir,
+            skip_sensor_check=args.skip_sensor_check,
+            skip_pubtime_check=args.skip_pubtime_check)
+
+        compiler.compile()
