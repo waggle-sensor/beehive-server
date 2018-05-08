@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import re
 import os
 import subprocess
 import argparse
@@ -114,8 +113,27 @@ class DigestCompiler:
         copy_file_if_exists(os.path.join(self.project_dir, 'DUA.txt'),
                             os.path.join(self.digest_dir, 'DUA.txt'))
 
+    def get_staging_script_template(self):
+        steps = ["gzip -dc '{src}'"]
+
+        if not self.skip_sensor_check:
+            steps.append("{program_dir}/bin/filter-sensors '{sensors_metadata}'")
+
+        if not self.skip_pubtime_check:
+            steps.append("{program_dir}/bin/filter-view '{project_metadata}'")
+
+        steps.append("sed '/^time/d'")
+        steps.append("gzip > '{dst}.tmp'")
+
+        return ' | '.join(steps)
+
     def stage_data_files(self):
         print('[{}] Staging data files.'.format(self.project_id))
+
+        script_template = self.get_staging_script_template()
+
+        sensors_metadata = os.path.join(self.project_dir, 'sensors.csv')
+        project_metadata = os.path.join(self.project_dir)
 
         # sort candinate files in latest first order
         candidates = sorted(publishing.published_dates(self.nodes),
@@ -132,22 +150,6 @@ class DigestCompiler:
 
         for src, dst in filter(newer_than, file_pairs):
             try:
-                sensors_metadata = os.path.join(self.project_dir, 'sensors.csv')
-                project_metadata = os.path.join(self.project_dir)
-
-                script_steps = ["gzip -dc '{src}'"]
-
-                if not self.skip_sensor_check:
-                    script_steps.append("{program_dir}/bin/filter-sensors '{sensors_metadata}'")
-
-                if not self.skip_pubtime_check:
-                    script_steps.append("{program_dir}/bin/filter-view '{project_metadata}'")
-
-                script_steps.append("sed '/^time/d'")
-                script_steps.append("gzip > '{dst}.tmp'")
-
-                script_template = ' | '.join(script_steps)
-
                 script = script_template.format(src=src,
                                                 dst=dst,
                                                 program_dir=program_dir,
