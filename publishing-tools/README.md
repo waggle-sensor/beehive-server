@@ -160,6 +160,10 @@ _The header is required!_
 In addition to the main pipeline tools, the following utilities are included for
 debugging or more efficiently interfacing with other components:
 
+* `compile-digests`: Takes datasets tree of the form `node/date.csv.gz`, digest
+build directory and a list of projects and compiles a complete project digest.
+See program help for more information.
+
 * `published-dates`: Takes project metadata and prints all commissioned nodes /
 dates pairs up to and including today. May be useful for debugging or efficiently
 selecting datasets for a digest.
