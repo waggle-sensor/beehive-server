@@ -1,4 +1,4 @@
-ontology,subsystem,sensor,parameter,unit,minval,maxval,datasheet
+ontology,subsystem,sensor,parameter,hrf_unit,hrf_minval,hrf_maxval,datasheet
 ,metsense,metsense,id,,,,"https://github.com/waggle-sensor/sensors"
 ,metsense,bmp180,pressure,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
 ,metsense,bmp180,temperature,,,,"https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/bmp180.pdf"
