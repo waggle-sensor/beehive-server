@@ -9,9 +9,7 @@ import csv
 from datetime import datetime
 from jinja2 import Template
 
-# resolve environment paths
-program = os.path.abspath(__file__)
-program_dir = os.path.dirname(os.path.dirname(program))
+publishing_tools_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def ensure_exists(*dirs):
@@ -103,7 +101,7 @@ class DigestCompiler:
         print('[{}] Copy metadata.'.format(self.project_id))
 
         render_template(os.path.join(self.digest_dir, 'README.md'),
-                        os.path.join(program_dir, 'docs', 'digest-readme.md'),
+                        os.path.join(publishing_tools_dir, 'docs', 'digest-readme.md'),
                         header=read_file_or_empty(os.path.join(self.project_dir, 'header.md')))
 
         copy_file(os.path.join(self.project_dir, 'nodes.csv'),
@@ -119,10 +117,10 @@ class DigestCompiler:
         steps = ["gzip -dc '{src}'"]
 
         if not self.skip_sensor_check:
-            steps.append("{program_dir}/bin/filter-sensors '{sensors_metadata}'")
+            steps.append("{publishing_tools_dir}/bin/filter-sensors '{sensors_metadata}'")
 
         if not self.skip_pubtime_check:
-            steps.append("{program_dir}/bin/filter-view '{project_metadata}'")
+            steps.append("{publishing_tools_dir}/bin/filter-view '{project_metadata}'")
 
         steps.append("sed '/^time/d'")
         steps.append("gzip > '{dst}.tmp'")
@@ -154,7 +152,7 @@ class DigestCompiler:
             try:
                 script = script_template.format(src=src,
                                                 dst=dst,
-                                                program_dir=program_dir,
+                                                publishing_tools_dir=publishing_tools_dir,
                                                 sensors_metadata=sensors_metadata,
                                                 project_metadata=project_metadata)
 
