@@ -25,7 +25,7 @@ def read_file(filename):
 
 
 def render_template(filename, template, *args, **kwargs):
-    write_file(filename, Template(read_file(filename)).render(*args, **kwargs))
+    write_file(filename, Template(read_file(template)).render(*args, **kwargs))
 
 
 def read_file_or_empty(filename):
