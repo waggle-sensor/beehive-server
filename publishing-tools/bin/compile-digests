@@ -247,7 +247,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='''
     Compiles a digest for each specified project from datasets. For each project
     "path/to/project" in project_dirs, a digest is compiled at
-    "digests_dir/project/project.latest.tar.gz". Datasets are
+    "digests_dir/project/project.latest.tar.gz". Datasets are assumed to be a
+    tree of the form "node_id/date.csv.gz" with the root being specified as
+    datasets_dir.
     ''')
     parser.add_argument('--skip-sensor-check', action='store_true', help='Skip sensor check.')
     parser.add_argument('--skip-pubtime-check', action='store_true', help='Skip commissioned time check.')
