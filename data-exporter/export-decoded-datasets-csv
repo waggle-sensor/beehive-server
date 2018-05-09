@@ -32,7 +32,8 @@ def decode_row(row):
 
 formats = {'3'}
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description='''
+''')
 parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
 parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If not specified, will write to stdout.')
 args = parser.parse_args()

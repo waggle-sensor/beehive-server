@@ -1,49 +1,179 @@
 #!/usr/bin/env python3
-import fileinput
+import argparse
 from cassandra.cluster import Cluster
-import sys
 import os
+import logging
+import csv
+import binascii
+import time
+import sys
+from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
+from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
+
+
+decoders = {
+    ('coresense', '3'): unpack_sensors_v3,
+    ('coresense', '4'): unpack_sensors_v5,
+    ('status', '0'): unpack_sensors_v5,
+    ('image_example', '0'): unpack_sensors_v5,
+    ('spl', '0'): unpack_sensors_v5,
+}
+
+
+def decode_row(row):
+    plugin = (row.plugin_name, row.plugin_version)
+
+    if plugin not in decoders:
+        return []
+
+    source = binascii.unhexlify(row.data)
+    return decoders[plugin](source)
+
+
+formats = {'3'}
+
+parser = argparse.ArgumentParser(description='''
+This tool reads a list of "node
+''')
+parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
+parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If not specified, will write to stdout.')
+args = parser.parse_args()
+
+if args.format not in formats:
+    raise NotImplementedError('For {} is not currently supported.'.format(args.format))
+
+logger = logging.getLogger('export')
+logger.setLevel(logging.INFO)
+
+
+def stringify(x):
+    if x is None:
+        return 'NA'
+    if isinstance(x, tuple) or isinstance(x, list):
+        return ','.join(map(stringify, x))
+    if isinstance(x, bytes) or isinstance(x, bytearray):
+        return binascii.hexlify(x).decode()
+    if isinstance(x, float):
+        return str(round(x, 5))
+    if isinstance(x, bool):
+        return int(x)
+    return str(x)
+
+
+def export_raw(rows, writer):
+    for row in rows:
+        plugin = (row.plugin_name, row.plugin_version)
+
+        if sample.timestamp == 0:
+            timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
+        else:
+            timestamp = sample.timestamp
+
+        writer.writerow([
+            timestamp,
+            node_id,
+            row.plugin_name,
+            row.plugin_version,
+            row.data,
+        ])
+
+
+def decode_rows(rows, writer):
+    for row in rows:
+        plugin = (row.plugin_name, row.plugin_version)
+
+        try:
+            samples = decode_row(row)
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
+            continue
+
+        for sample in samples:
+            if sample.timestamp == 0:
+                timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
+            else:
+                timestamp = sample.timestamp
+
+            writer.writerow([
+                timestamp,
+                node_id,
+                sample.subsystem,
+                sample.sensor,
+                sample.parameter,
+                stringify(sample.value_raw),
+                stringify(sample.value_hrf),
+            ])
+
 
 cluster = Cluster()
 session = cluster.connect('waggle')
 
 query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
 
-lines = list(fileinput.input())
+lines = sys.stdin.readlines()
+
+opened = set()
+
+console_writer = None
 
 for i, line in enumerate(lines):
     try:
         fields = line.split()
-        node_id = fields[0]
-        date = fields[2]
-        partition_key = (fields[1], fields[2])
 
-        prefix = 'datasets/2raw/{}'.format(node_id)
-        os.makedirs(prefix, exist_ok=True)
-        filename = '{}/{}.csv'.format(prefix, date)
+        if len(fields) != 2:
+            logger.warning('skipping invalid line: {}'.format(line))
+            continue
+
+        node_id = fields[0][-12:].lower()
+        date = fields[1]
+        partition_key = (fields[0], fields[1])
 
         rows = session.execute(query, partition_key)
 
-        print('{} [{:.0%}]'.format(filename, i / len(lines)))
+        if args.datasets_dir is None:
+            if console_writer is None:
+                console_writer = csv.writer(sys.stdout)
 
-        with open(filename, 'w') as outfile:
-            for row in rows:
-                if row.data.startswith("b'"):
-                    data = row.data[2:-1]
-                else:
-                    data = row.data
+                console_writer.writerow([
+                    'timestamp',
+                    'node_id',
+                    'subsystem',
+                    'sensor',
+                    'parameter',
+                    'value_raw',
+                    'value_hrf',
+                ])
 
-                columns = [
-                    node_id,
-                    row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                    row.plugin_name,
-                    row.plugin_version,
-                    row.parameter,
-                    data,
-                ]
+            decode_rows(rows, console_writer)
+        else:
+            filename = os.path.join(args.datasets_dir, node_id, date + '.csv')
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-                print(','.join(columns), file=outfile)
+            if filename in opened:
+                mode = 'a'
+            else:
+                mode = 'w'
+
+            opened.add(filename)
+
+            with open(filename, mode) as outfile:
+                writer = csv.writer(outfile)
+
+                if mode == 'w':
+                    writer.writerow([
+                        'timestamp',
+                        'node_id',
+                        'subsystem',
+                        'sensor',
+                        'parameter',
+                        'value_raw',
+                        'value_hrf',
+                    ])
+
+                decode_rows(rows, writer)
     except KeyboardInterrupt:
-        break
-    except Exception as e:
-        print(e, flush=True, file=sys.stderr)
+        raise
+    except Exception as exc:
+        logger.exception('Failed to decode row: {}'.format(row))
