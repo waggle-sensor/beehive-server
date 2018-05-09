@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 from cassandra.cluster import Cluster
 import os
 import logging
@@ -9,6 +10,12 @@ import sys
 from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--console', action='store_true', help='Write to stdout instead of files.')
+parser.add_argument('-d', '--datasets-dir', default='datasets', help='Directory where datasets will be exported.')
+parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
+args = parser.parse_args()
 
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
@@ -26,6 +33,24 @@ def stringify(x):
     if isinstance(x, bool):
         return int(x)
     return str(x)
+
+
+def export_raw(rows, writer):
+    for row in rows:
+        plugin = (row.plugin_name, row.plugin_version)
+
+        if sample.timestamp == 0:
+            timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
+        else:
+            timestamp = sample.timestamp
+
+        writer.writerow([
+            timestamp,
+            node_id,
+            row.plugin_name,
+            row.plugin_version,
+            row.data,
+        ])
 
 
 decoders = {
@@ -75,6 +100,7 @@ def decode_rows(rows, writer):
                 stringify(sample.value_hrf),
             ])
 
+
 cluster = Cluster()
 session = cluster.connect('waggle')
 
@@ -83,6 +109,8 @@ query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sen
 lines = sys.stdin.readlines()
 
 opened = set()
+
+console_writer = None
 
 for i, line in enumerate(lines):
     try:
@@ -96,24 +124,13 @@ for i, line in enumerate(lines):
         date = fields[2]
         partition_key = (fields[1], fields[2])
 
-        prefix = 'datasets/3/{}'.format(node_id)
-        os.makedirs(prefix, exist_ok=True)
-        filename = '{}/{}.csv'.format(prefix, date)
+        rows = session.execute(query, partition_key)
 
-        if filename in opened:
-            mode = 'a'
-        else:
-            mode = 'w'
+        if args.console:
+            if console_writer is None:
+                console_writer = csv.writer(sys.stdout)
 
-        opened.add(filename)
-
-        print(filename, mode)
-
-        with open(filename, mode) as outfile:
-            writer = csv.writer(outfile)
-
-            if mode == 'w':
-                writer.writerow([
+                console_writer.writerow([
                     'timestamp',
                     'node_id',
                     'subsystem',
@@ -123,8 +140,33 @@ for i, line in enumerate(lines):
                     'value_hrf',
                 ])
 
-            rows = session.execute(query, partition_key)
-            decode_rows(rows, writer)
+            decode_rows(rows, console_writer)
+        else:
+            filename = os.path.join(args.datasets_dir, node_id, date + '.csv')
+            os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+            if filename in opened:
+                mode = 'a'
+            else:
+                mode = 'w'
+
+            opened.add(filename)
+
+            with open(filename, mode) as outfile:
+                writer = csv.writer(outfile)
+
+                if mode == 'w':
+                    writer.writerow([
+                        'timestamp',
+                        'node_id',
+                        'subsystem',
+                        'sensor',
+                        'parameter',
+                        'value_raw',
+                        'value_hrf',
+                    ])
+
+                decode_rows(rows, writer)
     except KeyboardInterrupt:
         raise
     except Exception as exc:

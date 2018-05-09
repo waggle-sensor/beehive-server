@@ -67,7 +67,7 @@ def newer_than(pair):
 
 class DigestCompiler:
 
-    def __init__(self, datasets_dir, digests_dir, project_dir, skip_sensor_check=False, skip_pubtime_check=False):
+    def __init__(self, datasets_dir, digests_dir, project_dir, **kwargs):
         self.datasets_dir = datasets_dir
         self.digests_dir = digests_dir
 
@@ -82,8 +82,9 @@ class DigestCompiler:
 
         self.staging_dir = os.path.join(self.build_dir, 'staging')
 
-        self.skip_sensor_check = skip_sensor_check
-        self.skip_pubtime_check = skip_pubtime_check
+        # init optional flags
+        self.skip_sensor_check = kwargs.get('skip_sensor_check', False)
+        self.skip_pubtime_check = kwargs.get('skip_pubtime_check', False)
 
         self.nodes = publishing.load_project_metadata(self.project_dir)
 
@@ -151,7 +152,7 @@ class DigestCompiler:
             ])
 
     def add_metadata(self):
-        print('[{}] Copy metadata.'.format(self.project_id))
+        print('[{}] Add metadata.'.format(self.project_id))
         self.add_readme()
         self.add_nodes_metadata()
         self.add_sensor_metadata()
@@ -205,28 +206,32 @@ class DigestCompiler:
 
                 os.rename(dst + '.tmp', dst)
 
-                print('[{}] Prepared file {}.'.format(self.project_id, src))
+                print('[{}] Staged file {}.'.format(self.project_id, src))
             except Exception as exc:
-                print('[{}] Failed to prepare file {}!'.format(self.project_id, src))
+                print('[{}] Failed to stage file {}!'.format(self.project_id, src))
 
     def merge_data_files(self):
         print('[{}] Compiling staged files.'.format(self.project_id))
 
         # can reduce to: find . -name '*.csv.gz' | xargs gzcat >> data.csv
         with open(os.path.join(self.digest_dir, 'data.csv'), 'wb') as outfile:
-            outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf\n')
+            # outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf\n')
             for root, _, filenames in os.walk(self.staging_dir):
                 for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
                     with open(os.path.join(root, filename), 'rb') as infile:
                         indata = infile.read()
                     outfile.write(gzip.decompress(indata))
 
-        # subprocess.check_output([
-        #     'sort',
-        #     '-o',
-        #     os.path.join(self.digest_dir, 'data.csv.sorted'),
-        #     os.path.join(self.digest_dir, 'data.csv'),
-        # ])
+        print('[{}] Sorting staged files.'.format(self.project_id))
+
+        subprocess.check_output([
+            'sort',
+            '-o',
+            os.path.join(self.digests_dir, 'sorted.csv'),
+            os.path.join(self.digest_dir, 'data.csv'),
+        ])
+
+        # Can I just append results of large sort to file?
 
         # os.rename(os.path.join(self.digest_dir, 'data.csv.sorted'),
         #           os.path.join(self.digest_dir, 'data.csv'))
@@ -256,6 +261,7 @@ if __name__ == '__main__':
     tree of the form "node_id/date.csv.gz" with the root being specified as
     datasets_dir.
     ''')
+
     parser.add_argument('--skip-sensor-check', action='store_true', help='Skip sensor check.')
     parser.add_argument('--skip-pubtime-check', action='store_true', help='Skip commissioned time check.')
     parser.add_argument('datasets_dir', help='Root directory of dataset tree.')
