@@ -15,7 +15,7 @@ formats = {'3'}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
-parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If none, will print to stdout.')
+parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If not specified, will write to stdout.')
 args = parser.parse_args()
 
 if args.format not in formats:
