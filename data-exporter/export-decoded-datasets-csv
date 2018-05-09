@@ -11,11 +11,15 @@ from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
 
 
+formats = {'3'}
+
 parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--console', action='store_true', help='Write to stdout instead of files.')
-parser.add_argument('-d', '--datasets-dir', default='datasets', help='Directory where datasets will be exported.')
 parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
+parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If none, will print to stdout.')
 args = parser.parse_args()
+
+if args.format not in formats:
+    raise NotImplementedError('For {} is not currently supported.'.format(args.format))
 
 logger = logging.getLogger('export')
 logger.setLevel(logging.INFO)
@@ -126,7 +130,7 @@ for i, line in enumerate(lines):
 
         rows = session.execute(query, partition_key)
 
-        if args.console:
+        if args.datasets_dir is None:
             if console_writer is None:
                 console_writer = csv.writer(sys.stdout)
 
