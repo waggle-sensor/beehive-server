@@ -11,6 +11,25 @@ from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
 
 
+decoders = {
+    ('coresense', '3'): unpack_sensors_v3,
+    ('coresense', '4'): unpack_sensors_v5,
+    ('status', '0'): unpack_sensors_v5,
+    ('image_example', '0'): unpack_sensors_v5,
+    ('spl', '0'): unpack_sensors_v5,
+}
+
+
+def decode_row(row):
+    plugin = (row.plugin_name, row.plugin_version)
+
+    if plugin not in decoders:
+        return []
+
+    source = binascii.unhexlify(row.data)
+    return decoders[plugin](source)
+
+
 formats = {'3'}
 
 parser = argparse.ArgumentParser()
@@ -57,25 +76,6 @@ def export_raw(rows, writer):
         ])
 
 
-decoders = {
-    ('coresense', '3'): unpack_sensors_v3,
-    ('coresense', '4'): unpack_sensors_v5,
-    ('status', '0'): unpack_sensors_v5,
-    ('image_example', '0'): unpack_sensors_v5,
-    ('spl', '0'): unpack_sensors_v5,
-}
-
-
-def decode_row(row):
-    plugin = (row.plugin_name, row.plugin_version)
-
-    if plugin not in decoders:
-        return []
-
-    source = binascii.unhexlify(row.data)
-    return decoders[plugin](source)
-
-
 def decode_rows(rows, writer):
     for row in rows:
         plugin = (row.plugin_name, row.plugin_version)
@@ -84,7 +84,7 @@ def decode_rows(rows, writer):
             samples = decode_row(row)
         except KeyboardInterrupt:
             raise
-        except Exception as exc:
+        except Exception:
             logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
             continue
 
