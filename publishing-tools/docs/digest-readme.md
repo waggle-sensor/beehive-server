@@ -93,13 +93,13 @@ inside the brackets `[ ]` indicate:
 The sensor metadata provides additional information about each of the sensors published
 by the project. This file is a CSV with the following fields:
 
-* `ontology` - Sensor name.
+* `ontology` - Ontology of measurement.
 * `subsystem` - Subsystem containing sensor.
 * `sensor` - Sensor name.
 * `parameter` - Sensor parameter.
-* `unit` - Physical units of sensor value.
-* `minval` - Minimum value according to datasheet. Used as lower bound in range filter.
-* `maxval` - Maximum value according to datasheet. Used as upper bound in range filter.
+* `hrf_unit` - Physical units of HRF value.
+* `hrf_minval` - Minimum HRF value according to datasheet. Used as lower bound in range filter.
+* `hrf_maxval` - Maximum HRF value according to datasheet. Used as upper bound in range filter.
 * `datasheet` - Reference to sensor's datasheet.
 
 These fields will always be provided as a header, for example:
