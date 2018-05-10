@@ -1,7 +1,5 @@
 # Project Digest Readme
 
-{{ header }}
-
 The files in this directory contain sensor data and the associated meta-data that
 will enable parsing the sensor values.
 
@@ -22,11 +20,11 @@ The sensor data file is an aggregate of all published data from the project's
 nodes. By published, we mean:
 
 * Data was read from a whitelisted node belonging to the project.
-* Data was read during that node's commissioning time.
+* Data was read during that node's commissioning period.
 * Data was read from a whitelisted sensor.
-* Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate.
+* Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate. No further checks were made on the data. 
 
-The `data.csv` file is a CSV with the following fields:
+The `data.csv` file is a CSV with the following, but not limited to, columns:
 
 * `node_id` - ID of node which did the measurement.
 * `timestamp` - UTC timestamp of when the measurement was done.
