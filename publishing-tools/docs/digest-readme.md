@@ -142,4 +142,5 @@ data_format_version,project_id,data_start_date,data_end_date,creation_date,url
 
 Although our goal is to provide stable metadata files, please consider these as
 in-development. If you do write tools which process them, we *strongly* recommend
-taking advantage of the metadata headers in order to accommodate future changes.
+taking advantage of the metadata headers and processing the files as CSV when applicable in 
+order to accommodate future changes.
