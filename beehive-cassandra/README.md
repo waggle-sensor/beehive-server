@@ -1,4 +1,7 @@
+<!--
 waggle_topic=Waggle/Beehive/Service
+-->
+
 # Cassandra Database
 
 Be sure that environment variable $DATA is defined.

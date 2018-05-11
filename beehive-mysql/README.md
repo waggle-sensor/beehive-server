@@ -1,4 +1,7 @@
+<!--
 waggle_topic=Waggle/Beehive/Service
+-->
+
 # MySQL Database
 
 ## Start container:

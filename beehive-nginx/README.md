@@ -1,4 +1,7 @@
+<!--
 waggle_topic=Waggle/Beehive/Service
+-->
+
 # Nginx HTTP Server
 
 

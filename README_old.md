@@ -1,4 +1,7 @@
+<!--
 waggle_topic=Waggle/Beehive
+-->
+
 # System Overview (Old)
 
 Waggle cloud software for aggregation, storage and analysis of sensor data from Waggle nodes
