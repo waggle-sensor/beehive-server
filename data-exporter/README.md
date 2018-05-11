@@ -27,6 +27,12 @@ The following would export all datasets from 2018-05-10 to `mydatasets` as a
 ./list-datasets | grep 2018-05-10 | ./export-datasets mydatasets
 ```
 
+The you could grep the tree using something like:
+
+```
+grep -h -r 'failures,nc' mydatasets
+```
+
 ### Working Remote
 
 You can access the Cassandra database remotely opening an SSH tunnel in the
