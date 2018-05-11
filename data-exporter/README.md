@@ -1,11 +1,11 @@
 # Data Exporting Tools
 
 ```
-                Filter nodes and dates                     +----> Stdout
-                        v                                  |
-[List Dataset] -> grep, awk, etc -> [Export Datasets] -----+
-     ^                                  ^                  |
- Emits list of (Node ID, Date)       Exports datasets for  +----> Dataset Tree on Disk
+                                                               +----> Stdout
+                                                               |
+[List Dataset] ---> grep, awk, etc ---> [Export Datasets] -----+
+     ^                                         ^               |
+ Emits list of (Node ID, Date)       Exports datasets for      +----> Dataset Tree on Disk
  partition keys.                     partition keys.                  
 ```
 
