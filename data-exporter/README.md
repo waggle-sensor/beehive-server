@@ -1,5 +1,14 @@
 # Data Exporting Tools
 
+```
+                Filter nodes and dates                     +----> Stdout
+                        v                                  |
+[List Dataset] -> grep, awk, etc -> [Export Datasets] -----+
+     ^                                  ^                  |
+ Emits list of (Node ID, Date)       Exports datasets for  +----> Dataset Tree on Disk
+ partition keys.                     partition keys.                  
+```
+
 ## Installing dependencies
 
 ```sh
@@ -7,7 +16,20 @@
 pip install -r requirements.txt
 ```
 
-## list-datasets and export-datasets
+## Usage
+
+### Listing Datasets
+
+```
+Sean@mcswl072 ~/t/b/data-exporter> ./list-datasets | tail
+001e0610f725 2017-12-09
+001e0610ba16 2017-08-30
+001e0610f6dd 2018-04-27
+001e0610ee41 2018-04-23
+001e06109416 2018-04-04
+001e0610c2d7 2018-04-01
+```
+
 
 These tools are used together to perform bulk pulls from the Cassandra database.
 They will dump all pulled datasets to `data/nodeid/date.csv`. Let's look a few
