@@ -1,7 +1,5 @@
-
-
-# Beehive MySQL
-
+waggle_topic=Waggle/Beehive/Service
+# MySQL Database
 
 ## Start container:
 
@@ -64,4 +62,3 @@ Note: The beehive server will not function properly without these tables - there
 ```bash
 curl https://raw.githubusercontent.com/waggle-sensor/beehive-server/master/beehive-mysql/dropTables.sql | docker exec -i beehive-mysql mysql  -u waggle --password=waggle
 ```
-

@@ -27,8 +27,21 @@ def decode_row(row):
     if plugin not in decoders:
         return []
 
-    source = binascii.unhexlify(row.data)
-    return decoders[plugin](source)
+    # hack to handle incorrectly python repr'd byte data
+    # data = row.data.lstrip("b'").rstrip("'")
+    data = binascii.unhexlify(row.data)
+    #
+    # try:
+    #     data = data[data.index(0xAA):]
+    # except ValueError:
+    #     pass
+    #
+    # try:
+    #     data = data[:data.rindex(0x55)+1]
+    # except ValueError:
+    #     pass
+
+    return decoders[plugin](data)
 
 
 formats = {'3'}

@@ -1,6 +1,5 @@
-
-
-# Beehive SSH
+waggle_topic=Waggle/Beehive/Service
+# Node Management SSH Server
 
 SSH server to accept reverse ssh tunnel connections from waggle nodes.
 

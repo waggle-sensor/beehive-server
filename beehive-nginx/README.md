@@ -1,8 +1,8 @@
+waggle_topic=Waggle/Beehive/Service
+# Nginx HTTP Server
 
-# Beehive Nginx
- 
 
-This is the Beehive Nginx server. 
+This is the Beehive Nginx server.
 
 ## Build image:
 ```bash
