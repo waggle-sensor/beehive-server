@@ -224,14 +224,13 @@ class DigestCompiler:
 
         print('[{}] Sorting staged files.'.format(self.project_id))
 
-        subprocess.check_output([
-            'sort',
-            '-o',
-            os.path.join(self.digests_dir, 'sorted.csv'),
-            os.path.join(self.digest_dir, 'data.csv'),
-        ])
+        sort_path = os.path.join(self.digests_dir, 'sorted.csv')
+        data_path = os.path.join(self.digest_dir, 'data.csv')
 
-        # Can I just append results of large sort to file?
+        subprocess.check_output('''
+            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {sort_path};
+            sort {data_path} >> {sort_path};
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
 
         # os.rename(os.path.join(self.digest_dir, 'data.csv.sorted'),
         #           os.path.join(self.digest_dir, 'data.csv'))
