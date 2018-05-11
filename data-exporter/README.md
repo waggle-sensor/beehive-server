@@ -26,3 +26,14 @@ The following would export all datasets from 2018-05-10 to `mydatasets` as a
 ```
 ./list-datasets | grep 2018-05-10 | ./export-datasets mydatasets
 ```
+
+### Working Remote
+
+You can access the Cassandra database remotely opening an SSH tunnel in the
+background.
+
+```
+ssh beehive1 -L 9042:localhost:9042
+```
+
+This allows you to remotely run exporting commands for testing, backups, etc.
