@@ -1,7 +1,8 @@
 <!--
-waggle_topic=Waggle/Beehive/Operations,Setup
+waggle_topic=Waggle/Beehive
 -->
-# Beehive Server
+
+# Installation
 
 Waggle cloud software for aggregation, storage and analysis of sensor data from Waggle nodes
 
