@@ -1,8 +1,8 @@
 <!--
-waggle_topic=Waggle/Beehive
+waggle_topic=Waggle/Beehive,Overview
 -->
 
-# System Overview
+# Beehive Overview
 
 <img src="./images/beehiveconnections.svg" width=900 />
 
