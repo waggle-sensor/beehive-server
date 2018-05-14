@@ -1,3 +1,7 @@
+<!--
+waggle_topic=IGNORE
+-->
+
 ## Top Level Architecture:
 
 Beehive is made up of many processes running in several *docker containers* -
