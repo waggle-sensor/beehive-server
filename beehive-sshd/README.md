@@ -1,5 +1,5 @@
 <!--
-waggle_topic=Waggle/Beehive/Service
+waggle_topic=Waggle/Beehive/Services
 -->
 
 # Node Management SSH Server
