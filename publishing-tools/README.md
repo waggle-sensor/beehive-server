@@ -1,3 +1,7 @@
+<!--
+waggle_topic=Waggle/Beehive/Operations
+-->
+
 # Publishing Filter Tools and Metadata
 
 ## Overview
