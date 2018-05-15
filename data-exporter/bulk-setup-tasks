@@ -19,4 +19,4 @@ rows.sort(key=lambda r: r.date, reverse=True)
 for date, datasets in groupby(rows, key=lambda r: r.date):
     with open(os.path.join(args.taskdir, date), 'w') as file:
         for r in datasets:
-            print(r.node_id[-12:].lower(), r.node_id, r.date, file=file)
+            print(r.node_id, r.date, file=file)

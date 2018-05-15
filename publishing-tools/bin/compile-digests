@@ -224,16 +224,20 @@ class DigestCompiler:
 
         print('[{}] Sorting staged files.'.format(self.project_id))
 
+        # NOTE Currently, same sorted.csv used across projects. Cannot be run in parallel.
         sort_path = os.path.join(self.digests_dir, 'sorted.csv')
         data_path = os.path.join(self.digest_dir, 'data.csv')
 
         subprocess.check_output('''
-            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {sort_path};
-            sort {data_path} >> {sort_path};
+            sort -o {sort_path} {data_path}
         '''.format(data_path=data_path, sort_path=sort_path), shell=True)
 
-        # os.rename(os.path.join(self.digest_dir, 'data.csv.sorted'),
-        #           os.path.join(self.digest_dir, 'data.csv'))
+        subprocess.check_output('''
+            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {data_path};
+            cat {sort_path} >> {data_path}
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
+
+        os.remove(sort_path)
 
     def compile_archive(self):
         print('[{}] Compiling archive.'.format(self.project_id))

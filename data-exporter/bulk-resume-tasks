@@ -2,17 +2,18 @@
 
 set -e
 
-if [ $# -eq 0 ]; then
-  echo 'please specify a task directory'
+if [ $# -ne 2 ]; then
+  echo "usage: $0 taskdir datadir"
   exit 1
 fi
 
 taskdir=$1
+datadir=$2
 
 for task in $(ls $taskdir | sort -r); do
   echo starting $task
-  ./export-decoded-datasets-csv < $taskdir/$task
-  gzip -f datasets/3/*/*.csv || true
+  ./export-datasets $2 < $taskdir/$task
+  find $2 -name '*csv' | xargs gzip -f
   rm $taskdir/$task
   echo completed $task
 done
