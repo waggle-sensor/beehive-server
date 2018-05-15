@@ -1,6 +1,5 @@
 <!--
 waggle_topic=Waggle/Beehive/Operations,Publishing Data
-waggle_topic=Waggle/Data,Publishing Data
 -->
 
 # Publishing Filter Tools and Metadata
