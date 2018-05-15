@@ -19,3 +19,14 @@ RabbitMQ incoming data queue into Cassandra.
                               3. Insert to DB
                               4. ACK message
 ```
+
+## Deployment
+
+beehive-loader-raw is packaged as a Docker image. It can be built and deployed
+as follows:
+
+```
+cd beehive-server/beehive-loader-raw
+make build
+make deploy
+```
