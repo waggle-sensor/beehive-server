@@ -3,7 +3,7 @@
 As a very broad statement,the cause was an erroneous execution of a script that took actions to "harden" the system, overriding correct system setup with what the script thought it should be.
 
 # What Caused it
-A script that was produced by CIS, (Center for Information Security), a big name in enterprises for security compliance and hardening (used by UChicago), develops scripts that "examine" a system, and compares the results to a specific set of values that CIS thinks is acceptable. This is called a workbench to CIS. Each workbench is designated for a specific system and the environment that it is run under. 
+A script that was produced by CIS, (Center for Information Security), a big name in enterprises for security compliance and hardening (used by UChicago), develops scripts that "examines" a system, and compares the results to a specific set of values that CIS thinks is acceptable. This is called a workbench to CIS. Each workbench is designated for a specific system and the environment that it is run under. 
 
 The next items are a two-fold issue. First,the CentOS workbench was downloaded from their portal, and was **supposed** to be pre-ran on my workstation, to make sure nothing bad would happen. It was executed in the wrong terminal window, thus causing the system to harden and degregate. Secondly, after a naming convention change in CIS, they no longer offer just the analyzer, it is now also a "remediation kit", which in addition to printing results of the analyzer, it now takes "corrective" action.
 
