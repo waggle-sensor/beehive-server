@@ -3,6 +3,7 @@ from glob import glob
 import hashlib
 import datetime
 import os
+import shutil
 import gzip
 import multiprocessing
 import subprocess
@@ -212,21 +213,60 @@ def update_combined_file(data_dir, build_dir):
     print('done', target, time.time() - start)
 
 
+def copy_file(src, dst):
+    ensure_dir(dst)
+    shutil.copy(src, dst)
+
+
+def copy_file_if_exists(src, dst):
+    try:
+        copy_file(src, dst)
+    except FileNotFoundError:
+        pass
+
+
+# maybe just use a single, general render template function
+def update_project_files(build_dir, project_dir):
+    project_id = os.path.basename(project_dir)
+    date = datetime.datetime.utcnow().strftime('%Y-%m-%d')
+
+    digest_dir = os.path.join(build_dir,
+                              '{}.latest'.format(project_id),
+                              '{}.{}'.format(project_id, date))
+
+    copy_file(os.path.join(build_dir, 'data.csv.gz'),
+              os.path.join(digest_dir, 'data.csv.gz'))
+
+    copy_file(os.path.join(project_dir, 'nodes.csv'),
+              os.path.join(digest_dir, 'nodes.csv'))
+
+    copy_file(os.path.join(project_dir, 'sensors.csv'),
+              os.path.join(digest_dir, 'sensors.csv'))
+
+    copy_file_if_exists(os.path.join(project_dir, 'DUA.txt'),
+                        os.path.join(digest_dir, 'DUA.txt'))
+
+    shutil.make_archive(base_name=os.path.dirname(digest_dir),
+                        root_dir=os.path.dirname(digest_dir),
+                        base_dir=os.path.basename(digest_dir),
+                        format='tar')
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('data_dir')
     parser.add_argument('build_dir')
-    # parser.add_argument('project_dir')
+    parser.add_argument('project_dir')
     args = parser.parse_args()
 
     data_dir = os.path.abspath(args.data_dir)
     build_dir = os.path.abspath(args.build_dir)
-    # project_dir = os.path.abspath(args.project_dir)
+    project_dir = os.path.abspath(args.project_dir)
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    project_dir = '/Users/Sean/beehive-server/publishing-tools/projects/AoT_Chicago.complete'
+    # update_filtered_files(data_dir, filtered_dir, project_dir)
+    # update_date_files(filtered_dir, dates_dir, project_dir)
+    # update_combined_file(dates_dir, build_dir)
 
-    update_filtered_files(data_dir, filtered_dir, project_dir)
-    update_date_files(filtered_dir, dates_dir, project_dir)
-    update_combined_file(dates_dir, build_dir)
+    update_project_files(build_dir, project_dir)
