@@ -121,10 +121,12 @@ def update_filtered_file(target, dependencies):
             outfile.write(gzip.compress(data))
 
 
-def update_date_files(data_dir, build_dir):
+def update_date_files(data_dir, build_dir, project_dir):
+    project_metadata = publishing.load_project_metadata(project_dir)
+
     tasks = {}
 
-    for file in find_data_files(data_dir):
+    for file in find_data_files_for_project(data_dir, project_metadata):
         date = os.path.basename(file).rstrip('.csv.gz')
         target = os.path.join(build_dir, '{}.csv.gz'.format(date))
         if target not in tasks:
@@ -213,5 +215,5 @@ if __name__ == '__main__':
     project_dir = '/Users/Sean/beehive-server/publishing-tools/projects/AoT_Chicago.complete'
 
     update_filtered_files(data_dir, filtered_dir, project_dir)
-    update_date_files(filtered_dir, dates_dir)
+    update_date_files(filtered_dir, dates_dir, project_dir)
     update_combined_file(dates_dir, build_dir)
