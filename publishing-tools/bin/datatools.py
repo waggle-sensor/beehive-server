@@ -179,7 +179,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data_dir = os.path.abspath(args.data_dir)
-    bulid_dir = os.path.abspath(args.build_dir)
+    build_dir = os.path.abspath(args.build_dir)
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
