@@ -165,15 +165,16 @@ def update_date_file_if_needed(target, dependencies, configs):
 
 # NOTE Should be able to implement a streaming merge as follows:
 #
-# 1. read all n compressed in memory streams
+# 1. read all files for date as compressed, memory gzip streams
 # 2. heapify first lines
 # 3. repeat:
 #      1. pop heap min line from heap
 #      2. write min line to compressed out stream
 #      3. get next line from min line's in stream
 #
-# should run in O(#lines * log(#files))
-#
+# Runs in O(#lines * log(#files)) and allows much smaller memory usage during
+# processing. The latter could help scale up to more cores on a memory limited
+# machine.
 def update_date_file(target, dependencies):
     rows = []
 
