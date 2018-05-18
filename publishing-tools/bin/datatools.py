@@ -7,6 +7,8 @@ import gzip
 import multiprocessing
 import subprocess
 import time
+import publishing
+import pprint
 
 
 def read_file(filename):
@@ -32,6 +34,7 @@ def hash_dependencies(filenames):
     return hash.digest()
 
 
+# rename checkpoint -> digest
 def get_checkpoint(target):
     try:
         with open(target + '.checkpoint', 'rb') as file:
@@ -55,20 +58,42 @@ def find_data_files(top, rel=''):
             yield os.path.join(rel, entry.name)
 
 
-def update_filtered_files(data_dir, build_dir):
+def find_data_files_for_project(data_dir, project_metadata):
+    nodes_by_id = {node['node_id']: node for node in project_metadata}
+
+    def isvalid(file):
+        node_id, date = file.rstrip('.csv.gz').split('/')
+        date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        return (node_id in nodes_by_id and
+                any(date in interval for interval in nodes_by_id[node_id]['commissioned']))
+
+    return filter(isvalid, find_data_files(data_dir))
+
+
+def update_filtered_files(data_dir, build_dir, project_dir):
+    project_metadata = publishing.load_project_metadata(project_dir)
+    sensor_metadata = publishing.load_sensor_metadata(os.path.join(project_dir, 'sensors.csv'))
+
     tasks = []
 
-    for file in find_data_files(data_dir):
+    for file in find_data_files_for_project(data_dir, project_metadata):
         target = os.path.join(build_dir, file)
         dependencies = [os.path.join(data_dir, file)]
-        tasks.append((target, dependencies))
+        configs = [
+            os.path.join(project_dir, 'sensors.csv'),
+        ]
+        tasks.append((target, dependencies, configs))
+
+    print(len(tasks))
+    raise NotImplementedError('Still working on publishing design.')
 
     with multiprocessing.Pool() as pool:
         pool.starmap(update_filtered_file_if_needed, tasks)
 
 
-def update_filtered_file_if_needed(target, dependencies):
+def update_filtered_file_if_needed(target, dependencies, configs):
     hash = hash_dependencies(dependencies)
+    # hash = hash_dependencies(dependencies + configs)
 
     if get_checkpoint(target) == hash:
         return
@@ -141,6 +166,8 @@ def update_date_file_memsort(target, dependencies):
 
     rows.sort()
 
+    # ensure blank line at end
+    rows.append(b'')
     data = gzip.compress(b'\n'.join(rows))
 
     ensure_dir(target)
@@ -183,6 +210,8 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    update_filtered_files(data_dir, filtered_dir)
+    project_dir = '/Users/Sean/beehive-server/publishing-tools/projects/AoT_Chicago.complete'
+
+    update_filtered_files(data_dir, filtered_dir, project_dir)
     update_date_files(filtered_dir, dates_dir)
     update_combined_file(dates_dir, build_dir)
