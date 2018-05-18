@@ -144,8 +144,9 @@ def update_date_files(data_dir, build_dir, project_dir):
     for target, dependencies in sorted(date_dependencies.items(), reverse=True):
         tasks.append((target, dependencies, configs))
 
-    for task in tasks:
-        update_date_file_if_needed(*task)
+    # NOTE May want to adapt based on available memory, not just processors.
+    with multiprocessing.Pool() as pool:
+        pool.starmap(update_date_file_if_needed, tasks)
 
 
 def update_date_file_if_needed(target, dependencies, configs):
@@ -162,15 +163,16 @@ def update_date_file_if_needed(target, dependencies, configs):
     set_checkpoint(target, hash)
 
 
-# NOTE can also probably load all into memory as a GzipFile and stream the
-# lines for merging.
-# NOTE may be able to use heap to efficiently do the k way merge
-# can insert keys with ref of file read next line from
+# NOTE Should be able to implement a streaming merge as follows:
+#
+# 1. read all n compressed in memory streams
+# 2. heapify first lines
+# 3. repeat:
+#      1. pop heap min line from heap
+#      2. write min line to compressed out stream
+#      3. get next line from min line's in stream
+#
 def update_date_file(target, dependencies):
-    update_date_file_memsort(target, dependencies)
-
-
-def update_date_file_memsort(target, dependencies):
     rows = []
 
     for source in dependencies:
@@ -186,10 +188,6 @@ def update_date_file_memsort(target, dependencies):
 
     with open(target, 'wb') as file:
         file.write(data)
-
-
-def update_date_file_merge(target, dependencies):
-    raise NotImplementedError('Still need to prototype and profile.')
 
 
 # NOTE faster to cat rather than check if needed
@@ -215,10 +213,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('data_dir')
     parser.add_argument('build_dir')
+    # parser.add_argument('project_dir')
     args = parser.parse_args()
 
     data_dir = os.path.abspath(args.data_dir)
     build_dir = os.path.abspath(args.build_dir)
+    # project_dir = os.path.abspath(args.project_dir)
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
