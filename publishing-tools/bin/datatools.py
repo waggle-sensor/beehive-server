@@ -50,6 +50,7 @@ def set_checkpoint(target, hash):
         file.write(hash)
 
 
+# NOTE Safer to just do simple listdir rather than walk?
 def find_data_files(top, rel=''):
     for entry in os.scandir(top):
         if entry.is_dir():
@@ -58,7 +59,12 @@ def find_data_files(top, rel=''):
             yield os.path.join(rel, entry.name)
 
 
+# NOTE Simpler to just enumerate nodes and then check dates?
 def find_data_files_for_project(data_dir, project_metadata):
+    # node_dirs = set(os.listdir(data_dir)) & {node['node_id'] for node in project_metadata}
+    #
+    # for node in node_dirs:
+    #     for date in ...
     nodes_by_id = {node['node_id']: node for node in project_metadata}
 
     def isvalid(file):
@@ -80,12 +86,9 @@ def update_filtered_files(data_dir, build_dir, project_dir):
         target = os.path.join(build_dir, file)
         dependencies = [os.path.join(data_dir, file)]
         configs = [
-            os.path.join(project_dir, 'sensors.csv'),
+            os.path.join(project_dir, 'sensors.csv'), # maybe allow to depend on flag?
         ]
         tasks.append((target, dependencies, configs))
-
-    print(len(tasks))
-    raise NotImplementedError('Still working on publishing design.')
 
     with multiprocessing.Pool() as pool:
         pool.starmap(update_filtered_file_if_needed, tasks)
@@ -124,23 +127,30 @@ def update_filtered_file(target, dependencies):
 def update_date_files(data_dir, build_dir, project_dir):
     project_metadata = publishing.load_project_metadata(project_dir)
 
-    tasks = {}
+    configs = []
+
+    date_dependencies = {}
 
     for file in find_data_files_for_project(data_dir, project_metadata):
-        date = os.path.basename(file).rstrip('.csv.gz')
-        target = os.path.join(build_dir, '{}.csv.gz'.format(date))
-        if target not in tasks:
-            tasks[target] = []
-        tasks[target].append(os.path.join(data_dir, file))
+        target = os.path.join(build_dir, os.path.basename(file))
 
-    tasks = sorted(tasks.items(), reverse=True)
+        if target not in date_dependencies:
+            date_dependencies[target] = []
 
-    for target, dependencies in tasks:
-        update_date_file_if_needed(target, dependencies)
+        date_dependencies[target].append(os.path.join(data_dir, file))
+
+    tasks = []
+
+    for target, dependencies in sorted(date_dependencies.items(), reverse=True):
+        tasks.append((target, dependencies, configs))
+
+    for task in tasks:
+        update_date_file_if_needed(*task)
 
 
-def update_date_file_if_needed(target, dependencies):
+def update_date_file_if_needed(target, dependencies, configs):
     hash = hash_dependencies(dependencies)
+    # hash = hash_dependencies(dependencies + configs)
 
     if get_checkpoint(target) == hash:
         return
