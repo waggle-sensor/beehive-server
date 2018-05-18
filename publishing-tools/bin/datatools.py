@@ -172,6 +172,8 @@ def update_date_file_if_needed(target, dependencies, configs):
 #      2. write min line to compressed out stream
 #      3. get next line from min line's in stream
 #
+# should run in O(#lines * log(#files))
+#
 def update_date_file(target, dependencies):
     rows = []
 
