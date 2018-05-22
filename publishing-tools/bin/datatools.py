@@ -15,6 +15,7 @@ import sys
 from jinja2 import Template
 import csv
 import io
+import logging
 
 
 def read_file(filename):
@@ -80,19 +81,21 @@ def find_data_files_for_project(data_dir, project_metadata):
 
 def update_filtered_files(data_dir, build_dir, project_dir, **kwargs):
     processes = kwargs.get('processes', None)
+    complete = kwargs.get('complete', False)
 
     project_metadata = publishing.load_project_metadata(project_dir)
     sensor_metadata = publishing.load_sensor_metadata(os.path.join(project_dir, 'sensors.csv'))
+
+    if complete:
+        configs = []
+    else:
+        configs = [os.path.join(project_dir, 'sensors.csv')]
 
     tasks = []
 
     for file in find_data_files_for_project(data_dir, project_metadata):
         target = os.path.join(build_dir, file)
         dependencies = [os.path.join(data_dir, file)]
-        configs = [
-            os.path.join(project_dir, 'sensors.csv'), # maybe allow to depend on flag?
-        ]
-
         tasks.append((target, dependencies, configs))
 
     with multiprocessing.Pool(processes) as pool:
@@ -107,31 +110,36 @@ def update_filtered_file_if_needed(target, dependencies, configs):
 
     print('make', target)
     start = time.time()
-    update_filtered_file(target, dependencies, configs)
-    print('done', target, time.time() - start)
-    set_checkpoint(target, hash)
+
+    try:
+        update_filtered_file(target, dependencies, configs)
+        print('done', target, time.time() - start)
+        set_checkpoint(target, hash)
+    except Exception:
+        print('fail', target)
+        logging.exception('filter failed')
 
 
 def update_filtered_file(target, dependencies, configs):
-    # TODO Fix this...it's very unclear what configs[0] is.
-    metadata = publishing.load_sensor_metadata(configs[0])
-    filter_func = publishing.make_filter_for_sensor_metadata(metadata)
-
     ensure_dir(target)
 
     all_data = []
 
+    if configs:
+        # TODO Fix this...it's very unclear what configs[0] is.
+        metadata = publishing.load_sensor_metadata(configs[0])
+
     for source in dependencies:
-        lines = read_compressed_file(source).decode().splitlines()
-        reader = csv.DictReader(lines)
+        data = read_compressed_file(source)
 
-        writebuf = io.StringIO()
-        writer = csv.DictWriter(writebuf, fieldnames=reader.fieldnames)
-        writer.writerows(filter(filter_func, reader))
-
-        data = writebuf.getvalue().encode()
+        if configs:
+            data = apply_sensor_filter(metadata, data)
 
         rows = data.splitlines()
+
+        if rows[0].startswith(b'timestamp'):
+            rows = rows[1:]
+
         rows.sort()
         rows.append(b'')
 
@@ -141,6 +149,18 @@ def update_filtered_file(target, dependencies, configs):
     with open(target, 'wb') as outfile:
         for data in all_data:
             outfile.write(data)
+
+
+def apply_sensor_filter(metadata, data):
+    lines = data.decode().splitlines()
+    reader = csv.DictReader(lines)
+
+    writebuf = io.StringIO()
+    writebuf = io.StringIO()
+    writer = csv.DictWriter(writebuf, fieldnames=reader.fieldnames)
+
+    publishing.filter_sensors(metadata, reader, writer)
+    return writebuf.getvalue().encode()
 
 
 def update_date_files(data_dir, build_dir, project_dir, **kwargs):
@@ -171,8 +191,7 @@ def update_date_files(data_dir, build_dir, project_dir, **kwargs):
 
 
 def update_date_file_if_needed(target, dependencies, configs):
-    hash = hash_dependencies(dependencies)
-    # hash = hash_dependencies(dependencies + configs)
+    hash = hash_dependencies(dependencies + configs)
 
     if get_checkpoint(target) == hash:
         return
@@ -336,6 +355,7 @@ def update_project_files(build_dir, project_dir):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--processes', default=None, help='Number of worker processes.')
+    parser.add_argument('--complete', action='store_true', help='Compile as complete digest.')
     parser.add_argument('data_dir', help='Directory containing source dataset tree.')
     parser.add_argument('build_dir', help='Directory used for building digest.')
     parser.add_argument('project_dir', help='Directory containing project metadata.')
@@ -347,7 +367,7 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes)
+    update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
     update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
     update_combined_file(dates_dir, build_dir)
     update_project_files(build_dir, project_dir)
