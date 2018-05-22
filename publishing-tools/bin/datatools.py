@@ -14,6 +14,7 @@ import pprint
 import sys
 from jinja2 import Template
 import csv
+import io
 
 
 def read_file(filename):
@@ -42,7 +43,7 @@ def hash_dependencies(filenames):
 # rename checkpoint -> digest
 def get_checkpoint(target):
     try:
-        with open(target + '.checkpoint', 'rb') as file:
+        with open(target + '.digest', 'rb') as file:
             return file.read()
     except FileNotFoundError:
         return bytes()
@@ -51,7 +52,7 @@ def get_checkpoint(target):
 def set_checkpoint(target, hash):
     ensure_dir(target)
 
-    with open(target + '.checkpoint', 'wb') as file:
+    with open(target + '.digest', 'wb') as file:
         file.write(hash)
 
 
@@ -66,10 +67,6 @@ def find_data_files(top, rel=''):
 
 # NOTE Simpler to just enumerate nodes and then check dates?
 def find_data_files_for_project(data_dir, project_metadata):
-    # node_dirs = set(os.listdir(data_dir)) & {node['node_id'] for node in project_metadata}
-    #
-    # for node in node_dirs:
-    #     for date in ...
     nodes_by_id = {node['node_id']: node for node in project_metadata}
 
     def isvalid(file):
@@ -95,6 +92,7 @@ def update_filtered_files(data_dir, build_dir, project_dir, **kwargs):
         configs = [
             os.path.join(project_dir, 'sensors.csv'), # maybe allow to depend on flag?
         ]
+
         tasks.append((target, dependencies, configs))
 
     with multiprocessing.Pool(processes) as pool:
@@ -102,33 +100,47 @@ def update_filtered_files(data_dir, build_dir, project_dir, **kwargs):
 
 
 def update_filtered_file_if_needed(target, dependencies, configs):
-    hash = hash_dependencies(dependencies)
-    # hash = hash_dependencies(dependencies + configs)
+    hash = hash_dependencies(dependencies + configs)
 
     if get_checkpoint(target) == hash:
         return
 
     print('make', target)
     start = time.time()
-    update_filtered_file(target, dependencies)
+    update_filtered_file(target, dependencies, configs)
     print('done', target, time.time() - start)
     set_checkpoint(target, hash)
 
 
-def update_filtered_file(target, dependencies):
+def update_filtered_file(target, dependencies, configs):
+    # TODO Fix this...it's very unclear what configs[0] is.
+    metadata = publishing.load_sensor_metadata(configs[0])
+    filter_func = publishing.make_filter_for_sensor_metadata(metadata)
+
     ensure_dir(target)
 
+    all_data = []
+
+    for source in dependencies:
+        lines = read_compressed_file(source).decode().splitlines()
+        reader = csv.DictReader(lines)
+
+        writebuf = io.StringIO()
+        writer = csv.DictWriter(writebuf, fieldnames=reader.fieldnames)
+        writer.writerows(filter(filter_func, reader))
+
+        data = writebuf.getvalue().encode()
+
+        rows = data.splitlines()
+        rows.sort()
+        rows.append(b'')
+
+        data = gzip.compress(b'\n'.join(rows))
+        all_data.append(data)
+
     with open(target, 'wb') as outfile:
-        for source in dependencies:
-            lines = read_compressed_file(source).splitlines()
-
-            # drop header from staged data
-            if lines[0].startswith(b'timestamp'):
-                lines = lines[1:]
-
-            lines.sort()
-            data = b'\n'.join(lines)
-            outfile.write(gzip.compress(data))
+        for data in all_data:
+            outfile.write(data)
 
 
 def update_date_files(data_dir, build_dir, project_dir, **kwargs):

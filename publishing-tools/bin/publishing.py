@@ -173,21 +173,24 @@ def filter_view(metadata, reader, writer):
 
 
 def filter_sensors(metadata, reader, writer):
-    def isvalid(fields):
-        try:
-            value = float(fields['value_hrf'])
-        except ValueError:
-            return False
+    csvreader = csv.DictReader(reader)
+    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
+    csvwriter.writeheader()
+    csvwriter.writerows(filter(make_filter_for_sensor_metadata(metadata), csvreader))
 
-        key = (fields['subsystem'], fields['sensor'], fields['parameter'])
+
+def make_filter_for_sensor_metadata(metadata):
+    def filter(row):
+        key = (row['subsystem'], row['sensor'], row['parameter'])
 
         if key not in metadata:
             return False
 
-        params = metadata[key]
-        return value in params['range']
+        try:
+            value = float(row['value_hrf'])
+            params = metadata[key]
+            return value in params['range']
+        except ValueError:
+            return True
 
-    csvreader = csv.DictReader(reader)
-    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
-    csvwriter.writeheader()
-    csvwriter.writerows(filter(isvalid, csvreader))
+    return filter
