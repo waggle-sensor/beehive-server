@@ -13,6 +13,7 @@ import publishing
 import pprint
 import sys
 from jinja2 import Template
+import csv
 
 
 def read_file(filename):
@@ -267,6 +268,43 @@ def update_project_files(build_dir, project_dir):
                     os.path.join(template_dir, 'digest-readme.md'),
                     header=read_file_or_empty(os.path.join(project_dir, 'header.md')))
 
+    now = datetime.datetime.now()
+
+    nodes = publishing.load_project_metadata(project_dir)
+
+    intervals = [interval for node in nodes for interval in node['commissioned']]
+
+    try:
+        data_start_date = min(interval.start for interval in intervals)
+    except ValueError:
+        data_start_date = now
+
+    try:
+        data_end_date = max(interval.end or now for interval in intervals)
+    except ValueError:
+        data_end_date = now
+
+    with open(os.path.join(digest_dir, 'provenance.csv'), 'w') as outfile:
+        writer = csv.writer(outfile)
+
+        writer.writerow([
+            'data_format_version',
+            'project_id',
+            'data_start_date',
+            'data_end_date',
+            'creation_date',
+            'url',
+        ])
+
+        writer.writerow([
+            '2',
+            project_id,
+            data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
+            data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
+            now.strftime('%Y/%m/%d %H:%M:%S'),
+            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
+        ])
+
     shutil.make_archive(base_name=os.path.dirname(digest_dir),
                         root_dir=os.path.dirname(digest_dir),
                         base_dir=os.path.basename(digest_dir),
@@ -286,7 +324,7 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    update_filtered_files(data_dir, filtered_dir, project_dir)
-    update_date_files(filtered_dir, dates_dir, project_dir)
-    update_combined_file(dates_dir, build_dir)
+    # update_filtered_files(data_dir, filtered_dir, project_dir)
+    # update_date_files(filtered_dir, dates_dir, project_dir)
+    # update_combined_file(dates_dir, build_dir)
     update_project_files(build_dir, project_dir)
