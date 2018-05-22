@@ -243,6 +243,10 @@ def render_template(filename, template, *args, **kwargs):
 
 # maybe just use a single, general render template function
 def update_project_files(build_dir, project_dir):
+    print('make archive')
+
+    start = time.time()
+
     project_id = os.path.basename(project_dir)
     date = datetime.datetime.utcnow().strftime('%Y-%m-%d')
 
@@ -309,6 +313,8 @@ def update_project_files(build_dir, project_dir):
                         root_dir=os.path.dirname(digest_dir),
                         base_dir=os.path.basename(digest_dir),
                         format='tar')
+
+    print('done archive', time.time() - start)
 
 
 if __name__ == '__main__':
