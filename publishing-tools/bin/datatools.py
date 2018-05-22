@@ -306,7 +306,7 @@ def update_project_files(build_dir, project_dir):
             data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
             data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
             now.strftime('%Y/%m/%d %H:%M:%S'),
-            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(project_id),
+            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar'.format(project_id),
         ])
 
     shutil.make_archive(base_name=os.path.dirname(digest_dir),
