@@ -27,20 +27,7 @@ def decode_row(row):
     if plugin not in decoders:
         return []
 
-    # hack to handle incorrectly python repr'd byte data
-    # data = row.data.lstrip("b'").rstrip("'")
     data = binascii.unhexlify(row.data)
-    #
-    # try:
-    #     data = data[data.index(0xAA):]
-    # except ValueError:
-    #     pass
-    #
-    # try:
-    #     data = data[:data.rindex(0x55)+1]
-    # except ValueError:
-    #     pass
-
     return decoders[plugin](data)
 
 
@@ -54,8 +41,8 @@ args = parser.parse_args()
 if args.format not in formats:
     raise NotImplementedError('For {} is not currently supported.'.format(args.format))
 
+logging.basicConfig(level=logging.CRITICAL)
 logger = logging.getLogger('export')
-logger.setLevel(logging.INFO)
 
 
 def stringify(x):
@@ -169,6 +156,8 @@ for i, line in enumerate(lines):
                 mode = 'w'
 
             opened.add(filename)
+
+            print('{} {}'.format(filename, mode))
 
             with open(filename, mode) as outfile:
                 writer = csv.writer(outfile)
