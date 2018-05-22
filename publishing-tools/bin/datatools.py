@@ -323,10 +323,10 @@ def update_project_files(build_dir, project_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--processes', default=None)
-    parser.add_argument('data_dir')
-    parser.add_argument('build_dir')
-    parser.add_argument('project_dir')
+    parser.add_argument('-p', '--processes', default=None, help='Number of worker processes.')
+    parser.add_argument('data_dir', help='Directory containing source dataset tree.')
+    parser.add_argument('build_dir', help='Directory used for building digest.')
+    parser.add_argument('project_dir', help='Directory containing project metadata.')
     args = parser.parse_args()
 
     data_dir = os.path.abspath(args.data_dir)
