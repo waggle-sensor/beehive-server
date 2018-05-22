@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
+import shutil
 import subprocess
 import argparse
-import shutil
 import publishing
 import gzip
 import csv
@@ -168,7 +168,8 @@ class DigestCompiler:
         if not self.skip_pubtime_check:
             steps.append("{publishing_tools_dir}/bin/filter-view '{project_metadata}'")
 
-        steps.append("sed '/^time/d'")
+        steps.append("sed '/^timestamp/d'")
+        # steps.append("sort")
         steps.append("gzip > '{dst}.tmp'")
 
         return ' | '.join(steps)
@@ -206,7 +207,7 @@ class DigestCompiler:
 
                 os.rename(dst + '.tmp', dst)
 
-                print('[{}] Staged file {}.'.format(self.project_id, src))
+                print('[{}] Staged file {} -> {}.'.format(self.project_id, src, dst))
             except Exception as exc:
                 print('[{}] Failed to stage file {}!'.format(self.project_id, src))
 
@@ -228,12 +229,17 @@ class DigestCompiler:
         sort_path = os.path.join(self.digests_dir, 'sorted.csv')
         data_path = os.path.join(self.digest_dir, 'data.csv')
 
+        # TODO Clean this sequence up.
+
         subprocess.check_output('''
             sort -o {sort_path} {data_path}
         '''.format(data_path=data_path, sort_path=sort_path), shell=True)
 
         subprocess.check_output('''
-            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {data_path};
+            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {data_path}
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
+
+        subprocess.check_output('''
             cat {sort_path} >> {data_path}
         '''.format(data_path=data_path, sort_path=sort_path), shell=True)
 

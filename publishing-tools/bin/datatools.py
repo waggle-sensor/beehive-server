@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 from glob import glob
 import hashlib
@@ -10,6 +11,8 @@ import subprocess
 import time
 import publishing
 import pprint
+import sys
+from jinja2 import Template
 
 
 def read_file(filename):
@@ -225,6 +228,18 @@ def copy_file_if_exists(src, dst):
         pass
 
 
+def read_file_or_empty(filename):
+    try:
+        return read_file(filename).decode()
+    except FileNotFoundError:
+        return ''
+
+
+def render_template(filename, template, *args, **kwargs):
+    with open(filename, 'w') as file:
+        file.write(Template(read_file(template).decode()).render(*args, **kwargs))
+
+
 # maybe just use a single, general render template function
 def update_project_files(build_dir, project_dir):
     project_id = os.path.basename(project_dir)
@@ -246,6 +261,12 @@ def update_project_files(build_dir, project_dir):
     copy_file_if_exists(os.path.join(project_dir, 'DUA.txt'),
                         os.path.join(digest_dir, 'DUA.txt'))
 
+    template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))), 'docs')
+
+    render_template(os.path.join(digest_dir, 'README.md'),
+                    os.path.join(template_dir, 'digest-readme.md'),
+                    header=read_file_or_empty(os.path.join(project_dir, 'header.md')))
+
     shutil.make_archive(base_name=os.path.dirname(digest_dir),
                         root_dir=os.path.dirname(digest_dir),
                         base_dir=os.path.basename(digest_dir),
@@ -265,8 +286,7 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    # update_filtered_files(data_dir, filtered_dir, project_dir)
-    # update_date_files(filtered_dir, dates_dir, project_dir)
-    # update_combined_file(dates_dir, build_dir)
-
+    update_filtered_files(data_dir, filtered_dir, project_dir)
+    update_date_files(filtered_dir, dates_dir, project_dir)
+    update_combined_file(dates_dir, build_dir)
     update_project_files(build_dir, project_dir)
