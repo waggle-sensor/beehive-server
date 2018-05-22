@@ -81,7 +81,9 @@ def find_data_files_for_project(data_dir, project_metadata):
     return filter(isvalid, find_data_files(data_dir))
 
 
-def update_filtered_files(data_dir, build_dir, project_dir):
+def update_filtered_files(data_dir, build_dir, project_dir, **kwargs):
+    processes = kwargs.get('processes', None)
+
     project_metadata = publishing.load_project_metadata(project_dir)
     sensor_metadata = publishing.load_sensor_metadata(os.path.join(project_dir, 'sensors.csv'))
 
@@ -95,7 +97,7 @@ def update_filtered_files(data_dir, build_dir, project_dir):
         ]
         tasks.append((target, dependencies, configs))
 
-    with multiprocessing.Pool() as pool:
+    with multiprocessing.Pool(processes) as pool:
         pool.starmap(update_filtered_file_if_needed, tasks)
 
 
@@ -129,7 +131,9 @@ def update_filtered_file(target, dependencies):
             outfile.write(gzip.compress(data))
 
 
-def update_date_files(data_dir, build_dir, project_dir):
+def update_date_files(data_dir, build_dir, project_dir, **kwargs):
+    processes = kwargs.get('processes', None)
+
     project_metadata = publishing.load_project_metadata(project_dir)
 
     configs = []
@@ -150,7 +154,7 @@ def update_date_files(data_dir, build_dir, project_dir):
         tasks.append((target, dependencies, configs))
 
     # NOTE May want to adapt based on available memory, not just processors.
-    with multiprocessing.Pool() as pool:
+    with multiprocessing.Pool(processes) as pool:
         pool.starmap(update_date_file_if_needed, tasks)
 
 
@@ -319,6 +323,7 @@ def update_project_files(build_dir, project_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--processes', default=None)
     parser.add_argument('data_dir')
     parser.add_argument('build_dir')
     parser.add_argument('project_dir')
@@ -330,7 +335,7 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    update_filtered_files(data_dir, filtered_dir, project_dir)
-    update_date_files(filtered_dir, dates_dir, project_dir)
+    update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes)
+    update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
     update_combined_file(dates_dir, build_dir)
     update_project_files(build_dir, project_dir)
