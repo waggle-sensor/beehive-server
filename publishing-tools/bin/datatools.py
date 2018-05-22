@@ -324,7 +324,7 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
-    # update_filtered_files(data_dir, filtered_dir, project_dir)
-    # update_date_files(filtered_dir, dates_dir, project_dir)
-    # update_combined_file(dates_dir, build_dir)
+    update_filtered_files(data_dir, filtered_dir, project_dir)
+    update_date_files(filtered_dir, dates_dir, project_dir)
+    update_combined_file(dates_dir, build_dir)
     update_project_files(build_dir, project_dir)
