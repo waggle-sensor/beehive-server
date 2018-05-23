@@ -101,6 +101,8 @@ def make_jobs(lines):
 def init_worker(cluster):
     global logger
     global session
+    global worker_start_time
+    global worker_completed
 
     logging.basicConfig(level=logging.CRITICAL)
     logger = multiprocessing.log_to_stderr()
@@ -108,8 +110,16 @@ def init_worker(cluster):
     session = cluster.connect('waggle')
     print('init', session)
 
+    worker_start_time = time.time()
+    worker_completed = 0
+
 
 def process_job(job):
+    global logger
+    global session
+    global worker_start_time
+    global worker_completed
+
     (node_id, date), partition_keys = job
 
     target = os.path.join(datasets_dir, node_id, date + '.csv.gz')
@@ -141,7 +151,10 @@ def process_job(job):
     with open(target, 'wb') as file:
         file.write(data)
 
-    print('done', target, time.time() - start)
+    worker_completed += 1
+    worker_rate = round(worker_completed / (time.time() - worker_start_time), 2)
+
+    print('done', target, time.time() - start, worker_rate, 'datasets/s')
 
 
 if __name__ == '__main__':
