@@ -152,9 +152,9 @@ def process_job(job):
         file.write(data)
 
     worker_completed += 1
-    worker_rate = round(worker_completed / (time.time() - worker_start_time), 2)
+    worker_rate = round(worker_completed / (time.time() - worker_start_time), 3)
 
-    print('done', target, time.time() - start, worker_rate, 'datasets/s')
+    print('done', target, round(time.time() - start, 3), 's', worker_rate, 'datasets/s')
 
 
 if __name__ == '__main__':
