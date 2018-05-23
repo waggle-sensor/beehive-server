@@ -146,7 +146,7 @@ def process_job(job):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--processes', type=int, default=None)
+    parser.add_argument('-p', '--processes', type=int, default=1)
     parser.add_argument('datasets_dir', help='Directory where datasets will be exported.')
     args = parser.parse_args()
 
