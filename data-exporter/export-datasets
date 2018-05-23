@@ -10,6 +10,8 @@ import sys
 import datetime
 from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
+from io import StringIO
+import multiprocessing
 
 
 decoders = {
@@ -31,20 +33,6 @@ def decode_row(row):
     return decoders[plugin](data)
 
 
-formats = {'3'}
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', '--format', default='3', help='Format datasets will be exported in.')
-parser.add_argument('datasets_dir', nargs='?', help='Directory where datasets will be exported. If not specified, will write to stdout.')
-args = parser.parse_args()
-
-if args.format not in formats:
-    raise NotImplementedError('For {} is not currently supported.'.format(args.format))
-
-logging.basicConfig(level=logging.CRITICAL)
-logger = logging.getLogger('export')
-
-
 def stringify(x):
     if x is None:
         return 'NA'
@@ -59,26 +47,8 @@ def stringify(x):
     return str(x)
 
 
-def export_raw(rows, writer):
-    for row in rows:
-        plugin = (row.plugin_name, row.plugin_version)
-
-        if sample.timestamp == 0:
-            timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
-        else:
-            timestamp = sample.timestamp
-
-        writer.writerow([
-            timestamp,
-            node_id,
-            row.plugin_name,
-            row.plugin_version,
-            row.data,
-        ])
-
-
-def decode_rows(rows, writer):
-    for row in rows:
+def decode_rows(node_id, date, results, writer):
+    for row in results:
         plugin = (row.plugin_name, row.plugin_version)
 
         try:
@@ -106,75 +76,83 @@ def decode_rows(rows, writer):
             ])
 
 
-cluster = Cluster()
-session = cluster.connect('waggle')
+def make_jobs(lines):
+    jobs = {}
 
-query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+    for line in lines:
+        key = tuple(line.split())
 
-lines = sys.stdin.readlines()
-
-opened = set()
-
-console_writer = None
-
-for i, line in enumerate(lines):
-    try:
-        fields = line.split()
-
-        if len(fields) != 2:
-            logger.warning('skipping invalid line: {}'.format(line))
+        if len(key) != 2:
             continue
 
-        node_id = fields[0][-12:].lower()
-        date = fields[1]
-        partition_key = (fields[0], fields[1])
+        node_id = key[0][-12:].lower()
+        date = key[1]
+        index = (node_id, date)
 
-        rows = session.execute(query, partition_key)
+        if index not in jobs:
+            jobs[index] = []
 
-        if args.datasets_dir is None:
-            if console_writer is None:
-                console_writer = csv.writer(sys.stdout)
+        jobs[index].append(key)
 
-                console_writer.writerow([
-                    'timestamp',
-                    'node_id',
-                    'subsystem',
-                    'sensor',
-                    'parameter',
-                    'value_raw',
-                    'value_hrf',
-                ])
+    return list(jobs.items())
 
-            decode_rows(rows, console_writer)
-        else:
-            filename = os.path.join(args.datasets_dir, node_id, date + '.csv')
-            os.makedirs(os.path.dirname(filename), exist_ok=True)
 
-            if filename in opened:
-                mode = 'a'
-            else:
-                mode = 'w'
+def init_worker(cluster):
+    global session
+    session = cassandra_cluster.connect('waggle')
+    print('init', session)
 
-            opened.add(filename)
 
-            print('{} {}'.format(filename, mode))
+def process_job(job):
+    (node_id, date), partition_keys = job
 
-            with open(filename, mode) as outfile:
-                writer = csv.writer(outfile)
+    target = os.path.join(datasets_dir, node_id, date + '.csv')
+    print('make', target)
 
-                if mode == 'w':
-                    writer.writerow([
-                        'timestamp',
-                        'node_id',
-                        'subsystem',
-                        'sensor',
-                        'parameter',
-                        'value_raw',
-                        'value_hrf',
-                    ])
+    start = time.time()
 
-                decode_rows(rows, writer)
-    except KeyboardInterrupt:
-        raise
-    except Exception as exc:
-        logger.exception('Failed to decode row: {}'.format(row))
+    write_buffer = StringIO()
+    writer = csv.writer(write_buffer)
+    writer.writerow([
+        'timestamp',
+        'node_id',
+        'subsystem',
+        'sensor',
+        'parameter',
+        'value_raw',
+        'value_hrf',
+    ])
+
+    query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+
+    for partition_key in partition_keys:
+        results = session.execute(query, partition_key)
+        decode_rows(node_id, date, results, writer)
+
+    data = write_buffer.getvalue()
+
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+
+    with open(target, 'w') as file:
+        file.write(data)
+
+    print('done', target, time.time() - start)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p', '--processes', type=int, default=None)
+    parser.add_argument('datasets_dir', help='Directory where datasets will be exported.')
+    args = parser.parse_args()
+
+    datasets_dir = os.path.abspath(args.datasets_dir)
+
+    logging.basicConfig(level=logging.CRITICAL)
+    logger = logging.getLogger('export')
+
+    jobs = make_jobs(sys.stdin.readlines())
+
+    cluster = Cluster()
+
+    with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster,)) as pool:
+        pool.map(process_job, jobs)
