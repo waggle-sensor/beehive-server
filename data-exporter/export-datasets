@@ -98,8 +98,13 @@ def make_jobs(lines):
 
 
 def init_worker(cluster):
+    global logger
     global session
-    session = cassandra_cluster.connect('waggle')
+
+    logging.basicConfig(level=logging.CRITICAL)
+    logger = multiprocessing.log_to_stderr()
+
+    session = cluster.connect('waggle')
     print('init', session)
 
 
@@ -146,9 +151,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     datasets_dir = os.path.abspath(args.datasets_dir)
-
-    logging.basicConfig(level=logging.CRITICAL)
-    logger = logging.getLogger('export')
 
     jobs = make_jobs(sys.stdin.readlines())
 
