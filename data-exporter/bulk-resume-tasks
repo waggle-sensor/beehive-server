@@ -13,7 +13,6 @@ datadir=$2
 for task in $(ls $taskdir | sort -r); do
   echo starting $task
   ./export-datasets -p 1 $2 < $taskdir/$task
-  find $2 -name '*csv' | xargs gzip -f
   rm $taskdir/$task
   echo completed $task
 done
