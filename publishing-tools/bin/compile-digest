@@ -349,7 +349,7 @@ def update_project_files(build_dir, project_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--processes', default=None, help='Number of worker processes.')
+    parser.add_argument('-p', '--processes', type=int, default=None, help='Number of worker processes.')
     parser.add_argument('--complete', action='store_true', help='Compile as complete digest.')
     parser.add_argument('data_dir', help='Directory containing source dataset tree.')
     parser.add_argument('build_dir', help='Directory used for building digest.')
