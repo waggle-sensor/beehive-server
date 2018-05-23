@@ -14,7 +14,7 @@ import pprint
 import sys
 from jinja2 import Template
 import csv
-import io
+from io import StringIO
 import logging
 
 
@@ -152,15 +152,10 @@ def update_filtered_file(target, dependencies, configs):
 
 
 def apply_sensor_filter(metadata, data):
-    lines = data.decode().splitlines()
-    reader = csv.DictReader(lines)
-
-    writebuf = io.StringIO()
-    writebuf = io.StringIO()
-    writer = csv.DictWriter(writebuf, fieldnames=reader.fieldnames)
-
+    reader = StringIO(data.decode())
+    writer = StringIO()
     publishing.filter_sensors(metadata, reader, writer)
-    return writebuf.getvalue().encode()
+    return writer.getvalue().encode()
 
 
 def update_date_files(data_dir, build_dir, project_dir, **kwargs):
@@ -366,6 +361,10 @@ if __name__ == '__main__':
     project_dir = os.path.abspath(args.project_dir)
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
+
+    os.makedirs(build_dir, exist_ok=True)
+    os.makedirs(filtered_dir, exist_ok=True)
+    os.makedirs(dates_dir, exist_ok=True)
 
     update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
     update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
