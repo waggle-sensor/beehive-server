@@ -12,6 +12,7 @@ from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
 from io import StringIO
 import multiprocessing
+import gzip
 
 
 decoders = {
@@ -111,7 +112,7 @@ def init_worker(cluster):
 def process_job(job):
     (node_id, date), partition_keys = job
 
-    target = os.path.join(datasets_dir, node_id, date + '.csv')
+    target = os.path.join(datasets_dir, node_id, date + '.csv.gz')
     print('make', target)
 
     start = time.time()
@@ -134,11 +135,10 @@ def process_job(job):
         results = session.execute(query, partition_key)
         decode_rows(node_id, date, results, writer)
 
-    data = write_buffer.getvalue()
-
     os.makedirs(os.path.dirname(target), exist_ok=True)
+    data = gzip.compress(write_buffer.getvalue().encode())
 
-    with open(target, 'w') as file:
+    with open(target, 'wb') as file:
         file.write(data)
 
     print('done', target, time.time() - start)
