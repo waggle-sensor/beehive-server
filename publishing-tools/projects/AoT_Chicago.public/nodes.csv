@@ -1,70 +1,91 @@
 node_id,project_id,vsn,address,lat,lon,description
-001e0610bc10,AoT Chicago,01F," State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
-001e0610ba8b,AoT Chicago,018," Stony Island Ave & 63rd St Chicago IL",41.7806,-87.586456,AoT Chicago (S) [C]
-001e0610ba18,AoT Chicago,01D," Damen Ave & Cermak Chicago IL",41.852179,-87.675825,AoT Chicago (S)
-001e0610ba81,AoT Chicago,040," Lake Shore Drive & 85th St Chicago IL",41.741148,-87.54045,AoT Chicago (S)
-001e0610ba16,AoT Chicago,010," Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
-001e0610bbf9,AoT Chicago,020," Western Ave & 69th St Chicago IL",41.768319,-87.683396,AoT Chicago (S) [C]
-001e0610ba8f,AoT Chicago,00D," Cornell & 47th St Chicago IL",41.810342,-87.590228,AoT Chicago (S)
-001e0610ba3b,AoT Chicago,006," 18th St & Lake Shore Dr Chicago IL",41.858136, -87.616055,AoT Chicago (S)
-001e0610bbff,AoT Chicago,025," Western Ave & 18th St Chicago IL",41.857797,-87.685806,AoT Chicago (S)
-001e0610bbe5,AoT Chicago,02C," Martin Luther King Dr & 87th St Chicago IL",41.736495,-87.614529,AoT Chicago (S) [C]
-001e0610b9e9,AoT Chicago,080," Broadway Ave & Lawrence Ave Chicago IL",41.96904,-87.659672,AoT Chicago (S) [C]
-001e0610b9e5,AoT Chicago,02F," Sheridan Rd & Granville Ave Chicago IL",41.994597,-87.655523,AoT Chicago (S) [C]
-001e0610bc12,AoT Chicago,085," Ashland Ave & 79th St Chicago IL",41.75034,-87.663518,AoT Chicago (S) [C]
-001e0610ba57,AoT Chicago,041," Western Ave & Madison St Chicago IL",41.881172,-87.686359,AoT Chicago (S)
-001e0610ba15,AoT Chicago,02A," Jeffrey Ave & 95th St Chicago IL",41.722457,-87.57535,AoT Chicago (S) [C]
-001e0610f668,AoT Chicago,038," Damen Ave & Archer Chicago IL",41.831827,-87.675311,AoT Chicago (S)
-001e0610fb4c,AoT Chicago,04D," Leavitt St & Milwaukee Ave Chicago IL",41.913583,-87.682414,AoT Chicago (S)
-001e0610ef29,AoT Chicago,037," Martin Luther King Dr & 83rd St Chicago IL",41.743814,-87.614732,AoT Chicago (S)
-001e0610ef27,AoT Chicago,04C," Western Ave & 25th St Chicago IL",41.846579,-87.685557,AoT Chicago (S) [C]
-001e0610f730,AoT Chicago,039," Campbell Ave & Addison St Chicago IL",41.94672,-87.69068,AoT Chicago (S)
-001e0610eef4,AoT Chicago,034," Milwaukee Ave & Wabansia Ave Chicago IL",41.912681,-87.681052,AoT Chicago (S)
-001e0610e540,AoT Chicago,05A," Fort Dearborn Dr & 31st St Chicago IL",41.838618,-87.607817,AoT Chicago (S) [C]
-001e0610bc07,AoT Chicago,03C," Kedzie Ave & 5th Ave Chicago IL",41.878372,-87.706042,AoT Chicago (S)
-001e0610ef68,AoT Chicago,04F," Ashland Ave & 18th St Chicago IL",41.857775,-87.666144,AoT Chicago (S)
-001e0610ee61,AoT Chicago,03F," Pulaski Rd & Madison St Chicago IL",41.880732,-87.72566,AoT Chicago (S)
-001e0610ee41,AoT Chicago,032," Wood St & Warren Blv Chicago IL",41.882304,-87.671773,AoT Chicago (S) [C]
-001e0610ee33,AoT Chicago,02D," Damen Ave & Wilson Ave Chicago IL",41.965089,-87.679076,AoT Chicago (S) [C]
-001e0610e809,AoT Chicago,050," Ashland Ave & Division St Chicago IL",41.903335,-87.6674,AoT Chicago (S)
-001e0610ee6f,AoT Chicago,04E," Damen Ave & Chicago Int'l Produce Mkt Chicago IL",41.846712,87.673124,AoT Chicago (S)
-001e0610ea5a,AoT Chicago,03E," 606 Path & Milwaukee Ave Chicago IL",41.914202, -87.683048,AoT Chicago (S)
-001e0610ef26,AoT Chicago,03D," Halsted St & Randolph St Chicago IL",41.88431,-87.647431,AoT Chicago (S)
-001e0610ee36,AoT Chicago,051," Cottage Grove Ave & 79th St Chicago IL",41.751295,-87.605288,AoT Chicago (S) [C]
-001e061135cb,AoT Chicago,052," Ashland & 63rd St Chicago IL",41.779369,-87.664421,AoT Chicago (S) [C]
-001e0610ee82,AoT Chicago,048," Damen Ave & Webster Chicago IL",41.921405,-87.677766,AoT Chicago (S) [C]
-001e0610e532,AoT Chicago,053," Racine Ave & 18th St Chicago IL",41.857959,-87.656427,AoT Chicago (S) [C]
-001e0610ee5d,AoT Chicago,056," Long Ave & Fullerton Ave Chicago IL",41.923996,-87.761072,AoT Chicago (S) [C]
-001e0610ee43,AoT Chicago,08B," UChicago Chicago IL",41.788608,-87.598713,AoT Chicago (S) [C] {UChicago}
-001e0610f6dd,AoT Chicago,05D," Pulaski Rd & Chicago Ave Chicago IL",41.895355,-87.726064,AoT Chicago (S) [C]
-001e0610e538,AoT Chicago,087," Cottage Grove Ave & 87th St Chicago IL",41.736593,-87.604759,AoT Chicago (S) [C]
-001e0610f05c,AoT Chicago,08C," Western Ave & Fullerton Ave Chicago IL",41.924903,-87.687703,AoT Chicago (S) [C]
-001e0610f732,AoT Chicago,08D," Cicero Ave & Chicago Ave Chicago IL",41.895005,-87.745817,AoT Chicago (S) [C]
-001e0610f8f4,AoT Chicago,030," Halsted St & 34th St Chicago IL",41.832579,-87.646133,AoT Chicago (S) [C]
-001e0610f513,AoT Chicago,090," Milwaukee & Belmont Chicago IL",41.939121, -87.723801,AoT Chicago (S) [C]
-001e061130f4,AoT Chicago,089," Chicago Ave & Noble St Chicago IL",41.896157,-87.662391,AoT Chicago (S) [C]
-001e0610e537,AoT Chicago,08F," Clark St & Montrose Ave Chicago IL",41.961622,-87.665948,AoT Chicago (S) [C]
-001e06113100,AoT Chicago,08E," Cottage Grove Ave & 111th St Chicago IL",41.692769,-87.609852,AoT Chicago (S) [C]
-001e0610e835,AoT Chicago,086," Damen Ave & Lawrence Ave Chicago IL",41.968757,-87.679174,AoT Chicago (S) [C]
-001e0610eef2,AoT Chicago,088," Clark St & Wilson Ave Chicago IL",41.965256,-87.66672,AoT Chicago (S) [C]
-001e0610f703,AoT Chicago,07F," Damen Ave & Polk St Chicago IL",41.87148,-87.67644,AoT Chicago (S) [C]
-001e0610e539,AoT Chicago,07E," Cicero Ave & Madison St Chicago IL",41.880497,-87.745268,AoT Chicago (S) [C]
-001e06113d83,AoT Chicago,06A," Clybourn Ave & North Ave Chicago IL",41.910922, -87.649518,AoT Chicago (S) [C]
-001e06113ad8,AoT Chicago,062," Ashland Ave & Roosevelt Rd Chicago IL",41.866786,-87.666306,AoT Chicago (S) [C]
-001e06113107,AoT Chicago,072," 7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
-001e06112e77,AoT Chicago,06B," Ashland Ave & 59th St Chicago IL",41.786756,-87.664343,AoT Chicago (S) [C]
-001e0611441e,AoT Chicago,067," Ashland Ave & 47th Chicago IL",41.808594,-87.665048,AoT Chicago (S) [C]
-001e06114503,AoT Chicago,095," Ave O & 126th Chicago IL",41.666078,-87.539374,AoT Chicago (S) [C]
-001e0611462f,AoT Chicago,081," Wallace St & Pershing Rd Chicago IL",41.823527,-87.641054,AoT Chicago (S) [C]
-001e06115369,AoT Chicago,082," Pulaski Rd & Addison St Chicago IL",41.946373,-87.727382,AoT Chicago (S) [C]
-001e06113cff,AoT Chicago,070," 7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
-001e06109f62,AoT Chicago,076," LSD Marine Dr & Irving Park Rd Chicago IL",41.954626,-87.645247,AoT Chicago (S) [C]
-001e061144c0,AoT Chicago,097," Pulaski Rd & 71st St Chicago IL",41.764122,-87.72242,AoT Chicago (S) [C]
-001e061146d6,AoT Chicago,091," Halsted St & Division St Chicago IL",41.903632,-87.648093,AoT Chicago (S) [C]
-001e06113dbc,AoT Chicago,096," Ave L & 100th St Chicago IL",41.713867,-87.536509,AoT Chicago (S) [C]
-001e06113d22,AoT Chicago,092," Kedzie Ave & 51st St Chicago IL",41.800846,-87.703739,AoT Chicago (S) [C]
-001e061146bc,AoT Chicago,079," Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
-001e06113ace,AoT Chicago,077," Martin Luther King Dr & 35th St Chicago IL",41.83107,-87.617298,AoT Chicago (S) [C]
-001e061146cb,AoT Chicago,07C," Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
-001e06114fd4,AoT Chicago,073," Martin Luther King Dr & Garfield Blvd Chicago IL",41.794477,-87.615957,AoT Chicago (S) [C]
-001e06113ad6,AoT Chicago,075," Milwaukee Ave & Wood St Chicago IL",41.906481,-87.671373,AoT Chicago (S) [C]
+001e0610ba46,AoT Chicago,004,"State St & Jackson Blvd Chicago IL",41.878377, -87.627678,AoT Chicago (S) [C]
+001e0610ba3b,AoT Chicago,006,"18th St & Lake Shore Dr Chicago IL",41.858136, -87.616055,AoT Chicago (S)
+001e0610ba8f,AoT Chicago,00D,"Cornell & 47th St Chicago IL",41.810342,-87.590228,AoT Chicago (S)
+001e0610ba16,AoT Chicago,010,"Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
+001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St Chicago IL",41.7806,-87.586456,AoT Chicago (S) [C]
+001e0610ba18,AoT Chicago,01D,"Damen Ave & Cermak Chicago IL",41.852179,-87.675825,AoT Chicago (S)
+001e0610bc10,AoT Chicago,01F,"State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
+001e0610bbf9,AoT Chicago,020,"Western Ave & 69th St Chicago IL",41.768319,-87.683396,AoT Chicago (S) [C]
+001e0610bbff,AoT Chicago,025,"Western Ave & 18th St Chicago IL",41.857797,-87.685806,AoT Chicago (S)
+001e0610ba15,AoT Chicago,02A,"Jeffrey Ave & 95th St Chicago IL",41.722457,-87.57535,AoT Chicago (S) [C]
+001e0610bbe5,AoT Chicago,02C,"Martin Luther King Dr & 87th St Chicago IL",41.736495,-87.614529,AoT Chicago (S) [C]
+001e0610ee33,AoT Chicago,02D,"Damen Ave & Wilson Ave Chicago IL",41.965089,-87.679076,AoT Chicago (S) [C]
+001e0610b9e5,AoT Chicago,02F,"Sheridan Rd & Granville Ave Chicago IL",41.994597,-87.655523,AoT Chicago (S) [C]
+001e0610f8f4,AoT Chicago,030,"Halsted St & 34th St Chicago IL",41.832579,-87.646133,AoT Chicago (S) [C]
+001e0610ee41,AoT Chicago,032,"Wood St & Warren Blv Chicago IL",41.882304,-87.671773,AoT Chicago (S) [C]
+001e0610eef4,AoT Chicago,034,"Milwaukee Ave & Wabansia Ave Chicago IL",41.912681,-87.681052,AoT Chicago (S)
+001e0610ef29,AoT Chicago,037,"Martin Luther King Dr & 83rd St Chicago IL",41.743814,-87.614732,AoT Chicago (S)
+001e0610f668,AoT Chicago,038,"Damen Ave & Archer Chicago IL",41.831827,-87.675311,AoT Chicago (S)
+001e0610f730,AoT Chicago,039,"Campbell Ave & Addison St Chicago IL",41.94672,-87.69068,AoT Chicago (S)
+001e0610bc07,AoT Chicago,03C,"Kedzie Ave & 5th Ave Chicago IL",41.878372,-87.706042,AoT Chicago (S)
+001e0610ef26,AoT Chicago,03D,"Halsted St & Randolph St Chicago IL",41.88431,-87.647431,AoT Chicago (S)
+001e0610ea5a,AoT Chicago,03E,"606 Path & Milwaukee Ave Chicago IL",41.914202, -87.683048,AoT Chicago (S)
+001e0610ee61,AoT Chicago,03F,"Pulaski Rd & Madison St Chicago IL",41.880732,-87.72566,AoT Chicago (S)
+001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St Chicago IL",41.741148,-87.54045,AoT Chicago (S)
+001e0610ba57,AoT Chicago,041,"Western Ave & Madison St Chicago IL",41.881172,-87.686359,AoT Chicago (S)
+001e0610ee82,AoT Chicago,048,"Damen Ave & Webster Chicago IL",41.921405,-87.677766,AoT Chicago (S) [C]
+001e0610ef27,AoT Chicago,04C,"Western Ave & 25th St Chicago IL",41.846579,-87.685557,AoT Chicago (S) [C]
+001e0610fb4c,AoT Chicago,04D,"Leavitt St & Milwaukee Ave Chicago IL",41.913583,-87.682414,AoT Chicago (S)
+001e0610ee6f,AoT Chicago,04E,"Damen Ave & Chicago Int'l Produce Mkt Chicago IL",42.002412,-87.679602,AoT Chicago (S)
+001e0610ef68,AoT Chicago,04F,"Ashland Ave & 18th St Chicago IL",41.857775,-87.666144,AoT Chicago (S)
+001e0610e809,AoT Chicago,050,"Ashland Ave & Division St Chicago IL",41.903335,-87.6674,AoT Chicago (S)
+001e0610ee36,AoT Chicago,051,"Cottage Grove Ave & 79th St Chicago IL",41.751295,-87.605288,AoT Chicago (S) [C]
+001e061135cb,AoT Chicago,052,"Ashland & 63rd St Chicago IL",41.779369,-87.664421,AoT Chicago (S) [C]
+001e0610e532,AoT Chicago,053,"Racine Ave & 18th St Chicago IL",41.857959,-87.656427,AoT Chicago (S) [C]
+001e0610ee5d,AoT Chicago,056,"Long Ave & Fullerton Ave Chicago IL",41.923996,-87.761072,AoT Chicago (S) [C]
+001e0610ef73,AoT Chicago,057,"7801 S Lawndale Ave Chicago IL",41.751198, -87.713001,AoT Chicago (S) [C] {ComEd}
+001e0610e540,AoT Chicago,05A,"Fort Dearborn Dr & 31st St Chicago IL",41.838618,-87.607817,AoT Chicago (S) [C]
+001e0610f6dd,AoT Chicago,05D,"Pulaski Rd & Chicago Ave Chicago IL",41.895355,-87.726064,AoT Chicago (S) [C]
+001e06113ad8,AoT Chicago,062,"Ashland Ave & Roosevelt Rd Chicago IL",41.866786,-87.666306,AoT Chicago (S) [C]
+001e0611441e,AoT Chicago,067,"Ashland Ave & 47th Chicago IL",41.808594,-87.665048,AoT Chicago (S) [C]
+001e06113d83,AoT Chicago,06A,"Clybourn Ave & North Ave Chicago IL",41.910922, -87.649518,AoT Chicago (S) [C]
+001e06112e77,AoT Chicago,06B,"Ashland Ave & 59th St Chicago IL",41.786756,-87.664343,AoT Chicago (S) [C]
+001e0610f6db,AoT Chicago,06D,"Hutchinson Commons UChicago Chicago IL",41.791329, -87.598677,AoT Chicago (S) [C] {UChicago}
+001e06115365,AoT Chicago,06E,"UChicago Chicago IL",41.788430, -87.599130,AoT Chicago (S) [C] {UChicago}
+001e06113cff,AoT Chicago,070,"7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
+001e0611537d,AoT Chicago,071,"Ratner Hall UChicago Chicago IL",41.794167, -87.601646,AoT Chicago (S) [C] {UChicago}
+001e06113107,AoT Chicago,072,"7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
+001e06114fd4,AoT Chicago,073,"Martin Luther King Dr & Garfield Blvd Chicago IL",41.794477,-87.615957,AoT Chicago (S) [C]
+001e06113ad6,AoT Chicago,075,"Milwaukee Ave & Wood St Chicago IL",41.906481,-87.671373,AoT Chicago (S) [C]
+001e06109f62,AoT Chicago,076,"LSD Marine Dr & Irving Park Rd Chicago IL",41.954626,-87.645247,AoT Chicago (S) [C]
+001e06113ace,AoT Chicago,077,"Martin Luther King Dr & 35th St Chicago IL",41.83107,-87.617298,AoT Chicago (S) [C]
+001e061146bc,AoT Chicago,079,"Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
+001e061146cb,AoT Chicago,07C,"Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
+001e0610e539,AoT Chicago,07E,"Cicero Ave & Madison St Chicago IL",41.880497,-87.745268,AoT Chicago (S) [C]
+001e0610f703,AoT Chicago,07F,"Damen Ave & Polk St Chicago IL",41.87148,-87.67644,AoT Chicago (S) [C]
+001e0610b9e9,AoT Chicago,080,"Broadway Ave & Lawrence Ave Chicago IL",41.96904,-87.659672,AoT Chicago (S) [C]
+001e0611462f,AoT Chicago,081,"Wallace St & Pershing Rd Chicago IL",41.823527,-87.641054,AoT Chicago (S) [C]
+001e06115369,AoT Chicago,082,"Pulaski Rd & Addison St Chicago IL",41.946373,-87.727382,AoT Chicago (S) [C]
+001e0610bc12,AoT Chicago,085,"Ashland Ave & 79th St Chicago IL",41.75034,-87.663518,AoT Chicago (S) [C]
+001e0610e835,AoT Chicago,086,"Damen Ave & Lawrence Ave Chicago IL",41.968757,-87.679174,AoT Chicago (S) [C]
+001e0610e538,AoT Chicago,087,"Cottage Grove Ave & 87th St Chicago IL",41.736593,-87.604759,AoT Chicago (S) [C]
+001e0610eef2,AoT Chicago,088,"Clark St & Wilson Ave Chicago IL",41.965256,-87.66672,AoT Chicago (S) [C]
+001e061130f4,AoT Chicago,089,"Chicago Ave & Noble St Chicago IL",41.896157,-87.662391,AoT Chicago (S) [C]
+001e0610ee43,AoT Chicago,08B,"UChicago Chicago IL",41.788608,-87.598713,AoT Chicago (S) [C] {UChicago}
+001e0610f05c,AoT Chicago,08C,"Western Ave & Fullerton Ave Chicago IL",41.924903,-87.687703,AoT Chicago (S) [C]
+001e0610f732,AoT Chicago,08D,"Cicero Ave & Chicago Ave Chicago IL",41.895005,-87.745817,AoT Chicago (S) [C]
+001e06113100,AoT Chicago,08E,"Cottage Grove Ave & 111th St Chicago IL",41.692769,-87.609852,AoT Chicago (S) [C]
+001e0610e537,AoT Chicago,08F,"Clark St & Montrose Ave Chicago IL",41.961622,-87.665948,AoT Chicago (S) [C]
+001e0610f513,AoT Chicago,090A,"Milwaukee & Belmont Chicago IL",41.939121, -87.723801,AoT Chicago (S) [C]
+001e06109416,AoT Chicago,090B,"Elston and Cortland Chicago IL",41.916586, -87.666406,AoT Chicago (S) [C]
+001e061146d6,AoT Chicago,091A,"Halsted St & Division St Chicago IL",41.903632,-87.648093,AoT Chicago (S) [C]
+001e06113d22,AoT Chicago,092,"Kedzie Ave & 51st St Chicago IL",41.800846,-87.703739,AoT Chicago (S) [C]
+001e06113d20,AoT Chicago,094,"Ohio St & Grand Ave Chicago IL",41.892176, -87.611614,AoT Chicago (S) [C]
+001e06114503,AoT Chicago,095,"Ave O & 126th Chicago IL",41.666078,-87.539374,AoT Chicago (S) [C]
+001e06113dbc,AoT Chicago,096,"Ave L & 100th St Chicago IL",41.713867,-87.536509,AoT Chicago (S) [C]
+001e061144c0,AoT Chicago,097,"Pulaski Rd & 71st St Chicago IL",41.764122,-87.72242,AoT Chicago (S) [C]
+001e06114fcf,AoT Chicago,098,"Lake Shore Drive & Irving Park Rd Chicago IL",41.954825, -87.645248,AoT Chicago (S) [C]
+001e06115382,AoT Chicago,09B,"State St & Monroe St Chicago IL",41.88076, -87.62775,AoT Chicago (S) [C]
+001e06113cf1,AoT Chicago,09C,"State St & Randolph St Chicago IL",41.884688,-87.627864,AoT Chicago (S) [C]
+001e06113acb,AoT Chicago,09D,"Ashland Ave & 31st Pl Chicago IL",41.839066, -87.665685,AoT Chicago (S) [C]
+001e06113f54,AoT Chicago,0A0,"Michigan Ave & Randolph St Chicago IL",41.884607,-87.624577,AoT Chicago (S) [C]
+001e06114500,AoT Chicago,0A1,"Halsted St & 99th St Chicago IL",41.714494,-87.643099,AoT Chicago (S) [C]
+001e06113d32,AoT Chicago,0A2,"Western Ave & Addison St Chicago IL",41.947066,-87.688326,AoT Chicago (S) [C]
+001e061146ba,AoT Chicago,0A3,"Long Ave & Lawrence Ave Chicago IL",41.96759, -87.76257,AoT Chicago (S) [P]
+001e06113a48,AoT Chicago,0A4,"Western Ave & Roscoe Ave Chicago IL",41.943263, -87.688069,AoT Chicago (S) [P]
+001e06113ba6,AoT Chicago,0A5,"Ashland Ave & Washington Chicago IL",41.883541,-87.666748,AoT Chicago (S) [P]
+001e06115379,AoT Chicago,0A6,"N Wells St & W Washington St Chicago, IL ",41.88326, -87.63387,AoT Chicago (S) [P]
+001e06114fd6,AoT Chicago,0A7,"Upper Wacker Dr & Randolph St Chicago IL",41.88449, -87.636955,AoT Chicago (S) [P]
+001e0611536c,AoT Chicago,0AA,"Dearborn St & Lake St Chicago IL",41.88575, -87.62969,AoT Chicago (S) [P]
+001e061144be,AoT Chicago,890,"UChicago, Regenstine Chicago IL",41.792543,-87.600008,AoT Chicago (S) [C] {UChicago}
