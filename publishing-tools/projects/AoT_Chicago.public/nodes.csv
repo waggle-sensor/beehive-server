@@ -87,3 +87,5 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06115379,AoT Chicago,0A6,"N Wells St & W Washington St Chicago, IL ",41.88326, -87.63387,AoT Chicago (S) [P]
 001e0611537d,AoT Chicago,071,"Ratner Hall UChicago Chicago IL",41.794167, -87.601646,AoT Chicago (S) [C] {UChicago}
 001e06115382,AoT Chicago,09B,"State St & Monroe St Chicago IL",41.88076, -87.62775,AoT Chicago (S) [C]
+001e06114fcf,AoT Chicago,098,"Lake Shore Drive & Irving Park Rd Chicago IL",41.954825, -87.645248,AoT Chicago (S) [C]
+001e06113d20,AoT Chicago,094,"Ohio St & Grand Ave Chicago IL",41.892176, -87.611614,AoT Chicago (S) [C] 
