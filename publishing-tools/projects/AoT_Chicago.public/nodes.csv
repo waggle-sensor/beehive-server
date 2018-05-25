@@ -73,3 +73,10 @@ node_id,project_id,vsn,address,lat,lon,description
 001e0610f6db,AoT Chicago,06D,"Hutchinson Commons UChicago Chicago IL",41.791329, -87.598677,AoT Chicago (S) [C] {UChicago}
 001e06113a48,AoT Chicago,0A4,"Western Ave & Roscoe Ave Chicago IL",41.943263, -87.688069,AoT Chicago (S) [P]
 001e06113acb,AoT Chicago,09D,"Ashland Ave & 31st Pl Chicago IL",41.839066, -87.665685,AoT Chicago (S) [C]
+001e06113ba6,AoT Chicago,0A5,Ashland Ave & Washington Chicago IL,41.883541,-87.666748,AoT Chicago (S) [P]
+001e06113cf1,AoT Chicago,09C,State St & Randolph St Chicago IL,41.884688,-87.627864,AoT Chicago (S) [C]
+001e06113d32,AoT Chicago,0A2,Western Ave & Addison St Chicago IL,41.947066,-87.688326,AoT Chicago (S) [C]
+001e06113f54,AoT Chicago,0A0,"Michigan Ave & Randolph St ,(05/07/2018)",41.884607,-87.624577,AoT Chicago (S) [C]
+001e061144be,AoT Chicago,890,"UChicago, Regenstine",41.792543,-87.600008,AoT Chicago (S) [C] {UChicago}
+001e06114500,AoT Chicago,0A1,Halsted St & 99th St Chicago IL,41.714494,-87.643099,AoT Chicago (S) [C]
+001e06109416,AoT Chicago,090B,"Elson and Cortland Chicago IL",41.916586, -87.666406,AoT Chicago (S) [C]
