@@ -1,8 +1,10 @@
 <!--
-waggle_topic=Waggle/Beehive/Operations,Publishing Data
+waggle_topic=/beehive/data_archive
+waggle_topic=!/beehive/data_processing
+waggle_topic=!/beehive/scientific_datasets
 -->
 
-# Publishing Filter Tools and Metadata
+# Publishing Data
 
 ## Overview
 
