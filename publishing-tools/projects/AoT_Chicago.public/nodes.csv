@@ -42,7 +42,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06113d83,AoT Chicago,06A,"Clybourn Ave & North Ave Chicago IL",41.910922, -87.649518,AoT Chicago (S) [C]
 001e06112e77,AoT Chicago,06B,"Ashland Ave & 59th St Chicago IL",41.786756,-87.664343,AoT Chicago (S) [C]
 001e0610f6db,AoT Chicago,06D,"Hutchinson Commons UChicago Chicago IL",41.791329, -87.598677,AoT Chicago (S) [C] {UChicago}
-001e06115365,AoT Chicago,06E,"UChicago Chicago IL",41.788430, -87.599130,AoT Chicago (S) [C] {UChicago}
+001e06115365,AoT Chicago,06E,"David Logan Art Center UChicago Chicago IL",41.785605, -87.603909,AoT Chicago (S) [C] {UChicago}
 001e06113cff,AoT Chicago,070,"7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
 001e0611537d,AoT Chicago,071,"Ratner Hall UChicago Chicago IL",41.794167, -87.601646,AoT Chicago (S) [C] {UChicago}
 001e06113107,AoT Chicago,072,"7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
