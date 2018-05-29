@@ -1,5 +1,5 @@
 <!--
-waggle_topic=Waggle/Beehive/Operations
+waggle_topic=/beehive/data_archive
 -->
 
 # Exporting Data
