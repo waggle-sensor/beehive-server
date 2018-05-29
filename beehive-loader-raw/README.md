@@ -1,5 +1,5 @@
 <!--
-waggle_topic=Waggle/Beehive/Services
+waggle_topic=/beehive/services
 -->
 
 # Raw Data Loader
