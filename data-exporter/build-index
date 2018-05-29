@@ -54,7 +54,7 @@ if __name__ == '__main__':
                 # exceptional
                 if date <= today:
                     datasets.append({
-                        'url': filename,
+                        'url': os.path.relpath(filename, build_dir),
                         'date': date,
                         'version': '2',
                     })
