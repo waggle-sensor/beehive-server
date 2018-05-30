@@ -2,12 +2,32 @@
 import argparse
 import csv
 import os
+import itertools
 
 
-def get_node_ids_from_file(filename):
+def read_csv_file(filename):
     with open(filename) as file:
-        reader = csv.DictReader(file)
-        return {row['node_id'] for row in reader}
+        return list(csv.DictReader(file))
+
+
+def read_nodes_from_file(filename):
+    rows = read_csv_file(filename)
+    return {row['node_id'] for row in rows}
+
+
+def row_node_id(row):
+    return row['node_id']
+
+
+def groupby(seq, key):
+    return itertools.groupby(sorted(seq, key=key), key=key)
+
+
+def duplicates(seq, key):
+    for group, results in groupby(seq, key=row_node_id):
+        listed = list(results)
+        if len(listed) > 1:
+            yield group, listed
 
 
 if __name__ == '__main__':
@@ -18,8 +38,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for dir in map(os.path.abspath, args.project_dirs):
-        nodes_ids = get_node_ids_from_file(os.path.join(dir, 'nodes.csv'))
-        events_ids = get_node_ids_from_file(os.path.join(dir, 'events.csv'))
+        nodes_ids = read_nodes_from_file(os.path.join(dir, 'nodes.csv'))
+        events_ids = read_nodes_from_file(os.path.join(dir, 'events.csv'))
 
         no_commissioning_date = nodes_ids - events_ids
         no_node = events_ids - nodes_ids
@@ -40,4 +60,22 @@ if __name__ == '__main__':
 
             for id in sorted(no_node):
                 print(id)
+            print()
+
+        print()
+
+        for node_id, rows in duplicates(read_csv_file(os.path.join(dir, 'nodes.csv')), key=row_node_id):
+            print('## Multiple node entries for', node_id)
+
+            for row in rows:
+                print(*row.values())
+
+            print()
+
+        for node_id, rows in duplicates(read_csv_file(os.path.join(dir, 'events.csv')), key=row_node_id):
+            print('## Multiple event entries for', node_id)
+
+            for row in rows:
+                print(*row.values())
+
             print()
