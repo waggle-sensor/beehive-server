@@ -1,5 +1,11 @@
 # Project Digest Readme
 
+{%- if header %}
+
+{{ header }}
+
+{%- endif %}
+
 The files in this directory contain sensor data and the associated meta-data that
 will enable parsing the sensor values.
 
@@ -19,10 +25,17 @@ These files will be described in-depth in the following sections.
 The sensor data file is an aggregate of all published data from the project's
 nodes. By published, we mean:
 
+{%- if complete %}
+
+* Data was read from a whitelisted node belonging to the project.
+* Data was read during that node's commissioning period.
+{% else %}
+
 * Data was read from a whitelisted node belonging to the project.
 * Data was read during that node's commissioning period.
 * Data was read from a whitelisted sensor.
 * Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate. No further checks were made on the data.
+{%- endif %}
 
 The `data.csv.gz` file is a compressed CSV with the following, but not limited to, columns:
 
@@ -56,9 +69,12 @@ in the metadata. More information about these will be provided in the next two s
 A sensor values may be marked `NA`, indicating that either the raw or HRF value is
 unavailable.
 
+{%- if not complete %}
+
 *Note: Currently, we _do not_ do automatic in-depth or cross sensor comparison and
 filtering. For example, a damaged sensor _could_ repeat an error value over and over if it is
 in the accepted range or a node _could_ have a sensor value deviate from its neighbors.*
+{%- endif %}
 
 ### Node Metadata
 
