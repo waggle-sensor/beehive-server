@@ -19,17 +19,23 @@ if __name__ == '__main__':
         nodes_ids = get_node_ids_from_file(os.path.join(dir, 'nodes.csv'))
         events_ids = get_node_ids_from_file(os.path.join(dir, 'events.csv'))
 
-        print('#', os.path.basename(dir))
-        print()
+        no_commissioning_date = nodes_ids - events_ids
+        no_node = events_ids - nodes_ids
 
-        print('## No commissioning date')
+        if no_node or no_commissioning_date:
+            print('#', os.path.basename(dir))
+            print()
 
-        for id in sorted(nodes_ids - events_ids):
-            print(id)
-        print()
+        if no_commissioning_date:
+            print('## No commissioning date')
 
-        print('## No node')
+            for id in sorted(no_commissioning_date):
+                print(id)
+            print()
 
-        for id in sorted(events_ids - nodes_ids):
-            print(id)
-        print()
+        if no_node:
+            print('## No node')
+
+            for id in sorted(no_node):
+                print(id)
+            print()
