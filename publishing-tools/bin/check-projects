@@ -3,6 +3,8 @@ import argparse
 import csv
 import os
 import itertools
+import csv
+import sys
 
 
 def read_csv_file(filename):
@@ -64,11 +66,13 @@ if __name__ == '__main__':
 
         print()
 
+        csvwriter = csv.writer(sys.stdout)
+
         for node_id, rows in duplicates(read_csv_file(os.path.join(dir, 'nodes.csv')), key=row_node_id):
             print('## Multiple node entries for', node_id)
 
             for row in rows:
-                print(*row.values())
+                csvwriter.writerow(row.values())
 
             print()
 
@@ -76,6 +80,6 @@ if __name__ == '__main__':
             print('## Multiple event entries for', node_id)
 
             for row in rows:
-                print(*row.values())
+                csvwriter.writerow(row.values())
 
             print()
