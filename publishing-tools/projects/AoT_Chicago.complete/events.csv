@@ -1,5 +1,4 @@
 node_id,timestamp,event,comment
-001e0610f730,2017/03/31 00:00:00,commissioned,
 001e0610ba3b,2017/08/08 00:00:00,commissioned,
 001e0610ba8f,2017/08/08 00:00:00,commissioned,
 001e0610e809,2017/10/09 00:00:00,commissioned,
@@ -12,6 +11,7 @@ node_id,timestamp,event,comment
 001e0610ef68,2017/11/20 00:00:00,commissioned,
 001e0610b9e5,2017/11/28 00:00:00,commissioned,
 001e0610eef0,2017/11/28 00:00:00,commissioned,
+001e0610f730,2017/11/29 00:00:00,commissioned,
 001e0610ba81,2017/11/29 00:00:00,commissioned,
 001e0610e540,2017/11/29 00:00:00,commissioned,
 001e0610ba16,2017/12/01 00:00:00,commissioned,
