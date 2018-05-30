@@ -20,6 +20,7 @@ if __name__ == '__main__':
         events_ids = get_node_ids_from_file(os.path.join(dir, 'events.csv'))
 
         print('#', os.path.basename(dir))
+        print()
 
         print('## No commissioning date')
 
