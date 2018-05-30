@@ -4,7 +4,7 @@ from cassandra.cluster import Cluster
 import os
 import logging
 import csv
-import binascii
+from binascii import unhexlify
 import time
 import sys
 import datetime
@@ -24,13 +24,27 @@ decoders = {
 }
 
 
+def normalize_ascii_data(data):
+    if data.startswith("b'"):
+        data = data[2:]
+    if data.endswith("'"):
+        data = data[:-1]
+    return data
+
+
+def normalize_bin_data(data):
+    data = data[data.index(0xaa):]
+    data = data[:data.rindex(0x55)+1]
+    return data
+
+
 def decode_row(row):
     plugin = (row.plugin_name, row.plugin_version)
 
     if plugin not in decoders:
         return []
 
-    data = binascii.unhexlify(row.data)
+    data = normalize_bin_data(unhexlify(normalize_ascii_data(row.data)))
     return decoders[plugin](data)
 
 
@@ -98,13 +112,17 @@ def make_jobs(lines):
     return list(jobs.items())
 
 
-def init_worker(cluster):
+def init_worker(cluster, debug):
     global logger
     global session
     global worker_start_time
     global worker_completed
 
-    logging.basicConfig(level=logging.CRITICAL)
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
+
     logger = multiprocessing.log_to_stderr()
 
     session = cluster.connect('waggle')
@@ -159,6 +177,7 @@ def process_job(job):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-D', '--debug', action='store_true', help='Enable debug mode.')
     parser.add_argument('-p', '--processes', type=int, default=1)
     parser.add_argument('datasets_dir', help='Directory where datasets will be exported.')
     args = parser.parse_args()
@@ -169,5 +188,5 @@ if __name__ == '__main__':
 
     cluster = Cluster()
 
-    with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster,)) as pool:
+    with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster, args.debug)) as pool:
         pool.map(process_job, jobs)
