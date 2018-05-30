@@ -7,7 +7,7 @@ will enable parsing the sensor values.
 
 This sensor data digest contains the following files:
 
-* `data.csv` - Sensor data.
+* `data.csv.gz` - Sensor data ordered by ascending timestamp.
 * `nodes.csv` - Nodes metadata.
 * `sensors.csv` - Sensor metadata.
 * `provenance.csv` - Provenance metadata.
@@ -24,7 +24,7 @@ nodes. By published, we mean:
 * Data was read from a whitelisted sensor.
 * Data value passed a simple range check - the value for the parameter is reasonable and within the possible values the sensor can generate. No further checks were made on the data.
 
-The `data.csv` file is a CSV with the following, but not limited to, columns:
+The `data.csv.gz` file is a compressed CSV with the following, but not limited to, columns:
 
 * `timestamp` - UTC timestamp of when the measurement was done.
 * `node_id` - ID of node which did the measurement.
@@ -47,6 +47,8 @@ timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
 2017/09/09 22:12:44,001e0610ba8f,metsense,metsense,id,00001814B7E8,00001814B7E8
 2017/09/09 22:12:44,001e0610ba8f,metsense,pr103j2,temperature,839,NA
 ```
+
+Sensor data is ordered by ascending timestamp.
 
 Additional information such each node's coordinates or each sensor units can be found
 in the metadata. More information about these will be provided in the next two sections.
@@ -74,11 +76,11 @@ file is a CSV with the following fields:
 These fields will always be provided as a header, for example:
 ```
 node_id,project_id,vsn,address,lat,lon,description
-001e0610bc10,AoT Chicago,01F," State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
-001e0610ba8b,AoT Chicago,018," Stony Island Ave & 63rd St Chicago IL",41.7806,-87.586456,AoT Chicago (S) [C]
-001e0610ba18,AoT Chicago,01D," Damen Ave & Cermak Chicago IL",41.852179,-87.675825,AoT Chicago (S)
-001e0610ba81,AoT Chicago,040," Lake Shore Drive & 85th St Chicago IL",41.741148,-87.54045,AoT Chicago (S)
-001e0610ba16,AoT Chicago,010," Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
+001e0610bc10,AoT Chicago,01F,"State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
+001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St Chicago IL",41.7806,-87.586456,AoT Chicago (S) [C]
+001e0610ba18,AoT Chicago,01D,"Damen Ave & Cermak Chicago IL",41.852179,-87.675825,AoT Chicago (S)
+001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St Chicago IL",41.741148,-87.54045,AoT Chicago (S)
+001e0610ba16,AoT Chicago,010,"Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
 ```
 
 Additional details about a node are contained in the description field. The letters
@@ -142,5 +144,5 @@ data_format_version,project_id,data_start_date,data_end_date,creation_date,url
 
 Although our goal is to provide stable metadata files, please consider these as
 in-development. If you do write tools which process them, we *strongly* recommend
-taking advantage of the metadata headers and processing the files as CSV when applicable in 
+taking advantage of the metadata headers and processing the files as CSV when applicable in
 order to accommodate future changes.
