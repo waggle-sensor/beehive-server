@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+import argparse
+import csv
+import os
+
+
+def get_node_ids_from_file(filename):
+    with open(filename) as file:
+        reader = csv.DictReader(file)
+        return {row['node_id'] for row in reader}
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('project_dirs', nargs='*')
+    args = parser.parse_args()
+
+    for dir in map(os.path.abspath, args.project_dirs):
+        nodes_ids = get_node_ids_from_file(os.path.join(dir, 'nodes.csv'))
+        events_ids = get_node_ids_from_file(os.path.join(dir, 'events.csv'))
+
+        print(dir)
+
+        print('# No commissioning date')
+
+        for id in sorted(nodes_ids - events_ids):
+            print(id)
+        print()
+
+        print('# No node')
+
+        for id in sorted(events_ids - nodes_ids):
+            print(id)
+        print()
