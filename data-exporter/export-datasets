@@ -4,7 +4,7 @@ from cassandra.cluster import Cluster
 import os
 import logging
 import csv
-from binascii import unhexlify
+from binascii import hexlify, unhexlify
 import time
 import sys
 import datetime
@@ -54,7 +54,7 @@ def stringify(x):
     if isinstance(x, tuple) or isinstance(x, list):
         return ','.join(map(stringify, x))
     if isinstance(x, bytes) or isinstance(x, bytearray):
-        return binascii.hexlify(x).decode()
+        return hexlify(x).decode()
     if isinstance(x, float):
         return str(round(x, 5))
     if isinstance(x, bool):
