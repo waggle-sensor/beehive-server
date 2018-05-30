@@ -265,7 +265,7 @@ def render_template(filename, template, *args, **kwargs):
 
 
 # maybe just use a single, general render template function
-def update_project_files(build_dir, project_dir):
+def update_project_files(build_dir, project_dir, complete=False):
     print('make archive')
 
     start = time.time()
@@ -277,7 +277,7 @@ def update_project_files(build_dir, project_dir):
                               '{}.latest'.format(project_id),
                               '{}.{}'.format(project_id, date))
 
-    move_file(os.path.join(build_dir, 'data.csv.gz'),
+    copy_file(os.path.join(build_dir, 'data.csv.gz'),
               os.path.join(digest_dir, 'data.csv.gz'))
 
     copy_file(os.path.join(project_dir, 'nodes.csv'),
@@ -293,7 +293,8 @@ def update_project_files(build_dir, project_dir):
 
     render_template(os.path.join(digest_dir, 'README.md'),
                     os.path.join(template_dir, 'digest-readme.md'),
-                    header=read_file_or_empty(os.path.join(project_dir, 'header.md')))
+                    header=read_file_or_empty(os.path.join(project_dir, 'header.md'),
+                    complete=complete))
 
     now = datetime.datetime.now()
 
@@ -362,4 +363,4 @@ if __name__ == '__main__':
     update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
     update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
     update_combined_file(dates_dir, build_dir)
-    update_project_files(build_dir, project_dir)
+    update_project_files(build_dir, project_dir, complete=args.complete)
