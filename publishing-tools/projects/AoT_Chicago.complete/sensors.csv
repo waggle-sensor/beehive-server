@@ -45,7 +45,7 @@ ontology,subsystem,sensor,parameter,hrf_unit,hrf_minval,hrf_maxval,datasheet
 /sensing/physical/magnetic_field,lightsense,hmc5883l,magnetic_field_x,mG,-8000,8000,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
 /sensing/physical/magnetic_field,lightsense,hmc5883l,magnetic_field_y,mG,-8000,8000,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
 /sensing/physical/magnetic_field,lightsense,hmc5883l,magnetic_field_z,mG,-8000,8000,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hmc5883l.pdf
-/sensing/physical/sound_level,metsense,spv1840lr5h_b,intensity,dB,,121,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/spv1840lr5h-b.pdf
+/sensing/physical/sound_level,metsense,spv1840lr5h_b,intensity,dB,0,121,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/spv1840lr5h-b.pdf
 /sensing/physical/uv,lightsense,ml8511,intensity,uW/cm^2,0,15,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/ml8511.pdf
 /sensing/physical/vibration,metsense,mma8452q,acceleration_x,mg,-8000,8000,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
 /sensing/physical/vibration,metsense,mma8452q,acceleration_y,mg,-8000,8000,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/mma8452q.pdf
