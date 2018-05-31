@@ -1,4 +1,4 @@
-node_id,timestamp,event comment
+node_id,timestamp,event,comment
 001e0610bc10,2018/02/22 00:00:00,commissioned,
 001e0610ba8b,2018/02/26 00:00:00,commissioned,
 001e0610ba18,2017/12/15 00:00:00,commissioned,
