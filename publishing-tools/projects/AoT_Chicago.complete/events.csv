@@ -1,4 +1,4 @@
-node_id,timestamp,event,comment
+node_id,timestamp,event comment
 001e0610bc10,2018/02/22 00:00:00,commissioned,
 001e0610ba8b,2018/02/26 00:00:00,commissioned,
 001e0610ba18,2017/12/15 00:00:00,commissioned,
@@ -84,8 +84,8 @@ node_id,timestamp,event,comment
 001e06114fcf,2018/05/07 00:00:00,commissioned,
 001e06113d20,2018/05/07 00:00:00,commissioned,
 001e0611536c,2018/05/08 00:00:00,commissioned,
-001e06109416,2018/01/01	00:00:00,commissioned,
-001e06109f62,2018/01/01	00:00:00,commissioned,
-001e0610ef73,2017/01/01	00:00:00,commissioned,
-001e06113107,2017/01/01	00:00:00,commissioned,
-001e06113cff,2017/01/01	00:00:00,commissioned,
+001e06109416,2018/01/01 00:00:00,commissioned,
+001e06109f62,2018/01/01 00:00:00,commissioned,
+001e0610ef73,2017/01/01 00:00:00,commissioned,
+001e06113107,2017/01/01 00:00:00,commissioned,
+001e06113cff,2017/01/01 00:00:00,commissioned,
