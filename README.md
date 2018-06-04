@@ -1,5 +1,5 @@
 <!--
-waggle_topic=/beehive/introduction,Overview
+waggle_topic=/beehive/introduction
 -->
 
 # Beehive Overview
