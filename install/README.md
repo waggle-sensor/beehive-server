@@ -1,5 +1,5 @@
 <!--
-waggle_topic=/beehive/operations
+waggle_topic=ignore
 -->
 
 # Installation
