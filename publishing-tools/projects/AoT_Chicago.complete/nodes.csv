@@ -48,7 +48,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06113107,AoT Chicago,072,"7801 S Lawndale Ave Chicago IL",41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd}
 001e06114fd4,AoT Chicago,073,"Martin Luther King Dr & Garfield Blvd Chicago IL",41.794477,-87.615957,AoT Chicago (S) [C]
 001e06113ad6,AoT Chicago,075,"Milwaukee Ave & Wood St Chicago IL",41.906481,-87.671373,AoT Chicago (S) [C]
-001e06109f62,AoT Chicago,076,"LSD Marine Dr & Irving Park Rd Chicago IL",41.954626,-87.645247,AoT Chicago (S) [C]
+001e06109f62,AoT Chicago,076,"Lake Shore Drive & Irving Park Rd Chicago IL",41.954825,-87.645248,AoT Chicago (S) [C]
 001e06113ace,AoT Chicago,077,"Martin Luther King Dr & 35th St Chicago IL",41.83107,-87.617298,AoT Chicago (S) [C]
 001e061146bc,AoT Chicago,079,"Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
 001e061146cb,AoT Chicago,07C,"Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
