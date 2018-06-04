@@ -52,6 +52,7 @@ node_id,project_id,vsn,address,lat,lon,description
 001e06113ace,AoT Chicago,077,"Martin Luther King Dr & 35th St Chicago IL",41.83107,-87.617298,AoT Chicago (S) [C]
 001e061146bc,AoT Chicago,079,"Ashland Ave & Elston Ave Chicago IL",41.918733,-87.668257,AoT Chicago (S) [C]
 001e061146cb,AoT Chicago,07C,"Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
+001e06114fd9,AoT Chicago,0AC,"Lake Shore Drive & Fullerton Ave Chicago IL",41.926170, -87.631533,AoT Chicago (S) [C]
 001e0610e539,AoT Chicago,07E,"Cicero Ave & Madison St Chicago IL",41.880497,-87.745268,AoT Chicago (S) [C]
 001e0610f703,AoT Chicago,07F,"Damen Ave & Polk St Chicago IL",41.87148,-87.67644,AoT Chicago (S) [C]
 001e0610b9e9,AoT Chicago,080,"Broadway Ave & Lawrence Ave Chicago IL",41.96904,-87.659672,AoT Chicago (S) [C]
