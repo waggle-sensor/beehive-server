@@ -61,7 +61,7 @@ ontology,subsystem,sensor,parameter,hrf_unit,hrf_minval,hrf_maxval,datasheet
 /system/environment/ir,chemsense,si1145,ir_intensity,uW/cm^2,0,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
 /system/environment/light,chemsense,si1145,visible_light_intensity,uW/cm^2,0,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
 /system/environment/temperature,lightsense,hih6130,temperature,C,-25,85,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hih6130.pdf
-/system/environment/temperature,wagman,htu21d,humidity,RH,0,100,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
+/system/environment/humidity,wagman,htu21d,humidity,RH,0,100,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
 /system/environment/temperature,wagman,htu21d,temperature,C,-40,125,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
 /system/environment/temperature,wagman,temperatures,battery,C,-55,125,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
 /system/environment/temperature,wagman,temperatures,brainplate,C,-55,125,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
