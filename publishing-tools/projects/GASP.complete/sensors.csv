@@ -61,7 +61,7 @@ ontology,subsystem,sensor,parameter,hrf_unit,hrf_minval,hrf_maxval,datasheet
 /system/environment/ir,chemsense,si1145,ir_intensity,uW/cm^2,0,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
 /system/environment/light,chemsense,si1145,visible_light_intensity,uW/cm^2,0,,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/si1145.pdf
 /system/environment/temperature,lightsense,hih6130,temperature,C,-25,85,https://github.com/waggle-sensor/sensors/blob/master/sensors/lightsense/hih6130.pdf
-/system/environment/temperature,wagman,htu21d,humidity,RH,0,100,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
+/system/environment/humidity,wagman,htu21d,humidity,RH,0,100,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
 /system/environment/temperature,wagman,htu21d,temperature,C,-40,125,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/htu21d.pdf
 /system/environment/temperature,wagman,temperatures,battery,C,-55,125,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
 /system/environment/temperature,wagman,temperatures,brainplate,C,-55,125,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
@@ -84,13 +84,13 @@ ontology,subsystem,sensor,parameter,hrf_unit,hrf_minval,hrf_maxval,datasheet
 /system/node_controller/uptime,nc,uptime,idletime,s,0,,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
 /system/node_controller/uptime,nc,uptime,uptime,s,0,,https://github.com/waggle-sensor/core/blob/master/scripts/status-service
 /system/other/flow_rate,alphasense,opc_n2,sample_flow_rate,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
-/system/other/humidity,chemsense,lps25h,pressure,hPa,260,1260,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
+/system/other/pressure,chemsense,lps25h,pressure,hPa,260,1260,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
 /system/other/humidity,chemsense,sht25,humidity,RH,0,100,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/sht25.pdf
 /system/other/id,chemsense,chemsense,id,id,,,https://github.com/waggle-sensor/sensors
 /system/other/id,metsense,metsense,id,id,,,https://github.com/waggle-sensor/sensors
 /system/other/id,alphasense,opc_n2,fw,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
 /system/other/light,metsense,tsl250rd,intensity,uW/cm^2,0,124,https://github.com/waggle-sensor/sensors/blob/master/sensors/airsense/tsl250rd.pdf
-/system/other/pressure,chemsense,lps25h,temperature,C,-30,105,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
+/system/other/temperature,chemsense,lps25h,temperature,C,-30,105,https://github.com/waggle-sensor/sensors/blob/master/sensors/chemsense/lps25h.pdf
 /system/other/sampling_period,alphasense,opc_n2,sampling_period,,,,https://github.com/waggle-sensor/sensors/blob/master/sensors/opc/opcN2.pdf
 /system/other/temperature,chemsense,at0,temperature,C,-40,125,https://github.com/waggle-sensor/sensors
 /system/other/temperature,chemsense,at1,temperature,C,-40,125,https://github.com/waggle-sensor/sensors
