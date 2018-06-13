@@ -14,8 +14,6 @@ CA_DIR=$SSL_DIR/waggleca/
 
 mkdir -p $SSL_DIR
 chmod -R 777 $SSL_DIR
-
-rm -rf $CA_DIR
 mkdir -p $CA_DIR
 
 cp $OPENSSL_CONFIG_FILE $CA_DIR
@@ -37,9 +35,18 @@ echo "unique_subject = no" > index.txt.attr
 
 # Generate the root certificate
 
-# split private key gen
+# split private key gen as two steps, so can generate cert but reuse key
 
-openssl req -x509 -config openssl.cnf -newkey rsa:2048 -days 365 \
-	-out cacert.pem -outform PEM -subj /CN=waggleca/ -nodes
+# openssl genrsa \
+# 	-newkey rsa:2048 \
+# 	-nodes \
+# 	-keyout private/cakey.pem
 
-# openssl x509 -in cacert.pem -out cacert.cer -outform DER
+if [ ! -f cacert.pem ]; then
+	openssl req -x509 -config openssl.cnf -newkey rsa:2048 -days 365 \
+		-out cacert.pem -outform PEM -subj /CN=waggleca/ -nodes
+else
+	echo 'CA private key and certificate already exist. Skipping.'
+fi
+
+# openssl x509 -in cacert.pem -out cacert.der -outform DER
