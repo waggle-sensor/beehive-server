@@ -15,6 +15,7 @@ deploy:
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 80:80 \
+		-v $(BEEHIVE_ROOT)/www:/www:ro \
 		--name $(name) \
 		$(image)
 
