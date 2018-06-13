@@ -1,3 +1,3 @@
 FROM nginx
 
-ADD beehive.conf /etc/nginx/conf.d/default.conf
+ADD init.sql /etc/nginx/conf.d/default.conf

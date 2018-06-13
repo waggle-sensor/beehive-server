@@ -1,14 +1,18 @@
 name = beehive-mysql
-image = mysql:5
+image = waggle/$(name)
+
+
+build:
+	docker build -t $(image) .
 
 deploy:
-	docker network create beehive || true
+	docker network create ${BEEHIVE_DOCKER_NETWORK} || true
 	docker rm -f $(name) || true
 	docker run \
 		--detach \
-		--net beehive \
+		--net ${BEEHIVE_DOCKER_NETWORK} \
 		--restart=always \
-		-v /mnt/mysql/datadir:/var/lib/mysql \
+		-v ${BEEHIVE_ROOT}/mysql/datadir:/var/lib/mysql \
 		-e MYSQL_ROOT_PASSWORD=waggle \
 		-e MYSQL_DATABASE=waggle \
 		-e MYSQL_USER=waggle \

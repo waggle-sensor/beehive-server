@@ -5,15 +5,15 @@ build:
 	docker build -t $(image) .
 
 deploy:
-	docker network create beehive || true
+	docker network create ${BEEHIVE_DOCKER_NETWORK} || true
 	docker rm -f $(name) || true
 	docker run \
 		--detach \
-		--net beehive \
+		--net ${BEEHIVE_DOCKER_NETWORK} \
 		--restart=always \
 		-p 127.0.0.1:24181:80 \
-		-v /mnt/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
-		-v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
+		-v ${BEEHIVE_ROOT}/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
+		-v ${BEEHIVE_ROOT}/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
 		$(image)
 

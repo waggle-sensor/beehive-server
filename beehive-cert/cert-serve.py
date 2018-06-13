@@ -12,6 +12,14 @@ from os import listdir
 from os.path import isdir, join
 from mysql import Mysql
 
+
+def ensure_dirs(path):
+    try:
+        os.makedirs(path)
+    except:
+        pass
+
+
 LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
 formatter = logging.Formatter(LOG_FORMAT)
 loglevel = logging.DEBUG
@@ -33,8 +41,10 @@ resource_lock = threading.RLock()
 
 script_path = "/usr/lib/waggle/beehive-server/SSL/"
 ssl_path = "/usr/lib/waggle/SSL/"
-ssl_path_nodes = ssl_path+"nodes/"
+ssl_path_nodes = os.path.join(ssl_path, 'nodes')
 
+ensure_dirs(script_path)
+ensure_dirs(ssl_path_nodes)
 
 hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
