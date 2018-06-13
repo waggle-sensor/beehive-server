@@ -14,7 +14,7 @@ deploy:
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
-		-v $(BEEHIVE_ROOT)/mysql/datadir:/var/lib/mysql \
+		-v $(BEEHIVE_ROOT)/mysql:/var/lib/mysql \
 		-e MYSQL_ROOT_PASSWORD=waggle \
 		-e MYSQL_DATABASE=waggle \
 		-e MYSQL_USER=waggle \
