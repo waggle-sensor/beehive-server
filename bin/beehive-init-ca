@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [[ -z "BEEHIVE_ROOT" ]]; then
+	echo "Error: BEEHIVE_ROOT is not defined."
+	exit 1
+fi
+
+OPENSSL_CONFIG_FILE=$(dirname $0)/../SSL/waggleca/openssl.cnf
+
+SSL_DIR=$BEEHIVE_ROOT/waggle/SSL/
+CA_DIR=$SSL_DIR/waggleca/
+
+# Begin constructing the Certificate Authority
+
+mkdir -p $SSL_DIR
+chmod -R 777 $SSL_DIR
+
+rm -rf $CA_DIR
+mkdir -p $CA_DIR
+
+cp $OPENSSL_CONFIG_FILE $CA_DIR
+
+cd $CA_DIR
+
+# Make appropriate folders
+mkdir -p certs private
+chmod 700 private
+
+if [ ! -f serial ]; then
+	echo 01 > serial
+fi
+
+touch index.txt
+
+# this is needed for "node" certificates. We may change that later.
+echo "unique_subject = no" > index.txt.attr
+
+# Generate the root certificate
+
+# split private key gen
+
+openssl req -x509 -config openssl.cnf -newkey rsa:2048 -days 365 \
+	-out cacert.pem -outform PEM -subj /CN=waggleca/ -nodes
+
+# openssl x509 -in cacert.pem -out cacert.cer -outform DER
