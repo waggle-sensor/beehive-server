@@ -36,8 +36,8 @@ if __name__ == '__main__':
 
     os.makedirs(build_dir, exist_ok=True)
 
-    with open(os.path.join(build_dir, 'index.json'), 'w') as f:
-        json.dump(nodes, f)
+    # with open(os.path.join(build_dir, 'index.json'), 'w') as f:
+    #     json.dump(nodes, f)
 
     today = datetime.now().strftime('%Y-%m-%d')
 
@@ -76,8 +76,8 @@ if __name__ == '__main__':
         f.write(index_template.render(nodes=nodes, timestamp=timestamp))
 
     for node in nodes:
-        with open(os.path.join(build_dir, '{}.json'.format(node['id'])), 'w') as f:
-            json.dump(node['datasets'], f)
+        # with open(os.path.join(build_dir, '{}.json'.format(node['id'])), 'w') as f:
+        #     json.dump(node['datasets'], f)
 
         with open(os.path.join(build_dir, '{}.html'.format(node['id'])), 'w') as f:
             f.write(node_template.render(node=node))
