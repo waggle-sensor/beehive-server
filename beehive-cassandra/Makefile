@@ -20,3 +20,6 @@ deploy:
 
 rm:
 	docker rm -f $(name)
+
+setup:
+	docker exec -i $(name) 'cqlsh' < init.cql
