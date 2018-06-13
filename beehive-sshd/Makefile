@@ -1,3 +1,6 @@
+BEEHIVE_ROOT?=/mnt
+BEEHIVE_DOCKER_NETWORK?=beehive
+
 name = beehive-sshd
 image = waggle/$(name)
 
@@ -5,15 +8,15 @@ build:
 	docker build -t $(image) .
 
 deploy:
-	docker network create beehive || true
+	docker network create ${BEEHIVE_DOCKER_NETWORK} || true
 	docker rm -f $(name) || true
 	docker run \
 		--detach \
-		--net beehive \
+		--net ${BEEHIVE_DOCKER_NETWORK} \
 		--restart=always \
 		-p 20022:22 \
-		-v /mnt/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
-		-v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
+		-v ${BEEHIVE_ROOT}/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
+		-v ${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
 		$(image)
 
