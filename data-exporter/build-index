@@ -6,6 +6,7 @@ from jinja2 import Template
 from datetime import datetime
 import json
 from pprint import pprint
+import sys
 
 
 def load_json_file(path):
@@ -22,6 +23,9 @@ if __name__ == '__main__':
 
     datasets_dir = os.path.abspath(args.datasets_dir)
     build_dir = os.path.abspath(args.build_dir)
+
+    program_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    templates_dir = os.path.join(program_dir, 'templates')
 
     nodes = []
 
@@ -67,8 +71,8 @@ if __name__ == '__main__':
         except FileNotFoundError:
             continue
 
-    index_template = Template(open('templates/index.html').read())
-    node_template = Template(open('templates/node.html').read())
+    index_template = Template(open(os.path.join(templates_dir, 'index.html')).read())
+    node_template = Template(open(os.path.join(templates_dir, 'node.html')).read())
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
