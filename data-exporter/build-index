@@ -6,7 +6,6 @@ from jinja2 import Template
 from datetime import datetime
 import json
 from pprint import pprint
-import sys
 
 
 def load_json_file(path):
@@ -21,11 +20,10 @@ if __name__ == '__main__':
     parser.add_argument('build_dir')
     args = parser.parse_args()
 
+    program_dir = os.path.dirname(os.path.abspath(parser.prog))
+    templates_dir = os.path.join(program_dir, 'templates')
     datasets_dir = os.path.abspath(args.datasets_dir)
     build_dir = os.path.abspath(args.build_dir)
-
-    program_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
-    templates_dir = os.path.join(program_dir, 'templates')
 
     nodes = []
 
