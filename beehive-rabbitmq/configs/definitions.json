@@ -6,27 +6,6 @@
         {"name": "/"}
     ],
     "permissions": [
-        {
-            "user": "node",
-            "vhost": "/",
-            "configure": ".*",
-            "write": ".*",
-            "read": ".*"
-        },
-        {
-            "user": "server",
-            "vhost": "/",
-            "configure": ".*",
-            "write": ".*",
-            "read": ".*"
-        },
-        {
-            "user": "loader_raw",
-            "vhost": "/",
-            "configure": "^db-raw$",
-            "write": "^$",
-            "read": "^db-raw$"
-        }
     ],
     "parameters": [],
     "policies": [],
