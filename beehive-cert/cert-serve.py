@@ -77,7 +77,7 @@ class index:
 
 class certca:
     def GET(self):
-        result = read_file(os.path.join(ssl_path, 'waggleca/cacert.pem')
+        result = read_file(os.path.join(ssl_path, 'waggleca/cacert.pem'))
         if not result:
             return "error: cacert file not found !?"
 
