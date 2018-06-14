@@ -12,6 +12,7 @@ deploy:
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-v $(BEEHIVE_ROOT)/cassandra/:/var/lib/cassandra/ \
+		-v $(BEEHIVE_ROOT)/log/cassandra/:/var/log/cassandra/:rw \
 		-p 127.0.0.1:9042:9042 \
 		--hostname cassandra \
 		--network-alias cassandra \

@@ -16,6 +16,7 @@ deploy:
 		--restart=always \
 		-e RABBITMQ_NODENAME=rabbitmq \
 		-v $(BEEHIVE_ROOT)/rabbitmq/:/var/lib/rabbitmq/:rw \
+		-v $(BEEHIVE_ROOT)/log/rabbitmq/:/var/log/rabbitmq/:rw \
 		-v $(BEEHIVE_ROOT)/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
 		-p 23181:23181 \
