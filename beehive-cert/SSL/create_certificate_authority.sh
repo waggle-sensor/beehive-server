@@ -10,7 +10,7 @@ chmod 700 $CA_DIR
 cd $CA_DIR
 
 # Make appropriate folders
-mkdir certs private
+mkdir -p certs private
 chmod 700 private
 
 if [ ! -f serial ]; then
@@ -25,22 +25,24 @@ echo "unique_subject = no" > index.txt.attr
 # Generate the root certificate
 
 if [ -f "$CA_DIR/private/cakey.pem" ]; then
-	echo "Error: CA key already exists."
+	echo "CA key already exists. Will use pre-existing key."
+else
+	openssl genrsa -out $CA_DIR/private/cakey.pem 2048
+	rm $CA_DIR/cacert.pem
 fi
 
 if [ -f "$CA_DIR/cacert.pem" ]; then
 	echo "Error: CA cert already exists."
+else
+	openssl req \
+		-new \
+		-x509 \
+		-config /usr/lib/waggle/beehive-server/beehive-cert/SSL/waggleca \
+		-key $CA_DIR/private/cakey.pem \
+		-days 3650 \
+		-out cacert.pem \
+		-outform PEM \
+		-subj /CN=waggleca/
+
+	# openssl x509 -in cacert.pem -out cacert.cer -outform DER
 fi
-
-openssl req \
-	-x509 \
-	-config /usr/lib/waggle/beehive-server/beehive-cert/SSL/waggleca \
-	-newkey rsa:2048 \
-	-keyform PEM \
-	-nodes \
-	-days 365 \
-	-out cacert.pem \
-	-outform PEM \
-	-subj /CN=waggleca/
-
-openssl x509 -in cacert.pem -out cacert.cer -outform DER
