@@ -29,16 +29,22 @@ deploy:
 rm:
 	docker rm -f $(name)
 
-setup:
-	docker exec -ti $(name) rabbitmqctl add_user admin $(shell bash -c 'read -s -p "Admin Password: " pwd; echo $$pwd') || true
-	docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator || true
-	docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*" || true
+isrunning:
+	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
 
-	docker exec -ti $(name) rabbitmqctl add_user node waggle || true
-	docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
+setup: isrunning
+	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Admin password: " pwd; echo $$pwd'))
+	@echo
 
-	docker exec -ti $(name) rabbitmqctl add_user server waggle || true
-	docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*" || true
+	@docker exec -ti $(name) rabbitmqctl add_user admin $(ADMIN_PASSWORD) || true
+	@docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator || true
+	@docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*" || true
 
-	docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle || true
-	docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$" || true
+	@docker exec -ti $(name) rabbitmqctl add_user node waggle || true
+	@docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
+
+	@docker exec -ti $(name) rabbitmqctl add_user server waggle || true
+	@docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*" || true
+
+	@docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle || true
+	@docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$" || true
