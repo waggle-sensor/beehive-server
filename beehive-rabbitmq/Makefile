@@ -30,18 +30,15 @@ rm:
 	docker rm -f $(name)
 
 setup:
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost production || true
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost development || true
-	docker exec -ti beehive-rabbitmq rabbitmqctl add_vhost testing || true
+	docker exec -ti $(name) rabbitmqctl add_user admin $(shell bash -c 'read -s -p "Admin Password: " pwd; echo $$pwd') || true
+	docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator || true
+	docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*" || true
 
 	docker exec -ti $(name) rabbitmqctl add_user node waggle || true
 	docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p production node "^$" ".*" "^$" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p development node "^$" ".*" "^$" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p testing node "^$" ".*" "^$" || true
 
 	docker exec -ti $(name) rabbitmqctl add_user server waggle || true
 	docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p production server ".*" ".*" ".*" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p development server ".*" ".*" ".*" || true
-	docker exec -ti $(name) rabbitmqctl set_permissions -p testing server ".*" ".*" ".*" || true
+
+	docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle || true
+	docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$" || true
