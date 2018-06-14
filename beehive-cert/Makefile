@@ -4,10 +4,8 @@ BEEHIVE_DOCKER_NETWORK?=beehive
 name = beehive-cert
 image = waggle/$(name)
 
-build:
-	docker build -t $(image) .
-
 deploy:
+	docker build -t $(image) .
 	docker network create $(BEEHIVE_DOCKER_NETWORK) || true
 	docker rm -f $(name) || true
 	docker run \
