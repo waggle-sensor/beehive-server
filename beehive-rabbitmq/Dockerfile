@@ -1,3 +1,4 @@
-FROM rabbitmq:3
+FROM rabbitmq:3.5
 
-ADD configs /etc/rabbitmq
+ADD configs/enabled_plugins /etc/rabbitmq/enabled_plugins
+ADD configs/rabbitmq.config /etc/rabbitmq/rabbitmq.config

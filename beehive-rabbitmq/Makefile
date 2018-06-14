@@ -19,7 +19,7 @@ deploy:
 		-v $(BEEHIVE_ROOT)/log/rabbitmq/:/var/log/rabbitmq/:rw \
 		-v $(BEEHIVE_ROOT)/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 127.0.0.1:5672:5672 \
-		-p 23181:23181 \
+		-p 23181:5671 \
 		-p 15671:15671 \
 		--hostname rabbitmq \
 		--network-alias rabbitmq \
