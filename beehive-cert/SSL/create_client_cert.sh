@@ -48,7 +48,7 @@ openssl req -new -key ./key.pem -out req.pem -outform PEM \
 cd ${SSL_DIR}/waggleca
 
 # sign
-openssl ca -config /usr/lib/waggle/beehive-server/SSL/waggleca/openssl.cnf -in ${SSL_DIR}/${CERT_DIR}/req.pem -out  ${SSL_DIR}/${CERT_DIR}/cert.pem -notext -batch -extensions client_ca_extensions
+openssl ca -config openssl.cnf -in ${SSL_DIR}/${CERT_DIR}/req.pem -out  ${SSL_DIR}/${CERT_DIR}/cert.pem -notext -batch -extensions client_ca_extensions
 
 # pkcs12 , might be needed for java clients for example. Not sure if we actually need that.
 openssl pkcs12 -export -out ${SSL_DIR}/${CERT_DIR}/keycert.p12 -in ${SSL_DIR}/${CERT_DIR}/cert.pem -inkey ${SSL_DIR}/${CERT_DIR}/key.pem -passout pass:waggle
