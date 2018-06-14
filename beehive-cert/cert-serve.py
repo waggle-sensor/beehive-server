@@ -49,7 +49,7 @@ ensure_dirs(ssl_path_nodes)
 hexaPattern = re.compile(r'^([0-9A-F]*)$')
 prog = re.compile(hexaPattern)
 
-authorized_keys_file = ssl_path_nodes+"authorized_keys"
+authorized_keys_file = os.path.join(ssl_path_nodes, 'authorized_keys')
 
 db = None
 
@@ -77,7 +77,7 @@ class index:
 
 class certca:
     def GET(self):
-        result = read_file(ssl_path + "waggleca/cacert.pem")
+        result = read_file(os.path.join(ssl_path, 'waggleca/cacert.pem')
         if not result:
             return "error: cacert file not found !?"
 
@@ -133,7 +133,7 @@ class newnode:
 
         ##### Got node_id #####
         print "Using nodeid: "+str(nodeid)
-        node_dir = ssl_path_nodes + 'node_'+ nodeid
+        node_dir = os.path.join(ssl_path_nodes, 'node_' + nodeid)
         if not os.path.isdir(node_dir):
             with resource_lock:
                 subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
@@ -151,8 +151,8 @@ class newnode:
                 # cat node_*/key_rsa.pub > authorized_keys
 
 
-        privkey = read_file(node_dir + '/key.pem')
-        cert    = read_file(node_dir + '/cert.pem')
+        privkey = read_file(os.path.join(node_dir, '/key.pem'))
+        cert    = read_file(os.path.join(node_dir, '/cert.pem'))
 
         key_rsa_pub_file_content  = read_file(key_rsa_pub_file)
 
@@ -220,7 +220,7 @@ if __name__ == "__main__":
     # get all public keys from disk
     for d in listdir(ssl_path_nodes):
         if isdir(join(ssl_path_nodes, d)) and d[0:5] == 'node_':
-            rsa_pub_filename =  ssl_path_nodes+'/'+d+'/key_rsa.pub'
+            rsa_pub_filename =  os.path.join(ssl_path_nodes, d, 'key_rsa.pub')
             try:
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
