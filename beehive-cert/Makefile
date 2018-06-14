@@ -29,3 +29,6 @@ stop:
 
 restart:
 	docker restart $(name)
+
+pki:
+	docker exec -ti $(name) SSL/create_certificate_authority.sh
