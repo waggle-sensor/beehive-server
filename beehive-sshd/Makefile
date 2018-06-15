@@ -1,15 +1,9 @@
-BEEHIVE_ROOT?=/mnt
-BEEHIVE_DOCKER_NETWORK?=beehive
-
 name = beehive-sshd
 image = waggle/$(name)
 
-build:
-	docker build -t $(image) .
-
-deploy:
-	docker network create ${BEEHIVE_DOCKER_NETWORK} || true
-	docker rm -f $(name) || true
+deploy: build
+	-docker network create ${BEEHIVE_DOCKER_NETWORK}
+	-docker rm -f $(name)
 	docker run \
 		--detach \
 		--net ${BEEHIVE_DOCKER_NETWORK} \
@@ -20,14 +14,4 @@ deploy:
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
-
-start:
-	docker start $(name)
-
-stop:
-	docker stop $(name)
-
-restart:
-	docker restart $(name)
+include ../Makefile.service
