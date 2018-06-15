@@ -23,7 +23,7 @@ deploy: build
 setup:
 	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
 
-	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Admin password: " pwd; echo $$pwd'))
+	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Enter RabbitMQ admin password: " pwd; echo $$pwd'))
 	@echo
 
 	-docker exec -ti $(name) rabbitmqctl add_user admin $(ADMIN_PASSWORD)

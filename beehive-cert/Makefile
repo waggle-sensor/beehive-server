@@ -14,7 +14,7 @@ deploy: build
 		--name $(name) \
 		$(image)
 
-pki:
+setup:
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
 	docker exec -ti $(name) SSL/create_server_cert.sh
 
