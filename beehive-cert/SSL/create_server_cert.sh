@@ -11,7 +11,7 @@ export SSL_DIR="/usr/lib/waggle/SSL"
 cd ${SSL_DIR} # in SSL/
 
 mkdir -p server
-chmod 744 server
+chmod 755 server
 cd ${SSL_DIR}/server
 
 # Make the server key

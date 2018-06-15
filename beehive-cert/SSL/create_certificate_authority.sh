@@ -5,7 +5,7 @@ CA_DIR="${SSL_DIR}/waggleca"
 
 create_ca_dir() {
 	mkdir -p $CA_DIR
-	chmod 700 $CA_DIR
+	chmod 755 $CA_DIR
 	cd $CA_DIR
 
 	# Make appropriate folders
