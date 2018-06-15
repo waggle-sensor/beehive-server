@@ -21,12 +21,6 @@ do_setup() {
 
 do_cleanup() {
   docker rm -f $(echo beehive-*)
-
-  rm -rf \
-    $BEEHIVE_ROOT/cassandra \
-    $BEEHIVE_ROOT/log \
-    $BEEHIVE_ROOT/mysql \
-    $BEEHIVE_ROOT/rabbitmq waggle
 }
 
 if [ -z "$BEEHIVE_ROOT" ]; then
