@@ -1,13 +1,9 @@
-BEEHIVE_ROOT?=/mnt
-BEEHIVE_DOCKER_NETWORK?=beehive
-
 name = beehive-cert
 image = waggle/$(name)
 
-deploy:
-	docker build -t $(image) .
-	docker network create $(BEEHIVE_DOCKER_NETWORK) || true
-	docker rm -f $(name) || true
+run: build
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
@@ -18,17 +14,7 @@ deploy:
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
-
-start:
-	docker start $(name)
-
-stop:
-	docker stop $(name)
-
-restart:
-	docker restart $(name)
-
 pki:
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
+
+include ../Makefile.service

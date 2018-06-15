@@ -1,12 +1,9 @@
-BEEHIVE_ROOT?=/mnt
-BEEHIVE_DOCKER_NETWORK?=beehive
-
 name = beehive-cassandra
 image = cassandra:3
 
-deploy:
-	docker network create $(BEEHIVE_DOCKER_NETWORK) || true
-	docker rm -f $(name) || true
+run:
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
@@ -19,8 +16,7 @@ deploy:
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
-
 setup:
 	docker exec -i $(name) 'cqlsh' < init.cql
+
+include ../Makefile.service
