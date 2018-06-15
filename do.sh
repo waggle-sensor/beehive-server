@@ -1,6 +1,9 @@
 #!/bin/sh
 
 do_deploy() {
+  mkdir -p $BEEHIVE_ROOT/ssh_keys
+  cp ssh/id_rsa_waggle_aot_registration.pub $BEEHIVE_ROOT/ssh_keys/
+
   for image in $(echo beehive-*); do
     cd $image
     make deploy
