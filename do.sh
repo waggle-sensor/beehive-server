@@ -1,9 +1,17 @@
 #!/bin/sh
 
-do_setup() {
+do_deploy() {
   for image in $(echo beehive-*); do
     cd $image
     make deploy
+    cd ..
+  done
+}
+
+do_setup() {
+  for image in $(echo beehive-*); do
+    cd $image
+    make setup
     cd ..
   done
 }
@@ -24,6 +32,9 @@ if [ -z "$BEEHIVE_ROOT" ]; then
 fi
 
 case $1 in
+  deploy)
+    do_deploy
+    ;;
   setup)
     do_setup
     ;;
@@ -31,7 +42,7 @@ case $1 in
     do_cleanup
     ;;
   *)
-    echo "Usage: do.sh (setup|cleanup)"
+    echo "Usage: do.sh (deploy|setup|cleanup)"
     exit 1
     ;;
 esac
