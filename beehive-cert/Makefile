@@ -16,5 +16,6 @@ deploy: build
 
 pki:
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
+	docker exec -ti $(name) SSL/create_server_cert.sh
 
 include ../Makefile.service
