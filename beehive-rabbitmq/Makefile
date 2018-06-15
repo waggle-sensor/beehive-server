@@ -1,15 +1,9 @@
-BEEHIVE_ROOT?=/mnt
-BEEHIVE_DOCKER_NETWORK?=beehive
-
 name = beehive-rabbitmq
 image = waggle/$(name)
 
-build:
-	docker build -t $(image) .
-
-deploy:
-	docker network create $(BEEHIVE_DOCKER_NETWORK) || true
-	docker rm -f $(name) || true
+deploy: build
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
@@ -26,25 +20,23 @@ deploy:
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
-
-isrunning:
+setup:
 	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
 
-setup: isrunning
 	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Admin password: " pwd; echo $$pwd'))
 	@echo
 
-	@docker exec -ti $(name) rabbitmqctl add_user admin $(ADMIN_PASSWORD) || true
-	@docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator || true
-	@docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*" || true
+	-docker exec -ti $(name) rabbitmqctl add_user admin $(ADMIN_PASSWORD)
+	-docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator
+	-docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*"
 
-	@docker exec -ti $(name) rabbitmqctl add_user node waggle || true
-	@docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images" || true
+	-docker exec -ti $(name) rabbitmqctl add_user node waggle
+	-docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images"
 
-	@docker exec -ti $(name) rabbitmqctl add_user server waggle || true
-	@docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*" || true
+	-docker exec -ti $(name) rabbitmqctl add_user server waggle
+	-docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*"
 
-	@docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle || true
-	@docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$" || true
+	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
+	-docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$"
+
+include ../Makefile.service

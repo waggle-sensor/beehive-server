@@ -1,7 +1,7 @@
 name = beehive-cassandra
 image = cassandra:3
 
-run:
+deploy:
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \

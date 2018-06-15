@@ -1,7 +1,7 @@
 name = beehive-loader-raw
 image = waggle/$(name)
 
-run: build
+deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \

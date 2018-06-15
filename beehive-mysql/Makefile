@@ -1,9 +1,9 @@
 name = beehive-mysql
 image = waggle/$(name)
 
-run:
-	docker network create $(BEEHIVE_DOCKER_NETWORK) || true
-	docker rm -f $(name) || true
+deploy: build
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
