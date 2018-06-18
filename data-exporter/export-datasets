@@ -21,6 +21,7 @@ decoders = {
     ('status', '0'): unpack_sensors_v5,
     ('image_example', '0'): unpack_sensors_v5,
     ('spl', '0'): unpack_sensors_v5,
+    ('d3s', '0'): unpack_sensors_v5,
 }
 
 
