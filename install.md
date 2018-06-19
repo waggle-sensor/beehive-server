@@ -46,3 +46,10 @@ Now, we perform some one-time configuration of our containers:
 You should be prompted for a RabbitMQ server admin password during this
 process. Remember to choose this password wisely. You can always rerun
 this step if you forget the password.
+
+## Issues and Todo Items
+
+### Registration keys should configurable
+
+Right now, a default registration public key is used for node registration. I
+think it makes sense to allow for a special dev key.
