@@ -19,11 +19,15 @@ for match in glob.glob('/Users/Sean/beehive-testing/waggle/SSL/nodes/node_*'):
 add_users = cert_users - existing_users
 del_users = existing_users - cert_users
 
+print('found {} existing users.'.format(len(existing_users)))
+print('found {} users to add.'.format(len(add_users)))
+print('found {} users to drop.'.format(len(del_users)))
+
 for username in add_users:
-    print('add', username)
+    print('adding {}.'.format(username))
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'add_user', username, ''])
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
 
 for username in del_users:
-    print('drop', username)
+    print('dropping {}'.format(username))
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'delete_user', username])
