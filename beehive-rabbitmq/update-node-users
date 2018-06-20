@@ -29,7 +29,23 @@ for username in add_users:
     print('adding {}.'.format(username))
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'add_user', username, ''])
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
-    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'set_permissions', username, '.*', '.*', '.*'])
+
+    config_access = '^to-{}$'.format(username)
+    write_access = '^data$'
+    read_access = '^to-{}$'.format(username)
+
+    subprocess.check_output([
+        'docker',
+        'exec',
+        '-ti',
+        'beehive-rabbitmq',
+        'rabbitmqctl',
+        'set_permissions',
+        username,
+        config_access,
+        write_access,
+        read_access,
+    ])
 
 for username in del_users:
     print('dropping {}'.format(username))
