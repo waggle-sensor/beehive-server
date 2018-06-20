@@ -4,13 +4,15 @@ import re
 import os
 import glob
 
+BEEHIVE_ROOT = os.environ['BEEHIVE_ROOT']
+
 
 output = subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'list_users']).decode()
 existing_users = set(re.findall('node[0-9]+', output))
 
 cert_users = set()
 
-for match in glob.glob('/Users/Sean/beehive-testing/waggle/SSL/nodes/node_*'):
+for match in glob.glob(os.path.join(BEEHIVE_ROOT, 'waggle/SSL/nodes/node_*')):
     certfile = os.path.join(match, 'cert.pem')
     output = subprocess.check_output(['openssl', 'x509', '-noout', '-subject', '-in', certfile]).decode()
     username = re.search('CN=(node[0-9A-Fa-f]*)', output).group(1)
@@ -27,6 +29,7 @@ for username in add_users:
     print('adding {}.'.format(username))
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'add_user', username, ''])
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
+    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'set_permissions', username, '.*', '.*', '.*'])
 
 for username in del_users:
     print('dropping {}'.format(username))
