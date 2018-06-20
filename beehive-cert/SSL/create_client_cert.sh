@@ -17,7 +17,6 @@ export CERT_DIR=$2
 
 set -x
 
-rm -rf ${SSL_DIR}/${CERT_DIR}
 mkdir -p ${SSL_DIR}/${CERT_DIR}
 
 # create key
