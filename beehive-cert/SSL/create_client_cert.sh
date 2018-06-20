@@ -28,8 +28,9 @@ if [ -f "key.pem" ]; then
 else
   echo "Creating client private key."
   openssl genrsa -out key.pem 2048
-  chmod 600 key.pem
 fi
+
+chmod 600 key.pem
 
 # extract public key from private key
 ssh-keygen -y -f key.pem > key_rsa.pub
