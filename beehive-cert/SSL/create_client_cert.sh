@@ -13,21 +13,12 @@ if [ ! $# -eq 2 ];  then
 fi
 
 RABBIT_USER=$1
-
-# refers to beehive-sever, not RabbitMQ.
-if [ "${RABBIT_USER}_" != "node_" ] && [ "${RABBIT_USER}_" != "server_" ] ; then
-  echo 'error: first argument must be either "node" or "server"'
-  exit 1
-fi
-
-
 export CERT_DIR=$2
 
 set -x
 
 rm -rf ${SSL_DIR}/${CERT_DIR}
 mkdir -p ${SSL_DIR}/${CERT_DIR}
-
 
 # create key
 cd ${SSL_DIR}/${CERT_DIR}

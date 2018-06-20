@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import web
+import os
 import os.path
 import subprocess
 import threading
@@ -27,6 +28,11 @@ def ensure_dirs(path):
         os.makedirs(path)
     except:
         pass
+
+
+def read_file(path):
+    with open(path, 'r') as file:
+        return file.read()
 
 
 httpserver_port = 80
@@ -98,12 +104,12 @@ class newnode:
 
         ##### Got node_id #####
         if not os.path.isdir(node_dir):
-            with resource_lock:
-                logger.info('Call create_client_cert.sh')
+            logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
 
+            with resource_lock:
                 subprocess.call([
                     os.path.join(script_path, 'create_client_cert.sh'),
-                    'node',
+                    'node{}'.format(nodeid[-12:].lower()),
                     os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
                 ])
 
@@ -111,19 +117,7 @@ class newnode:
 
                 time.sleep(1)
 
-                logger.info('Append')
-                append_command = 'cat {} >> {}'.format(os.path.join(node_dir, 'key_rsa.pub'), authorized_keys_file)
-                print "command: ", append_command
-                # manual recreaetion of authorized_keys file:
-                # cat node_*/key_rsa.pub > authorized_keys
-                subprocess.call(append_command, shell=True)
-
-                logger.info('chmod')
-                chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
-                print "command: ", chmod_cmd
-                subprocess.call(chmod_cmd, shell=True)
-                # manual recreation of authorized_keys file:
-                # cat node_*/key_rsa.pub > authorized_keys
+                append_to_authorized_keys_file(read_file(os.path.join(node_dir, 'key_rsa.pub')))
 
         privkey = read_file(os.path.join(node_dir, 'key.pem'))
         cert = read_file(os.path.join(node_dir, 'cert.pem'))
@@ -152,6 +146,17 @@ class newnode:
         return privkey + "\n" + cert + "\nPORT="+str(port) + "\n" + key_rsa_pub_file_content + "\n"
 
 
+def update_authorized_keys_file():
+    pass
+
+
+def append_to_authorized_keys_file(data):
+    with open(authorized_keys_file, 'a') as file:
+        file.write(data)
+
+    os.chmod(authorized_keys_file, 0600)
+
+
 if __name__ == "__main__":
     node_database = {}
 
@@ -170,8 +175,6 @@ if __name__ == "__main__":
 
     print str(node_database)
 
-
-
     db = Mysql( host="beehive-mysql",
                 user="waggle",
                 passwd="waggle",
@@ -179,7 +182,6 @@ if __name__ == "__main__":
 
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     # get all ports:
-
 
     for row in db.query_all("SELECT * FROM nodes"):
         print row
@@ -245,8 +247,7 @@ if __name__ == "__main__":
     with open(authorized_keys_file, 'w') as file:
         file.writelines(new_authorized_keys_content)
 
-    subprocess.call(['chmod', '600', authorized_keys_file])
-
+    os.chmod(authorized_keys_file, 0600)
 
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", httpserver_port))
     app.run()
