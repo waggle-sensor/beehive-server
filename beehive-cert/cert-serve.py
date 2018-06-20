@@ -103,17 +103,16 @@ class newnode:
         node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
 
         ##### Got node_id #####
-        if not os.path.exists(os.path.join(node_dir, 'cert.pem')):
-            logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
+        logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
 
-            with resource_lock:
-                subprocess.call([
-                    os.path.join(script_path, 'create_client_cert.sh'),
-                    'node{}'.format(nodeid[-12:].lower()),
-                    os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
-                ])
+        with resource_lock:
+            subprocess.call([
+                os.path.join(script_path, 'create_client_cert.sh'),
+                'node{}'.format(nodeid[-12:].lower()),
+                os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
+            ])
 
-                append_to_authorized_keys_file(read_file(os.path.join(node_dir, 'key_rsa.pub')))
+            append_to_authorized_keys_file(read_file(os.path.join(node_dir, 'key_rsa.pub')))
 
         privkey = read_file(os.path.join(node_dir, 'key.pem'))
         cert = read_file(os.path.join(node_dir, 'cert.pem'))

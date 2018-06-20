@@ -19,7 +19,6 @@ set -x
 
 mkdir -p ${SSL_DIR}/${CERT_DIR}
 
-# create key
 cd ${SSL_DIR}/${CERT_DIR}
 
 if [ -f "key.pem" ]; then
@@ -27,12 +26,11 @@ if [ -f "key.pem" ]; then
 else
   echo "Creating client private key."
   openssl genrsa -out key.pem 2048
+  chmod 600 key.pem
+
+  # extract public key from private key
+  ssh-keygen -y -f key.pem > key_rsa.pub
 fi
-
-chmod 600 key.pem
-
-# extract public key from private key
-ssh-keygen -y -f key.pem > key_rsa.pub
 
 if [ -f "cert.pem" ]; then
   echo "Client certificate already exists."
