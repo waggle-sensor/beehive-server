@@ -15,7 +15,13 @@ cert_users = set()
 for match in glob.glob(os.path.join(BEEHIVE_ROOT, 'waggle/SSL/nodes/node_*')):
     certfile = os.path.join(match, 'cert.pem')
     output = subprocess.check_output(['openssl', 'x509', '-noout', '-subject', '-in', certfile]).decode()
-    username = re.search('CN=(node[0-9A-Fa-f]*)', output).group(1)
+
+    try:
+        username = re.search('CN=(node[0-9A-Fa-f]*)', output).group(1)
+    except AttributeError:
+        print('skipping CN for {}'.format(output))
+        continue
+
     cert_users.add(username)
 
 add_users = cert_users - existing_users
