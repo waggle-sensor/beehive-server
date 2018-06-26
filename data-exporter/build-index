@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 from pprint import pprint
 import sys
+import requests
 
 
 def load_json_file(path):
@@ -74,6 +75,14 @@ if __name__ == '__main__':
     node_template = Template(open(os.path.join(templates_dir, 'node.html')).read())
 
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    for node in nodes:
+        plots = 'http://www.mcs.anl.gov/research/projects/waggle/downloads/vis/tables/{}-table.html'.format(node['id'])
+
+        r = requests.head(plots)
+
+        if r.status_code == 200:
+            node['plots'] = plots
 
     with open(os.path.join(build_dir, 'index.html'), 'w') as f:
         f.write(index_template.render(nodes=nodes, timestamp=timestamp))
