@@ -50,6 +50,7 @@
             <th>Location</th>
             <th>Datasets</th>
             <th>Latest Dataset</th>
+            <th>Plots</th>
           </tr>
         </thead>
         <tbody>
@@ -62,6 +63,7 @@
             <td><span>{{ node['location'] }}</span></td>
             <td>{{ node['datasets'] | length }}</td>
             <td>{{ node['latest'] }}</td>
+            <td><a href="http://www.mcs.anl.gov/research/projects/waggle/downloads/vis/tables/{{ node['id']}}-table.html">Plots</a></td>
           </tr>
           {% endif %}
           {%- endfor %}
