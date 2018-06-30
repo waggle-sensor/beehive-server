@@ -1,5 +1,5 @@
 <!--
-waggle_topic=/data_analysis/datatools,"Waggle CSV Data Manipulation Tool"
+waggle_topic=/data_analysis/datatools,"wg_datatool: CSV Data Manipulation Tool"
 -->
 
 # wg_datatool: Waggle CSV Data Manipulation Tool
