@@ -2,7 +2,7 @@
 waggle_topic=/data_analysis/datatools,"wg_datatool: CSV Data Manipulation Tool"
 -->
 
-# wg_datatool: Waggle Data Manipulation Tool
+# wg_datatool: CSV Data Manipulation Tool
 
 All systems which build on the Waggle Platform share a common archive format for exported data.  This python tool helps manipulate the large comma-separated format (CSV) data from sensors: `data.csv`
 
