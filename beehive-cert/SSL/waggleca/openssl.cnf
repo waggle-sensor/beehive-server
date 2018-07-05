@@ -1,3 +1,7 @@
+#
+# OpenSSL Waggle PKI
+#
+
 [ ca ]
 default_ca = waggleca
 
@@ -11,7 +15,7 @@ serial = $dir/serial
 
 default_crl_days = 7
 default_days = 3653
-default_md = sha1
+default_md = sha256
 
 policy = waggleca_policy
 x509_extensions = certificate_extensions
@@ -30,10 +34,13 @@ basicConstraints = CA:false
 [ req ]
 default_bits = 2048
 default_keyfile = ./private/cakey.pem
-default_md = sha1
+default_md = sha256
 prompt = yes
-distinguished_name = root_ca_distinguished_name
+#distinguished_name = root_ca_distinguished_name
 x509_extensions = root_ca_extensions
+
+[ req_distinguished_name ]
+commonName = hostname
 
 [ root_ca_distinguished_name ]
 commonName = hostname
@@ -51,4 +58,3 @@ extendedKeyUsage = 1.3.6.1.5.5.7.3.2
 basicConstraints = CA:false
 keyUsage = keyEncipherment
 extendedKeyUsage = 1.3.6.1.5.5.7.3.1
-

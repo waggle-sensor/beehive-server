@@ -1,2 +1,0 @@
-pika
-git+https://github.com/waggle-sensor/pywaggle

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -ne 2 ]; then
+  echo "usage: $0 taskdir datadir"
+  exit 1
+fi
+
+taskdir=$1
+datadir=$2
+
+for task in $(ls $taskdir | sort -r); do
+  echo starting $task
+  ./export-datasets -p 1 $2 < $taskdir/$task
+  rm $taskdir/$task
+  echo completed $task
+done

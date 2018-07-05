@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+import subprocess
+import re
+import os
+import glob
+
+BEEHIVE_ROOT = os.environ['BEEHIVE_ROOT']
+
+
+output = subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'list_users']).decode()
+existing_users = set(re.findall('node[0-9A-Fa-f]*', output))
+
+cert_users = set()
+
+for match in glob.glob(os.path.join(BEEHIVE_ROOT, 'waggle/SSL/nodes/node_*')):
+    certfile = os.path.join(match, 'cert.pem')
+    output = subprocess.check_output(['openssl', 'x509', '-noout', '-subject', '-in', certfile]).decode()
+
+    try:
+        username = re.search('CN\s*=\s*(node[0-9A-Fa-f]*)', output).group(1).strip()
+    except AttributeError:
+        print('skipping CN for {}'.format(output))
+        continue
+
+    cert_users.add(username)
+
+add_users = cert_users - existing_users
+del_users = existing_users - cert_users
+
+print('found {} existing users.'.format(len(existing_users)))
+print('found {} users to add.'.format(len(add_users)))
+print('found {} users to drop.'.format(len(del_users)))
+
+for username in add_users:
+    print('adding {}.'.format(username))
+    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'add_user', username, ''])
+    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
+
+    config_access = '^to-{}$'.format(username)
+    write_access = '^data$'
+    read_access = '^to-{}$'.format(username)
+
+    subprocess.check_output([
+        'docker',
+        'exec',
+        '-ti',
+        'beehive-rabbitmq',
+        'rabbitmqctl',
+        'set_permissions',
+        username,
+        config_access,
+        write_access,
+        read_access,
+    ])
+
+for username in del_users:
+    print('dropping {}'.format(username))
+    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'delete_user', username])

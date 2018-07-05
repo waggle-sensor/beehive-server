@@ -1,49 +1,193 @@
 #!/usr/bin/env python3
-import fileinput
+import argparse
 from cassandra.cluster import Cluster
-import sys
 import os
+import logging
+import csv
+from binascii import hexlify, unhexlify
+import time
+import sys
+import datetime
+from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
+from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
+from io import StringIO
+import multiprocessing
+import gzip
 
-cluster = Cluster()
-session = cluster.connect('waggle')
 
-query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+decoders = {
+    ('coresense', '3'): unpack_sensors_v3,
+    ('coresense', '4'): unpack_sensors_v5,
+    ('status', '0'): unpack_sensors_v5,
+    ('image_example', '0'): unpack_sensors_v5,
+    ('spl', '0'): unpack_sensors_v5,
+    ('d3s', '0'): unpack_sensors_v5,
+}
 
-lines = list(fileinput.input())
 
-for i, line in enumerate(lines):
-    try:
-        fields = line.split()
-        node_id = fields[0]
-        date = fields[2]
-        partition_key = (fields[1], fields[2])
+def normalize_ascii_data(data):
+    if data.startswith("b'"):
+        data = data[2:]
+    if data.endswith("'"):
+        data = data[:-1]
+    return data
 
-        prefix = 'datasets/2raw/{}'.format(node_id)
-        os.makedirs(prefix, exist_ok=True)
-        filename = '{}/{}.csv'.format(prefix, date)
 
-        rows = session.execute(query, partition_key)
+def normalize_bin_data(data):
+    data = data[data.index(0xaa):]
+    data = data[:data.rindex(0x55)+1]
+    return data
 
-        print('{} [{:.0%}]'.format(filename, i / len(lines)))
 
-        with open(filename, 'w') as outfile:
-            for row in rows:
-                if row.data.startswith("b'"):
-                    data = row.data[2:-1]
-                else:
-                    data = row.data
+def decode_row(row):
+    plugin = (row.plugin_name, row.plugin_version)
 
-                columns = [
-                    node_id,
-                    row.timestamp.strftime('%Y/%m/%d %H:%M:%S'),
-                    row.plugin_name,
-                    row.plugin_version,
-                    row.parameter,
-                    data,
-                ]
+    if plugin not in decoders:
+        return []
 
-                print(','.join(columns), file=outfile)
-    except KeyboardInterrupt:
-        break
-    except Exception as e:
-        print(e, flush=True, file=sys.stderr)
+    data = normalize_bin_data(unhexlify(normalize_ascii_data(row.data)))
+    return decoders[plugin](data)
+
+
+def stringify(x):
+    if x is None:
+        return 'NA'
+    if isinstance(x, tuple) or isinstance(x, list):
+        return ','.join(map(stringify, x))
+    if isinstance(x, bytes) or isinstance(x, bytearray):
+        return hexlify(x).decode()
+    if isinstance(x, float):
+        return str(round(x, 5))
+    if isinstance(x, bool):
+        return int(x)
+    return str(x)
+
+
+def decode_rows(node_id, date, results, writer):
+    for row in results:
+        plugin = (row.plugin_name, row.plugin_version)
+
+        try:
+            samples = decode_row(row)
+        except KeyboardInterrupt:
+            raise
+        except Exception:
+            logger.exception('failed to decode {} {} {}'.format(node_id, date, row))
+            continue
+
+        for sample in samples:
+            if sample.timestamp == 0:
+                timestamp = row.timestamp.strftime('%Y/%m/%d %H:%M:%S')
+            else:
+                timestamp = sample.timestamp
+
+            writer.writerow([
+                timestamp,
+                node_id,
+                sample.subsystem,
+                sample.sensor,
+                sample.parameter,
+                stringify(sample.value_raw),
+                stringify(sample.value_hrf),
+            ])
+
+
+def make_jobs(lines):
+    jobs = {}
+
+    for line in lines:
+        key = tuple(line.split())
+
+        if len(key) != 2:
+            continue
+
+        node_id = key[0][-12:].lower()
+        date = key[1]
+        index = (node_id, date)
+
+        if index not in jobs:
+            jobs[index] = []
+
+        jobs[index].append(key)
+
+    return list(jobs.items())
+
+
+def init_worker(cluster, debug):
+    global logger
+    global session
+    global worker_start_time
+    global worker_completed
+
+    if debug:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
+
+    logger = multiprocessing.log_to_stderr()
+
+    session = cluster.connect('waggle')
+    print('init', session)
+
+    worker_start_time = time.time()
+    worker_completed = 0
+
+
+def process_job(job):
+    global logger
+    global session
+    global worker_start_time
+    global worker_completed
+
+    (node_id, date), partition_keys = job
+
+    target = os.path.join(datasets_dir, node_id, date + '.csv.gz')
+    print('make', target)
+
+    start = time.time()
+
+    write_buffer = StringIO()
+    writer = csv.writer(write_buffer)
+    writer.writerow([
+        'timestamp',
+        'node_id',
+        'subsystem',
+        'sensor',
+        'parameter',
+        'value_raw',
+        'value_hrf',
+    ])
+
+    query = 'SELECT timestamp, plugin_name, plugin_version, parameter, data FROM sensor_data_raw WHERE node_id=%s AND date=%s'
+
+    for partition_key in partition_keys:
+        results = session.execute(query, partition_key)
+        decode_rows(node_id, date, results, writer)
+
+    os.makedirs(os.path.dirname(target), exist_ok=True)
+    data = gzip.compress(write_buffer.getvalue().encode())
+
+    with open(target, 'wb') as file:
+        file.write(data)
+
+    worker_completed += 1
+    worker_rate = round(worker_completed / (time.time() - worker_start_time), 3)
+
+    print('done', target, round(time.time() - start, 3), 's', worker_rate, 'datasets/s')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-D', '--debug', action='store_true', help='Enable debug mode.')
+    parser.add_argument('-p', '--processes', type=int, default=1)
+    parser.add_argument('datasets_dir', help='Directory where datasets will be exported.')
+    args = parser.parse_args()
+
+    datasets_dir = os.path.abspath(args.datasets_dir)
+
+    jobs = make_jobs(sys.stdin.readlines())
+
+    cluster = Cluster()
+
+    with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster, args.debug)) as pool:
+        pool.map(process_job, jobs)

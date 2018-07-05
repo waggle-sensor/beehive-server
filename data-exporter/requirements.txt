@@ -1,3 +1,4 @@
 cassandra-driver
 jinja2
 requests
+git+https://github.com/waggle-sensor/pywaggle@0.23.12

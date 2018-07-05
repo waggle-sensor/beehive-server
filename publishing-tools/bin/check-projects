@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+import argparse
+import csv
+import os
+import itertools
+import csv
+import sys
+
+
+def read_csv_file(filename):
+    with open(filename) as file:
+        return list(csv.DictReader(file))
+
+
+def read_nodes_from_file(filename):
+    rows = read_csv_file(filename)
+    return {row['node_id'] for row in rows}
+
+
+def row_node_id(row):
+    return row['node_id']
+
+
+def groupby(seq, key):
+    return itertools.groupby(sorted(seq, key=key), key=key)
+
+
+def duplicates(seq, key):
+    for group, results in groupby(seq, key=row_node_id):
+        listed = list(results)
+        if len(listed) > 1:
+            yield group, listed
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='''
+    This tool performs a few sanity and incompleteness checks on projects' metadata.
+    ''')
+    parser.add_argument('project_dirs', nargs='*')
+    args = parser.parse_args()
+
+    for dir in map(os.path.abspath, args.project_dirs):
+        nodes_ids = read_nodes_from_file(os.path.join(dir, 'nodes.csv'))
+        events_ids = read_nodes_from_file(os.path.join(dir, 'events.csv'))
+
+        no_commissioning_date = nodes_ids - events_ids
+        no_node = events_ids - nodes_ids
+
+        if no_node or no_commissioning_date:
+            print('#', os.path.basename(dir))
+            print()
+
+        if no_commissioning_date:
+            print('## No commissioning date')
+
+            for id in sorted(no_commissioning_date):
+                print(id)
+            print()
+
+        if no_node:
+            print('## No node')
+
+            for id in sorted(no_node):
+                print(id)
+            print()
+
+        print()
+
+        csvwriter = csv.writer(sys.stdout)
+
+        for node_id, rows in duplicates(read_csv_file(os.path.join(dir, 'nodes.csv')), key=row_node_id):
+            print('## Multiple node entries for', node_id)
+
+            for row in rows:
+                csvwriter.writerow(row.values())
+
+            print()
+
+        for node_id, rows in duplicates(read_csv_file(os.path.join(dir, 'events.csv')), key=row_node_id):
+            print('## Multiple event entries for', node_id)
+
+            for row in rows:
+                csvwriter.writerow(row.values())
+
+            print()

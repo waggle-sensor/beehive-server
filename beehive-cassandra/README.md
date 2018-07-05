@@ -1,4 +1,8 @@
-### Cassandra
+<!--
+waggle_topic=/beehive/services
+-->
+
+# Cassandra Database
 
 Be sure that environment variable $DATA is defined.
 ```bash
@@ -23,7 +27,7 @@ http://docs.datastax.com/en/cassandra/2.0/cassandra/install/installDeb_t.html
 
 #### Notes
 
-After initialization, cassandra will not contain any databases (It will not include the "waggle" database).  However, *after* the database has been created and populated, it can be interactively explored using a "cqlsh" prompt via the following commands. 
+After initialization, cassandra will not contain any databases (It will not include the "waggle" database).  However, *after* the database has been created and populated, it can be interactively explored using a "cqlsh" prompt via the following commands.
 
 To directly connect to cassandra:
 ```bash
@@ -44,7 +48,7 @@ In case of multiple corrupt commit log files, files can be deleted in a more aut
 
 ```bash
 BAD_FILE='x'
-while [ "${BAD_FILE}x" != 'x' ] ; do 
+while [ "${BAD_FILE}x" != 'x' ] ; do
   export BAD_FILE=$(cassandra -f -R | grep CommitLogReplayException | grep -o "/var/lib/cassandra/commitlog/CommitLog-6-[0-9]*.log")
   echo "delete ${BAD_FILE}"
   rm -f ${BAD_FILE}

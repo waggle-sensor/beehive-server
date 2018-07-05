@@ -50,6 +50,7 @@
             <th>Location</th>
             <th>Datasets</th>
             <th>Latest Dataset</th>
+            <th>Plots</th>
           </tr>
         </thead>
         <tbody>
@@ -62,6 +63,11 @@
             <td><span>{{ node['location'] }}</span></td>
             <td>{{ node['datasets'] | length }}</td>
             <td>{{ node['latest'] }}</td>
+            {% if node['plots'] %}
+            <td><a href="{{ node['plots'] }}">Plots</a></td>
+            {% else %}
+            <td>Plots</td>
+            {% endif%}
           </tr>
           {% endif %}
           {%- endfor %}

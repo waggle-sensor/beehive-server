@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import web
+import os
 import os.path
 import subprocess
 import threading
@@ -12,45 +13,46 @@ from os import listdir
 from os.path import isdir, join
 from mysql import Mysql
 
-LOG_FORMAT='%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s'
-formatter = logging.Formatter(LOG_FORMAT)
-loglevel = logging.DEBUG
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s')
 
 handler = logging.StreamHandler(stream=sys.stdout)
 handler.setFormatter(formatter)
 
 logger = logging.getLogger(__name__)
-
 logger.addHandler(handler)
-logger.setLevel(loglevel)
+logger.setLevel(logging.DEBUG)
 
-root_logger = logging.getLogger()
-root_logger.setLevel(loglevel)
+
+def ensure_dirs(path):
+    try:
+        os.makedirs(path)
+    except:
+        pass
+
+
+def read_file(path):
+    with open(path, 'r') as file:
+        return file.read()
+
 
 httpserver_port = 80
 
 resource_lock = threading.RLock()
 
-script_path = "/usr/lib/waggle/beehive-server/SSL/"
-ssl_path = "/usr/lib/waggle/SSL/"
-ssl_path_nodes = ssl_path+"nodes/"
+script_path = '/usr/lib/waggle/beehive-server/beehive-cert/SSL/'
+ssl_dir = '/usr/lib/waggle/SSL/'
+ssl_nodes_dir = os.path.join(ssl_dir, 'nodes')
 
+ensure_dirs(ssl_nodes_dir)
 
-hexaPattern = re.compile(r'^([0-9A-F]*)$')
-prog = re.compile(hexaPattern)
-
-authorized_keys_file = ssl_path_nodes+"authorized_keys"
+authorized_keys_file = os.path.join(ssl_nodes_dir, 'authorized_keys')
 
 db = None
 
 
-def read_file(str):
-    print "read_file: "+str
-    if not os.path.isfile(str) :
-        return ""
-    with open(str,'r') as file_:
-        return file_.read().strip()
-    return ""
+def read_file(path):
+    with open(path, 'r') as file:
+        return file.read().strip()
 
 
 urls = (
@@ -67,91 +69,59 @@ class index:
 
 class certca:
     def GET(self):
-        result = read_file(ssl_path + "waggleca/cacert.pem")
-        if not result:
-            return "error: cacert file not found !?"
+        try:
+            return read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem'))
+        except FileNotFoundError:
+            return 'error: cacert file not found !?'
 
-        return result
+
+def validate_query_string(s):
+    return s.startswith('?')
+
+
+def validate_node_id_string(s):
+    return re.match('[0-9A-F]{16}$', s) is not None
+
 
 class newnode:
+
     def GET(self):
+        query = web.ctx.query
 
+        if not validate_query_string(query):
+            logger.info('GET newnode - Invalid query string "{}"'.format(query))
+            return 'error: Invalid query string "{}".\n'.format(query)
 
-        query = referer = web.ctx.query
-        nodeid=None
+        nodeid = query.lstrip('?').upper()
 
-        print "query: "+str(query)
+        if not validate_node_id_string(nodeid):
+            logger.error('GET newnode - Invalid node ID string "{}".'.format(nodeid))
+            return 'error: Invalid node ID string "{}".\n'.format(nodeid)
 
-        global prog
-        # TODO: make it an option to allow or disallow anonymous nodes
-        if len(query) > 1 :
+        logger.info('GET newnode - Preparing to register "{}".'.format(nodeid))
 
-            if query.startswith("?"):
-                nodeid = query[1:].upper()
-
-                result = prog.match(nodeid)
-                if not result:
-                    return "error: Could not parse node id."
-
-                # TODO check that this is a valid node id
-            else:
-                return "error: Could not parse query. Questionmark missing."
-        else:
-            print "requested cert without nodeid"
-
-
-        privkey=""
-        cert=""
-
-        if not nodeid:
-            print "No node_id provided."
-            return "No node_id provided."
-
-
-        # check for 16 digit hex
-        if len(nodeid) != 16:
-            print "node_id has wrong length."
-            return "node_id not recognized"
-
-        try:
-            int(nodeid, 16)
-        except ValueError:
-            print "node_id not hex."
-            return "node_id not recognized"
-
-        key_rsa_pub_file = "{0}node_{1}/key_rsa.pub".format(ssl_path_nodes, nodeid)
+        node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
 
         ##### Got node_id #####
-        print "Using nodeid: "+str(nodeid)
-        node_dir = ssl_path_nodes + 'node_'+ nodeid
-        if not os.path.isdir(node_dir):
-            with resource_lock:
-                subprocess.call([script_path + 'create_client_cert.sh', 'node', 'nodes/node_'+ nodeid])
-                time.sleep(1)
-                append_command = "cat {0} >> {1}".format(key_rsa_pub_file, authorized_keys_file)
-                print "command: ", append_command
-                # manual recreaetion of authorized_keys file:
-                # cat node_*/key_rsa.pub > authorized_keys
-                subprocess.call(append_command, shell=True)
+        logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
 
-                chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
-                print "command: ", chmod_cmd
-                subprocess.call(chmod_cmd, shell=True)
-                # manual recreation of authorized_keys file:
-                # cat node_*/key_rsa.pub > authorized_keys
+        with resource_lock:
+            subprocess.call([
+                os.path.join(script_path, 'create_client_cert.sh'),
+                'node{}'.format(nodeid[-12:].lower()),
+                os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
+            ])
 
+            append_to_authorized_keys_file(read_file(os.path.join(node_dir, 'key_rsa.pub')))
 
-        privkey = read_file(node_dir + '/key.pem')
-        cert    = read_file(node_dir + '/cert.pem')
-
-        key_rsa_pub_file_content  = read_file(key_rsa_pub_file)
-
+        privkey = read_file(os.path.join(node_dir, 'key.pem'))
+        cert = read_file(os.path.join(node_dir, 'cert.pem'))
+        key_rsa_pub_file_content = read_file(os.path.join(node_dir, 'key_rsa.pub'))
 
         db = Mysql( host="beehive-mysql",
                         user="waggle",
                         passwd="waggle",
                         db="waggle")
-        #logger.warning("should not happen")
 
         mysql_row_node = db.get_node(nodeid)
 
@@ -162,55 +132,33 @@ class newnode:
                 return "Error: Node creation failed"
             mysql_row_node = db.get_node(nodeid)
 
-
-
-        #port = mysql_row_node[4]
-        port = db.find_port(nodeid)
+        port = int(db.find_port(nodeid))
 
         if not port:
-            print "Error: Node creation failed, port not found"
-            return "Error: Node creation failed, port not found"
-
-        try:
-            port = int(port)
-        except:
-            print "Error: Node creation failed, port is not an int"
-            return "Error: Node creation failed, port is not an int"
-
-
-        if port:
-            logger.debug("port number found: %d" % (port))
-        else:
-            logger.debug("Error: port number not found !?")
+            logger.error("Error: port number not found !?")
             return "Error: port number not found !?"
 
-
-
-        if not privkey:
-            return "error: privkey file not found !?"
-
-        if not cert:
-            return "error: cert file not found !?"
-
-        if nodeid:
-            print "issuing cert for node "+nodeid
-        else:
-            print "issuing cert for unknown node"
         return privkey + "\n" + cert + "\nPORT="+str(port) + "\n" + key_rsa_pub_file_content + "\n"
 
 
+def update_authorized_keys_file():
+    pass
 
+
+def append_to_authorized_keys_file(data):
+    with open(authorized_keys_file, 'a') as file:
+        file.write(data)
+
+    os.chmod(authorized_keys_file, 0600)
 
 
 if __name__ == "__main__":
-
-
-    node_database={}
+    node_database = {}
 
     # get all public keys from disk
-    for d in listdir(ssl_path_nodes):
-        if isdir(join(ssl_path_nodes, d)) and d[0:5] == 'node_':
-            rsa_pub_filename =  ssl_path_nodes+'/'+d+'/key_rsa.pub'
+    for d in listdir(ssl_nodes_dir):
+        if isdir(join(ssl_nodes_dir, d)) and d[0:5] == 'node_':
+            rsa_pub_filename =  os.path.join(ssl_nodes_dir, d, 'key_rsa.pub')
             try:
                 with open(rsa_pub_filename, 'r') as rsa_pub_file:
                     data=rsa_pub_file.read()
@@ -222,19 +170,13 @@ if __name__ == "__main__":
 
     print str(node_database)
 
-
-
     db = Mysql( host="beehive-mysql",
                 user="waggle",
                 passwd="waggle",
                 db="waggle")
 
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
-
-
-
     # get all ports:
-
 
     for row in db.query_all("SELECT * FROM nodes"):
         print row
@@ -275,7 +217,7 @@ if __name__ == "__main__":
       '/usr/lib/waggle/ssh_keys/id_rsa_waggle_aot_registration.pub'
     with open(registration_key_filename) as registration_key_file:
       registration_key = registration_key_file.readline().strip()
-    new_authorized_keys_content =['command="%s",%s %s\n\n' \
+    new_authorized_keys_content =['command="%s",%s %s\n' \
       % (registration_script, auth_options, registration_key)]
 
     for node_id in node_database.keys():
@@ -284,11 +226,11 @@ if __name__ == "__main__":
             if 'reverse_ssh_port' in node_database[node_id]:
                 port = node_database[node_id]['reverse_ssh_port']
                 permitopen = 'permitopen="localhost:%d"' % (port)
-                line="%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
+                line="%s,%s %s node:%s\n" % (permitopen, auth_options, node_database[node_id]['pub'].strip(), node_id)
             else:
                 # add public keys without port number, but comment the line
                 permitopen = 'permitopen="localhost:?"'
-                line="#%s,%s %s" % (permitopen, auth_options, node_database[node_id]['pub'])
+                line="#%s,%s %s node:%s\n" % (permitopen, auth_options, node_database[node_id]['pub'].strip(), node_id)
         else:
             logger.warning("Node %s has no public key" % (node_id))
 
@@ -298,15 +240,9 @@ if __name__ == "__main__":
 
     # create new authorized_keys file on every start, just to be sure.
     with open(authorized_keys_file, 'w') as file:
-        for line in new_authorized_keys_content:
-            file.write("%s\n" % line)
+        file.writelines(new_authorized_keys_content)
 
-    chmod_cmd = "chmod 600 {0}".format(authorized_keys_file)
-    logger.debug ( "command: "+ chmod_cmd)
-    subprocess.call(chmod_cmd, shell=True)
-
-    logger.debug( "create "+authorized_keys_file)
-
+    os.chmod(authorized_keys_file, 0600)
 
     web.httpserver.runsimple(app.wsgifunc(), ("0.0.0.0", httpserver_port))
     app.run()

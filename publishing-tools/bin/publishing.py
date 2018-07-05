@@ -120,22 +120,18 @@ def load_sensor_metadata(filename):
 
         for row in reader:
             try:
-                minval = float(row['minval'])
+                minval = float(row['hrf_minval'])
             except ValueError:
                 minval = None
 
             try:
-                maxval = float(row['maxval'])
+                maxval = float(row['hrf_maxval'])
             except ValueError:
                 maxval = None
 
-            # hold over until after field conversion
-            try:
-                sensor_id = row['sensor_id']
-            except KeyError:
-                sensor_id = row['sensor'] + '.' + row['parameter']
+            key = (row['subsystem'], row['sensor'], row['parameter'])
 
-            sensors[sensor_id] = {
+            sensors[key] = {
                 'range': Interval(minval, maxval)
             }
 
@@ -160,8 +156,8 @@ def filter_view(metadata, reader, writer):
     nodes_by_id = {node['node_id']: node for node in metadata}
 
     def isviewable(fields):
-        node_id = fields[0]
-        timestamp = load_timestamp(fields[1])
+        node_id = fields['node_id']
+        timestamp = load_timestamp(fields['timestamp'])
 
         if node_id not in nodes_by_id:
             return False
@@ -170,29 +166,31 @@ def filter_view(metadata, reader, writer):
 
         return any(timestamp in interval for interval in node['commissioned'])
 
-    csvreader = csv.reader(reader, delimiter=';')
-    csvwriter = csv.writer(writer, delimiter=';')
+    csvreader = csv.DictReader(reader)
+    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
+    csvwriter.writeheader()
     csvwriter.writerows(filter(isviewable, csvreader))
 
 
 def filter_sensors(metadata, reader, writer):
-    def isvalid(fields):
-        sensor = fields[4]
-        param = fields[5]
+    csvreader = csv.DictReader(reader)
+    csvwriter = csv.DictWriter(writer, fieldnames=csvreader.fieldnames)
+    csvwriter.writeheader()
+    csvwriter.writerows(filter(make_filter_for_sensor_metadata(metadata), csvreader))
+
+
+def make_filter_for_sensor_metadata(metadata):
+    def filter(row):
+        key = (row['subsystem'], row['sensor'], row['parameter'])
+
+        if key not in metadata:
+            return False
 
         try:
-            value = float(fields[6])
+            value = float(row['value_hrf'])
+            params = metadata[key]
+            return value in params['range']
         except ValueError:
-            return False
+            return True
 
-        name = '.'.join([sensor, param])
-
-        if name not in metadata:
-            return False
-
-        params = metadata[name]
-        return value in params['range']
-
-    csvreader = csv.reader(reader, delimiter=';')
-    csvwriter = csv.writer(writer, delimiter=';')
-    csvwriter.writerows(filter(isvalid, csvreader))
+    return filter

@@ -1,30 +1,17 @@
 name = beehive-sshd
 image = waggle/$(name)
 
-build:
-	docker build -t $(image) .
-
-deploy:
-	docker network create beehive || true
-	docker rm -f $(name) || true
+deploy: build
+	-docker network create ${BEEHIVE_DOCKER_NETWORK}
+	-docker rm -f $(name)
 	docker run \
 		--detach \
-		--net beehive \
+		--net ${BEEHIVE_DOCKER_NETWORK} \
 		--restart=always \
 		-p 20022:22 \
-		-v /mnt/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
-		-v /mnt/waggle/SSL/:/usr/lib/waggle/SSL/ \
+		-v ${BEEHIVE_ROOT}/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
+		-v ${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
-
-start:
-	docker start $(name)
-
-stop:
-	docker stop $(name)
-
-restart:
-	docker restart $(name)
+include ../Makefile.service

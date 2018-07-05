@@ -1,0 +1,17 @@
+BEEHIVE_ROOT?=/mnt
+BEEHIVE_DOCKER_NETWORK?=beehive
+
+build:
+	docker build -t $(image) .
+
+rm:
+	docker rm -f $(name)
+
+start:
+	docker start $(name)
+
+stop:
+	docker stop $(name)
+
+restart:
+	docker restart $(name)

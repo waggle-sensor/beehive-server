@@ -37,7 +37,7 @@
         <tbody>
           {% for dataset in (node['datasets'] | reverse) -%}
           <tr>
-            <td><a href="../{{ dataset['url'] }}">{{ dataset['date'] }}</a></td>
+            <td><a href="{{ dataset['url'] }}">{{ dataset['date'] }}</a></td>
             <td>{{ dataset['version'] }}</td>
           </tr>
           {%- endfor %}

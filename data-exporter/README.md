@@ -1,4 +1,19 @@
-# Data Exporting Tools
+<!--
+waggle_topic=/beehive/data_archive
+waggle_topic=!/beehive/data_processing
+waggle_topic=!/beehive/scientific_datasets
+-->
+
+# Exporting Data
+
+```
+                                                             +----> Stdout
+                                                             |
+list-datasets ---> grep, awk, etc ---> export-datasets ------+
+    ^                                        ^               |
+ Emits list of (Node ID, Date)       Exports datasets for    +----> Dataset Tree on Disk
+ partition keys.                     partition keys.                  
+```
 
 ## Installing dependencies
 
@@ -7,48 +22,30 @@
 pip install -r requirements.txt
 ```
 
-## list-datasets and export-datasets
+## Example Usage
 
-These tools are used together to perform bulk pulls from the Cassandra database.
-They will dump all pulled datasets to `data/nodeid/date.csv`. Let's look a few
-use cases:
+### Export Datasets from 2018-05-10
 
-This first example pulls all the datasets.
-
-```sh
-./list-datasets | ./export-datasets
-```
-
-This second example pulls all the datasets from node 001e0610ba3f.
-
-```sh
-./list-datasets | awk '/001e0610ba3f/' | ./export-datasets
-```
-
-This last example pulls all the datasets after September 1, 2017.
-
-```sh
-./list-datasets | awk '$3 >= "2017-09-01"' | ./export-datasets
-```
-
-## build-index
-
-This provides an easy way to get a quick overview of what datasets you've
-pulled. Running the command
-
-```sh
-./build-index
-```
-
-will populate the `static` directory with a statically generated set of pages.
-Open `static/index.html` to view the datasets.
-
-## Remote backup
-
-You can do pulls over the network using ssh forwarding
+The following would export all datasets from 2018-05-10 to `mydatasets` as a
+`mydatasets/nodeid/date.csv` tree.
 
 ```
-ssh -C -L 9042:localhost:9042 beehive1
+./list-datasets | grep 2018-05-10 | ./export-datasets mydatasets
 ```
 
-Then, just run `export` or `exportall`.
+The you could grep the tree using something like:
+
+```
+grep -h -r 'failures,nc' mydatasets
+```
+
+### Working Remote
+
+You can access the Cassandra database remotely opening an SSH tunnel in the
+background.
+
+```
+ssh beehive1 -L 9042:localhost:9042
+```
+
+This allows you to remotely run exporting commands for testing, backups, etc.

@@ -1,33 +1,64 @@
 #!/bin/bash
 
+SSL_DIR="/usr/lib/waggle/SSL"
+CA_DIR="${SSL_DIR}/waggleca"
 
-export SSL_DIR="/usr/lib/waggle/SSL"
+create_ca_dir() {
+	mkdir -p $CA_DIR
+	chmod 755 $CA_DIR
+	cd $CA_DIR
 
-# Begin constructing the Certificate Authority
+	# Make appropriate folders
+	mkdir -p certs private
+	chmod 700 private
 
-mkdir -p /usr/lib/waggle
-chmod 777 -R /usr/lib/waggle
+	if [ ! -f serial ]; then
+		echo 01 > serial
+	fi
 
+	touch index.txt
 
-rm -rf ${SSL_DIR}/waggleca
-mkdir -p ${SSL_DIR}/waggleca
+	# this is needed for "node" certificates. We may change that later.
+	echo "unique_subject = no" > index.txt.attr
 
-cd ${SSL_DIR}/waggleca
+	cp /usr/lib/waggle/beehive-server/beehive-cert/SSL/waggleca/openssl.cnf openssl.cnf
+}
 
-# Make appropriate folders
-mkdir -p certs private
-chmod 700 private
-echo 01 > serial
-touch index.txt
+create_ca_key_if_needed() {
+	cd $CA_DIR
 
-# this is needed for "node" certificates. We may change that later.
-echo "unique_subject = no" > index.txt.attr
+	if [ -f "private/cakey.pem" ]; then
+		echo "CA key already exists."
+	else
+		echo "Creating CA key."
+		openssl genrsa -out $CA_DIR/private/cakey.pem 2048
+		rm -f $CA_DIR/cacert.pem
+		rm $CA_DIR/certs/*
+	fi
+}
 
-# Generate the root certificate
+create_ca_cert_if_needed() {
+	cd $CA_DIR
 
-openssl req -x509 -config /usr/lib/waggle/beehive-server/SSL/waggleca/openssl.cnf -newkey rsa:2048 -days 365 \
-	-out cacert.pem -outform PEM -subj /CN=waggleca/ -nodes
+	if [ -f "cacert.pem" ]; then
+		echo "CA certificate already exists."
+	else
+		echo "Creating CA certificate."
 
-openssl x509 -in cacert.pem -out cacert.cer -outform DER
+		openssl req \
+			-new \
+			-x509 \
+			-key private/cakey.pem \
+			-days 3650 \
+			-out cacert.pem \
+			-outform PEM \
+			-subj /CN=waggleca/ \
+			-sha256
+			# openssl req -new -x509 -key private/cakey.pem -days 3650 -out cacert.pem -outform PEM -subj /CN=waggleca/ -sha256
+			# openssl x509 -in cacert.pem -out cacert.cer -outform DER
+	fi
+}
 
-
+create_ca_dir
+create_ca_key_if_needed
+create_ca_cert_if_needed

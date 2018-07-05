@@ -1,90 +1,95 @@
 #!/usr/bin/env python3
+import argparse
 from glob import glob
 import os
 from jinja2 import Template
 from datetime import datetime
 import json
-import subprocess
+from pprint import pprint
+import sys
+import requests
 
 
-def get_node_info():
-    output = subprocess.check_output('/usr/lib/waggle/beehive-server/bin/node-info-json').decode()
-    return json.loads(output)
+def load_json_file(path):
+    with open(path) as file:
+        return json.load(file)
 
 
-nodes = []
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('nodes_file')
+    parser.add_argument('datasets_dir')
+    parser.add_argument('build_dir')
+    args = parser.parse_args()
 
-for item in get_node_info():
-    nodes.append({
-        'id': item['node_id'][-12:].lower(),
-        'name': item.get('name', ''),
-        'description': item.get('description', ''),
-        'location': item.get('location', ''),
-        'groups': item.get('groups', []),
-        'url': '{}.json'.format(item['node_id'][-12:]),
-    })
+    program_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    templates_dir = os.path.join(program_dir, 'templates')
+    datasets_dir = os.path.abspath(args.datasets_dir)
+    build_dir = os.path.abspath(args.build_dir)
 
-with open('static/index.json', 'w') as f:
-    json.dump(nodes, f)
+    nodes = []
 
-with open('static/index.csv', 'w') as f:
+    for item in load_json_file(args.nodes_file):
+        nodes.append({
+            'id': item['node_id'][-12:].lower(),
+            'name': item.get('name') or '',
+            'description': item.get('description') or '',
+            'location': item.get('location') or '',
+            'url': '{}.json'.format(item['node_id'][-12:]),
+        })
+
+    os.makedirs(build_dir, exist_ok=True)
+
+    # with open(os.path.join(build_dir, 'index.json'), 'w') as f:
+    #     json.dump(nodes, f)
+
+    today = datetime.now().strftime('%Y-%m-%d')
+
     for node in nodes:
-        url = '{}.csv'.format(node['id'][-12:])
-        print('{};{};{};{}'.format(node['id'], node['name'], node['description'], url), file=f)
+        try:
+            datasets = []
 
-today = datetime.now().strftime('%Y-%m-%d')
+            for filename in glob(os.path.join(datasets_dir, '{}/*.csv.gz'.format(node['id']))):
+                if 'recent' in filename:
+                    continue
 
-indexfile = open('static/index.txt', 'w')
+                date = filename.split('/')[-1].split('.')[0]
 
-for node in nodes:
-    try:
-        datasets = []
+                # exceptional
+                if date <= today:
+                    datasets.append({
+                        'url': os.path.relpath(filename, build_dir),
+                        'date': date,
+                        'version': '2',
+                    })
 
-        for filename in glob('datasets/2/{}/*.csv.gz'.format(node['id'])):
-            if 'recent' in filename:
-                continue
+            node['datasets'] = sorted(datasets, key=lambda r: (r['version'], r['date']))
 
-            date = filename.split('/')[-1].split('.')[0]
+            if node['datasets']:
+                node['latest'] = max([dataset['date'] for dataset in node['datasets']])
 
-            indexfile.write('http://www.mcs.anl.gov/research/projects/waggle/downloads/{} {} {} {}\n'.format(filename, node['id'], node['name'], ','.join(node['groups'])))
+        except FileNotFoundError:
+            continue
 
-            # exceptional
-            if date <= today:
-                datasets.append({
-                    'url': filename,
-                    'date': date,
-                    'version': '2',
-                })
+    index_template = Template(open(os.path.join(templates_dir, 'index.html')).read())
+    node_template = Template(open(os.path.join(templates_dir, 'node.html')).read())
 
-        node['datasets'] = sorted(datasets, key=lambda r: (r['version'], r['date']))
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        if node['datasets']:
-            node['latest'] = max([dataset['date'] for dataset in node['datasets']])
+    for node in nodes:
+        plots = 'http://www.mcs.anl.gov/research/projects/waggle/downloads/vis/tables/{}-table.html'.format(node['id'])
 
-    except FileNotFoundError:
-        continue
+        r = requests.head(plots)
 
-indexfile.close()
+        if r.status_code == 200:
+            node['plots'] = plots
 
-index_template = Template(open('templates/index.html').read())
-node_template = Template(open('templates/node.html').read())
+    with open(os.path.join(build_dir, 'index.html'), 'w') as f:
+        f.write(index_template.render(nodes=nodes, timestamp=timestamp))
 
-os.makedirs('static', exist_ok=True)
+    for node in nodes:
+        # with open(os.path.join(build_dir, '{}.json'.format(node['id'])), 'w') as f:
+        #     json.dump(node['datasets'], f)
 
-timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-with open('static/index.html', 'w') as f:
-    f.write(index_template.render(nodes=nodes, timestamp=timestamp))
-
-for node in nodes:
-    with open('static/{}.json'.format(node['id']), 'w') as f:
-        json.dump(node['datasets'], f)
-
-    # write csv version
-    with open('static/{}.csv'.format(node['id']), 'w') as f:
-        for dataset in node['datasets']:
-            row = [dataset['date'], dataset['version'], dataset['url']]
-            print(';'.join(row), file=f)
-
-    with open('static/{}.html'.format(node['id']), 'w') as f:
-        f.write(node_template.render(node=node))
+        with open(os.path.join(build_dir, '{}.html'.format(node['id'])), 'w') as f:
+            f.write(node_template.render(node=node))

@@ -1,4 +1,10 @@
-# Publishing Filter Tools and Metadata
+<!--
+waggle_topic=/beehive/data_archive
+waggle_topic=!/beehive/data_processing
+waggle_topic=!/beehive/scientific_datasets
+-->
+
+# Publishing Data
 
 ## Overview
 
@@ -46,32 +52,30 @@ A complete publishing filter is composed of the following more specific tools:
 
 The expected sensor stream format is just a semicolon delimited, CSV-like format with fields:
 
-* Node ID
 * UTC Timestamp
-* Plugin Name _(Not used internally.)_
-* Plugin Key _(Not used internally.)_
-* Sensor Name
-* Sensor Parameter
-* Sensor Value
+* Node ID
+* Subsystem
+* Sensor
+* Parameter
+* Value (Raw)
+* Value (HRF)
 
 For example:
 
 ```
-001e06109f62;2018/02/26 17:00:56;coresense:4;frame;HTU21D;temperature;29.78
-001e06109f62;2018/02/26 17:00:56;coresense:4;frame;SPV1840LR5H-B;intensity;63.03
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;h2s;63
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;co;5238
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;so2;634
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;o3;5198
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;oxidizing_gases;22637
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;reducing_gases;6992
-001e0610e537;2018/02/26 17:02:24;coresense:4;frame;Chemsense;no2;1266
+timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf
+2018/03/12 15:49:04,001e06113100,metsense,bmp180,pressure,11417504,1062.55
+2018/03/12 15:49:04,001e06113100,metsense,bmp180,temperature,22717,14.5
+2018/03/12 15:49:04,001e06113100,metsense,hih4030,humidity,537,81.4
+2018/03/12 15:49:04,001e06113100,metsense,htu21d,humidity,34042,58.93
+2018/03/12 15:49:04,001e06113100,metsense,htu21d,temperature,18968,4.01
+2018/03/12 15:49:04,001e06113100,metsense,mma8452q,acceleration_x,65280,-15.625
+2018/03/12 15:49:04,001e06113100,metsense,mma8452q,acceleration_y,49120,-1001.953
+2018/03/12 15:49:04,001e06113100,metsense,mma8452q,acceleration_z,320,19.531
+2018/03/12 15:49:04,001e06113100,metsense,pr103j2,temperature,659,4.55
 ```
 
 _Input and output are in the same format, but output will usually contain a subset of the input._
-
-_Expected usage is in a pipeline, so valid sensor stream input may be produced by another tool,
-not just a file._
 
 ## Metadata
 
@@ -90,13 +94,13 @@ Each of these will be described below.
 
 The node information table is a CSV file with the following fields:
 
-1. Node ID
-2. Project ID
-3. VSN
-4. Street Address
-5. Latitude
-6. Longitude
-7. Description
+* Node ID
+* Project ID
+* VSN
+* Street Address
+* Latitude
+* Longitude
+* Description
 
 For example, valid file contents would look like:
 
@@ -114,10 +118,10 @@ _The header is required!_
 
 The node events table is a CSV file with the following fields:
 
-1. Node ID
-2. Timestamp
-3. Event (Either `commissioned`, `decommissioned`, `retired`.)
-4. Comment
+* Node ID
+* Timestamp
+* Event (Either `commissioned`, `decommissioned`, `retired`.)
+* Comment
 
 For example, valid file contents would look like:
 
@@ -140,118 +144,31 @@ _The header is required!_
 
 Sensor metadata is a CSV file with the following fields:
 
-1. Sensor ID
-2. Min Value
-3. Max Value
+* Subsystem
+* Sensor
+* Parameter
+* Unit
+* Min Value
+* Max Value
+* Datasheet URL
 
 For example, valid file contents would look like:
 
 ```
-sensor_id,minval,maxval
-HTU21D.humidity,-1,101
-HTU21D.temperature,-40,50
-BMP180.temperature,-40,50
-BMP180.pressure,300,1100
-TSYS01.temperature,-40,50
+subsystem,sensor,parameter,unit,minval,maxval,datasheet
+... update example ...
 ```
 
 _The header is required!_
-
-## Usage
-
-A complete example is given at `examples/example-plenario.sh`. It uses the
-`examples/plenario` project metadata, the `examples/climate.csv` sensor metadata
-and sample data `examples/recent.csv`. We will reference this example, as we
-walk through the details of building the following complete pipeline:
-
-```
-                        project metadata
-                              v
-[Recent Sensor Data] -> [Filter View] -> [Filter Sensors] -> [Filtered Sensor Data]
-                                                ^
-                                         sensors metadata
-```
-
-First, we'll translate this into the shell script:
-
-```sh
-#!/bin/sh
-
-# working directory is publishing-tools
-cat examples/recent.csv |
-bin/filter-view examples/plenario |
-bin/filter-sensors examples/climate.csv >
-filtered-sensor-data.csv
-```
-
-This will take the data in `recent.csv`, which includes sample data from many
-different nodes and sensors:
-
-```sh
-$ cat examples/recent.csv | head
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HIH4030;humidity;459
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MLX75305;intensity;31162
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;pressure;100301
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL250RD-LS;intensity;21952
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
-
-$ cat examples/recent.csv | wc -l
-   67767
-```
-
-First, we apply `filter-view` which only keeps data from nodes in
-`examples/plenario/nodes.csv` during a valid commissioning interval in
-`examples/plenario/events.csv`:
-
-```sh
-$ cat examples/recent.csv | bin/filter-view examples/plenario | head
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;SPV1840LR5H-B;intensity;814
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HIH4030;humidity;459
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MLX75305;intensity;31162
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;pressure;100301
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL250RD-LS;intensity;21952
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSL260RD;intensity;21092
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;acceleration.y;-1.0
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;MMA8452Q;rms;1.0
-
-$ cat examples/recent.csv | bin/filter-view examples/plenario | wc -l
-   19293
-```
-
-Second, we apply `filter-sensors` which only keeps data from sensors in
-`examples/climate.csv`:
-
-```sh
-$ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-sensors examples/climate.csv | head
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;TSYS01;temperature;9.04
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;BMP180;temperature;9.25
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HTU21D;humidity;36.72
-001e0610ef29;2018/02/26 16:48:48;coresense:3;frame;HTU21D;temperature;9.39
-001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;TSYS01;temperature;9.05
-001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;BMP180;temperature;9.3
-001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;HTU21D;humidity;37.08
-001e0610ef29;2018/02/26 16:49:14;coresense:3;frame;HTU21D;temperature;9.41
-001e0610ef29;2018/02/26 16:49:37;coresense:3;frame;TSYS01;temperature;9.04
-001e0610ef29;2018/02/26 16:49:37;coresense:3;frame;BMP180;temperature;9.3
-
-$ cat examples/recent.csv | bin/filter-view examples/plenario | bin/filter-sensors examples/climate.csv | wc -l
-    2256
-```
-
-Finally, we write the result to `filtered-sensor-data.csv` which is ready for
-further packaging or pushing to a consumer.
 
 ## Utilities
 
 In addition to the main pipeline tools, the following utilities are included for
 debugging or more efficiently interfacing with other components:
+
+* `compile-digests`: Takes datasets tree of the form `node/date.csv.gz`, digest
+build directory and a list of projects and compiles a complete project digest.
+See program help for more information.
 
 * `published-dates`: Takes project metadata and prints all commissioned nodes /
 dates pairs up to and including today. May be useful for debugging or efficiently

@@ -1,19 +1,22 @@
 name = beehive-cassandra
-image = cassandra:3.2
+image = cassandra:3
 
 deploy:
-	docker network create beehive || true
-	docker rm -f $(name) || true
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
-		--net beehive \
+		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
-		-v /mnt/cassandra/:/var/lib/cassandra/ \
+		-v $(BEEHIVE_ROOT)/cassandra/:/var/lib/cassandra/ \
+		-v $(BEEHIVE_ROOT)/log/cassandra/:/var/log/cassandra/:rw \
 		-p 127.0.0.1:9042:9042 \
 		--hostname cassandra \
 		--network-alias cassandra \
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
+setup:
+	docker exec -i $(name) 'cqlsh' < init.cql
+
+include ../Makefile.service

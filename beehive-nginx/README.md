@@ -1,8 +1,11 @@
+<!--
+waggle_topic=/beehive/services
+-->
 
-# Beehive Nginx
- 
+# Nginx HTTP Server
 
-This is the Beehive Nginx server. 
+
+This is the Beehive Nginx server.
 
 ## Build image:
 ```bash

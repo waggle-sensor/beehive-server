@@ -1,0 +1,289 @@
+#!/usr/bin/env python3
+import os
+import shutil
+import subprocess
+import argparse
+import publishing
+import gzip
+import csv
+from datetime import datetime
+from jinja2 import Template
+
+publishing_tools_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def ensure_exists(*dirs):
+    for dir in dirs:
+        os.makedirs(dir, exist_ok=True)
+
+
+def read_file(filename):
+    with open(filename) as file:
+        return file.read()
+
+
+def render_template(filename, template, *args, **kwargs):
+    write_file(filename, Template(read_file(template)).render(*args, **kwargs))
+
+
+def read_file_or_empty(filename):
+    try:
+        return read_file(filename)
+    except FileNotFoundError:
+        return ''
+
+
+def write_file(filename, contents):
+    with open(filename, 'w') as file:
+        file.write(contents)
+
+
+def copy_file(src, dst):
+    shutil.copy(src, dst)
+
+
+def copy_file_if_exists(src, dst):
+    try:
+        shutil.copy(src, dst)
+    except Exception:
+        pass
+
+
+def newer_than(pair):
+    src, dst = pair
+
+    try:
+        src_mtime = os.path.getmtime(src)
+    except FileNotFoundError:
+        return False
+
+    try:
+        dst_mtime = os.path.getmtime(dst)
+    except FileNotFoundError:
+        return True
+
+    return dst_mtime < src_mtime
+
+
+class DigestCompiler:
+
+    def __init__(self, datasets_dir, digests_dir, project_dir, **kwargs):
+        self.datasets_dir = datasets_dir
+        self.digests_dir = digests_dir
+
+        self.project_dir = project_dir
+        self.project_id = os.path.basename(os.path.abspath(project_dir))
+
+        self.build_dir = os.path.join(digests_dir, self.project_id)
+
+        self.digest_dir = os.path.join(self.build_dir,
+                                       '{}.latest'.format(self.project_id),
+                                       '{}.{}'.format(self.project_id, datetime.utcnow().strftime('%Y-%m-%d')))
+
+        self.staging_dir = os.path.join(self.build_dir, 'staging')
+
+        # init optional flags
+        self.skip_sensor_check = kwargs.get('skip_sensor_check', False)
+        self.skip_pubtime_check = kwargs.get('skip_pubtime_check', False)
+
+        self.nodes = publishing.load_project_metadata(self.project_dir)
+
+    def setup(self):
+        print('[{}] Setting up.'.format(self.project_id))
+
+        ensure_exists(self.build_dir,
+                      self.digest_dir,
+                      self.staging_dir)
+
+    def cleanup(self):
+        print('[{}] Cleaning up.'.format(self.project_id))
+
+    def add_readme(self):
+        render_template(os.path.join(self.digest_dir, 'README.md'),
+                        os.path.join(publishing_tools_dir, 'docs', 'digest-readme.md'),
+                        header=read_file_or_empty(os.path.join(self.project_dir, 'header.md')))
+
+    def add_nodes_metadata(self):
+        copy_file(os.path.join(self.project_dir, 'nodes.csv'),
+                  os.path.join(self.digest_dir, 'nodes.csv'))
+
+    def add_sensor_metadata(self):
+        copy_file(os.path.join(self.project_dir, 'sensors.csv'),
+                  os.path.join(self.digest_dir, 'sensors.csv'))
+
+    def add_optional_dua(self):
+        copy_file_if_exists(os.path.join(self.project_dir, 'DUA.txt'),
+                            os.path.join(self.digest_dir, 'DUA.txt'))
+
+    def add_provenance_metadata(self):
+        now = datetime.now()
+
+        intervals = [interval for node in self.nodes for interval in node['commissioned']]
+
+        try:
+            data_start_date = min(interval.start for interval in intervals)
+        except ValueError:
+            data_start_date = now
+
+        try:
+            data_end_date = max(interval.end or now for interval in intervals)
+        except ValueError:
+            data_end_date = now
+
+        with open(os.path.join(self.digest_dir, 'provenance.csv'), 'w') as outfile:
+            writer = csv.writer(outfile)
+
+            writer.writerow([
+                'data_format_version',
+                'project_id',
+                'data_start_date',
+                'data_end_date',
+                'creation_date',
+                'url',
+            ])
+
+            writer.writerow([
+                '2',
+                self.project_id,
+                data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
+                data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
+                now.strftime('%Y/%m/%d %H:%M:%S'),
+                'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar.gz'.format(self.project_id),
+            ])
+
+    def add_metadata(self):
+        print('[{}] Add metadata.'.format(self.project_id))
+        self.add_readme()
+        self.add_nodes_metadata()
+        self.add_sensor_metadata()
+        self.add_optional_dua()
+        self.add_provenance_metadata()
+
+    def get_staging_script_template(self):
+        steps = ["gzip -dc '{src}'"]
+
+        if not self.skip_sensor_check:
+            steps.append("{publishing_tools_dir}/bin/filter-sensors '{sensors_metadata}'")
+
+        if not self.skip_pubtime_check:
+            steps.append("{publishing_tools_dir}/bin/filter-view '{project_metadata}'")
+
+        steps.append("sed '/^timestamp/d'")
+        # steps.append("sort")
+        steps.append("gzip > '{dst}.tmp'")
+
+        return ' | '.join(steps)
+
+    def stage_data_files(self):
+        print('[{}] Staging data files.'.format(self.project_id))
+
+        script_template = self.get_staging_script_template()
+
+        sensors_metadata = os.path.join(self.project_dir, 'sensors.csv')
+        project_metadata = os.path.join(self.project_dir)
+
+        # sort candinate files in latest first order
+        candidates = sorted(publishing.published_dates(self.nodes),
+                            key=lambda item: item[1], reverse=True)
+
+        file_pairs = []
+
+        for node, date in candidates:
+            src = os.path.join(self.datasets_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+
+            ensure_exists(os.path.join(self.staging_dir, node['node_id']))
+            dst = os.path.join(self.staging_dir, node['node_id'], date.strftime('%Y-%m-%d.csv.gz'))
+            file_pairs.append((src, dst))
+
+        for src, dst in filter(newer_than, file_pairs):
+            try:
+                script = script_template.format(src=src,
+                                                dst=dst,
+                                                publishing_tools_dir=publishing_tools_dir,
+                                                sensors_metadata=sensors_metadata,
+                                                project_metadata=project_metadata)
+
+                subprocess.check_output(script, shell=True)
+
+                os.rename(dst + '.tmp', dst)
+
+                print('[{}] Staged file {} -> {}.'.format(self.project_id, src, dst))
+            except Exception as exc:
+                print('[{}] Failed to stage file {}!'.format(self.project_id, src))
+
+    def merge_data_files(self):
+        print('[{}] Compiling staged files.'.format(self.project_id))
+
+        # can reduce to: find . -name '*.csv.gz' | xargs gzcat >> data.csv
+        with open(os.path.join(self.digest_dir, 'data.csv'), 'wb') as outfile:
+            # outfile.write(b'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf\n')
+            for root, _, filenames in os.walk(self.staging_dir):
+                for filename in filter(lambda f: f.endswith('.csv.gz'), filenames):
+                    with open(os.path.join(root, filename), 'rb') as infile:
+                        indata = infile.read()
+                    outfile.write(gzip.decompress(indata))
+
+        print('[{}] Sorting staged files.'.format(self.project_id))
+
+        # NOTE Currently, same sorted.csv used across projects. Cannot be run in parallel.
+        sort_path = os.path.join(self.digests_dir, 'sorted.csv')
+        data_path = os.path.join(self.digest_dir, 'data.csv')
+
+        # TODO Clean this sequence up.
+
+        subprocess.check_output('''
+            sort -o {sort_path} {data_path}
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
+
+        subprocess.check_output('''
+            echo 'timestamp,node_id,subsystem,sensor,parameter,value_raw,value_hrf' > {data_path}
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
+
+        subprocess.check_output('''
+            cat {sort_path} >> {data_path}
+        '''.format(data_path=data_path, sort_path=sort_path), shell=True)
+
+        os.remove(sort_path)
+
+    def compile_archive(self):
+        print('[{}] Compiling archive.'.format(self.project_id))
+
+        shutil.make_archive(base_name=os.path.join(self.build_dir, '{}.latest'.format(self.project_id)),
+                            format='gztar',
+                            root_dir=os.path.dirname(self.digest_dir),
+                            base_dir=os.path.basename(self.digest_dir))
+
+    def compile(self):
+        self.setup()
+        self.add_metadata()
+        self.stage_data_files()
+        self.merge_data_files()
+        self.compile_archive()
+        self.cleanup()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='''
+    Compiles a digest for each specified project from datasets. For each project
+    "path/to/project" in project_dirs, a digest is compiled at
+    "digests_dir/project/project.latest.tar.gz". Datasets are assumed to be a
+    tree of the form "node_id/date.csv.gz" with the root being specified as
+    datasets_dir.
+    ''')
+
+    parser.add_argument('--skip-sensor-check', action='store_true', help='Skip sensor check.')
+    parser.add_argument('--skip-pubtime-check', action='store_true', help='Skip commissioned time check.')
+    parser.add_argument('datasets_dir', help='Root directory of dataset tree.')
+    parser.add_argument('digests_dir', help='Root directory to build and store digests in.')
+    parser.add_argument('project_dirs', nargs='*', help='Root directories for each project to compile digest for.')
+    args = parser.parse_args()
+
+    for project_dir in args.project_dirs:
+        compiler = DigestCompiler(
+            datasets_dir=args.datasets_dir,
+            digests_dir=args.digests_dir,
+            project_dir=project_dir,
+            skip_sensor_check=args.skip_sensor_check,
+            skip_pubtime_check=args.skip_pubtime_check)
+
+        compiler.compile()

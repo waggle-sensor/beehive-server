@@ -1,19 +1,16 @@
 name = beehive-nginx
 image = waggle/$(name)
 
-build:
-	docker build -t $(image) .
-
-deploy:
-	docker network create beehive || true
-	docker rm -f $(name) || true
+deploy: build
+	-docker network create $(BEEHIVE_DOCKER_NETWORK)
+	-docker rm -f $(name)
 	docker run \
 		--detach \
-		--net beehive \
+		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 80:80 \
+		-v $(BEEHIVE_ROOT)/www:/www:ro \
 		--name $(name) \
 		$(image)
 
-rm:
-	docker rm -f $(name)
+include ../Makefile.service

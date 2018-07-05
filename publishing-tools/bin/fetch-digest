@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -ex
+
+project=$1
+
+wget http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/$project.latest.tar.gz -O $project.latest.tar.gz
+tar xvfz $project.latest.tar.gz

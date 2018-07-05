@@ -1,10 +1,14 @@
-# Beehive Server
+<!--
+waggle_topic=IGNORE
+-->
+
+# System Overview (Old)
 
 Waggle cloud software for aggregation, storage and analysis of sensor data from Waggle nodes
 
 ## Installation
 
-The recommended installation method for the waggle beehive server is Docker. But it should be easily possible to install everything in a non-virtualized ubuntu environment. In that case we recommend ubuntu trusty (14.04). If you are using Docker, you can use any operating system with a recent Linux kernel that runs Docker. 
+The recommended installation method for the waggle beehive server is Docker. But it should be easily possible to install everything in a non-virtualized ubuntu environment. In that case we recommend ubuntu trusty (14.04). If you are using Docker, you can use any operating system with a recent Linux kernel that runs Docker.
 
 **NOTE:** (WCC 2/13/2017) We will assume that beehive is installed on Ubuntu.  LastSsh.py assumes python3 is available from the host command line.  Others may follow.
 
@@ -103,7 +107,7 @@ You should now be inside the container.
 
 #### Configure the beehive server
 
-You can set RabbitMQ and Cassandra hostnames in /etc/waggle/beehive-server.cfg if they are installed remotely. The configure script will create this file if it does not yet exist. 
+You can set RabbitMQ and Cassandra hostnames in /etc/waggle/beehive-server.cfg if they are installed remotely. The configure script will create this file if it does not yet exist.
 
 Run configure script.
 ```bash
@@ -115,7 +119,7 @@ Run configure script.
 ./Server.py [--logging]
 ```
 
-The beehive server should be running at this point. 
+The beehive server should be running at this point.
 
 If you are in a Docker container, leave the container and put it in background using key combinations "Ctrl-P" "Ctrl-Q". You can re-attach to the container with
 ```bash
@@ -169,7 +173,7 @@ To use systemd unit files for the beehive components, follow these instructions:
 
 ### SSL certificate related problems
 
-If a node gets the error below when the node tries to connect to the beehive server, the SSL certificate key that the node is using may possibly be wrong or corrupted. 
+If a node gets the error below when the node tries to connect to the beehive server, the SSL certificate key that the node is using may possibly be wrong or corrupted.
 
 ```
 # log from node side

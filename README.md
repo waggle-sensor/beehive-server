@@ -1,4 +1,8 @@
-# Current Server
+<!--
+waggle_topic=/beehive/introduction
+-->
+
+# Beehive Overview
 
 <img src="./images/beehiveconnections.svg" width=900 />
 

@@ -8,7 +8,7 @@ now = datetime.now()
 for line in map(str.strip, fileinput.input()):
     try:
         fields = line.split()
-        date = datetime.strptime(fields[2], '%Y-%m-%d')
+        date = datetime.strptime(fields[1], '%Y-%m-%d')
 
         if (now - date).days <= 31:
             print(line, flush=True)
