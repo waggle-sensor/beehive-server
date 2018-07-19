@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import subprocess
+import re
+import os
+
+BEEHIVE_ROOT = os.environ['BEEHIVE_ROOT']
+
+
+output = subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'list_users']).decode()
+existing_users = set(re.findall('node[0-9A-Fa-f]*', output))
+
+for username in existing_users:
+    subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
+
+    node_id = username.replace('node', '')
+
+    config_access = '^to-node-{}$'.format(node_id)
+    write_access = '^data|messages$'
+    read_access = '^to-node-{}$'.format(node_id)
+
+    subprocess.check_output([
+        'docker',
+        'exec',
+        '-ti',
+        'beehive-rabbitmq',
+        'rabbitmqctl',
+        'set_permissions',
+        username,
+        config_access,
+        write_access,
+        read_access,
+    ])
