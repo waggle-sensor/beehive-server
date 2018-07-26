@@ -12,7 +12,7 @@ existing_users = set(re.findall('node[0-9A-Fa-f]*', output))
 for username in existing_users:
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
 
-    node_id = username.replace('node', '')
+    node_id = username.replace('node', '').rjust(16, '0')
 
     config_access = '^to-node-{}$'.format(node_id)
     write_access = '^data|messages$'
