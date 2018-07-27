@@ -108,7 +108,7 @@ class newnode:
         with resource_lock:
             subprocess.call([
                 os.path.join(script_path, 'create_client_cert.sh'),
-                'node{}'.format(nodeid.lower()),
+                'node-{}'.format(nodeid.lower()),
                 os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
             ])
 

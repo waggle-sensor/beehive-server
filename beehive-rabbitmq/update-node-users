@@ -8,7 +8,7 @@ BEEHIVE_ROOT = os.environ['BEEHIVE_ROOT']
 
 
 output = subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'list_users']).decode()
-existing_users = set(re.findall('node[0-9a-fA-F]*', output))
+existing_users = set(re.findall('node[\-0-9a-fA-F]*', output))
 
 cert_users = set()
 
@@ -17,7 +17,7 @@ for match in glob.glob(os.path.join(BEEHIVE_ROOT, 'waggle/SSL/nodes/node_*')):
     output = subprocess.check_output(['openssl', 'x509', '-noout', '-subject', '-in', certfile]).decode()
 
     try:
-        username = re.search('CN\s*=\s*(node[0-9A-Fa-f]*)', output).group(1).strip()
+        username = re.search('CN\s*=\s*(node[\-0-9A-Fa-f]*)', output).group(1).strip()
     except AttributeError:
         print('skipping CN for {}'.format(output))
         continue
