@@ -80,7 +80,7 @@ def validate_query_string(s):
 
 
 def validate_node_id_string(s):
-    return re.match('[0-9A-F]{16}$', s) is not None
+    return re.match('[0-9a-fA-F]{16}$', s) is not None
 
 
 class newnode:
@@ -108,7 +108,7 @@ class newnode:
         with resource_lock:
             subprocess.call([
                 os.path.join(script_path, 'create_client_cert.sh'),
-                'node{}'.format(nodeid[-12:].lower()),
+                'node{}'.format(nodeid.lower()),
                 os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
             ])
 
