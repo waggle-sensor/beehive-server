@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import pika
+import waggle.protocol
+
+logger = logging.getLogger('beehive-router')
+
+route_format = 'to-node-{receiver_id}'
+
+
+def message_handler(ch, method, properties, body):
+    logger.info('Got message data.')
+
+    if properties.user_id is None:
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        logger.warning('Dropping message with no user ID.')
+        return
+
+    node_id = properties.user_id.replace('node-', '')
+
+    for message in waggle.protocol.unpack_waggle_packets(body):
+        if message['sender_id'] != node_id:
+            logging.warning('Dropping message with sender_id %s != node_id %s.', message['sender_id'], node_id)
+            continue
+
+        route_queue = route_format.format(**message)
+        route_data = waggle.protocol.pack_waggle_packets([message])
+
+        ch.queue_declare(queue=route_queue, durable=True)
+        ch.basic_publish(exchange='', routing_key=route_queue, body=route_data)
+        logger.info('Route to %s.', route_queue)
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+    logger.info('Ack message data.')
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url', default='amqp://localhost', help='AMQP broker URL to connect to.')
+    parser.add_argument('queue', help='Message queue to process.')
+    args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y/%m/%d %H:%M:%S %Z',
+    )
+
+    parameters = pika.URLParameters(args.url)
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+
+    channel.queue_declare(queue=args.queue, durable=True)
+    channel.basic_consume(message_handler, args.queue)
+    channel.start_consuming()
+
+
+if __name__ == '__main__':
+    main()
