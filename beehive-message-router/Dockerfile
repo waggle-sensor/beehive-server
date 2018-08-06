@@ -6,4 +6,4 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY beehive-message-router ./
-CMD ["python", "./beehive-message-router", "--url", "amqp://rabbitmq", "messages"]
+CMD ["python", "./beehive-message-router", "--url", "amqp://router:router@rabbitmq", "messages"]
