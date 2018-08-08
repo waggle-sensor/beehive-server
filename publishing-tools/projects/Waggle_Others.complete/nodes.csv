@@ -1,2 +1,72 @@
 node_id,project_id,vsn,address,lat,lon,description
-001e061088bf,Waggle_Others,W001,TBD,0.0,0.0,Uglybox - Pete SaT
+001e0610893c,Waggle_Others,003,TCS 4302 - Returned from CDOT 04 Dec 2017,0.0,0.0,AoT Chicago (T) - Replace
+001e0610ba67,Waggle_Others,007,"TCS 4302 P2,S7",0.0,0.0,AoT Node (S)
+001e0610f02f,Waggle_Others,00A,"CDOT,05/31/2018",0.0,0.0,AoT Chicago (S) [CA]
+001e061089c0,Waggle_Others,00B,TCS 4302 (Returned from CDOT 4/3/17),0.0,0.0,AoT Chicago (T)
+001e06108081,Waggle_Others,00C,Returned - TCS 4302,0.0,0.0,AoT Chicago (T)
+001e06200314,Waggle_Others,00E,Returned - TCS 4302,0.0,0.0,AoT NIU (T)
+001e0610b9fd,Waggle_Others,00F,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned
+001e061089fa,Waggle_Others,011,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned
+001e06107ff0,Waggle_Others,012,TCS 4302 (Returned from CDOT 4/3/17),0.0,0.0,AoT Chicago (T)
+001e0610bbed,Waggle_Others,013,Retired as display piece. With Douglas at SAIC.,0.0,0.0,Hot Glue Humidor (T)
+001e06107e5d,Waggle_Others,014,"State St & Washington St ,[SEC] ,(9/14/2016)",0.0,0.0,AoT Chicago (T) - Replace
+001e0610ba93,Waggle_Others,015,TCS 4302 (Brought Inside Oct 2017),0.0,0.0,Test Control Node (T)
+001e0610ba60,Waggle_Others,016,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned
+001e0610b9eb,Waggle_Others,017,TCS Somewhere?,0.0,0.0,
+001e0610ba3f,Waggle_Others,019,"Fedex, 21/DEC/2017",0.0,0.0,Panasonic at Civic Ctr Park (S)
+001e0610bbe9,Waggle_Others,01A,TCS 4302 - Returned from CDOT 04 Dec 2017,0.0,0.0,AoT Chicago (T) - Replace
+001e0610bc03,Waggle_Others,01B,"TCS 4302 P2,S9",0.0,0.0,AoT Node (S)
+001e0610ba13,Waggle_Others,01C,"7801 S Lawndale Ave, Chicago",0.0,0.0,AoT Chicago (S) [C] {ComEd}
+001e0610b9e1,Waggle_Others,021,TCS 4302 - Returned from CDOT 04 Dec 2017,0.0,0.0,AoT Chicago (T) - Replace
+001e0610ba72,Waggle_Others,022,"TCS 4302 (Returned from Panasonic 4/?/17) P1,S2",0.0,0.0,Panasonic - Dead (T)
+001e0610ba51,Waggle_Others,023,TCS 4302,0.0,0.0,AoT Node (S)
+001e0610bbf5,Waggle_Others,024,TCS 4302 (Returned from NIU Oct 2017),0.0,0.0,Humidor (T)
+001e0610b9f2,Waggle_Others,026,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned
+001e0610bc09,Waggle_Others,027,"TCS 4302 P1,S6",0.0,0.0,AoT Node (S)
+001e0610b9e7,Waggle_Others,028,"Western Blvd & 35th St ,[NWC] ,(02/02/2017)",0.0,0.0,AoT Chicago (T) - Replace
+001e0610b9f8,Waggle_Others,029,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned
+001e0610ba42,Waggle_Others,02E,Returned - TCS 4302,0.0,0.0,AoT Chicago (T) {UChicago}
+001e0610b9f6,Waggle_Others,031,Returned - TCS 4302,0.0,0.0,AoT Chicago (T) {UChicago}
+001e0610f72c,Waggle_Others,036,"TCS 4302 P1,S10",0.0,0.0,AoT Node (S) [C]
+001e0610eee9,Waggle_Others,03A,Returned - TCS 4302,0.0,0.0,AoT Chicago (S)
+001e0610eef0,Waggle_Others,03B,Returned - TCS 4302,0.0,0.0,AoT Node (S) [C]
+001e061135c8,Waggle_Others,042,"Bldg 484, EVS Field Site",0.0,0.0,AoT Node (S) [C] {Argonne}
+001e0610f068,Waggle_Others,043,"TCS 4302 P1,S1",0.0,0.0,AoT Node (S) [C]
+001e0610f8f7,Waggle_Others,049,"TCS 4302 P2,S2",0.0,0.0,AoT Node (S) [C]
+001e0610ef66,Waggle_Others,04A,"TCS 4302 P2,S1",0.0,0.0,AoT Node (S) [C]
+001e0610ee8d,Waggle_Others,04B,"TCS 4302 P1,S3",0.0,0.0,AoT Node (S) [C]
+001e0610e8cb,Waggle_Others,054,"CDOT,05/31/2018",0.0,0.0,AoT Chicago (S) [C]
+001e0610f8f6,Waggle_Others,058,"TCS 4302 P1,S8",0.0,0.0,AoT Node (S) [C]
+001e0610f725,Waggle_Others,059,"TCS 4302 P2,S10",0.0,0.0,AoT Node (S) [C]
+001e0610fc2d,Waggle_Others,05E,"TCS 4302 P2,S8",0.0,0.0,AoT Node (S) [C]
+001e0610e34e,Waggle_Others,061,pod-less node Seans desk TCS,0.0,0.0,AoT Node (S) [CA]
+001e0610890f,Waggle_Others,074,"TCS 4302 P2,S4",0.0,0.0,AoT Node (S) [C]
+001e0610941b,Waggle_Others,078,"CDOT,05/31/2018",0.0,0.0,AoT Chicago (S) [C]
+001e06113a24,Waggle_Others,07A,"TCS 4302 P2,S4",0.0,0.0,AoT Node (S) [C]
+001e061144cd,Waggle_Others,07B,"Ashland Ave & Harrison St ,(05/31/2018)",0.0,0.0,AoT Chicago (S) [C]
+001e061144d6,Waggle_Others,07D,"93rd St & Cottage Grove Ave ,(03/30/2018)",0.0,0.0,AoT Chicago (S) [C]
+001e06113d78,Waggle_Others,083,"Cottage Grove Ave & 95th St ,(05/31/2018)",0.0,0.0,AoT Chicago (S) [C]
+001e06113ae8,Waggle_Others,093,Surya,0.0,0.0,AoT Node (S) [C]
+001e061146d4,Waggle_Others,099,"Torrence Ave & Brainard Ave ,(05/31/2018)",0.0,0.0,AoT Chicago (S) [C]
+001e06109401,Waggle_Others,09A,"Cottage Grove Ave & 115th St ,(05/31/2018)",0.0,0.0,AoT Chicago (S) [C]
+001e0611463b,Waggle_Others,0A9,Surya,0.0,0.0,AoT Node (S) [CP]
+001e0611538f,Waggle_Others,0AB,"Surya,02:04/02/18, 03:/04/17/18, 04:/04/23/18",0.0,0.0,AoT Node (S) [C]
+001e06107c9e,Waggle_Others,BRT03,TCS 5E12,0.0,0.0,"Brain on Test, YK"
+001e0610889b,Waggle_Others,IUH0,Phoenix,0.0,0.0,Intel Test Node
+020000000001,Waggle_Others,LNK5,"10 Hudson Yards, NYC",0.0,0.0,"Indoors, bb-cartlink1"
+001e0610ba64,Waggle_Others,RET,TCS 4302,0.0,0.0,Humidor (T)
+001e06107d97,Waggle_Others,Ret_waggle_006,CBG,0.0,0.0,NU-CBG Uglybox #1
+001e061131d6,Waggle_Others,SPS1,Surya,0.0,0.0,C1 connected to SPS1
+001e0610ea32,Waggle_Others,SPS2,Surya,0.0,0.0,C1 connected to SPS2
+001e06200335,Waggle_Others,THS1,Surya,0.0,0.0,Testing Rig 1
+020000000000,Waggle_Others,VN0,,0.0,0.0,Virtual Node
+001e06200162,Waggle_Others,W000,TCS 5th floor,0.0,0.0,"Ugly image collector, YK"
+001e061088bf,Waggle_Others,W001,TCS 3134,0.0,0.0,Uglybox - Pete SaT
+001e06107e4c,Waggle_Others,W002,,0.0,0.0,None
+001e061080a7,Waggle_Others,W004,Purdue (12/07/2017),0.0,0.0,Ugly box with solar/wind power
+001e06107d7f,Waggle_Others,W007,,0.0,0.0,
+001e061089e5,Waggle_Others,W009,"Chattanooga, TN",0.0,0.0,David Lary's Ugly Box #2
+001e0620051e,Waggle_Others,W00A,TCS outside,0.0,0.0,David Lary's Ugly Box #3
+001e06200325,Waggle_Others,W00B,ANL 5th Floor,0.0,0.0,
+001e061088c8,Waggle_Others,W00X,"Chattanooga, TN",0.0,0.0,David Lary's Ugly Box #1
+001e06108a8a,Waggle_Others,W037,TCS Outside,0.0,0.0,Waggle node
