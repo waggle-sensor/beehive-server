@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+import argparse
+from cassandra.cluster import Cluster
+import datetime
+import pika
+import waggle.protocol
+
+
+cluster = Cluster(['127.0.0.1', 'cassandra'])
+session = cluster.connect('waggle')
+
+data_by_date_query = '''
+INSERT INTO sensor_data_by_date
+(date, timestamp, node_id, subsystem, sensor, parameter, value)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+'''
+
+data_by_type_query = '''
+INSERT INTO sensor_data_by_type
+(node_id, subsystem, sensor, parameter, timestamp, value)
+VALUES (?, ?, ?, ?, ?, ?)
+'''
+
+data_by_date_prepared = session.prepare(data_by_date_query)
+data_by_type_prepared = session.prepare(data_by_type_query)
+
+
+def unpack_messages_and_sensorgrams(body):
+    for message in waggle.protocol.unpack_waggle_packets(body):
+        for datagram in waggle.protocol.unpack_datagrams(message['body']):
+            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                yield message, datagram, sensorgram
+
+
+def message_handler(ch, method, properties, body):
+    for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
+        ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
+        node_id = message['sender_id']
+        subsystem = str(int(message['sender_sub_id'], 16))
+        sensor = str(sensorgram['sensor_id'])
+        parameter = str(sensorgram['parameter_id'])
+        value = str(sensorgram['value'])
+
+        session.execute(
+            data_by_date_prepared,
+            (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
+
+        session.execute(
+            data_by_type_prepared,
+            (node_id, subsystem, sensor, parameter, ts, value))
+
+        print(ts, node_id, subsystem, sensor, parameter, value, sep=',', flush=True)
+
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--url', default='amqp://localhost')
+    parser.add_argument('node_id')
+    args = parser.parse_args()
+
+    queue = 'to-node-{}'.format(args.node_id)
+
+    connection = pika.BlockingConnection(pika.URLParameters(args.url))
+    channel = connection.channel()
+
+    channel.queue_declare(queue=queue, durable=True)
+    channel.basic_consume(message_handler, queue)
+    channel.start_consuming()
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,3 @@
+cassandra-driver
+pika
+git+https://github.com/waggle-sensor/pywaggle@v0.24.0
