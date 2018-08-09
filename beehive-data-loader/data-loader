@@ -36,7 +36,7 @@ def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
-        subsystem = str(int(message['sender_sub_id'], 16))
+        subsystem = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
         parameter = str(sensorgram['parameter_id'])
         value = str(sensorgram['value'])
