@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import argparse
 from cassandra.cluster import Cluster
+import csv
 import datetime
 import pika
+import sys
 import waggle.protocol
 
 
@@ -38,6 +40,9 @@ def unpack_messages_and_sensorgrams(body):
                 yield message, datagram, sensorgram
 
 
+csvout = csv.writer(sys.stdout)
+
+
 def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
@@ -55,7 +60,16 @@ def message_handler(ch, method, properties, body):
             data_by_type_prepared,
             (node_id, subsystem, sensor, parameter, ts, value))
 
-        print(ts, node_id, subsystem, sensor, parameter, value, sep=',', flush=True)
+        csvout.writerow([
+            ts,
+            node_id,
+            subsystem,
+            sensor,
+            parameter,
+            value,
+        ])
+
+        sys.stdout.flush()
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
