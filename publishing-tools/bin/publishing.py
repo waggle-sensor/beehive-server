@@ -59,6 +59,8 @@ def load_nodes_metadata(filename):
                 'lat': lat,
                 'lon': lon,
                 'description': row['description'],
+                'start_timestamp': load_timestamp_or_none(row['start_timestamp']),
+                'end_timestamp': load_timestamp_or_none(row['end_timestamp']),
             })
 
     return events
@@ -68,21 +70,39 @@ def load_timestamp(timestamp):
     return datetime.strptime(timestamp, '%Y/%m/%d %H:%M:%S')
 
 
-def load_events_metadata(filename):
-    events = []
+def load_timestamp_or_none(timestamp):
+    try:
+        return load_timestamp(timestamp)
+    except ValueError:
+        return None
 
-    with open(filename) as csvfile:
-        reader = csv.DictReader(csvfile)
+
+def generate_events_metadata(filename):
+    with open(filename) as file:
+        reader = csv.DictReader(file)
 
         for row in reader:
-            events.append({
-                'node_id': row['node_id'][-12:].lower(),
-                'timestamp': load_timestamp(row['timestamp']),
-                'event': row['event'].lower(),
-                'comment': row['comment'],
-            })
+            node_id = row['node_id'][-12:].lower()
 
-    return events
+            try:
+                yield {
+                    'node_id': node_id,
+                    'timestamp': load_timestamp(row['start_timestamp']),
+                    'event': 'commissioned',
+                    'comment': '',
+                }
+            except ValueError:
+                pass
+
+            try:
+                yield {
+                    'node_id': node_id,
+                    'timestamp': load_timestamp(row['end_timestamp']),
+                    'event': 'decommissioned',
+                    'comment': '',
+                }
+            except ValueError:
+                pass
 
 
 # NOTE mutates nodes. may change in future.
@@ -108,7 +128,7 @@ def join_metadata(nodes, events):
 
 def load_project_metadata(basepath):
     nodes = load_nodes_metadata(basepath + '/nodes.csv')
-    events = load_events_metadata(basepath + '/events.csv')
+    events = generate_events_metadata(basepath + '/nodes.csv')
     return join_metadata(nodes, events)
 
 
