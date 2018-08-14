@@ -1,5 +1,5 @@
-node_id,project_id,vsn,address,lat,lon,description
-001e0610ba5c,AoT_UNC,005,TBD,0.0,0.0,AoT UNC (S) [C]
-001e0610eef6,AoT_UNC,047,TBD,0.0,0.0,AoT UNC (S) [C]
-001e0610f063,AoT_UNC,055,TBD,0.0,0.0,AoT UNC (S) [C]
-001e0610f8fd,AoT_UNC,044,TBD,0.0,0.0,AoT UNC (S) [C]
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e0610ba5c,AoT_UNC,005,TBD,0.0,0.0,AoT UNC (S) [C],2018/01/01 00:00:00,
+001e0610f8fd,AoT_UNC,044,TBD,0.0,0.0,AoT UNC (S) [C],2018/01/01 00:00:00,
+001e0610eef6,AoT_UNC,047,TBD,0.0,0.0,AoT UNC (S) [C],2018/01/01 00:00:00,
+001e0610f063,AoT_UNC,055,TBD,0.0,0.0,AoT UNC (S) [C],2018/01/01 00:00:00,

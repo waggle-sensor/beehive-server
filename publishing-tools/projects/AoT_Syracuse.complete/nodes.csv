@@ -1,4 +1,4 @@
-node_id,project_id,vsn,address,lat,lon,description
-001e0610e547,AoT_Syracuse,060,TBD,0.0,0.0,AoT Syracuse (S) [CA]
-001e061146b8,AoT_Syracuse,0A8,TBD,0.0,0.0,AoT Syracuse (S) [CP]
-001e06114640,AoT_Syracuse,09E,TBD,0.0,0.0,AoT Syracuse (S) [C]
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e0610e547,AoT_Syracuse,060,TBD,0.0,0.0,AoT Syracuse (S) [CA],2018/02/22 00:00:00,
+001e06114640,AoT_Syracuse,09E,TBD,0.0,0.0,AoT Syracuse (S) [C],2018/02/22 00:00:00,
+001e061146b8,AoT_Syracuse,0A8,TBD,0.0,0.0,AoT Syracuse (S) [CP],2018/02/22 00:00:00,

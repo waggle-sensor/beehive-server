@@ -1,4 +1,4 @@
-node_id,project_id,vsn,address,lat,lon,description
-001e06115388,AoT_Stanford,063,TBD,0.0,0.0,AoT Stanford (S) [C]
-001e061130f7,AoT_Stanford,084,TBD,0.0,0.0,AoT Stanford (S) [C]
-001e0611536a,AoT_Stanford,08A,TBD,0.0,0.0,AoT Stanford (S) [C]
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e06115388,AoT_Stanford,063,TBD,0.0,0.0,AoT Stanford (S) [C],2018/01/01 00:00:00,
+001e061130f7,AoT_Stanford,084,TBD,0.0,0.0,AoT Stanford (S) [C],2018/01/01 00:00:00,
+001e0611536a,AoT_Stanford,08A,TBD,0.0,0.0,AoT Stanford (S) [C],2018/01/01 00:00:00,

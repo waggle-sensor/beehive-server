@@ -1,4 +1,4 @@
-node_id,project_id,vsn,address,lat,lon,description
-001e0610ba01,AoT_NIU,01E,TBD,0.0,0.0,AoT Node (S) {NIU}
-001e0610ba8d,AoT_NIU,NIUU01,TBD,0.0,0.0,Ugly Kit at NIU
-001e0610eb9d,AoT_NIU,035,TBD,0.0,0.0,AoT Node (S) {NIU}
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e0610ba01,AoT_NIU,01E,TBD,0.0,0.0,AoT Node (S) {NIU},2018/01/01 00:00:00,
+001e0610eb9d,AoT_NIU,035,TBD,0.0,0.0,AoT Node (S) {NIU},2018/01/01 00:00:00,
+001e0610ba8d,AoT_NIU,NIUU01,TBD,0.0,0.0,Ugly Kit at NIU,2018/01/01 00:00:00,

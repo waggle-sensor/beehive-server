@@ -1,10 +1,10 @@
-node_id,project_id,vsn,address,lat,lon,description
-001e0610ba89,AoT_Denver,008,TBD,0.0,0.0,AoT Denver (S)
-001e061130fe,AoT_Denver,05F,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610ee5f,AoT_Denver,091B,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610f029,AoT_Denver,045,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610ef75,AoT_Denver,009,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610ef03,AoT_Denver,046,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610e80f,AoT_Denver,033,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0610ef1d,AoT_Denver,05C,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
-001e0611320d,AoT_Denver,05B,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA]
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e0610ba89,AoT_Denver,008,TBD,0.0,0.0,AoT Denver (S),2018/02/22 00:00:00,
+001e0610ef75,AoT_Denver,009,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0610e80f,AoT_Denver,033,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0610f029,AoT_Denver,045,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0610ef03,AoT_Denver,046,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0611320d,AoT_Denver,05B,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0610ef1d,AoT_Denver,05C,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e061130fe,AoT_Denver,05F,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
+001e0610ee5f,AoT_Denver,091B,TBD,0.0,0.0,AoT Denver - Panasonic (S) [CA],2018/02/22 00:00:00,
