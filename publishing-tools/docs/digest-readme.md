@@ -87,19 +87,20 @@ file is a CSV with the following fields:
 * `node_id` - ID of node.
 * `project_id` - ID of project which manages node.
 * `vsn` - Public name for node. The VSN is visible on the physical enclosure.
-* `address` - Street address of node.
-* `lat` - Latitude of node.
-* `lon` - Longitude of node.
+* `address` - Street address of node installation.
+* `lat` - Latitude of node installation.
+* `lon` - Longitude of node installation.
 * `description` - More detailed description of node's build and configuration.
+* `start_timestamp` - Starting timestamp of node installation.
+* `end_timestamp` - Ending timestamp of node installation.
 
 These fields will always be provided as a header, for example:
 ```
-node_id,project_id,vsn,address,lat,lon,description
-001e0610bc10,AoT Chicago,01F,"State St & 87th Chicago IL",41.736314,-87.624179,AoT Chicago (S) [C]
-001e0610ba8b,AoT Chicago,018,"Stony Island Ave & 63rd St Chicago IL",41.7806,-87.586456,AoT Chicago (S) [C]
-001e0610ba18,AoT Chicago,01D,"Damen Ave & Cermak Chicago IL",41.852179,-87.675825,AoT Chicago (S)
-001e0610ba81,AoT Chicago,040,"Lake Shore Drive & 85th St Chicago IL",41.741148,-87.54045,AoT Chicago (S)
-001e0610ba16,AoT Chicago,010,"Ohio St & Grand Ave Chicago IL",41.891964,-87.611603,AoT Chicago (S) [C]
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e0610ba46,AoT_Chicago,004,State St & Jackson Blvd Chicago IL,41.878377,-87.627678,AoT Chicago (S) [C],2017/10/09 00:00:00,
+001e0610ba3b,AoT_Chicago,006,18th St & Lake Shore Dr Chicago IL,41.858136,-87.616055,AoT Chicago (S),2017/08/08 00:00:00,
+001e0610ba8f,AoT_Chicago,00D,Cornell & 47th St Chicago IL,41.810342,-87.590228,AoT Chicago (S),2017/08/08 00:00:00,
+001e0610ba16,AoT_Chicago,010,Ohio St & Grand Ave Chicago IL,41.891964,-87.611603,AoT Chicago (S) [C],2017/12/01 00:00:00,2018/06/04 00:00:00
 ```
 
 Additional details about a node are contained in the description field. The letters
