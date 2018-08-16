@@ -34,7 +34,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061135cb,AoT_Chicago,052,Ashland & 63rd St Chicago IL,41.779369,-87.664421,AoT Chicago (S) [C],2018/02/13 00:00:00,
 001e0610e532,AoT_Chicago,053,Racine Ave & 18th St Chicago IL,41.857959,-87.656427,AoT Chicago (S) [C],2017/12/15 00:00:00,
 001e0610ee5d,AoT_Chicago,056,Long Ave & Fullerton Ave Chicago IL,41.923996,-87.761072,AoT Chicago (S) [C],2018/02/23 00:00:00,
-001e0610ef73,AoT_Chicago,057,TCS 4302,41.718008,-87.982901,AoT Chicago (S) [C] {ComEd},2017/01/01 00:00:00,
+001e0610ef73,AoT_Chicago,057,TCS 4302,41.718008,-87.982901,AoT Chicago (S) [C] {ComEd},2017/01/01 00:00:00,2018/08/15 00:00:00
 001e0610e540,AoT_Chicago,05A,Fort Dearborn Dr & 31st St Chicago IL,41.838618,-87.607817,AoT Chicago (S) [C],2017/11/29 00:00:00,
 001e0610f6dd,AoT_Chicago,05D,Pulaski Rd & Chicago Ave Chicago IL,41.895355,-87.726064,AoT Chicago (S) [C],2018/02/06 00:00:00,
 001e06113ad8,AoT_Chicago,062,Ashland Ave & Roosevelt Rd Chicago IL,41.866786,-87.666306,AoT Chicago (S) [C],2018/02/27 00:00:00,
