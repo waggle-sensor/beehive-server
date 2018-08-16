@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+import argparse
+import csv
+import datetime
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='+')
+    args = parser.parse_args()
+
+    for filename in args.filenames:
+        fieldnames, rows = read_csv_file(filename)
+
+        if not valid_fieldnames(fieldnames):
+            print('{} invalid fieldnames'.format(filename))
+
+        for lineno, row in enumerate(rows):
+            if not valid_row(row):
+                print('{}:{} invalid row'.format(filename, lineno+1))
+
+
+def read_csv_file(filename):
+    with open(filename) as file:
+        reader = csv.DictReader(file)
+        rows = list(reader)
+        fieldnames = reader.fieldnames
+        return fieldnames, rows
+
+
+def valid_fieldnames(fieldnames):
+    return fieldnames == [
+        'node_id',
+        'project_id',
+        'vsn',
+        'address',
+        'lat',
+        'lon',
+        'description',
+        'start_timestamp',
+        'end_timestamp',
+    ]
+
+
+def valid_row(row):
+    if None in row:
+        return False
+
+    if not valid_timestamp(row['start_timestamp']):
+        return False
+
+    if row['end_timestamp'] != '' and not valid_timestamp(row['end_timestamp']):
+        return False
+
+    return True
+
+
+def valid_timestamp(s):
+    try:
+        datetime.datetime.strptime(s, '%Y/%m/%d %H:%M:%S')
+        return True
+    except ValueError:
+        return False
+
+
+if __name__ == '__main__':
+    main()
