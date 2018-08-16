@@ -16,8 +16,8 @@ def main():
             print('{} invalid fieldnames'.format(filename))
 
         for lineno, row in enumerate(rows):
-            if not valid_row(row):
-                print('{}:{} invalid row'.format(filename, lineno+1))
+            for error in get_row_errors(row):
+                print('{}:{} {}'.format(filename, lineno+2, error))
 
 
 def read_csv_file(filename):
@@ -42,17 +42,41 @@ def valid_fieldnames(fieldnames):
     ]
 
 
-def valid_row(row):
+def get_row_errors(row):
     if None in row:
-        return False
+        yield 'extra fields'
+
+    if not row['node_id']:
+        yield 'no node_id'
+
+    if not row['project_id']:
+        yield 'no project_id'
+
+    if not row['vsn']:
+        yield 'no vsn'
+
+    if not row['address']:
+        yield 'no address'
+
+    if not valid_coordinate(row['lat']):
+        yield 'invalid lat'
+
+    if not valid_coordinate(row['lon']):
+        yield 'invalid lon'
 
     if not valid_timestamp(row['start_timestamp']):
-        return False
+        yield 'invalid start_timestamp'
 
     if row['end_timestamp'] != '' and not valid_timestamp(row['end_timestamp']):
-        return False
+        yield 'invalid end_timestamp'
 
-    return True
+
+def valid_coordinate(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
 def valid_timestamp(s):
