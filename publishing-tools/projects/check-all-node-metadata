@@ -1,3 +1,0 @@
-#!/bin/sh
-
-./check-node-metadata */nodes.csv
