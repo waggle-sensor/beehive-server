@@ -92,7 +92,7 @@ if __name__ == '__main__':
             for s in sensorsamples:
                 observation[s[3]] = s[4]
 
-            observations[sensor] = observation
+            observations[sensor.upper()] = observation
 
         results.append({
             'node_id': node['vsn'],
