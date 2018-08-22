@@ -4,7 +4,7 @@ set -e
 
 init_dir=$(pwd)
 
-build_dir=$(mktemp)
+build_dir=$(mktemp -d -q)
 echo "building in $build_dir"
 
 cleanup() {
