@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import fileinput
+from datetime import datetime
+import sys
+
+now = datetime.now()
+
+for line in map(str.strip, fileinput.input()):
+    try:
+        fields = line.split()
+        date = datetime.strptime(fields[1], '%Y-%m-%d')
+
+        if abs((now - date).total_seconds()) <= 3600:
+            print(line, flush=True)
+    except KeyboardInterrupt:
+        break
+    except Exception as e:
+        print(e, flush=True, file=sys.stderr)
