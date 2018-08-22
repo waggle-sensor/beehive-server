@@ -4,6 +4,7 @@ import csv
 import json
 import gzip
 import os
+import sys
 from datetime import datetime
 from itertools import groupby
 
@@ -35,52 +36,50 @@ def load_data_file(path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('project_dir', help='Project directory.')
+    parser.add_argument('project_dirs', nargs='+', help='Project directories.')
     args = parser.parse_args()
-
-    os.chdir(args.project_dir)
-
-    nodes = load_csv_file('nodes.csv')
-    nodes_by_id = {node['node_id']: node for node in nodes}
 
     results = []
 
-    samples = load_data_file('data.csv.gz')
+    for project_dir in args.project_dirs:
+        nodes = load_csv_file(os.path.join(project_dir, 'nodes.csv'))
+        samples = load_data_file(os.path.join(project_dir, 'data.csv.gz'))
 
-    for (node_id, timestamp), groupsamples in groupby(samples, key=lambda s: (s[0], s[1])):
-        observations = {}
+        nodes_by_id = {node['node_id']: node for node in nodes}
 
-        if node_id not in nodes_by_id:
-            continue
+        for (node_id, timestamp), groupsamples in groupby(samples, key=lambda s: (s[0], s[1])):
+            observations = {}
 
-        node = nodes_by_id[node_id]
+            if node_id not in nodes_by_id:
+                continue
 
-        try:
-            lat = float(node['lat'])
-        except (KeyError, ValueError):
-            continue
+            node = nodes_by_id[node_id]
 
-        try:
-            lon = float(node['lon'])
-        except (KeyError, ValueError):
-            continue
+            try:
+                lat = float(node['lat'])
+            except (KeyError, ValueError):
+                continue
 
-        for sensor, sensorsamples in groupby(groupsamples, key=lambda s: s[2]):
-            observation = {}
+            try:
+                lon = float(node['lon'])
+            except (KeyError, ValueError):
+                continue
 
-            for s in sensorsamples:
-                observation[s[3]] = s[4]
+            for sensor, sensorsamples in groupby(groupsamples, key=lambda s: s[2]):
+                observation = {}
 
-            observations[sensor] = observation
+                for s in sensorsamples:
+                    observation[s[3]] = s[4]
 
-        results.append({
-            'node_id': node['vsn'],
-            'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-            'latitude': lat,
-            'longitude': lon,
-            'human_address': node['address'],
-            'observations': observations,
-        })
+                observations[sensor] = observation
 
-with open('plenario-data.json', 'w') as file:
-    json.dump(results, file)
+            results.append({
+                'node_id': node['vsn'],
+                'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'latitude': lat,
+                'longitude': lon,
+                'human_address': node['address'],
+                'observations': observations,
+            })
+
+    json.dump(results, sys.stdout)
