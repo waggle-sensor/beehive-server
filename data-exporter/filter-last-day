@@ -10,7 +10,7 @@ for line in map(str.strip, fileinput.input()):
         fields = line.split()
         date = datetime.strptime(fields[1], '%Y-%m-%d')
 
-        if (now - date).total_seconds() <= 3600*36:
+        if abs((now - date).total_seconds()) <= 3600*36:
             print(line, flush=True)
     except KeyboardInterrupt:
         break
