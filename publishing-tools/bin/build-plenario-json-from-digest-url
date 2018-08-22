@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+import csv
+import io
+import os
+import requests
+import tarfile
+import argparse
+import json
+import gzip
+import sys
+from datetime import datetime
+from itertools import groupby
+
+
+def get_archive_index(archive):
+    index = {}
+
+    for name in archive.getnames():
+        base, filename = os.path.split(name)
+        if not base:
+            continue
+        index[filename] = name
+
+    return index
+
+
+def load_nodes_file(archive):
+    index = get_archive_index(archive)
+    return list(csv.DictReader(archive.extractfile(index['nodes.csv']).read().decode().splitlines()))
+
+
+def load_data_file(archive):
+    index = get_archive_index(archive)
+
+    data = gzip.decompress(archive.extractfile(index['data.csv.gz']).read()).decode().splitlines()
+    reader = csv.DictReader(data)
+
+    for row in reader:
+        node_id = row['node_id']
+
+        timestamp = datetime.strptime(row['timestamp'], '%Y/%m/%d %H:%M:%S')
+
+        try:
+            value = float(row['value_hrf'])
+        except ValueError:
+            continue
+
+        sensor = row['sensor']
+        parameter = row['parameter']
+
+        yield node_id, timestamp, sensor, parameter, value
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('url', help='URL to build Plenario JSON from.')
+    args = parser.parse_args()
+
+    r = requests.get(args.url)
+
+    content = io.BytesIO(r.content)
+    archive = tarfile.open(fileobj=content)
+
+    results = []
+
+    nodes = load_nodes_file(archive)
+    samples = load_data_file(archive)
+
+    nodes_by_id = {node['node_id']: node for node in nodes}
+
+    for (node_id, timestamp), groupsamples in groupby(samples, key=lambda s: (s[0], s[1])):
+        observations = {}
+
+        if node_id not in nodes_by_id:
+            continue
+
+        node = nodes_by_id[node_id]
+
+        try:
+            lat = float(node['lat'])
+        except (KeyError, ValueError):
+            continue
+
+        try:
+            lon = float(node['lon'])
+        except (KeyError, ValueError):
+            continue
+
+        for sensor, sensorsamples in groupby(groupsamples, key=lambda s: s[2]):
+            observation = {}
+
+            for s in sensorsamples:
+                observation[s[3]] = s[4]
+
+            observations[sensor] = observation
+
+        results.append({
+            'node_id': node['vsn'],
+            'timestamp': timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'latitude': lat,
+            'longitude': lon,
+            'human_address': node['address'],
+            'observations': observations,
+        })
+
+    json.dump(results, sys.stdout)
