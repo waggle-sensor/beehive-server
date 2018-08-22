@@ -1,8 +1,10 @@
 #!/bin/sh
 
-init_dir=$(pwd)
-build_dir=$(mktemp)
+set -e
 
+init_dir=$(pwd)
+
+build_dir=$(mktemp)
 echo "building in $build_dir"
 
 cleanup() {
@@ -11,8 +13,8 @@ cleanup() {
 }
 
 trap cleanup EXIT
-
 cd $build_dir
+
 mkdir -p digests
 wget -P downloads 'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT_Chicago.public.recent.tar'
 tar -C digests -xvf downloads/*.tar
