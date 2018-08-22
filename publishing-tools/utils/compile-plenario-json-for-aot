@@ -1,13 +1,25 @@
 #!/bin/sh
 
-rm -rf downloads digests plenario.json
-mkdir -p digests
+init_dir=$(pwd)
+build_dir=$(mktemp)
 
+echo "building in $build_dir"
+
+cleanup() {
+  echo "cleaning up $build_dir"
+  rm -rf $build_dir
+}
+
+trap cleanup EXIT
+
+cd $build_dir
+mkdir -p digests
 wget -P downloads 'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT_Chicago.public.recent.tar'
 tar -C digests -xvf downloads/*.tar
 
-# only expecting one project for now, but can be expanded to more
+# only expecting one project for now, but can be expanded to aggregate more
 for dir in $(echo digests/*); do
   /Users/Sean/beehive-server/publishing-tools/bin/compile-plenario-json $dir
-  cp $dir/plenario-data.json plenario.json
+  cp $dir/plenario-data.json $init_dir/plenario.json
+  break
 done
