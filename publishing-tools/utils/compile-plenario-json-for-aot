@@ -1,0 +1,13 @@
+#!/bin/sh
+
+rm -rf downloads digests plenario.json
+mkdir -p digests
+
+wget -P downloads 'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/AoT_Chicago.public.recent.tar'
+tar -C digests -xvf downloads/*.tar
+
+# only expecting one project for now, but can be expanded to more
+for dir in $(echo digests/*); do
+  /Users/Sean/beehive-server/publishing-tools/bin/compile-plenario-json $dir
+  cp $dir/plenario-data.json plenario.json
+done
