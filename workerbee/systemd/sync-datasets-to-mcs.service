@@ -1,0 +1,5 @@
+[Unit]
+Description=Sync datasets to MCS.
+
+[Service]
+ExecStart=/home/sean/sync-datasets.sh

@@ -1,0 +1,8 @@
+[Unit]
+Description=Update digests nightly.
+
+[Timer]
+OnCalendar=*-*-* 19:30:00
+
+[Install]
+WantedBy=timers.target

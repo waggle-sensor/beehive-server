@@ -1,0 +1,8 @@
+[Unit]
+Description=Update datasets hourly.
+
+[Timer]
+OnCalendar=*:02/5
+
+[Install]
+WantedBy=timers.target

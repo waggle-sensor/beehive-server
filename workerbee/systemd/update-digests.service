@@ -1,0 +1,5 @@
+[Unit]
+Description=Update project digests.
+
+[Service]
+ExecStart=/home/sean/update-digests.sh

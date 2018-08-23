@@ -1,0 +1,8 @@
+[Unit]
+Description=Update docs.
+
+[Timer]
+OnCalendar=*:0/10
+
+[Install]
+WantedBy=timers.target

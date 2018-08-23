@@ -1,0 +1,5 @@
+[Unit]
+Description=Update decoded datasets from last 24h
+
+[Service]
+ExecStart=/home/sean/update-datasets.sh

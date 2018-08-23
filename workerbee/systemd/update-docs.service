@@ -1,0 +1,5 @@
+[Unit]
+Description=Update waggle docs
+
+[Service]
+ExecStart=/home/sean/crondoc/update
