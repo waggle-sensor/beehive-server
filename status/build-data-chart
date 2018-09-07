@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+import argparse
+import csv
+import datetime
+import subprocess
+
+
+def load_csv_file(path):
+    with open(path) as file:
+        return list(csv.DictReader(file))
+
+
+def symbol(x):
+    return str(int(x))
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-n', default=90, type=int)
+parser.add_argument('--order', default='last', choices=['last', 'first', 'uptime'])
+parser.add_argument('-r', '--reverse', action='store_true')
+args = parser.parse_args()
+
+
+keys = set()
+
+results = subprocess.check_output(['ssh', 'beehive1', '~/beehive-server/data-exporter/list-datasets']).decode()
+
+for line in results.splitlines():
+    fields = line.split()
+    node_id = fields[0][-12:].lower()
+    date = fields[1]
+    keys.add((node_id, date))
+
+
+nodes = load_csv_file('nodeinfo.csv')
+
+now = datetime.datetime.utcnow()
+ns = list(range(args.n))
+dates = [now - datetime.timedelta(days=n) for n in ns]
+dates.sort()
+
+results = []
+
+for node in nodes:
+    host = 'node{}'.format(node['ssh_port'])
+    up = [(node['node_id'], date.strftime('%Y-%m-%d')) in keys for date in dates]
+    results.append((node['node_id'], host, up))
+
+
+if args.order == 'first':
+    def sortkey(r):
+        return r[2], r[1]
+elif args.order == 'last':
+    def sortkey(r):
+        return r[2][::-1], r[1]
+elif args.order == 'uptime':
+    def sortkey(r):
+        return sum(int(x) for x in r[2]), r[1]
+else:
+    raise ValueError('Invalid order.')
+
+
+results.sort(key=sortkey, reverse=args.reverse)
+
+for r in results:
+    print(r[0], r[1], ''.join(map(symbol, r[2])))
