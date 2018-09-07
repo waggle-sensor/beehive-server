@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import re
 import sys
 
+cmap = 'bone'
+
 parser = argparse.ArgumentParser()
 parser.add_argument('outfile', nargs='?')
 args = parser.parse_args()
@@ -15,8 +17,8 @@ for line in sys.stdin:
     img.append([int(c) for c in up])
 
 if args.outfile:
-    plt.imsave(args.outfile, img)
+    plt.imsave(args.outfile, img, cmap=cmap)
 else:
     plt.figure()
-    plt.imshow(img)
+    plt.imshow(img, cmap=cmap)
     plt.show()
