@@ -83,7 +83,7 @@ class certca:
             'cacert': cacert.strip(),
         }
 
-        return json.dumps(response, sort_keys=True, indent=4)
+        return json.dumps(response)
 
 
 def validate_query_string(s):
@@ -165,7 +165,7 @@ class newnode:
             'ssh_key': ssh_key.strip(),
         }
 
-        return json.dumps(response, sort_keys=True, indent=4)
+        return json.dumps(response)
 
 
 def update_authorized_keys_file():
