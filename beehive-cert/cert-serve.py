@@ -147,7 +147,8 @@ def update_authorized_keys_file():
 
 def append_to_authorized_keys_file(data):
     with open(authorized_keys_file, 'a') as file:
-        file.write(data)
+        file.write(data.strip())
+        file.write('\n')
 
     os.chmod(authorized_keys_file, 0600)
 
