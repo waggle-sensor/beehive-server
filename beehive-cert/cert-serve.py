@@ -79,7 +79,7 @@ class certca:
                 'cacert.pem': read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem')).strip(),
             }
 
-            return json.dumps(response)
+            return json.dumps(response, sort_keys=True, indent=4)
         except FileNotFoundError:
             return 'error: cacert file not found !?'
 
@@ -163,7 +163,7 @@ class newnode:
             'ssh_key': ssh_key.strip(),
         }
 
-        return json.dumps(response)
+        return json.dumps(response, sort_keys=True, indent=4)
 
 
 def update_authorized_keys_file():
