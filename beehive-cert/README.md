@@ -13,4 +13,6 @@ Currently, node credentials include:
 * Client Key
 * Client Token
 * Reverse SSH Port
-* SSH Key
+* Client Public Key (in SSH format)
+
+## Storage
