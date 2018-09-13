@@ -6,6 +6,10 @@ waggle_topic=/beehive/introduction
 
 <img src="./images/beehiveconnections.svg" width=900 />
 
+## Installation
+
+Please see [installation notes](./install.md) for deploying a beehive server.
+
 ## Beehive1
 
 ```
