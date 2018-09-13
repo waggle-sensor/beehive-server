@@ -13,6 +13,7 @@ import hashlib
 from os import listdir
 from os.path import isdir, join
 from mysql import Mysql
+import json
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s')
 
@@ -65,13 +66,20 @@ urls = (
 app = web.application(urls, globals())
 
 class index:
+
     def GET(self):
         return 'This is the Waggle certificate server.'
 
 class certca:
+
     def GET(self):
+
         try:
-            return read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem'))
+            response = {
+                'cacert.pem': read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem')).strip(),
+            }
+
+            return json.dumps(response)
         except FileNotFoundError:
             return 'error: cacert file not found !?'
 
@@ -147,12 +155,15 @@ class newnode:
 
         token = generate_token_from_key_and_cert(key=privkey, cert=cert)
 
-        return '{key}\n{cert}\n{token}\n{ssh_port}\n{ssh_key}\n'.format(
-            key=privkey,
-            cert=cert,
-            token=token,
-            ssh_port=port,
-            ssh_key=key_rsa_pub_file_content)
+        response = {
+            'key': privkey.strip(),
+            'cert': cert.strip(),
+            'token': token.strip(),
+            'ssh_port': ssh_port,
+            'ssh_key': ssh_key.strip(),
+        }
+
+        return json.dumps(response)
 
 
 def update_authorized_keys_file():
