@@ -10,7 +10,7 @@ waggle_topic=/beehive/installation
 
 We'll assume Docker CE (Community Edition) version 17.01 or later (_check minimal version_) is installed on the system.
 
-Docker provides their own installation guides [here](https://docs.docker.com/install/linux/docker-ce/) for various system configurations.
+Docker provides their own installation guides for various system configurations. [Here](https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-from-a-package) is a link to the guide for Ubuntu. 
 
 ## Deployment Instructions
 
@@ -25,7 +25,7 @@ cd beehive-server
 
 ### Deploy Containers
 
-Next, we'll specify a deployment directory and spin up all the containers:
+Next, we'll specify a deployment directory and spin up all the containers. The deployment directory holds 1. Databases 2. Nodes Keys 3. Beehive Keys 4. RMQP data. If you remove this directory you loose all persistent stuff. The incoming data from the nodes also gets stored under this directory. :
 
 ```
 export BEEHIVE_ROOT=/path/to/deploy/into
