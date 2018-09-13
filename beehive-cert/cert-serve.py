@@ -143,7 +143,7 @@ class newnode:
         mysql_row_node = db.get_node(nodeid)
 
         if not mysql_row_node:
-            port=db.createNewNode(nodeid)
+            port = db.createNewNode(nodeid)
             if not port:
                 print "Error: Node creation failed"
                 return "Error: Node creation failed"
@@ -155,15 +155,17 @@ class newnode:
             logger.error("Error: port number not found !?")
             return "Error: port number not found !?"
 
-        token = generate_token_from_key_and_cert(key=privkey, cert=cert)
+        # token = generate_token_from_key_and_cert(key=privkey, cert=cert)
 
         response = {
             'key': privkey.strip(),
             'cert': cert.strip(),
-            'token': token.strip(),
+            # 'token': token.strip(),
             'ssh_port': ssh_port,
             'ssh_key': ssh_key.strip(),
         }
+
+        logger.info('response %s', json.dumps(response))
 
         return json.dumps(response)
 
