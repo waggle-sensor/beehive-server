@@ -20,10 +20,7 @@ First, we'll ensure we have the latest code:
 
 ```
 git clone https://github.com/waggle-sensor/beehive-server
-
-# temporary fix before we merge into master
 cd beehive-server
-git checkout newformat
 ```
 
 ### Deploy Containers
