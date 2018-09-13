@@ -9,6 +9,7 @@ import sys
 import logging
 import pprint
 import time
+import hashlib
 from os import listdir
 from os.path import isdir, join
 from mysql import Mysql
@@ -83,22 +84,28 @@ def validate_node_id_string(s):
     return re.match('[0-9a-fA-F]{16}$', s) is not None
 
 
+def generate_token_from_key_and_cert(key, cert):
+    data = (key.strip() + cert.strip()).encode()
+    hexdigest = hashlib.sha1(data).hexdigest()
+    return hexdigest[:8]
+
+
 class newnode:
 
     def GET(self):
         query = web.ctx.query
 
         if not validate_query_string(query):
-            logger.info('GET newnode - Invalid query string "{}"'.format(query))
+            logger.info('GET newnode - Invalid query string "%s"', query)
             return 'error: Invalid query string "{}".\n'.format(query)
 
         nodeid = query.lstrip('?').upper()
 
         if not validate_node_id_string(nodeid):
-            logger.error('GET newnode - Invalid node ID string "{}".'.format(nodeid))
+            logger.error('GET newnode - Invalid node ID string "%s".', nodeid)
             return 'error: Invalid node ID string "{}".\n'.format(nodeid)
 
-        logger.info('GET newnode - Preparing to register "{}".'.format(nodeid))
+        logger.info('GET newnode - Preparing to register "%s".', nodeid)
 
         node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
 
@@ -138,7 +145,14 @@ class newnode:
             logger.error("Error: port number not found !?")
             return "Error: port number not found !?"
 
-        return privkey + "\n" + cert + "\nPORT="+str(port) + "\n" + key_rsa_pub_file_content + "\n"
+        token = generate_token_from_key_and_cert(key=privkey, cert=cert)
+
+        return '{key}\n{cert}\n{token}\n{ssh_port}\n{ssh_key}\n'.format(
+            key=privkey,
+            cert=cert,
+            token=token,
+            ssh_port=port,
+            ssh_key=key_rsa_pub_file_content)
 
 
 def update_authorized_keys_file():
@@ -177,13 +191,8 @@ if __name__ == "__main__":
                 db="waggle")
 
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
-    # get all ports:
-
-    for row in db.query_all("SELECT * FROM nodes"):
-        print row
-
     # get nodes and ports from database
-    for row in db.query_all("SELECT node_id,reverse_ssh_port FROM nodes"):
+    for row in db.query_all('SELECT node_id, reverse_ssh_port FROM nodes'):
         print row
 
         node_id = row[0].upper()
@@ -211,6 +220,9 @@ if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(node_database)
 
+    # TODO Support multiple auth keys here. We can keep them in a directory or
+    # the database.
+
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     registration_script =\
       '/usr/lib/waggle/beehive-server/beehive-sshd/register.sh'
@@ -222,7 +234,8 @@ if __name__ == "__main__":
       % (registration_script, auth_options, registration_key)]
 
     for node_id in node_database.keys():
-        line=None
+        line = None
+
         if 'pub' in node_database[node_id]:
             if 'reverse_ssh_port' in node_database[node_id]:
                 port = node_database[node_id]['reverse_ssh_port']
