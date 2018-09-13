@@ -75,13 +75,15 @@ class certca:
     def GET(self):
 
         try:
-            response = {
-                'cacert.pem': read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem')).strip(),
-            }
-
-            return json.dumps(response, sort_keys=True, indent=4)
+            cacert = read_file(os.path.join(ssl_dir, 'waggleca/cacert.pem'))
         except FileNotFoundError:
             return 'error: cacert file not found !?'
+
+        response = {
+            'cacert': cacert.strip(),
+        }
+
+        return json.dumps(response, sort_keys=True, indent=4)
 
 
 def validate_query_string(s):
