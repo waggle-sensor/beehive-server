@@ -10,6 +10,7 @@ import sys
 import datetime
 from waggle.protocol.v3 import unpack_sensors as unpack_sensors_v3
 from waggle.protocol.v5 import unpack_sensors as unpack_sensors_v5
+from waggle.protocol.v5.encoder import encode_frame as encode_frame_v5
 from io import StringIO
 import multiprocessing
 import gzip
@@ -41,7 +42,19 @@ def normalize_bin_data(data):
     return data
 
 
+alphasense_histogram_id = 0x28
+
+
+def unpack_alphasense_v1(data):
+    frame = {alphasense_histogram_id: [bytes.fromhex(data)]}
+    return unpack_sensors_v5(encode_frame_v5(frame))
+
+
 def decode_row(row):
+    # HACK special support for old alphasense plugin
+    if row.plugin_name == 'alphasense':
+        return unpack_alphasense_v1(row.data)
+
     plugin = (row.plugin_name, row.plugin_version)
 
     if plugin not in decoders:
@@ -67,8 +80,6 @@ def stringify(x):
 
 def decode_rows(node_id, date, results, writer):
     for row in results:
-        plugin = (row.plugin_name, row.plugin_version)
-
         try:
             samples = decode_row(row)
         except KeyboardInterrupt:
