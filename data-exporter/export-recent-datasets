@@ -17,6 +17,15 @@ import gzip
 # TODO clean up this hack to get recent timestamp filtering in
 since = None
 
+
+alphasense_histogram_id = 0x28
+
+
+def unpack_alphasense_v1(data):
+    frame = {alphasense_histogram_id: [bytes.fromhex(data)]}
+    return unpack_sensors_v5(encode_frame_v5(frame))
+
+
 decoders = {
     ('coresense', '3'): unpack_sensors_v3,
     ('coresense', '4'): unpack_sensors_v5,
@@ -24,6 +33,7 @@ decoders = {
     ('image_example', '0'): unpack_sensors_v5,
     ('spl', '0'): unpack_sensors_v5,
     ('d3s', '0'): unpack_sensors_v5,
+    ('alphasense', '1'): unpack_alphasense_v1,
 }
 
 
@@ -39,14 +49,6 @@ def normalize_bin_data(data):
     data = data[data.index(0xaa):]
     data = data[:data.rindex(0x55)+1]
     return data
-
-
-alphasense_histogram_id = 0x28
-
-
-def unpack_alphasense_v1(data):
-    frame = {alphasense_histogram_id: [bytes.fromhex(data)]}
-    return unpack_sensors_v5(encode_frame_v5(frame))
 
 
 def decode_row(row):
