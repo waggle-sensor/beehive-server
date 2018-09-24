@@ -4,7 +4,6 @@ from cassandra.cluster import Cluster
 import os
 import logging
 import csv
-from binascii import hexlify, unhexlify
 import time
 import sys
 import datetime
@@ -60,7 +59,7 @@ def decode_row(row):
     if plugin not in decoders:
         return []
 
-    data = normalize_bin_data(unhexlify(normalize_ascii_data(row.data)))
+    data = normalize_bin_data(bytes.fromhex(normalize_ascii_data(row.data)))
     return decoders[plugin](data)
 
 
@@ -70,7 +69,7 @@ def stringify(x):
     if isinstance(x, tuple) or isinstance(x, list):
         return ','.join(map(stringify, x))
     if isinstance(x, bytes) or isinstance(x, bytearray):
-        return hexlify(x).decode()
+        return x.hex()
     if isinstance(x, float):
         return str(round(x, 5))
     if isinstance(x, bool):
