@@ -18,10 +18,10 @@ from contextlib import contextmanager
 
 @contextmanager
 def timed(*args):
-    start_time = time.time()
+    context_start_time = time.time()
     yield
-    end_time = time.time()
-    print(*args, end_time - start_time, flush=True)
+    context_end_time = time.time()
+    print(*args, context_end_time - context_start_time)
 
 
 def read_file(filename):
