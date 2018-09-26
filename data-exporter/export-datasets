@@ -12,6 +12,15 @@ from waggle.protocol.v5.encoder import encode_frame as encode_frame_v5
 from io import StringIO
 import multiprocessing
 import gzip
+from contextlib import contextmanager
+
+
+@contextmanager
+def timed(*args):
+    start_time = time.time()
+    yield
+    end_time = time.time()
+    print(*args, end_time - start_time)
 
 
 decoders = {
@@ -198,5 +207,6 @@ if __name__ == '__main__':
 
     cluster = Cluster()
 
-    with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster, args.debug)) as pool:
-        pool.map(process_job, jobs)
+    with timed('export_datasets'):
+        with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster, args.debug)) as pool:
+            pool.map(process_job, jobs)
