@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 import argparse
-from glob import glob
 import hashlib
 import datetime
 import os
 import shutil
 import gzip
 import multiprocessing
-import subprocess
 import time
 import publishing
-import pprint
 import sys
 from jinja2 import Template
 import csv
 from io import StringIO
 import logging
+from contextlib import contextmanager
+
+
+@contextmanager
+def timed(*args):
+    start_time = time.time()
+    yield
+    end_time = time.time()
+    print(*args, end_time - start_time, flush=True)
 
 
 def read_file(filename):
@@ -370,11 +376,18 @@ if __name__ == '__main__':
     filtered_dir = os.path.join(build_dir, 'filtered')
     dates_dir = os.path.join(build_dir, 'dates')
 
+    project_id = os.path.basename(project_dir)
+
     os.makedirs(build_dir, exist_ok=True)
     os.makedirs(filtered_dir, exist_ok=True)
     os.makedirs(dates_dir, exist_ok=True)
 
-    update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
-    update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
-    update_combined_file(dates_dir, build_dir)
-    update_project_files(build_dir, project_dir, complete=args.complete)
+    with timed('compile_digest', project_id):
+        with timed('update_filtered_files', project_id):
+            update_filtered_files(data_dir, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
+        with timed('update_date_files', project_id):
+            update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
+        with timed('update_combined_file', project_id):
+            update_combined_file(dates_dir, build_dir)
+        with timed('update_project_files', project_id):
+            update_project_files(build_dir, project_dir, complete=args.complete)
