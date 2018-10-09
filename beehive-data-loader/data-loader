@@ -28,6 +28,8 @@ data_by_type_prepared = session.prepare(data_by_type_query)
 
 
 def stringify_value(value):
+    if isinstance(value, bytes):
+        return value.hex()
     if isinstance(value, list):
         return ','.join(map(str, value))
     return str(value)
