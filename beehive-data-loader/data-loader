@@ -32,7 +32,7 @@ def stringify_value(value):
         return value.hex()
     if isinstance(value, list):
         return ','.join(map(str, value))
-    return str(value)
+    return repr(str(value))
 
 
 def unpack_messages_and_sensorgrams(body):
