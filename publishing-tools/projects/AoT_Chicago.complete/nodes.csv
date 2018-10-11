@@ -84,7 +84,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061146ba,AoT_Chicago,0A3,Long Ave & Lawrence Ave Chicago IL,41.96759,-87.76257,AoT Chicago (S) [P],2018/03/15 00:00:00,
 001e06113a48,AoT_Chicago,0A4,Western Ave & Roscoe Ave Chicago IL,41.943263,-87.688069,AoT Chicago (S) [P],2018/03/15 00:00:00,
 001e06113ba6,AoT_Chicago,0A5,Ashland Ave & Washington Chicago IL,41.883541,-87.666748,AoT Chicago (S) [P],2018/03/19 00:00:00,
-001e06115379,AoT_Chicago,0A6,"N Wells St & W Washington St Chicago, IL ",41.88326,-87.63387,AoT Chicago (S) [P],2018/03/27 00:00:00,
+001e06115379,AoT_Chicago,0A6,"N Wells St & W Washington St Chicago IL ",41.88326,-87.63387,AoT Chicago (S) [P],2018/03/27 00:00:00,
 001e06114fd6,AoT_Chicago,0A7,Upper Wacker Dr & Randolph St Chicago IL,41.88449,-87.636955,AoT Chicago (S) [P],2018/05/07 00:00:00,
 001e0611536c,AoT_Chicago,0AA,Dearborn St & Lake St Chicago IL,41.88575,-87.62969,AoT Chicago (S) [P],2018/05/08 00:00:00,
 001e06114fd9,AoT_Chicago,0AC,Lake Shore Drive & Fullerton Ave Chicago IL,41.926170,-87.631533,AoT Chicago (S) [C],2018/06/04 00:00:00,

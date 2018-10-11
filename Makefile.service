@@ -15,3 +15,7 @@ stop:
 
 restart:
 	docker restart $(name)
+
+snapshot:
+	docker tag $(image) $(image):$(date +'%Y-%m-%d-%H-%M-%S')
+	docker tag $(image) $(image):rollback
