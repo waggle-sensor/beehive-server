@@ -20,4 +20,5 @@ restart:
 	docker restart $(name)
 
 snapshot:
-	docker tag $(image) $(image):snapshot-`date +'%Y-%m-%d-%H-%M-%S'`
+	docker tag $(image) $(image):snapshot-`date +'%Y.%m.%d.%H.%M.%S'`
+	docker tag $(image) $(image):snapshot
