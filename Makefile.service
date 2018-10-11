@@ -22,3 +22,6 @@ restart:
 snapshot:
 	docker tag $(image) $(image):snapshot-`date +'%Y.%m.%d.%H.%M.%S'`
 	docker tag $(image) $(image):snapshot
+
+rollback: image := $(image):snapshot
+rollback: deploy

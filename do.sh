@@ -6,7 +6,7 @@ do_deploy() {
 
   for image in $(echo beehive-*); do
     cd $image
-    make deploy
+    make build && make deploy
     cd ..
   done
 }
