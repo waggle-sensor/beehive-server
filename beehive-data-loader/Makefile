@@ -1,5 +1,6 @@
 name = beehive-data-loader
 image = waggle/$(name)
+include ../Makefile.service
 
 deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -10,5 +11,3 @@ deploy: build
 		--restart=always \
 		--name $(name) \
 		$(image)
-
-include ../Makefile.service

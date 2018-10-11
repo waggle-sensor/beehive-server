@@ -1,5 +1,6 @@
 name = beehive-nginx
 image = waggle/$(name)
+include ../Makefile.service
 
 deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -12,5 +13,3 @@ deploy: build
 		-v $(BEEHIVE_ROOT)/www:/www:ro \
 		--name $(name) \
 		$(image)
-
-include ../Makefile.service

@@ -1,5 +1,6 @@
 name = beehive-cassandra
 image = cassandra:3
+include ../Makefile.service
 
 deploy:
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -18,5 +19,3 @@ deploy:
 
 setup:
 	docker exec -i $(name) 'cqlsh' < init.cql
-
-include ../Makefile.service

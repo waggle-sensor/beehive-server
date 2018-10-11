@@ -1,5 +1,6 @@
 name = beehive-sshd
 image = waggle/$(name)
+include ../Makefile.service
 
 deploy: build
 	-docker network create ${BEEHIVE_DOCKER_NETWORK}
@@ -13,5 +14,3 @@ deploy: build
 		-v ${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
 		$(image)
-
-include ../Makefile.service

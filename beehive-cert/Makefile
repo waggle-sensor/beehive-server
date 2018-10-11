@@ -1,5 +1,6 @@
 name = beehive-cert
 image = waggle/$(name)
+include ../Makefile.service
 
 deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -17,5 +18,3 @@ deploy: build
 setup:
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
 	docker exec -ti $(name) SSL/create_server_cert.sh
-
-include ../Makefile.service

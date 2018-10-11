@@ -1,5 +1,6 @@
 name = beehive-mysql
 image = waggle/$(name)
+include ../Makefile.service
 
 deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -18,5 +19,3 @@ deploy: build
 		--network-alias beehive-mysql \
 		--name $(name) \
 		$(image)
-
-include ../Makefile.service

@@ -1,5 +1,7 @@
 name = beehive-rabbitmq
 image = waggle/$(name)
+include ../Makefile.service
+
 
 deploy: build
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
@@ -38,5 +40,3 @@ setup:
 
 	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
 	-docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$"
-
-include ../Makefile.service
