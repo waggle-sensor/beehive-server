@@ -37,7 +37,7 @@ for username in add_users:
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
 
     config_access = '^to-{}$'.format(username)
-    write_access = '^data|messages$'
+    write_access = '^messages|data-pipeline-in|logs|images$'
     read_access = '^to-{}$'.format(username)
 
     subprocess.check_output([
