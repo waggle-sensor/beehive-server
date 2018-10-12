@@ -38,7 +38,7 @@ else
   echo "Creating client certificate."
   # create certificate request
   openssl req -new -key ./key.pem -out req.pem -outform PEM \
-      -subj /CN=${RABBIT_USER}/O=client/ -nodes
+      -subj "/O=client/CN=${RABBIT_USER}" -nodes
 
   cd ${SSL_DIR}/waggleca
 
