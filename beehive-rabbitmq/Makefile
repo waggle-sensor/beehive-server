@@ -1,5 +1,5 @@
 name = beehive-rabbitmq
-image = waggle/$(name)
+image = waggle/$(name):2
 include ../Makefile.service
 
 deploy:

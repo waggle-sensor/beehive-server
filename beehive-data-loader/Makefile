@@ -1,5 +1,5 @@
 name = beehive-data-loader
-image = waggle/$(name)
+image = waggle/$(name):2
 include ../Makefile.service
 
 deploy:

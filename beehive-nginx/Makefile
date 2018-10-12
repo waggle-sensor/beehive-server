@@ -1,5 +1,5 @@
 name = beehive-nginx
-image = waggle/$(name)
+image = waggle/$(name):2
 include ../Makefile.service
 
 deploy:

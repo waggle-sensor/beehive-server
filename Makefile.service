@@ -19,6 +19,10 @@ stop:
 restart:
 	docker restart $(name)
 
+test: image = waggle/$(name):testing
+test: build
+test: deploy
+
 snapshot:
 	docker tag $(image) $(image):snapshot-`date +'%Y.%m.%d.%H.%M.%S'`
 	docker tag $(image) $(image):snapshot
