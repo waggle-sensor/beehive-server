@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -z "$BEEHIVE_ROOT" ]; then
+  echo "Environment variable BEEHIVE_ROOT is required."
+  exit 1
+fi
+
+dir=backup-$(date +'%Y-%m-%d')
+
+mkdir $dir
+rsync -av $BEEHIVE_ROOT/ssh_keys/ $dir/ssh_keys/
+rsync -ar $BEEHIVE_ROOT/waggle/ $dir/waggle/
+docker exec -ti beehive-mysql mysqldump --user waggle --password=waggle waggle > $dir/mysqldump.sql
+tar -zcvf $dir.tar.gz $dir
