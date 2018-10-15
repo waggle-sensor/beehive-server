@@ -8,7 +8,7 @@ import sys
 import waggle.protocol
 
 
-cluster = Cluster(['127.0.0.1', 'cassandra'])
+cluster = Cluster(['beehive-cassandra', 'cassandra', '127.0.0.1'])
 session = cluster.connect('waggle')
 
 session.execute('''
