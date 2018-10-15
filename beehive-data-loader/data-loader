@@ -11,20 +11,42 @@ import waggle.protocol
 cluster = Cluster(['127.0.0.1', 'cassandra'])
 session = cluster.connect('waggle')
 
-data_by_date_query = '''
-INSERT INTO sensor_data_by_date
+session.execute('''
+CREATE TABLE IF NOT EXISTS waggle.measurements_by_date (
+  date date,
+  timestamp timestamp,
+  node_id text,
+  subsystem text,
+  sensor text,
+  parameter text,
+  value text,
+  PRIMARY KEY ((node_id, date), timestamp, subsystem, sensor, parameter)
+)
+''')
+
+measurements_by_date = session.prepare('''
+INSERT INTO measurements_by_date
 (date, timestamp, node_id, subsystem, sensor, parameter, value)
 VALUES (?, ?, ?, ?, ?, ?, ?)
-'''
+''')
 
-data_by_type_query = '''
-INSERT INTO sensor_data_by_type
+session.execute('''
+CREATE TABLE IF NOT EXISTS waggle.measurements_by_type (
+  timestamp timestamp,
+  node_id text,
+  subsystem text,
+  sensor text,
+  parameter text,
+  value text,
+  PRIMARY KEY ((node_id, subsystem, sensor, parameter), timestamp)
+)
+''')
+
+measurements_by_type = session.prepare('''
+INSERT INTO measurements_by_type
 (node_id, subsystem, sensor, parameter, timestamp, value)
 VALUES (?, ?, ?, ?, ?, ?)
-'''
-
-data_by_date_prepared = session.prepare(data_by_date_query)
-data_by_type_prepared = session.prepare(data_by_type_query)
+''')
 
 
 def stringify_value(value):
@@ -55,11 +77,11 @@ def message_handler(ch, method, properties, body):
         value = stringify_value(sensorgram['value'])
 
         session.execute(
-            data_by_date_prepared,
+            measurements_by_date,
             (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
 
         session.execute(
-            data_by_type_prepared,
+            measurements_by_type,
             (node_id, subsystem, sensor, parameter, ts, value))
 
         csvout.writerow([
