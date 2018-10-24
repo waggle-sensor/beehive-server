@@ -1,0 +1,3 @@
+#!/bin/sh
+
+docker logs --tail 0 -f beehive-data-loader
