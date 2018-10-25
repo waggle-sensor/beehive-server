@@ -12,41 +12,60 @@ cluster = Cluster(['beehive-cassandra'])
 session = cluster.connect('waggle')
 
 session.execute('''
-CREATE TABLE IF NOT EXISTS waggle.measurements_by_date (
-  date date,
-  timestamp timestamp,
+CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
   node_id text,
-  subsystem text,
-  sensor text,
-  parameter text,
-  value text,
-  PRIMARY KEY ((node_id, date), timestamp, subsystem, sensor, parameter)
+  date date,
+  plugin_id text,
+  plugin_version text,
+  plugin_instance text,
+  timestamp timestamp,
+  data blob,
+  PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp, data)
 )
 ''')
 
-measurements_by_date = session.prepare('''
-INSERT INTO measurements_by_date
-(date, timestamp, node_id, subsystem, sensor, parameter, value)
+insert_query = session.prepare('''
+INSERT INTO waggle.data_messages_v2
+(node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, data)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
 
-session.execute('''
-CREATE TABLE IF NOT EXISTS waggle.measurements_by_type (
-  timestamp timestamp,
-  node_id text,
-  subsystem text,
-  sensor text,
-  parameter text,
-  value text,
-  PRIMARY KEY ((node_id, subsystem, sensor, parameter), timestamp)
-)
-''')
-
-measurements_by_type = session.prepare('''
-INSERT INTO measurements_by_type
-(node_id, subsystem, sensor, parameter, timestamp, value)
-VALUES (?, ?, ?, ?, ?, ?)
-''')
+# session.execute('''
+# CREATE TABLE IF NOT EXISTS waggle.measurements_by_date (
+#   date date,
+#   timestamp timestamp,
+#   node_id text,
+#   subsystem text,
+#   sensor text,
+#   parameter text,
+#   value text,
+#   PRIMARY KEY ((node_id, date), timestamp, subsystem, sensor, parameter)
+# )
+# ''')
+#
+# measurements_by_date = session.prepare('''
+# INSERT INTO measurements_by_date
+# (date, timestamp, node_id, subsystem, sensor, parameter, value)
+# VALUES (?, ?, ?, ?, ?, ?, ?)
+# ''')
+#
+# session.execute('''
+# CREATE TABLE IF NOT EXISTS waggle.measurements_by_type (
+#   timestamp timestamp,
+#   node_id text,
+#   subsystem text,
+#   sensor text,
+#   parameter text,
+#   value text,
+#   PRIMARY KEY ((node_id, subsystem, sensor, parameter), timestamp)
+# )
+# ''')
+#
+# measurements_by_type = session.prepare('''
+# INSERT INTO measurements_by_type
+# (node_id, subsystem, sensor, parameter, timestamp, value)
+# VALUES (?, ?, ?, ?, ?, ?)
+# ''')
 
 
 def stringify_value(value):
@@ -67,27 +86,42 @@ def unpack_messages_and_sensorgrams(body):
 csvout = csv.writer(sys.stdout)
 
 
+def get_plugin_version(datagram):
+    return '{plugin_major_version}.{plugin_minor_version}.{plugin_patch_version}'.format(**datagram)
+
+
 def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
-        subsystem = message['sender_sub_id']
+
+        plugin_id = datagram['plugin_id']
+        plugin_version = get_plugin_version(datagram)
+        plugin_instance = datagram['plugin_instance']
+
+        session.execute(
+            insert_query,
+            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
+
+        sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
         parameter = str(sensorgram['parameter_id'])
         value = stringify_value(sensorgram['value'])
 
-        session.execute(
-            measurements_by_date,
-            (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
+        # session.execute(
+        #     measurements_by_date,
+        #     (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
 
-        session.execute(
-            measurements_by_type,
-            (node_id, subsystem, sensor, parameter, ts, value))
+        # session.execute(
+        #     measurements_by_type,
+        #     (node_id, subsystem, sensor, parameter, ts, value))
 
         csvout.writerow([
             ts,
             node_id,
-            subsystem,
+            sub_id,
+            plugin_id,
+            plugin_version,
             sensor,
             parameter,
             value,
