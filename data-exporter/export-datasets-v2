@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+from cassandra.cluster import Cluster
+import waggle.protocol
+import subprocess
+
+
+cluster = Cluster()
+session = cluster.connect('waggle')
+
+query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node_id=%s AND date=%s'
+
+results = []
+results_by_plugin = {}
+
+executables = {
+    ('1', '0.1.0'): '/Users/sean/github.com/waggle-sensor/plugin_manager/plugins/sysmon.plugin/plugin_bin/plugin_beehive',
+    ('50', '0.0.0'): '/Users/sean/github.com/waggle-sensor/plugin_manager/plugins/image-detector.plugin/plugin_bin/plugin_beehive',
+}
+
+for r in session.execute(query, ('0000001e0610ef7b', '2018-10-25')):
+    plugin = (r.plugin_id, r.plugin_version)
+
+    if plugin not in results_by_plugin:
+        results_by_plugin[plugin] = []
+
+    results_by_plugin[plugin].append(r.data)
+    results.append(r.data)
+
+for plugin, results in results_by_plugin.items():
+    if plugin not in executables:
+        print('no plugin for', plugin)
+        continue
+
+    input = b''.join(results)
+    output = subprocess.check_output([executables[plugin]], input=input)
+
+    for message in waggle.protocol.unpack_messages(output):
+        for datagram in waggle.protocol.unpack_datagrams(message['body']):
+            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                print(sensorgram)
