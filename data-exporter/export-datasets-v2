@@ -1,11 +1,34 @@
 #!/usr/bin/env python3
+import argparse
 from cassandra.cluster import Cluster
+import configparser
 import csv
 import datetime
+import os
 import subprocess
 import sys
 import waggle.protocol
 
+
+parser = argparse.ArgumentParser()
+parser.add_argument('plugins', nargs='+')
+args = parser.parse_args()
+
+
+executables = {}
+
+for p in (os.path.abspath(p) for p in args.plugins):
+    executable = os.path.join(p, 'plugin_bin', 'plugin_beehive')
+    if not os.path.exists(executable):
+        print(p, 'missing beehive plugin', file=sys.stderr)
+        continue
+
+    config = configparser.ConfigParser()
+    config.read(os.path.join(p, 'plugin.ver'))
+    section = config['plugin']
+
+    plugin = (section['id'], section['version'])
+    executables[plugin] = executable
 
 cluster = Cluster()
 session = cluster.connect('waggle')
@@ -15,10 +38,6 @@ query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node
 results = []
 results_by_plugin = {}
 
-executables = {
-    ('1', '0.1.0'): '/Users/sean/github.com/waggle-sensor/plugin_manager/plugins/sysmon.plugin/plugin_bin/plugin_beehive',
-    ('50', '0.0.0'): '/Users/sean/github.com/waggle-sensor/plugin_manager/plugins/image-detector.plugin/plugin_bin/plugin_beehive',
-}
 
 writer = csv.writer(sys.stdout)
 
