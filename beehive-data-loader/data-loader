@@ -15,9 +15,9 @@ session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
   node_id text,
   date date,
-  plugin_id text,
+  plugin_id int,
   plugin_version text,
-  plugin_instance text,
+  plugin_instance int,
   timestamp timestamp,
   data blob,
   PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp, data)
@@ -101,7 +101,7 @@ def message_handler(ch, method, properties, body):
 
         session.execute(
             insert_query,
-            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
+            (ts.date(), node_id, str(plugin_id), plugin_version, str(plugin_instance), ts, body))
 
         sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
