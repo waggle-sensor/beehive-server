@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
 
 insert_query = session.prepare('''
 INSERT INTO waggle.data_messages_v2
-(node_id, date, plugin_id, plugin_version, plugin_instance, timestamp, data)
+(date, node_id, plugin_id, plugin_version, plugin_instance, timestamp, data)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
 
