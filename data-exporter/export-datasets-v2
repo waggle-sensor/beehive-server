@@ -10,9 +10,40 @@ import sys
 import waggle.protocol
 
 
+def parse_int_string(s):
+    if s.startswith('0x'):
+        return int(s, 16)
+    return int(s)
+
+
+def load_sdf_file(path):
+    results = []
+
+    with open(path) as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            results.append({
+                'sensor_id': parse_int_string(row['sensor_id']),
+                'sensor_name': row['sensor_name'].strip(),
+                'parameter_id': parse_int_string(row['parameter_id']),
+                'parameter_name': row['parameter_name'].strip(),
+            })
+
+    return results
+
+
 parser = argparse.ArgumentParser()
+parser.add_argument('sdf')
 parser.add_argument('plugins', nargs='+')
 args = parser.parse_args()
+
+
+sdf = load_sdf_file(args.sdf)
+id_to_name = {}
+
+for r in sdf:
+    id_to_name[(r['sensor_id'], r['parameter_id'])] = (r['sensor_name'], r['parameter_name'])
 
 
 executables = {}
@@ -61,12 +92,18 @@ for plugin, results in results_by_plugin.items():
     for message in waggle.protocol.unpack_messages(output):
         for datagram in waggle.protocol.unpack_datagrams(message['body']):
             for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                try:
+                    sensor_name, parameter_name = id_to_name[(sensorgram['sensor_id'], sensorgram['parameter_id'])]
+                except KeyError:
+                    sensor_name, parameter_name = sensorgram['sensor_id'], sensorgram['parameter_id']
+
                 ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
                 writer.writerow([
                     ts.strftime('%Y/%m/%d %H:%M:%S'),
-                    message['sender_id'],
-                    message['sender_sub_id'],
-                    sensorgram['sensor_id'],
-                    sensorgram['parameter_id'],
+                    message['sender_id'][-12:].lower(),
+                    # message['sender_sub_id'],
+                    'subsystem',
+                    sensor_name,
+                    parameter_name,
                     sensorgram['value'],
                 ])
