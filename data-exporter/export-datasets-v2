@@ -3,11 +3,11 @@ import argparse
 from cassandra.cluster import Cluster
 import configparser
 import csv
+import json
 import datetime
 import os
 import subprocess
 import sys
-import waggle.protocol
 
 
 def parse_int_string(s):
@@ -72,7 +72,9 @@ results_by_plugin = {}
 
 writer = csv.writer(sys.stdout)
 
-for r in session.execute(query, ('0000001e0610ef7b', '2018-10-25')):
+node_id = '0000001e0610ef7b'
+
+for r in session.execute(query, (node_id, '2018-10-25')):
     plugin = (r.plugin_id, r.plugin_version)
 
     if plugin not in results_by_plugin:
@@ -88,22 +90,22 @@ for plugin, results in results_by_plugin.items():
 
     input = b''.join(results)
     output = subprocess.check_output([executables[plugin]], input=input)
+    rows = json.loads(output)
 
-    for message in waggle.protocol.unpack_messages(output):
-        for datagram in waggle.protocol.unpack_datagrams(message['body']):
-            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
-                try:
-                    sensor_name, parameter_name = id_to_name[(sensorgram['sensor_id'], sensorgram['parameter_id'])]
-                except KeyError:
-                    sensor_name, parameter_name = sensorgram['sensor_id'], sensorgram['parameter_id']
+    for row in rows:
+        try:
+            sensor, parameter = id_to_name[(row['sensor'], row['parameter'])]
+        except KeyError:
+            sensor, parameter = row['sensor'], row['parameter']
 
-                ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
-                writer.writerow([
-                    ts.strftime('%Y/%m/%d %H:%M:%S'),
-                    message['sender_id'][-12:].lower(),
-                    # message['sender_sub_id'],
-                    'subsystem',
-                    sensor_name,
-                    parameter_name,
-                    sensorgram['value'],
-                ])
+        ts = datetime.datetime.fromtimestamp(row['timestamp'])
+
+        writer.writerow([
+            ts.strftime('%Y/%m/%d %H:%M:%S'),
+            node_id[-12:].lower(),
+            row['subsystem'],
+            sensor,
+            parameter,
+            row['value_raw'],
+            row['value_hrf'],
+        ])
