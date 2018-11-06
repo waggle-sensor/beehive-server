@@ -8,13 +8,13 @@ set -x
 
 # TODO Cleanup this script and have it not destroy existing info.
 
-if [ -z "$1" ]; then
-	commonname="$1"
-else
-	commonname="rabbitmq"
-fi
-
 export SSL_DIR="/usr/lib/waggle/SSL"
+
+if [ -z "$1" ]; then
+	commonname="rabbitmq"
+else
+	commonname="$1"
+fi
 
 cd ${SSL_DIR} # in SSL/
 
