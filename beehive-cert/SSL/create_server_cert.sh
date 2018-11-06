@@ -6,6 +6,14 @@
 set -e
 set -x
 
+# TODO Cleanup this script and have it not destroy existing info.
+
+if [ -z "$1" ]; then
+	commonname="$1"
+else
+	commonname="rabbitmq"
+fi
+
 export SSL_DIR="/usr/lib/waggle/SSL"
 
 cd ${SSL_DIR} # in SSL/
@@ -19,7 +27,7 @@ openssl genrsa -out key.pem 2048
 
 # create request
 openssl req -new -key key.pem -out req.pem -outform PEM \
-	-subj /CN=$(hostname)/O=server/ -nodes
+	-subj /CN=$commonname/O=server/ -nodes
 
 cd ${SSL_DIR}/waggleca
 
