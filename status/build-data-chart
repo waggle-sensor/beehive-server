@@ -3,6 +3,11 @@ import argparse
 import csv
 import datetime
 import subprocess
+import sys
+import os
+
+# work relative to program directory
+os.chdir(os.path.dirname(sys.argv[0]))
 
 
 def load_csv_file(path):
