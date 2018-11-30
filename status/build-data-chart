@@ -53,13 +53,13 @@ for node in nodes:
 
 if args.order == 'first':
     def sortkey(r):
-        return r[2], r[1]
+        return r[1], r[0]
 elif args.order == 'last':
     def sortkey(r):
-        return r[2][::-1], r[1]
+        return r[1][::-1], r[0]
 elif args.order == 'uptime':
     def sortkey(r):
-        return sum(int(x) for x in r[2]), r[1]
+        return sum(int(x) for x in r[1]), r[0]
 else:
     raise ValueError('Invalid order.')
 
