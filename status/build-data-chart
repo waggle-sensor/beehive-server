@@ -47,8 +47,8 @@ dates.sort()
 results = []
 
 for node in nodes:
-    up = [(node['node_id'], date.strftime('%Y-%m-%d')) in keys for date in dates]
-    results.append((node['node_id'], up))
+    up = [(node, date.strftime('%Y-%m-%d')) in keys for date in dates]
+    results.append((node, up))
 
 
 if args.order == 'first':
