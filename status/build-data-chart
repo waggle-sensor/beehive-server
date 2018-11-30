@@ -23,7 +23,7 @@ args = parser.parse_args()
 
 keys = set()
 
-results = subprocess.check_output(['ssh', 'beehive1', '~/beehive-server/data-exporter/list-datasets']).decode()
+results = subprocess.check_output(['../data-exporter/list-datasets']).decode()
 
 for line in results.splitlines():
     fields = line.split()
