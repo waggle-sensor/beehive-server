@@ -37,19 +37,12 @@ for line in results.splitlines():
     keys.add((node_id, date))
 
 
-nodes = load_csv_file('nodeinfo.csv')
-
 now = datetime.datetime.utcnow()
 ns = list(range(args.n))
 dates = [now - datetime.timedelta(days=n) for n in ns]
 dates.sort()
 
 results = []
-
-for node in nodes:
-    host = 'node{}'.format(node['ssh_port'])
-    up = [(node['node_id'], date.strftime('%Y-%m-%d')) in keys for date in dates]
-    results.append((node['node_id'], host, up))
 
 
 if args.order == 'first':
@@ -68,4 +61,4 @@ else:
 results.sort(key=sortkey, reverse=args.reverse)
 
 for r in results:
-    print(r[0], r[1], ''.join(map(symbol, r[2])))
+    print(r[0], ''.join(map(symbol, r[2])))
