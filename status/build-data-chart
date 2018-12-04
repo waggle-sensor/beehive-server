@@ -1,18 +1,7 @@
 #!/usr/bin/env python3
 import argparse
-import csv
+from cassandra.cluster import Cluster
 import datetime
-import subprocess
-import sys
-import os
-
-# work relative to program directory
-os.chdir(os.path.dirname(sys.argv[0]))
-
-
-def load_csv_file(path):
-    with open(path) as file:
-        return list(csv.DictReader(file))
 
 
 def symbol(x):
@@ -25,16 +14,23 @@ parser.add_argument('--order', default='last', choices=['last', 'first', 'uptime
 parser.add_argument('-r', '--reverse', action='store_true')
 args = parser.parse_args()
 
+cluster = Cluster()
+session = cluster.connect('waggle')
 
 keys = set()
 nodes = set()
 
-results = subprocess.check_output(['../data-exporter/list-datasets']).decode()
+rows = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
 
-for line in results.splitlines():
-    fields = line.split()
-    node_id = fields[0][-12:].lower()
-    date = fields[1]
+for row in rows:
+    if not row.node_id:
+        continue
+    if not row.date:
+        continue
+
+    node_id = row.node_id[-12:].lower()
+    date = row.date
+
     nodes.add(node_id)
     keys.add((node_id, date))
 
