@@ -2,6 +2,8 @@
 import argparse
 from cassandra.cluster import Cluster
 import datetime
+import re
+import sys
 
 
 def symbol(x):
@@ -23,9 +25,8 @@ nodes = set()
 rows = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
 
 for row in rows:
-    if not row.node_id:
-        continue
-    if not row.date:
+    if not re.match(r'[0-9a-fA-F]+', row.node_id) or not row.date:
+        print('WARNING - Invalid key {} found.'.format((row.node_id, row.date)), file=sys.stderr)
         continue
 
     node_id = row.node_id[-12:].lower()
