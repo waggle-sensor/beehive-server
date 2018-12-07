@@ -45,9 +45,9 @@ id_to_name = {}
 for r in sdf:
     id_to_name[(r['sensor_id'], r['parameter_id'])] = (r['sensor_name'], r['parameter_name'])
 
-
 executables = {}
 
+# move into load configuration
 for p in (os.path.abspath(p) for p in args.plugins):
     executable = os.path.join(p, 'plugin_bin', 'plugin_beehive')
     if not os.path.exists(executable):
@@ -69,43 +69,52 @@ query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node
 results = []
 results_by_plugin = {}
 
-
 writer = csv.writer(sys.stdout)
 
-node_id = '0000001e0610ef7b'
+logfile = open('plugins.log', 'a')
 
-for r in session.execute(query, (node_id, '2018-10-25')):
-    plugin = (r.plugin_id, r.plugin_version)
+seen = set()
 
-    if plugin not in results_by_plugin:
-        results_by_plugin[plugin] = []
+for line in sys.stdin:
+    node_id, date = line.split()
 
-    results_by_plugin[plugin].append(r.data)
-    results.append(r.data)
+    for r in session.execute(query, (node_id, date)):
+        plugin = (r.plugin_id, r.plugin_version)
 
-for plugin, results in results_by_plugin.items():
-    if plugin not in executables:
-        print('no plugin for', plugin)
-        continue
+        if plugin not in results_by_plugin:
+            results_by_plugin[plugin] = []
 
-    input = b''.join(results)
-    output = subprocess.check_output([executables[plugin]], input=input)
-    rows = json.loads(output)
+        if (node_id, date, plugin) not in seen:
+            seen.add((node_id, date, plugin))
+            print(node_id, date, *plugin, file=logfile)
+            logfile.flush()
 
-    for row in rows:
-        try:
-            sensor, parameter = id_to_name[(row['sensor'], row['parameter'])]
-        except KeyError:
-            sensor, parameter = row['sensor'], row['parameter']
+        results_by_plugin[plugin].append(r.data)
+        results.append(r.data)
 
-        ts = datetime.datetime.fromtimestamp(row['timestamp'])
+    for plugin, results in results_by_plugin.items():
+        if plugin not in executables:
+            print('no plugin for', plugin, file=sys.stderr)
+            continue
 
-        writer.writerow([
-            ts.strftime('%Y/%m/%d %H:%M:%S'),
-            node_id[-12:].lower(),
-            row['subsystem'],
-            sensor,
-            parameter,
-            row['value_raw'],
-            row['value_hrf'],
-        ])
+        input = b''.join(results)
+        output = subprocess.check_output([executables[plugin]], input=input)
+        rows = json.loads(output)
+
+        for row in rows:
+            try:
+                sensor, parameter = id_to_name[(row['sensor'], row['parameter'])]
+            except KeyError:
+                sensor, parameter = row['sensor'], row['parameter']
+
+            ts = datetime.datetime.fromtimestamp(row['timestamp'])
+
+            writer.writerow([
+                ts.strftime('%Y/%m/%d %H:%M:%S'),
+                node_id[-12:].lower(),
+                row['subsystem'],
+                sensor,
+                parameter,
+                row['value_raw'],
+                row['value_hrf'],
+            ])
