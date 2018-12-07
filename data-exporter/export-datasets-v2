@@ -8,6 +8,10 @@ import datetime
 import os
 import subprocess
 import sys
+from io import StringIO
+import gzip
+import logging
+from collections import defaultdict
 
 
 def parse_int_string(s):
@@ -33,11 +37,30 @@ def load_sdf_file(path):
     return results
 
 
+def load_plugin_info(path):
+    executable = os.path.join(path, 'plugin_bin', 'plugin_beehive')
+
+    if not os.path.exists(executable):
+        raise FileNotFoundError()
+
+    config = configparser.ConfigParser()
+    config.read(os.path.join(p, 'plugin.ver'))
+    section = config['plugin']
+
+    return {
+        'id': section['id'],
+        'version': section['version'],
+        'executable': executable
+    }
+
+
 parser = argparse.ArgumentParser()
+parser.add_argument('datasets_dir')
 parser.add_argument('sdf')
 parser.add_argument('plugins', nargs='+')
 args = parser.parse_args()
 
+datasets_dir = os.path.abspath(args.datasets_dir)
 
 sdf = load_sdf_file(args.sdf)
 id_to_name = {}
@@ -47,54 +70,37 @@ for r in sdf:
 
 executables = {}
 
-# move into load configuration
 for p in (os.path.abspath(p) for p in args.plugins):
-    executable = os.path.join(p, 'plugin_bin', 'plugin_beehive')
-    if not os.path.exists(executable):
-        print(p, 'missing beehive plugin', file=sys.stderr)
+    try:
+        info = load_plugin_info(p)
+    except FileNotFoundError:
+        logging.warning('Invalid plugin at %s.', p)
         continue
 
-    config = configparser.ConfigParser()
-    config.read(os.path.join(p, 'plugin.ver'))
-    section = config['plugin']
-
-    plugin = (section['id'], section['version'])
-    executables[plugin] = executable
+    executables[(info['id'], info['version'])] = info['executable']
 
 cluster = Cluster()
 session = cluster.connect('waggle')
 
 query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node_id=%s AND date=%s'
 
-results = []
-results_by_plugin = {}
-
-writer = csv.writer(sys.stdout)
-
-logfile = open('plugins.log', 'a')
-
-seen = set()
-
+# right...need to break this down into just which can be run
 for line in sys.stdin:
     node_id, date = line.split()
 
+    buf = StringIO()
+    writer = csv.writer(buf)
+
+    results_by_plugin = defaultdict(list)
+
     for r in session.execute(query, (node_id, date)):
-        plugin = (r.plugin_id, r.plugin_version)
+        results_by_plugin[(r.plugin_id, r.plugin_version)].append(r.data)
 
-        if plugin not in results_by_plugin:
-            results_by_plugin[plugin] = []
-
-        if (node_id, date, plugin) not in seen:
-            seen.add((node_id, date, plugin))
-            print(node_id, date, *plugin, file=logfile)
-            logfile.flush()
-
-        results_by_plugin[plugin].append(r.data)
-        results.append(r.data)
+    node_id = node_id[-12:].lower()
 
     for plugin, results in results_by_plugin.items():
         if plugin not in executables:
-            print('no plugin for', plugin, file=sys.stderr)
+            logging.warning('No plugin with ID %s and version %s.', *plugin)
             continue
 
         input = b''.join(results)
@@ -111,10 +117,17 @@ for line in sys.stdin:
 
             writer.writerow([
                 ts.strftime('%Y/%m/%d %H:%M:%S'),
-                node_id[-12:].lower(),
+                node_id,
                 row['subsystem'],
                 sensor,
                 parameter,
                 row['value_raw'],
                 row['value_hrf'],
             ])
+
+    path = '{}/{}/{}.csv.gz'.format(datasets_dir, node_id, date)
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    with open(path, 'wb') as file:
+        file.write(gzip.compress(buf.getvalue().encode()))
