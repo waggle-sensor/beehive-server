@@ -14,6 +14,7 @@ import csv
 from io import StringIO
 import logging
 from contextlib import contextmanager
+from collections import defaultdict
 
 
 @contextmanager
@@ -97,13 +98,18 @@ def update_filtered_files(data_dirs, build_dir, project_dir, **kwargs):
     else:
         configs = [os.path.join(project_dir, 'sensors.csv')]
 
-    tasks = []
+    dependencies_by_target = defaultdict(list)
 
     for data_dir in data_dirs:
         for file in find_data_files_for_project(data_dir, project_metadata):
             target = os.path.join(build_dir, file)
-            dependencies = [os.path.join(data_dir, file)]
-            tasks.append((target, dependencies, configs))
+            source = os.path.join(data_dir, file)
+            dependencies_by_target[target].append(source)
+
+    tasks = []
+
+    for target, dependencies in dependencies_by_target.items():
+        tasks.append((target, dependencies, configs))
 
     with multiprocessing.Pool(processes) as pool:
         pool.starmap(update_filtered_file_if_needed, tasks)
@@ -371,7 +377,7 @@ if __name__ == '__main__':
     parser.add_argument('project_dir', help='Directory containing project metadata.')
     args = parser.parse_args()
 
-    data_dirs = {os.path.abspath(p) for p in args.data}
+    data_dirs = sorted({os.path.abspath(p) for p in args.data})
     build_dir = os.path.abspath(args.build_dir)
     project_dir = os.path.abspath(args.project_dir)
     filtered_dir = os.path.join(build_dir, 'filtered')
