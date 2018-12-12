@@ -1,0 +1,14 @@
+#!/usr/bin/env python3
+from cassandra.cluster import Cluster
+
+cluster = Cluster()
+session = cluster.connect('waggle')
+
+rows = session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2')
+
+for row in rows:
+    if not row.node_id:
+        continue
+    if not row.date:
+        continue
+    print(row.node_id, row.date, flush=True)
