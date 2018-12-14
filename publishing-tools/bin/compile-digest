@@ -282,7 +282,7 @@ def render_template(filename, template, *args, **kwargs):
 
 
 # maybe just use a single, general render template function
-def update_project_files(build_dir, project_dir, complete=False):
+def update_project_files(build_dir, project_dir, complete=False, cleanup=True):
     print('make archive')
 
     start = time.time()
@@ -303,8 +303,12 @@ def update_project_files(build_dir, project_dir, complete=False):
     copy_file_if_exists(os.path.join(project_dir, 'DUA.txt'),
                         os.path.join(digest_dir, 'DUA.txt'))
 
-    move_file(os.path.join(build_dir, 'data.csv.gz'),
-              os.path.join(digest_dir, 'data.csv.gz'))
+    if cleanup:
+        move_file(os.path.join(build_dir, 'data.csv.gz'),
+                  os.path.join(digest_dir, 'data.csv.gz'))
+    else:
+        copy_file(os.path.join(build_dir, 'data.csv.gz'),
+                  os.path.join(digest_dir, 'data.csv.gz'))
 
     move_file(os.path.join(build_dir, 'offsets.csv'),
               os.path.join(digest_dir, 'offsets.csv'))
@@ -359,7 +363,8 @@ def update_project_files(build_dir, project_dir, complete=False):
                         format='tar')
 
     # clean up archive dir
-    shutil.rmtree(os.path.dirname(digest_dir))
+    if cleanup:
+        shutil.rmtree(os.path.dirname(digest_dir))
 
     print('done archive', time.time() - start)
 
@@ -367,6 +372,7 @@ def update_project_files(build_dir, project_dir, complete=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--processes', type=int, default=None, help='Number of worker processes.')
+    parser.add_argument('--no-cleanup', action='store_false', dest='cleanup', help='Leave non-cached byproducts.')
     parser.add_argument('--complete', action='store_true', help='Compile as complete digest.')
     parser.add_argument('data_dir', help='Directory containing source dataset tree.')
     parser.add_argument('build_dir', help='Directory used for building digest.')
@@ -393,4 +399,4 @@ if __name__ == '__main__':
         with timed('update_combined_file', project_id):
             update_combined_file(dates_dir, build_dir)
         with timed('update_project_files', project_id):
-            update_project_files(build_dir, project_dir, complete=args.complete)
+            update_project_files(build_dir, project_dir, complete=args.complete, cleanup=args.cleanup)
