@@ -301,12 +301,6 @@ def update_project_files(build_dir, project_dir, complete=False):
                               '{}.latest'.format(project_id),
                               '{}.{}'.format(project_id, date))
 
-    copy_file(os.path.join(build_dir, 'data.csv.gz'),
-              os.path.join(digest_dir, 'data.csv.gz'))
-
-    copy_file(os.path.join(build_dir, 'offsets.csv'),
-              os.path.join(digest_dir, 'offsets.csv'))
-
     copy_file(os.path.join(project_dir, 'nodes.csv'),
               os.path.join(digest_dir, 'nodes.csv'))
 
@@ -315,6 +309,12 @@ def update_project_files(build_dir, project_dir, complete=False):
 
     copy_file_if_exists(os.path.join(project_dir, 'DUA.txt'),
                         os.path.join(digest_dir, 'DUA.txt'))
+
+    move_file(os.path.join(build_dir, 'data.csv.gz'),
+              os.path.join(digest_dir, 'data.csv.gz'))
+
+    move_file(os.path.join(build_dir, 'offsets.csv'),
+              os.path.join(digest_dir, 'offsets.csv'))
 
     template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))), 'docs')
 
@@ -364,6 +364,9 @@ def update_project_files(build_dir, project_dir, complete=False):
                         root_dir=os.path.dirname(digest_dir),
                         base_dir=os.path.basename(digest_dir),
                         format='tar')
+
+    # clean up archive dir
+    shutil.rmtree(os.path.dirname(digest_dir))
 
     print('done archive', time.time() - start)
 
