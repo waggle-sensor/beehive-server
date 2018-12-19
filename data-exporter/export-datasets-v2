@@ -62,7 +62,7 @@ args = parser.parse_args()
 
 datasets_dir = os.path.abspath(args.datasets_dir)
 
-sdf = load_sdf_file(args.sdf)
+sdf = load_sdf_file(os.path.abspath(args.sdf))
 id_to_name = {}
 
 for r in sdf:
