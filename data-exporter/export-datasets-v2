@@ -21,6 +21,8 @@ def parse_int_string(s):
 
 
 def load_sdf_file(path):
+    logging.info('Loading SDF %s.', path)
+
     results = []
 
     with open(path) as file:
@@ -38,6 +40,8 @@ def load_sdf_file(path):
 
 
 def load_plugin_info(path):
+    logging.info('Loading plugin %s.', path)
+
     executable = os.path.join(path, 'plugin_bin', 'plugin_beehive')
 
     if not os.path.exists(executable):
@@ -92,17 +96,18 @@ query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node
 
 # right...need to break this down into just which can be run
 for line in sys.stdin:
-    node_id, date = line.split()
+    node_id_key, date = line.split()
+    node_id = node_id_key[-12:].lower()
+
+    logging.info('Exporting dataset %s %s.', node_id, date)
 
     buf = StringIO()
     writer = csv.writer(buf)
 
     results_by_plugin = defaultdict(list)
 
-    for r in session.execute(query, (node_id, date)):
+    for r in session.execute(query, (node_id_key, date)):
         results_by_plugin[(r.plugin_id, r.plugin_version)].append(r.data)
-
-    node_id = node_id[-12:].lower()
 
     for plugin, results in results_by_plugin.items():
         if plugin not in executables:
@@ -137,3 +142,5 @@ for line in sys.stdin:
 
     with open(path, 'wb') as file:
         file.write(gzip.compress(buf.getvalue().encode()))
+
+    logging.info('Done dataset %s %s.', node_id, date)
