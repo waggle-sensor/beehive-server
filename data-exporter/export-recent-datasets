@@ -105,6 +105,9 @@ def decode_rows(node_id, date, results, writer):
             else:
                 timestamp = sample.timestamp
 
+            if sample.value_raw is None and sample.value_hrf is None:
+                continue
+
             writer.writerow([
                 timestamp,
                 node_id,
