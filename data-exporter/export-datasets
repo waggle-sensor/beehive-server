@@ -102,14 +102,39 @@ def decode_rows(node_id, date, results, writer):
             if sample.value_raw is None and sample.value_hrf is None:
                 continue
 
+            if not timestamp.isprintable():
+                continue
+
+            if not node_id.isprintable():
+                continue
+
+            if not sample.subsystem.isprintable():
+                continue
+
+            if not sample.sensor.isprintable():
+                continue
+
+            if not sample.parameter.isprintable():
+                continue
+
+            raw_string = stringify(sample.value_raw)
+
+            if not raw_string.isprintable():
+                continue
+
+            hrf_string = stringify(sample.value_hrf)
+
+            if not hrf_string.isprintable():
+                continue
+
             writer.writerow([
                 timestamp,
                 node_id,
                 sample.subsystem,
                 sample.sensor,
                 sample.parameter,
-                stringify(sample.value_raw),
-                stringify(sample.value_hrf),
+                raw_string,
+                hrf_string,
             ])
 
 
@@ -124,6 +149,16 @@ def make_jobs(lines):
 
         node_id = key[0][-12:].lower()
         date = key[1]
+
+        if not node_id:
+            continue
+
+        if not node_id.isprintable():
+            continue
+
+        if not date.isprintable():
+            continue
+
         index = (node_id, date)
 
         if index not in jobs:
