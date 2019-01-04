@@ -79,7 +79,7 @@ def stringify(x):
     if isinstance(x, float):
         return str(round(x, 5))
     if isinstance(x, bool):
-        return int(x)
+        return str(int(x))
     return str(x)
 
 
@@ -100,31 +100,39 @@ def decode_rows(node_id, date, results, writer):
                 timestamp = sample.timestamp
 
             if sample.value_raw is None and sample.value_hrf is None:
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             if not timestamp.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             if not node_id.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             if not sample.subsystem.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             if not sample.sensor.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             if not sample.parameter.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             raw_string = stringify(sample.value_raw)
 
             if not raw_string.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             hrf_string = stringify(sample.value_hrf)
 
             if not hrf_string.isprintable():
+                logger.warning('invalid sample - %r', sample)
                 continue
 
             writer.writerow([
