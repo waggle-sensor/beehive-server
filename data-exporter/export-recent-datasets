@@ -163,6 +163,16 @@ def make_jobs(lines):
 
         node_id = key[0][-12:].lower()
         date = key[1]
+
+        if not node_id:
+            continue
+
+        if not node_id.isprintable():
+            continue
+
+        if not date.isprintable():
+            continue
+
         index = (node_id, date)
 
         if index not in jobs:
