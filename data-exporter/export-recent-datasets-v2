@@ -1,0 +1,151 @@
+#!/usr/bin/env python3
+import argparse
+from cassandra.cluster import Cluster
+import configparser
+import csv
+import json
+import datetime
+import os
+import subprocess
+import sys
+from io import StringIO
+import gzip
+import logging
+from collections import defaultdict
+
+
+def parse_int_string(s):
+    if s.startswith('0x'):
+        return int(s, 16)
+    return int(s)
+
+
+def load_sdf_file(path):
+    logging.info('Loading SDF %s.', path)
+
+    results = []
+
+    with open(path) as file:
+        reader = csv.DictReader(file)
+
+        for row in reader:
+            results.append({
+                'sensor_id': parse_int_string(row['sensor_id']),
+                'sensor_name': row['sensor_name'].strip(),
+                'parameter_id': parse_int_string(row['parameter_id']),
+                'parameter_name': row['parameter_name'].strip(),
+            })
+
+    return results
+
+
+def load_plugin_info(path):
+    logging.info('Loading plugin %s.', path)
+
+    executable = os.path.join(path, 'plugin_bin', 'plugin_beehive')
+
+    if not os.path.exists(executable):
+        raise FileNotFoundError()
+
+    config = configparser.ConfigParser()
+    config.read(os.path.join(p, 'plugin.ver'))
+    section = config['plugin']
+
+    return {
+        'id': section['id'],
+        'version': section['version'],
+        'executable': executable
+    }
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--debug', action='store_true')
+parser.add_argument('--since', type=int)
+parser.add_argument('datasets_dir')
+parser.add_argument('sdf')
+parser.add_argument('plugins', nargs='+')
+args = parser.parse_args()
+
+if args.debug:
+    logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
+
+datasets_dir = os.path.abspath(args.datasets_dir)
+
+sdf = load_sdf_file(os.path.abspath(args.sdf))
+id_to_name = {}
+
+for r in sdf:
+    id_to_name[(r['sensor_id'], r['parameter_id'])] = (r['sensor_name'], r['parameter_name'])
+
+executables = {}
+
+for p in (os.path.abspath(p) for p in args.plugins):
+    try:
+        info = load_plugin_info(p)
+    except FileNotFoundError:
+        logging.warning('Invalid plugin at %s.', p)
+        continue
+
+    executables[(info['id'], info['version'])] = info['executable']
+
+now = datetime.datetime.utcnow()
+since = now - datetime.timedelta(seconds=args.since)
+
+cluster = Cluster()
+session = cluster.connect('waggle')
+
+query = 'SELECT data FROM data_messages_v2 WHERE node_id=%s AND date=%s AND plugin_id=%s AND plugin_version=%s AND timestamp >= %s'
+
+# right...need to break this down into just which can be run
+for line in sys.stdin:
+    node_id_key, date = line.split()
+    node_id = node_id_key[-12:].lower()
+
+    logging.info('Exporting dataset %s %s.', node_id, date)
+
+    buf = StringIO()
+    writer = csv.writer(buf)
+
+    results_by_plugin = defaultdict(list)
+
+    for plugin_id, plugin_version in executables.keys():
+        for r in session.execute(query, (node_id_key, date, plugin_id, plugin_version, since)):
+            results_by_plugin[(plugin_id, plugin_version)].append(r.data)
+
+    for plugin, results in results_by_plugin.items():
+        if plugin not in executables:
+            logging.warning('No plugin with ID %s and version %s.', *plugin)
+            continue
+
+        input = b''.join(results)
+        output = subprocess.check_output([executables[plugin]], input=input)
+        rows = json.loads(output)
+
+        for row in rows:
+            try:
+                sensor, parameter = id_to_name[(row['sensor'], row['parameter'])]
+            except KeyError:
+                sensor, parameter = row['sensor'], row['parameter']
+
+            ts = datetime.datetime.fromtimestamp(row['timestamp'])
+
+            writer.writerow([
+                ts.strftime('%Y/%m/%d %H:%M:%S'),
+                node_id,
+                row['subsystem'],
+                sensor,
+                parameter,
+                row['value_raw'],
+                row['value_hrf'],
+            ])
+
+    path = '{}/{}/{}.csv.gz'.format(datasets_dir, node_id, date)
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    with open(path, 'wb') as file:
+        file.write(gzip.compress(buf.getvalue().encode()))
+
+    logging.info('Done dataset %s %s.', node_id, date)
