@@ -89,7 +89,7 @@ for p in (os.path.abspath(p) for p in args.plugins):
 
     executables[(info['id'], info['version'])] = info['executable']
 
-cluster = Cluster()
+cluster = Cluster(control_connection_timeout=10.0, connect_timeout=15.0)
 session = cluster.connect('waggle')
 
 query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node_id=%s AND date=%s'

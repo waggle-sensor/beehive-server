@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from cassandra.cluster import Cluster
 
-cluster = Cluster()
+cluster = Cluster(control_connection_timeout=10.0, connect_timeout=15.0)
 session = cluster.connect('waggle')
-
-rows = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
+rows = list(session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw'))
+cluster.shutdown()
 
 for row in rows:
     if not row.node_id:
