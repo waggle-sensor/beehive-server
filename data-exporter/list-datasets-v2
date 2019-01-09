@@ -3,10 +3,8 @@ from cassandra.cluster import Cluster
 
 cluster = Cluster(control_connection_timeout=10.0, connect_timeout=15.0)
 session = cluster.connect('waggle')
-rows = list(session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2'))
-cluster.shutdown()
 
-for row in rows:
+for row in session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2'):
     if not row.node_id:
         continue
     if not row.date:
