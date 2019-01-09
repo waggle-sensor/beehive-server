@@ -1,12 +1,27 @@
 #!/usr/bin/env python3
+import argparse
 from cassandra.cluster import Cluster
+import logging
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--trace', action='store_true')
+args = parser.parse_args()
 
 cluster = Cluster()
 session = cluster.connect('waggle')
 
-for row in session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2'):
-    if not row.node_id:
-        continue
-    if not row.date:
-        continue
-    print(row.node_id, row.date, flush=True)
+results = session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2', trace=args.trace)
+
+while results.has_more_pages:
+    try:
+        for row in results:
+            if not row.node_id:
+                continue
+            if not row.date:
+                continue
+            print(row.node_id, row.date, flush=True)
+    except Exception:
+        if args.trace:
+            logging.exception(results.get_query_trace())
+        else:
+            logging.exception('page failed')
