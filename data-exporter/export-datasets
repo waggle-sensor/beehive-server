@@ -251,7 +251,7 @@ if __name__ == '__main__':
 
     jobs = make_jobs(sys.stdin.readlines())
 
-    cluster = Cluster(control_connection_timeout=10.0, connect_timeout=15.0)
+    cluster = Cluster()
 
     with timed('export_datasets'):
         with multiprocessing.Pool(processes=args.processes, initializer=init_worker, initargs=(cluster, args.debug)) as pool:
