@@ -93,7 +93,7 @@ for p in (os.path.abspath(p) for p in args.plugins):
 now = datetime.datetime.utcnow()
 since = now - datetime.timedelta(seconds=args.since)
 
-cluster = Cluster(control_connection_timeout=10.0, connect_timeout=15.0)
+cluster = Cluster()
 session = cluster.connect('waggle')
 
 query = 'SELECT data FROM data_messages_v2 WHERE node_id=%s AND date=%s AND plugin_id=%s AND plugin_version=%s AND timestamp >= %s'
