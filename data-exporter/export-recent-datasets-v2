@@ -72,6 +72,7 @@ else:
     logging.basicConfig(level=logging.INFO)
 
 datasets_dir = os.path.abspath(args.datasets_dir)
+os.makedirs(datasets_dir, exist_ok=True)
 
 sdf = load_sdf_file(os.path.abspath(args.sdf))
 id_to_name = {}

@@ -267,6 +267,7 @@ if __name__ == '__main__':
         since = now - datetime.timedelta(seconds=args.since)
 
     datasets_dir = os.path.abspath(args.datasets_dir)
+    os.makedirs(datasets_dir, exist_ok=True)
 
     jobs = make_jobs(sys.stdin.readlines())
 
