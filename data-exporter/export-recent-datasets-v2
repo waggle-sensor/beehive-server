@@ -129,7 +129,7 @@ for line in sys.stdin:
             except KeyError:
                 sensor, parameter = row['sensor'], row['parameter']
 
-            ts = datetime.datetime.fromtimestamp(row['timestamp'])
+            ts = datetime.datetime.utcfromtimestamp(row['timestamp'])
 
             writer.writerow([
                 ts.strftime('%Y/%m/%d %H:%M:%S'),
