@@ -12,18 +12,15 @@ session = cluster.connect('waggle')
 
 results = session.execute('SELECT DISTINCT node_id, date FROM data_messages_v2', trace=args.trace)
 
-while True:
-    try:
-        for row in results:
-            if not row.node_id:
-                continue
-            if not row.date:
-                continue
-            print(row.node_id, row.date, flush=True)
-    except Exception:
-        if args.trace:
-            logging.exception(results.get_query_trace())
-        else:
-            logging.exception('page failed')
-    if not results.has_more_pages:
-        break
+try:
+    for row in results:
+        if not row.node_id:
+            continue
+        if not row.date:
+            continue
+        print(row.node_id, row.date, flush=True)
+except Exception:
+    if args.trace:
+        logging.exception(results.get_query_trace())
+    else:
+        logging.exception('query failed')
