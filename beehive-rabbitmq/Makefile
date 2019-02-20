@@ -37,7 +37,10 @@ setup:
 	-docker exec -ti $(name) rabbitmqctl add_user server waggle
 	-docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*"
 
-	-docker exec -ti $(name) rabbitmqctl add_user server router
+	-docker exec -ti $(name) rabbitmqctl add_user router router
+	-docker exec -ti $(name) rabbitmqctl set_permissions router ".*" ".*" ".*"
+
+	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
 	-docker exec -ti $(name) rabbitmqctl set_permissions router ".*" ".*" ".*"
 
 	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
