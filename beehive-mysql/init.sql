@@ -1,3 +1,5 @@
+SET GLOBAL default_password_lifetime = 0;
+
 CREATE DATABASE IF NOT EXISTS waggle;
 
 USE waggle;

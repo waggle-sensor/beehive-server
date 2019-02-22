@@ -41,7 +41,4 @@ setup:
 	-docker exec -ti $(name) rabbitmqctl set_permissions router ".*" ".*" ".*"
 
 	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
-	-docker exec -ti $(name) rabbitmqctl set_permissions router ".*" ".*" ".*"
-
-	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
 	-docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$"
