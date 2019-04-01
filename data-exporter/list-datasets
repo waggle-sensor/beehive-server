@@ -1,26 +1,15 @@
 #!/usr/bin/env python3
-import argparse
 from cassandra.cluster import Cluster
 import logging
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--trace', action='store_true')
-args = parser.parse_args()
 
 cluster = Cluster()
 session = cluster.connect('waggle')
 
-results = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw', trace=args.trace)
+results = session.execute('SELECT DISTINCT node_id, date FROM sensor_data_raw')
 
-try:
-    for row in results:
-        if not row.node_id:
-            continue
-        if not row.date:
-            continue
-        print(row.node_id, row.date, flush=True)
-except Exception:
-    if args.trace:
-        logging.exception(results.get_query_trace())
-    else:
-        logging.exception('query failed')
+for row in results:
+    if not row.node_id:
+        continue
+    if not row.date:
+        continue
+    print(row.node_id, row.date)
