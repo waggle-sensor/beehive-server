@@ -7,7 +7,7 @@ BEEHIVE_ROOT = os.environ['BEEHIVE_ROOT']
 
 
 output = subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'list_users']).decode()
-existing_users = set(re.findall('node[\-0-9A-Fa-f]*', output))
+existing_users = set(re.findall('node[\-0-9A-Fa-f]+', output))
 
 for username in existing_users:
     subprocess.check_output(['docker', 'exec', '-ti', 'beehive-rabbitmq', 'rabbitmqctl', 'clear_password', username])
