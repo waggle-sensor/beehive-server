@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# ANL:waggle-license
+#  This file is part of the Waggle Platform.  Please see the file
+#  LICENSE.waggle.txt for the legal details of the copyright and software
+#  license.  For more details on the Waggle project, visit:
+#           http://www.wa8.gl
+# ANL:waggle-license
 """ gather data for troubleshooting the 9 CDOT nodes.
 """
 
@@ -127,4 +133,4 @@ if __name__ == '__main__':
         # get rabbitmq log
         CmdString("""journalctl -u beehive-rabbitmq  """)
 
-        
+       

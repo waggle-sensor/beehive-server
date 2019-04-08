@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# ANL:waggle-license
+#  This file is part of the Waggle Platform.  Please see the file
+#  LICENSE.waggle.txt for the legal details of the copyright and software
+#  license.  For more details on the Waggle project, visit:
+#           http://www.wa8.gl
+# ANL:waggle-license
 import argparse
 from binascii import unhexlify
 import datetime
@@ -388,4 +394,4 @@ if __name__ == '__main__':
     
     
     
-    
+   

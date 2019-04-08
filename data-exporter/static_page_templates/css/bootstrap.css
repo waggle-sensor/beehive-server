@@ -1,4 +1,11 @@
 /*!
+/* ANL:waggle-license */
+/* This file is part of the Waggle Platform.  Please see the file
+ * LICENSE.waggle.txt for the legal details of the copyright and software
+ * license.  For more details on the Waggle project, visit:
+ *          http://www.wa8.gl
+ */
+/* ANL:waggle-license */
  * Bootstrap v4.0.0-beta (https://getbootstrap.com)
  * Copyright 2011-2017 The Bootstrap Authors
  * Copyright 2011-2017 Twitter, Inc.
@@ -8182,4 +8189,4 @@ a.text-dark:focus, a.text-dark:hover {
 .invisible {
   visibility: hidden !important;
 }
-/*# sourceMappingURL=bootstrap.css.map */
+/*# sourceMappingURL=bootstrap.css.map *

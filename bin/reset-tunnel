@@ -1,4 +1,10 @@
 #!/bin/sh
+# ANL:waggle-license
+#  This file is part of the Waggle Platform.  Please see the file
+#  LICENSE.waggle.txt for the legal details of the copyright and software
+#  license.  For more details on the Waggle project, visit:
+#           http://www.wa8.gl
+# ANL:waggle-license
 
 sshd_pid=$(docker exec -t beehive-sshd netstat -lp | grep '^tcp ..*localhost:[0-9][0-9][0-9][0-9][0-9]..*sshd: root' | grep "localhost:$1" | awk '{print $7}' | sed 's/\/sshd..*//')
 docker exec -t beehive-sshd kill -9 ${sshd_pid}

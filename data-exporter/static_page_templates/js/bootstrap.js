@@ -1,4 +1,11 @@
 /*!
+/* ANL:waggle-license */
+/* This file is part of the Waggle Platform.  Please see the file
+ * LICENSE.waggle.txt for the legal details of the copyright and software
+ * license.  For more details on the Waggle project, visit:
+ *          http://www.wa8.gl
+ */
+/* ANL:waggle-license */
  * Bootstrap v4.0.0-beta (https://getbootstrap.com)
  * Copyright 2011-2017 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
@@ -3828,4 +3835,4 @@ var Popover = function ($) {
 }(jQuery);
 
 
-})();
+})()
