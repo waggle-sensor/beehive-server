@@ -1,6 +1,0 @@
-[Unit]
-Description=Generate publishable data for Plenario
-
-[Service]
-WorkingDirectory=/usr/lib/waggle/beehive-server/publishing-tools/examples
-ExecStart=/usr/lib/waggle/beehive-server/publishing-tools/examples/export-plenario.sh
