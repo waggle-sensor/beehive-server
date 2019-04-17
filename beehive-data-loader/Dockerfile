@@ -5,7 +5,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-FROM python:3
+FROM waggle/beehive-core:2
 
 WORKDIR /usr/src/app
 
