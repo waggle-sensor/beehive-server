@@ -1,2 +1,2 @@
 cassandra-driver
-pika
+pika>=1.0.0
