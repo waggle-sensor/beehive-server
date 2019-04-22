@@ -58,7 +58,7 @@ def main():
     channel = connection.channel()
 
     channel.queue_declare(queue=args.queue, durable=True)
-    channel.basic_consume(message_handler, args.queue)
+    channel.basic_consume(args.queue, message_handler)
     channel.start_consuming()
 
 

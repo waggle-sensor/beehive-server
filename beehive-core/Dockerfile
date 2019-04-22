@@ -5,12 +5,10 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-FROM waggle/beehive-core:2
+FROM python:3
 
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY loader.py ./
-CMD ["python", "./loader.py"]
