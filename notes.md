@@ -18,9 +18,9 @@ cd beehive-server/beehive-cert
 ./register-nodes 0000000000000001 0000000000000002 ...
 ```
 
-Note: Node IDs are all hexidecimal strings which are 16 chracters long.
+Note: Node IDs are all hexidecimal strings which are 16 characters long.
 
 Credentials will be created under:
 ```
-$BEEHIVE_ROOT/SSL/nodes/node_NODE_ID
+$BEEHIVE_ROOT/SSL/nodes/node_NODEID
 ```
