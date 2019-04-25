@@ -2,7 +2,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e0610ba46,AoT_Chicago,004,State St & Jackson Blvd Chicago IL,41.878377,-87.627678,AoT Chicago (S) [C],2017/10/09 00:00:00,
 001e0610ba3b,AoT_Chicago,006,18th St & Lake Shore Dr Chicago IL,41.858136,-87.616055,AoT Chicago (S),2017/08/08 00:00:00,
 001e0610ba8f,AoT_Chicago,00D,Cornell & 47th St Chicago IL,41.810342,-87.590228,AoT Chicago (S),2017/08/08 00:00:00,
-001e0610ba16,AoT_Chicago,010,Ohio St & Grand Ave Chicago IL,41.891964,-87.611603,AoT Chicago (S) [C],2017/12/01 00:00:00,2018/06/04 00:00:00
+001e0610ba16,AoT_Chicago,010,Homan Ave & Roosevelt Rd Chicago IL,41.866349,-87.710543,AoT Chicago (S) [C],2018/07/18 00:00:00,
 001e0610ba8b,AoT_Chicago,018,Stony Island Ave & 63rd St Chicago IL,41.7806,-87.586456,AoT Chicago (S) [C],2018/02/26 00:00:00,
 001e0610ba18,AoT_Chicago,01D,Damen Ave & Cermak Chicago IL,41.852179,-87.675825,AoT Chicago (S),2017/12/15 00:00:00,
 001e0610bc10,AoT_Chicago,01F,State St & 87th Chicago IL,41.736314,-87.624179,AoT Chicago (S) [C],2018/02/22 00:00:00,
@@ -48,10 +48,10 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e06113107,AoT_Chicago,072,7801 S Lawndale Ave Chicago IL,41.751142,-87.71299,AoT Chicago (S) [CA] {ComEd},2017/01/01 00:00:00,
 001e06114fd4,AoT_Chicago,073,Martin Luther King Dr & Garfield Blvd Chicago IL,41.794477,-87.615957,AoT Chicago (S) [C],2018/03/08 00:00:00,
 001e06113ad6,AoT_Chicago,075,Milwaukee Ave & Wood St Chicago IL,41.906481,-87.671373,AoT Chicago (S) [C],2018/03/09 00:00:00,
-001e06109f62,AoT_Chicago,076,Lake Shore Drive & Irving Park Rd Chicago IL,41.954825,-87.645248,AoT Chicago (S) [C],2018/01/01 00:00:00,2018/06/04 00:00:00
+001e06109f62,AoT_Chicago,076,Pulaski Rd & 27th St Chicago IL,41.84241,-87.724499,AoT Chicago (S) [C],2018/07/18 00:00:00
 001e06113ace,AoT_Chicago,077,Martin Luther King Dr & 35th St Chicago IL,41.83107,-87.617298,AoT Chicago (S) [C],2018/03/08 00:00:00,
 001e061146bc,AoT_Chicago,079,Ashland Ave & Elston Ave Chicago IL,41.918733,-87.668257,AoT Chicago (S) [C],2018/02/28 00:00:00,
-001e061146cb,AoT_Chicago,07C,Lake Shore Drive & Fullerton Ave Chicago IL,41.926170,-87.631533,AoT Chicago (S) [C],2018/03/09 00:00:00,2018/06/04 00:00:00
+001e061146cb,AoT_Chicago,07C,606 Path & Miwaukee Ave Chicago IL,41.9140942,-87.683022,AoT Chicago (S) [C],2018/01/11 00:00:00,
 001e0610e539,AoT_Chicago,07E,Cicero Ave & Madison St Chicago IL,41.880497,-87.745268,AoT Chicago (S) [C],2018/02/05 00:00:00,
 001e0610f703,AoT_Chicago,07F,Damen Ave & Polk St Chicago IL,41.87148,-87.67644,AoT Chicago (S) [C],2018/02/06 00:00:00,
 001e0610b9e9,AoT_Chicago,080,Broadway Ave & Lawrence Ave Chicago IL,41.96904,-87.659672,AoT Chicago (S) [C],2018/02/14 00:00:00,
