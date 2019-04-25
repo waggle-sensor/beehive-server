@@ -101,6 +101,6 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e06113d20,AoT_Chicago,094,"Ohio St & Grand Ave",41.8920031,-87.6116431,AoT Chicago (S) [C],2018/05/17 00:00:00,
 001e061146d4,AoT_Chicago,099,"Torrence Ave & Brainard Ave",41.65849,-87.559113,AoT Chicago (S) [C],2018/05/31 00:00:00,
 001e06109401,AoT_Chicago,09A,"Cottage Grove Ave & 115th St",41.685445,-87.611081,AoT Chicago (S) [C],2018/05/31 00:00:00,
-001e0611463b,AoT_Chicago,0A9,"UChicago, Shapiro Hall",41.789737",-87.587134,AoT Chicago (S) [CP] {UChicago},2018/12/04 00:00:00,
+001e0611463b,AoT_Chicago,0A9,"UChicago, Shapiro Hall",41.789737,-87.587134,AoT Chicago (S) [CP] {UChicago},2018/12/04 00:00:00,
 001e0610f02f,AoT_Chicago,00A,"Lake Shore Drive & Fullerton Ave",41.9262614,-87.6307578,AoT Chicago (S) [CA],2018/05/07 00:00:00,
 001e0610e8cb,AoT_Chicago,054,"Western Ave & Addison St",41.946731,-87.688258,AoT Chicago (S) [C],2018/03/14 00:00:00,
