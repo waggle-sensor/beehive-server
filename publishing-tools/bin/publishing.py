@@ -106,7 +106,8 @@ def generate_events_metadata(filename):
                     'event': 'commissioned',
                     'comment': '',
                 }
-            except ValueError:
+            except (TypeError, ValueError):
+                logging.exception('failed to parse start timestamp for %s', node_id)
                 pass
 
             try:
@@ -116,8 +117,9 @@ def generate_events_metadata(filename):
                     'event': 'decommissioned',
                     'comment': '',
                 }
-            except ValueError:
+            except (TypeError, ValueError):
                 pass
+
 
 
 # NOTE mutates nodes. may change in future.
