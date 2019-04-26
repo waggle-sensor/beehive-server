@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import csv
 import logging
 
+# TODO Refactor CSV reading into a single read CSV file which automatically applies format / type / data validation checks.
 
 logger = logging.getLogger('publishing')
 
