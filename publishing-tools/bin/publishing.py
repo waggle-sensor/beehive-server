@@ -62,10 +62,10 @@ def load_nodes_metadata(filename):
                 lon = float(row['lon'])
                 start_timestamp = load_timestamp_or_none(row['start_timestamp'])
                 end_timestamp = load_timestamp_or_none(row['end_timestamp'])
-            except ValueError:
-                logger.warning('failed to parse entry for %s', node_id)
+            except (TypeError, ValueError):
+                logger.exception('failed to parse entry for %s', node_id)
                 continue
-            
+
             events.append({
                 'node_id': node_id,
                 'project_id': row['project_id'],
