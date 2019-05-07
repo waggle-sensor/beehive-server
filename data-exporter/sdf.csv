@@ -125,3 +125,12 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xff10,wagman_th,4,3
 0xff10,wagman_th,5,4
 0xff11,media,1,media
+0xff12,modem,1,dbm
+0xff13,wagman_comm,1,up
+0xff14,wagman_uptime,1,uptime
+0xff15,disk_used,1,boot
+0xff15,disk_used,2,root
+0xff15,disk_used,3,rw
+0xff16,disk_size,1,boot
+0xff16,disk_size,2,root
+0xff16,disk_size,3,rw
