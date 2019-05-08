@@ -1,0 +1,5 @@
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e061182a9,AoT_Vanderbilt,0E7,TBD,0.0,0.0,AoT AoT_Vanderbilt (S) [CP],2019/04/01 00:00:00,
+001e06117b45,AoT_Vanderbilt,0BC,TBD,0.0,0.0,AoT AoT_Vanderbilt (S) [CP],2019/04/01 00:00:00,
+001e061181b6,AoT_Vanderbilt,0C5,TBD,0.0,0.0,AoT AoT_Vanderbilt (S) [CP],2019/04/01 00:00:00,
+001e061183ec,AoT_Vanderbilt,0E2,TBD,0.0,0.0,AoT AoT_Vanderbilt (S) [CP],2019/04/01 00:00:00,
