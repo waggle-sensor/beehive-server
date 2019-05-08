@@ -76,6 +76,7 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xff00,loadavg,3,loadavg15
 0xff01,mem,1,free
 0xff01,mem,2,total
+0xff01,mem,3,free_ratio
 0xff02,time,1,time
 0xff03,uptime,1,uptime
 0xff04,device,1,wagman
@@ -136,3 +137,6 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xff16,disk_size,3,rw
 0xff17,service_active,1,rabbitmq
 0xff17,service_active,2,coresense
+0xff18,disk_used_ratio,1,boot
+0xff18,disk_used_ratio,2,root
+0xff18,disk_used_ratio,3,rw
