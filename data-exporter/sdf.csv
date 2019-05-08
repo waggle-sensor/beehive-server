@@ -134,3 +134,5 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xff16,disk_size,1,boot
 0xff16,disk_size,2,root
 0xff16,disk_size,3,rw
+0xff17,service_active,1,rabbitmq
+0xff17,service_active,2,coresense
