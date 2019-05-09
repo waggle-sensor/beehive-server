@@ -140,3 +140,5 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xff18,disk_used_ratio,1,boot
 0xff18,disk_used_ratio,2,root
 0xff18,disk_used_ratio,3,rw
+0xff19,plugins,1,enabled
+0xff19,plugins,2,active
