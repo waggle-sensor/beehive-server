@@ -110,3 +110,8 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061183bf,AoT_Chicago,11A,"ComEd Training Center",41.829806,-87.659467,AoT Chicago (S) [CP] {ComEd},2019/04/25 00:00:00,
 001e0611804d,AoT_Chicago,11E,"ComEd Training Center",41.829806,-87.659467,AoT Chicago (S) [CP] {ComEd},2019/04/25 00:00:00,
 001e061182a2,AoT_Chicago,13B,"ComEd Training Center",41.829806,-87.659467,AoT Chicago (S) [CP] {ComEd},2019/04/25 00:00:00,
+001e06118295,AoT_Chicago,0EA,"Pershing Rd & Damen Ave Chicago IL",41.820972,-87.802435,AoT Chicago (S) [CP],2019/04/25 00:00:00,
+001e061184e7,AoT_Chicago,0E1,"Kostner Ave & 31st St Chicago IL",41.836875,-87.734087,AoT Chicago (S) [CP],2019/04/25 00:00:00,
+001e06118501,AoT_Chicago,0B0,"Morgan Ave & 63rd St Chicago IL",41.779805,-87.649145,AoT Chicago (S) [CP],2019/04/25 00:00:00,
+001e06118182,AoT_Chicago,0C3,"Loomis Ave & 63rd St Chicago IL",41.779593,-87.659354,AoT Chicago (S) [CP],2019/04/25 00:00:00,
+001e06118509,AoT_Chicago,0C2,"Racine Ave & 63rd St Chicago IL",41.779744,-87.654487,AoT Chicago (S) [CP],2019/04/25 00:00:00,
