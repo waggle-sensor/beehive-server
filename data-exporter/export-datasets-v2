@@ -100,11 +100,15 @@ session = cluster.connect('waggle')
 
 query = 'SELECT plugin_id, plugin_version, data FROM data_messages_v2 WHERE node_id=%s AND date=%s'
 
-# right...need to break this down into just which can be run
+# get unique tasks
+jobs = set()
+
 for line in sys.stdin:
     node_id_key, date = line.split()
     node_id = node_id_key[-12:].lower()
+    jobs.add((node_id_key, node_id, date))
 
+for node_id_key, node_id, date in jobs:
     logging.info('Exporting dataset %s %s.', node_id, date)
 
     buf = StringIO()
