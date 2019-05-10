@@ -179,6 +179,10 @@ def make_jobs(lines):
             jobs[index] = []
 
         jobs[index].append(key)
+    
+    # ensure unique
+    for k in jobs.keys():
+        jobs[k] = list(set(jobs[k]))
 
     return list(jobs.items())
 
