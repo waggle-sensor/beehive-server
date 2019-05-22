@@ -115,3 +115,6 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e06118501,AoT_Chicago,0B0,"Morgan Ave & 63rd St Chicago IL",41.779805,-87.649145,AoT Chicago (S) [CP],2019/04/25 00:00:00,
 001e06118182,AoT_Chicago,0C3,"Loomis Ave & 63rd St Chicago IL",41.779593,-87.659354,AoT Chicago (S) [CP],2019/04/25 00:00:00,
 001e06118509,AoT_Chicago,0C2,"Racine Ave & 63rd St Chicago IL",41.779744,-87.654487,AoT Chicago (S) [CP],2019/04/25 00:00:00,
+001e061182a1,AoT_Chicago,0BD,"Garfield Blvd & Michigan Ave Chicago IL",41.794467,-87.622479,AoT Chicago (S) [CP],2019/05/16 00:00:00,
+001e061183eb,AoT_Chicago,0BE,"63rd St & Halsted Ave Chicago IL",41.779889,-87.644777,AoT Chicago (S) [CP],2019/05/16 00:00:00,
+001e06117b41,AoT_Chicago,0BA,"60th & Michigan Ave Chicago IL",41.785715,-87.622214,AoT Chicago (S) [CP],2019/05/16 00:00:00,
