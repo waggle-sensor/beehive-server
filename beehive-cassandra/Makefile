@@ -9,7 +9,7 @@ name = beehive-cassandra
 image = cassandra:3
 include ../Makefile.service
 
-deploy:
+deploy: ## Runs the image in detached mode
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \
@@ -24,5 +24,5 @@ deploy:
 		--name $(name) \
 		$(image)
 
-setup:
+setup: ## Executes the init CQL script
 	docker exec -i $(name) 'cqlsh' < init.cql

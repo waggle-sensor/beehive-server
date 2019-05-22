@@ -4,34 +4,43 @@
 #  license.  For more details on the Waggle project, visit:
 #           http://www.wa8.gl
 # ANL:waggle-license
-BEEHIVE_ROOT?=/mnt
+
+BEEHIVE_ROOT?=/mnt/storage
 BEEHIVE_DOCKER_NETWORK?=beehive
 
-usage:
-	@echo "make [build | deploy | snapshot | rollback]"
+.PHONY: help
 
-build:
+help:
+	@echo "USAGE"
+	@echo "make [target]"
+	@echo ""
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+	@echo ""
+
+build: ## Builds the Docker image
 	docker build -t $(image) .
 
-rm:
+rm: ## Removes the Docker container
 	docker rm -f $(name)
 
-start:
+start: ## Starts the Docker container
 	docker start $(name)
 
-stop:
+stop: ## Stops the Docker container
 	docker stop $(name)
 
-restart:
+restart: ## Restarts the Docker container
 	docker restart $(name)
 
+test: ## Builds and deploys a special ':testing' tagged Docker image and container
 test: image = waggle/$(name):testing
 test: build
 test: deploy
 
-snapshot:
+snapshot: ## Creates a Docker tag for the image with the date
 	docker tag $(image) $(image):snapshot-`date +'%Y.%m.%d.%H.%M.%S'`
 	docker tag $(image) $(image):snapshot
 
+rollback: ## Brings up the last snapshot image
 rollback: image := $(image):snapshot
 rollback: deploy

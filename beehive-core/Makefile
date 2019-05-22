@@ -9,5 +9,5 @@ name = beehive-core
 image = waggle/$(name):2
 include ../Makefile.service
 
-deploy:
+deploy: ## No op
 	echo no-op

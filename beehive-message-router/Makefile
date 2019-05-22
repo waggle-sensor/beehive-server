@@ -9,7 +9,7 @@ name = beehive-message-router
 image = waggle/$(name):2
 include ../Makefile.service
 
-deploy:
+deploy: ## Runs the image in detached mode
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \

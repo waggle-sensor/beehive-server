@@ -9,7 +9,7 @@ name = beehive-cert
 image = waggle/$(name):2
 include ../Makefile.service
 
-deploy:
+deploy: ## Runs the image in detached mode
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \
@@ -22,6 +22,6 @@ deploy:
 		--name $(name) \
 		$(image)
 
-setup:
+setup: ## Sets up the SSL CA
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
 	docker exec -ti $(name) SSL/create_server_cert.sh

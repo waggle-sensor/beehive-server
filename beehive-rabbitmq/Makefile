@@ -9,7 +9,7 @@ name = beehive-rabbitmq
 image = waggle/$(name):2
 include ../Makefile.service
 
-deploy:
+deploy: ## Runs the image in detached mode
 	-docker network create $(BEEHIVE_DOCKER_NETWORK)
 	-docker rm -f $(name)
 	docker run \
@@ -28,7 +28,7 @@ deploy:
 		--name $(name) \
 		$(image)
 
-setup:
+setup: ## Sets up the admin user and configures service accounts
 	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
 
 	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Enter RabbitMQ admin password: " pwd; echo $$pwd'))
