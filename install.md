@@ -80,6 +80,9 @@ cd beehive-server
 Then run the make targets.
 
 ```bash
+# become root -- it'll just make life easier from here on in
+sudo su
+
 make build
 make run
 make configure
