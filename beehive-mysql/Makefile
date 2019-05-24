@@ -26,3 +26,6 @@ deploy: ## Runs the image in detached mode
 		--network-alias beehive-mysql \
 		--name $(name) \
 		$(image)
+
+setup: ## No op
+	@echo 'no op'

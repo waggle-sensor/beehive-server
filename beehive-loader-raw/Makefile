@@ -18,3 +18,6 @@ deploy: ## Runs the image in detached mode
 		--restart=always \
 		--name $(name) \
 		$(image)
+
+setup: ## No op
+	@echo 'no op'

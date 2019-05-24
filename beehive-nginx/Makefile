@@ -20,3 +20,6 @@ deploy: ## Runs the image in detached mode
 		-v $(BEEHIVE_ROOT)/www:/www:ro \
 		--name $(name) \
 		$(image)
+
+setup: ## No op
+	@echo 'no op'

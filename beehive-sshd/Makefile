@@ -21,3 +21,6 @@ deploy: ## Runs the image in detached mode
 		-v ${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
 		$(image)
+
+setup: ## No op
+	@echo 'no op'

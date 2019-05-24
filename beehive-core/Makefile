@@ -10,4 +10,7 @@ image = waggle/$(name):2
 include ../Makefile.service
 
 deploy: ## No op
-	echo no-op
+	@echo 'no op'
+
+setup: ## No op
+	@echo 'no op'
