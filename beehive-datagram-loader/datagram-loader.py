@@ -101,7 +101,7 @@ def message_handler(ch, method, properties, body):
         raw_value = sensorgram['value']
         try:
             # TODO: convert to clean, hrf value
-            value = 'DUNNO YET'
+            value = None
         except Exception as e:
             sys.stderr.write(f'Could not covert value: {e}')
             sys.stderr.flush()
@@ -120,6 +120,9 @@ def message_handler(ch, method, properties, body):
             sys.stderr.write(f'could not insert measurement: {e}')
             sys.stderr.flush()
             continue
+
+    # commit insertions
+    psql_conn.commit()
 
     # ack message so the node can purge it from its local RMQ
     ch.basic_ack(delivery_tag=method.delivery_tag)
