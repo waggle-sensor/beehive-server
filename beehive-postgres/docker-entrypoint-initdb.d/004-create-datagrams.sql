@@ -2,8 +2,6 @@
 -- The datagrams table stores the raw datagram information.
 --
 CREATE TABLE IF NOT EXISTS datagrams (
-  -- auto incrementing primary key
-  id BIGSERIAL PRIMARY KEY,
   -- the time the waggle packet was ingested; pulled from msg headers
   timestamp TIMESTAMP NOT NULL,
   -- ref to nodes table; pulled from msg headers
@@ -13,12 +11,15 @@ CREATE TABLE IF NOT EXISTS datagrams (
   -- the instance of the plugin that created the datagram; pulled from msg body
   plugin_instance TEXT NOT NULL,
   -- the sensorgram data embedded in the message body; this contains the measurements
-  sensorgrams BYTEA NOT NULL,
-  -- set a unique constraint for the header and first level fields
-  UNIQUE (timestamp, node_id, plugin_name, plugin_version, plugin_instance, parameter)
+  sensorgrams BYTEA NOT NULL
 );
 
 --
 -- Use the TimescaleDB Hypertable function to shard datagrams into daily chunks for faster loading and processing
 --
 SELECT create_hypertable('datagrams', 'timestamp', chunk_time_interval => interval '1 day');
+
+--
+-- Now set a unique constraint on the table
+--
+ALTER TABLE datagrams ADD UNIQUE (timestamp, node_id, plugin_id, plugin_instance);
