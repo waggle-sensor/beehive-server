@@ -28,7 +28,7 @@ CREATE INDEX ON nodes (node_id);
 
 CREATE INDEX ON nodes (vsn);
 
-CREATE INDEX ON nodes (location) USING gist;
+CREATE INDEX ON nodes USING gist(location) ;
 
 CREATE INDEX ON nodes USING gin(to_tsvector('english', address));
 
@@ -37,7 +37,7 @@ CREATE INDEX ON nodes USING gin(to_tsvector('english', description));
 --
 -- This function converts the float lon/lat into a PostGIS location
 --
-CREATE OR REPLACE FUNCTION set_node_location 
+CREATE OR REPLACE FUNCTION set_node_location ()
 RETURNS TRIGGER AS 
 $$
 BEGIN
@@ -52,7 +52,9 @@ $$ LANGUAGE 'plpgsql' IMMUTABLE;
 --
 -- This sets up the trigger to automatically create the location for a node if the lon/lat are set.
 --
-CREATE OR REPLACE TRIGGER trigger_set_node_location
+DROP TRIGGER IF EXISTS trigger_set_node_location ON nodes;
+
+CREATE TRIGGER trigger_set_node_location
   BEFORE INSERT OR UPDATE ON nodes
   FOR EACH ROW
   EXECUTE PROCEDURE set_node_location();
