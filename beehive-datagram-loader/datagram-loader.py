@@ -107,6 +107,10 @@ def message_handler(ch, method, properties, body):
             sys.stderr.flush()
             continue
 
+        # dump to STDOUT
+        csvout.writerow([str(timestamp), node_id, sensor_id, plugin_id, raw_value, value])
+        sys.stdout.flush()
+
         # insert the measurement from the sensorgram into the measurements table
         try:
             cursor.execute(
