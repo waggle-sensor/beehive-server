@@ -47,10 +47,10 @@ def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
         timestamp = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
-        
+
         plugin_packet_id = datagram['plugin_id']
         plugin_version = get_plugin_version(datagram)
-        (plugin_id, plugin_name) = plguins[(plugin_packet_id, plugin_version)]
+        (plugin_id, plugin_name) = plugins[(str(plugin_packet_id), plugin_version)]
         plugin_instance = datagram['plugin_instance']
 
         csvout.writerow([str(timestamp), node_id, plugin_name, plugin_version, plugin_instance, str(body)])
@@ -61,7 +61,7 @@ def message_handler(ch, method, properties, body):
                 """
                 INSERT INTO datagrams (timestamp, node_id, plugin_id, plugin_instance, sensorgrams)
                     VALUES (%s, %s, %s, %s, %s);
-                """, 
+                """,
                 (timestamp, node_id, plugin_id, plugin_instance, body)
             )
         except Exception as e:
