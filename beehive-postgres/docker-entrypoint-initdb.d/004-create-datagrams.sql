@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS datagrams (
   plugin_id INTEGER REFERENCES plugins (id),
   -- the instance of the plugin that created the datagram; pulled from msg body
   plugin_instance TEXT NOT NULL,
-  -- the sensorgram data embedded in the message body; this contains the measurements
-  sensorgrams BYTEA NOT NULL
+  -- the raw packet data
+  body BYTEA NOT NULL
 );
 
 --

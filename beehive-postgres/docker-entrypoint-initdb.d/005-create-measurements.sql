@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS measurements (
   node_id INTEGER REFERENCES nodes (id),
   -- ref to sensors table
   sensor_id INTEGER REFERENCES sensors (id),
+  -- ref to plugins table
+  plugin_id INTEGER REFERENCES plugins (id),
   -- the raw "off the serial" value of the measurement
   raw_value FLOAT NOT NULL,
   -- the computed, human accessible value of the measurement
@@ -22,12 +24,14 @@ SELECT create_hypertable('measurements', 'timestamp', chunk_time_interval => int
 --
 -- Add indexes
 --
-ALTER TABLE measurements ADD UNIQUE (timestamp, node_id, sensor_id);
+ALTER TABLE measurements ADD UNIQUE (timestamp, node_id, sensor_id, plugin_id);
 
 CREATE INDEX ON measurements (timestamp);
 
 CREATE INDEX ON measurements (node_id);
 
 CREATE INDEX ON measurements (sensor_id);
+
+CREATE INDEX ON measurements (plugin_id);
 
 CREATE INDEX ON measurements (value);
