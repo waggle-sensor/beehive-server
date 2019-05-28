@@ -93,7 +93,7 @@ def message_handler(ch, method, properties, body):
         try:
             (sensor_id, sensor, parameter) = sensors[(str(sensorgram['sensor_id']), str(sensorgram['parameter_id']))]
         except:
-            sys.stderr.write(f'Could not lookup sensor for {str(sensorgram['sensor_id'])} {str(sensorgram['parameter_id'])}')
+            sys.stderr.write(f"Could not lookup sensor for {str(sensorgram['sensor_id'])} {str(sensorgram['parameter_id'])}")
             sys.stderr.flush()
             continue
         
@@ -116,6 +116,10 @@ def message_handler(ch, method, properties, body):
                 """,
                 (timestamp, node_id, sensor_id, plugin_id, raw_value, value)
             )
+        except Exception as e:
+            sys.stderr.write(f'could not insert measurement: {e}')
+            sys.stderr.flush()
+            continue
 
     # ack message so the node can purge it from its local RMQ
     ch.basic_ack(delivery_tag=method.delivery_tag)
