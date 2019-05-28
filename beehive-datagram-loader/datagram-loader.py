@@ -19,6 +19,11 @@ import waggle.protocol
 psql_conn = psycopg2.connect("dbname='postgres' host='beehive-postgres' user='postgres' password='waggle'")
 cursor = psql_conn.cursor()
 
+plugins = {}
+cursor.execute("SELECT packet_id, version, id, name FROM plugins")
+for row in cursor.fetchall():
+    plugins[(row[0], row[1])] = (row[2], row[3])
+
 rmq_conn = pika.BlockingConnection(pika.URLParameters('amqp://router:router@beehive-rabbitmq'))
 channel = rmq_conn.channel()
 queue = 'to-node-0000000000000000'
@@ -34,24 +39,34 @@ def unpack_messages_and_sensorgrams(body):
                 yield message, datagram, sensorgram
 
 
+def get_plugin_version(datagram):
+    return '{plugin_major_version}.{plugin_minor_version}.{plugin_patch_version}'.format(**datagram)
+
+
 def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
         timestamp = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
         
-        plugin_id = datagram['plugin_id']
+        plugin_packet_id = datagram['plugin_id']
+        plugin_version = get_plugin_version(datagram)
+        (plugin_id, plugin_name) = plguins[(plugin_packet_id, plugin_version)]
         plugin_instance = datagram['plugin_instance']
 
-        csvout.writerow([str(timestamp), node_id, plugin_id, plugin_instance, str(body)])
+        csvout.writerow([str(timestamp), node_id, plugin_name, plugin_version, plugin_instance, str(body)])
         sys.stdout.flush()
 
-        cursor.execute(
-            """
-            INSERT INTO datagrams (timestamp, node_id, plugin_id, plugin_instance, sensorgrams)
-                VALUES (%s, %s, %s, %s, %s);
-            """, 
-            (timestamp, node_id, plugin_id, plugin_instance, body)
-        )
+        try:
+            cursor.execute(
+                """
+                INSERT INTO datagrams (timestamp, node_id, plugin_id, plugin_instance, sensorgrams)
+                    VALUES (%s, %s, %s, %s, %s);
+                """, 
+                (timestamp, node_id, plugin_id, plugin_instance, body)
+            )
+        except Exception as e:
+            sys.stderr.write(f'{e}')
+            sys.stderr.flush()
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
