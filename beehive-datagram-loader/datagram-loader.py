@@ -72,7 +72,7 @@ def message_handler(ch, method, properties, body):
             continue
 
         # dump to STDOUT
-        csvout.writerow([str(timestamp), node_id, plugin_name, plugin_version, plugin_instance, str(body)])
+        csvout.writerow(['DATAGRAM', str(timestamp), node_id, plugin_name, plugin_version, plugin_instance, str(body)])
         sys.stdout.flush()
 
         # insert the packet into the datagrams table
@@ -108,7 +108,7 @@ def message_handler(ch, method, properties, body):
             continue
 
         # dump to STDOUT
-        csvout.writerow([str(timestamp), node_id, sensor_id, plugin_id, raw_value, value])
+        csvout.writerow(['MEASUREMENT', str(timestamp), node_id, sensor_id, plugin_id, raw_value, value])
         sys.stdout.flush()
 
         # insert the measurement from the sensorgram into the measurements table
