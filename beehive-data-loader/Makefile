@@ -5,7 +5,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-name = beehive-data-loader
+name = beehive-datagram-loader
 image = waggle/$(name):2
 include ../Makefile.service
 
