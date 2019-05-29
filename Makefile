@@ -6,7 +6,7 @@
 # ANL:waggle-license
 
 BEEHIVE_ROOT?=/mnt/storage
-SERVICES = cert datagram-loader message-router mysql nginx postgres rabbitmq sshd
+SERVICES = cert postgres rabbitmq message-router datagram-loader sshd nginx
 
 .PHONY: help
 
