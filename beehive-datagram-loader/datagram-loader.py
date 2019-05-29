@@ -67,7 +67,7 @@ def message_handler(ch, method, properties, body):
         try:
             (plugin_id, plugin_name) = plugins[(str(plugin_packet_id), plugin_version)]
         except:
-            sys.stderr.write(f'Could not lookup plugin for {plugin_packet_id} {puglin_version}')
+            sys.stderr.write(f'Could not lookup plugin for {plugin_packet_id} {plugin_version}')
             sys.stderr.flush()
             continue
 
