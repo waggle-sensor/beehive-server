@@ -5,7 +5,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 EXPOSE 80
 RUN apt-get update && apt-get install -y openssh-client openssl python-mysqldb python-webpy

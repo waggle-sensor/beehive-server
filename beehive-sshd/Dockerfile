@@ -5,7 +5,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 RUN apt-get update && apt-get install -y openssh-server curl netcat net-tools
 RUN mkdir -p /var/run/sshd
