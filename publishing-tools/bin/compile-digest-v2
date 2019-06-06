@@ -97,7 +97,8 @@ def update_filtered_files(data_dirs, build_dir, project_dir, **kwargs):
     complete = kwargs.get('complete', False)
 
     project_metadata = publishing.load_project_metadata(project_dir)
-    sensor_metadata = publishing.load_sensor_metadata(os.path.join(project_dir, 'sensors.csv'))
+    sensor_metadata = publishing.load_sensor_metadata(
+        os.path.join(project_dir, 'sensors.csv'))
 
     if complete:
         configs = []
@@ -156,7 +157,7 @@ def update_filtered_file(target, dependencies, configs):
 
         rows = data.splitlines()
 
-        if rows[0].startswith(b'timestamp'):
+        if len(rows) > 0 and rows[0].startswith(b'timestamp'):
             rows = rows[1:]
 
         rows.sort()
@@ -238,7 +239,8 @@ def update_date_file(target, dependencies):
 # NOTE faster to cat rather than check if needed
 def update_combined_file(data_dir, build_dir):
     target = os.path.join(build_dir, 'data.csv.gz')
-    dependencies = [os.path.join(data_dir, file) for file in sorted(find_data_files(data_dir))]
+    dependencies = [os.path.join(data_dir, file)
+                    for file in sorted(find_data_files(data_dir))]
 
     print('make', target)
     start = time.time()
@@ -253,7 +255,8 @@ def update_combined_file(data_dir, build_dir):
         for dep in dependencies:
             offset = file.tell()
             size = file.write(read_file(dep))
-            offsets.append((os.path.basename(dep).rstrip('.csv.gz'), offset, size))
+            offsets.append(
+                (os.path.basename(dep).rstrip('.csv.gz'), offset, size))
 
     with open(os.path.join(build_dir, 'offsets.csv'), 'w') as file:
         writer = csv.writer(file)
@@ -326,18 +329,21 @@ def update_project_files(build_dir, project_dir, complete=False, cleanup=True):
     move_file(os.path.join(build_dir, 'offsets.csv'),
               os.path.join(digest_dir, 'offsets.csv'))
 
-    template_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))), 'docs')
+    template_dir = os.path.join(os.path.dirname(
+        os.path.dirname(os.path.abspath(sys.argv[0]))), 'docs')
 
     render_template(os.path.join(digest_dir, 'README.md'),
                     os.path.join(template_dir, 'digest-readme.md'),
-                    header=read_file_or_empty(os.path.join(project_dir, 'header.md')),
+                    header=read_file_or_empty(
+                        os.path.join(project_dir, 'header.md')),
                     complete=complete)
 
     now = datetime.datetime.now()
 
     nodes = publishing.load_project_metadata(project_dir)
 
-    intervals = [interval for node in nodes for interval in node['commissioned']]
+    intervals = [
+        interval for node in nodes for interval in node['commissioned']]
 
     try:
         data_start_date = min(interval.start for interval in intervals)
@@ -367,7 +373,8 @@ def update_project_files(build_dir, project_dir, complete=False, cleanup=True):
             data_start_date.strftime('%Y/%m/%d %H:%M:%S'),
             data_end_date.strftime('%Y/%m/%d %H:%M:%S'),
             now.strftime('%Y/%m/%d %H:%M:%S'),
-            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar'.format(project_id),
+            'http://www.mcs.anl.gov/research/projects/waggle/downloads/datasets/{}.latest.tar'.format(
+                project_id),
         ])
 
     shutil.make_archive(base_name=os.path.dirname(digest_dir),
@@ -384,12 +391,18 @@ def update_project_files(build_dir, project_dir, complete=False, cleanup=True):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-p', '--processes', type=int, default=None, help='Number of worker processes.')
-    parser.add_argument('--no-cleanup', action='store_false', dest='cleanup', help='Leave non-cached byproducts.')
-    parser.add_argument('--complete', action='store_true', help='Compile as complete digest.')
-    parser.add_argument('-d', '--data', action='append', help='Include data tree in build.')
-    parser.add_argument('build_dir', help='Directory used for building digest.')
-    parser.add_argument('project_dir', help='Directory containing project metadata.')
+    parser.add_argument('-p', '--processes', type=int,
+                        default=None, help='Number of worker processes.')
+    parser.add_argument('--no-cleanup', action='store_false',
+                        dest='cleanup', help='Leave non-cached byproducts.')
+    parser.add_argument('--complete', action='store_true',
+                        help='Compile as complete digest.')
+    parser.add_argument('-d', '--data', action='append',
+                        help='Include data tree in build.')
+    parser.add_argument(
+        'build_dir', help='Directory used for building digest.')
+    parser.add_argument(
+        'project_dir', help='Directory containing project metadata.')
     args = parser.parse_args()
 
     data_dirs = sorted({os.path.abspath(p) for p in args.data})
@@ -406,10 +419,13 @@ if __name__ == '__main__':
 
     with timed('compile_digest', project_id):
         with timed('update_filtered_files', project_id):
-            update_filtered_files(data_dirs, filtered_dir, project_dir, processes=args.processes, complete=args.complete)
+            update_filtered_files(data_dirs, filtered_dir, project_dir,
+                                  processes=args.processes, complete=args.complete)
         with timed('update_date_files', project_id):
-            update_date_files(filtered_dir, dates_dir, project_dir, processes=args.processes)
+            update_date_files(filtered_dir, dates_dir,
+                              project_dir, processes=args.processes)
         with timed('update_combined_file', project_id):
             update_combined_file(dates_dir, build_dir)
         with timed('update_project_files', project_id):
-            update_project_files(build_dir, project_dir, complete=args.complete, cleanup=args.cleanup)
+            update_project_files(build_dir, project_dir,
+                                 complete=args.complete, cleanup=args.cleanup)
