@@ -153,7 +153,11 @@ def update_filtered_file(target, dependencies, configs):
         data = read_compressed_file(source)
 
         if configs:
-            data = apply_sensor_filter(metadata, data)
+            try:
+                data = apply_sensor_filter(metadata, data)
+            except Exception:
+                logging.exception('apply_sensor_filter failed')
+                continue
 
         rows = data.splitlines()
 
