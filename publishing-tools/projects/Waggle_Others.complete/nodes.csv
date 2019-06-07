@@ -9,7 +9,6 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061089fa,Waggle_Others,011,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned,2018/01/01 00:00:00,
 001e06107ff0,Waggle_Others,012,TCS 4302 (Returned from CDOT 4/3/17),0.0,0.0,AoT Chicago (T),2018/01/01 00:00:00,
 001e0610bbed,Waggle_Others,013,Retired as display piece. With Douglas at SAIC.,0.0,0.0,Hot Glue Humidor (T),2018/01/01 00:00:00,
-001e06107e5d,Waggle_Others,014,"State St & Washington St ,[SEC] ,(9/14/2016)",0.0,0.0,AoT Chicago (T) - Replace,2018/01/01 00:00:00,
 001e0610ba93,Waggle_Others,015,TCS 4302 (Brought Inside Oct 2017),0.0,0.0,Test Control Node (T),2018/01/01 00:00:00,
 001e0610ba60,Waggle_Others,016,"TCS 4302,01/18/2018",0.0,0.0,AoT Chicago (T) - Returned,2018/01/01 00:00:00,
 001e0610b9eb,Waggle_Others,017,TCS Somewhere?,0.0,0.0,,2018/01/01 00:00:00,
