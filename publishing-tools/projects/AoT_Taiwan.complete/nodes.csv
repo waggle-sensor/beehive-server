@@ -1,0 +1,4 @@
+node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
+001e061182ae,AoT_Taiwan,0CC,National Chung Hsing University,0.0,0.0,AoT Node (S) [CP],2019/06/18 00:00:00,
+001e06118178,AoT_Taiwan,0FD,National Chung Hsing University,0.0,0.0,AoT Node (S) [CP],2019/06/18 00:00:00,
+001e061182bb,AoT_Taiwan,110,National Chung Hsing University,0.0,0.0,AoT Node (S) [CP],2019/06/18 00:00:00,
