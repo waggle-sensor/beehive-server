@@ -61,3 +61,4 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0x010e,Chemsense ADC2,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
 0x010f,Chemsense ADC3,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
 0x0110,Chemsense RAW,0x01,ASCII string output from Chemsense,ASCII,string,ASCII,string,NAN,NAN,NAN,Instantaneous Measurement,TBA
+900,spl,1,octave,,,,,,,,,
