@@ -39,7 +39,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e0610f6dd,AoT_Chicago,05D,Pulaski Rd & Chicago Ave Chicago IL,41.895355,-87.726064,AoT Chicago (S) [C],2018/02/06 00:00:00,
 001e06113ad8,AoT_Chicago,062,Ashland Ave & Roosevelt Rd Chicago IL,41.866786,-87.666306,AoT Chicago (S) [C],2018/02/27 00:00:00,
 001e0611441e,AoT_Chicago,067,Ashland Ave & 47th Chicago IL,41.808594,-87.665048,AoT Chicago (S) [C],2018/02/27 00:00:00,
-001e06113d83,AoT_Chicago,06A,Clybourn Ave & North Ave Chicago IL,41.910922,-87.649518,AoT Chicago (S) [C],2018/02/23 00:00:00,
+001e06113d83,AoT_Chicago,06A,Clybourn Ave & North Ave Chicago IL,41.910922,-87.649518,AoT Chicago (S) [C],2018/02/23 00:00:00,2018/05/16 00:00:00
 001e06112e77,AoT_Chicago,06B,Ashland Ave & 59th St Chicago IL,41.786756,-87.664343,AoT Chicago (S) [C],2018/02/26 00:00:00,
 001e0610f6db,AoT_Chicago,06D,Hutchinson Commons UChicago Chicago IL,41.791329,-87.598677,AoT Chicago (S) [C] {UChicago},2018/03/15 00:00:00,
 001e06115365,AoT_Chicago,06E,UChicago Chicago IL,41.788430,-87.599130,AoT Chicago (S) [C] {UChicago},2018/04/02 00:00:00,
@@ -57,7 +57,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e0610b9e9,AoT_Chicago,080,Broadway Ave & Lawrence Ave Chicago IL,41.96904,-87.659672,AoT Chicago (S) [C],2018/02/14 00:00:00,
 001e0611462f,AoT_Chicago,081,Wallace St & Pershing Rd Chicago IL,41.823527,-87.641054,AoT Chicago (S) [C],2018/02/27 00:00:00,
 001e06115369,AoT_Chicago,082,Pulaski Rd & Addison St Chicago IL,41.946373,-87.727382,AoT Chicago (S) [C],2018/02/23 00:00:00,
-001e0610bc12,AoT_Chicago,085,Ashland Ave & 79th St Chicago IL,41.75034,-87.663518,AoT Chicago (S) [C],2018/02/08 00:00:00,
+001e0610bc12,AoT_Chicago,085,Ashland Ave & 79th St Chicago IL,41.75034,-87.663518,AoT Chicago (S) [C],2018/02/08 00:00:00,2019/05/23 00:00:00
 001e0610e835,AoT_Chicago,086,Damen Ave & Lawrence Ave Chicago IL,41.968757,-87.679174,AoT Chicago (S) [C],2018/02/15 00:00:00,
 001e0610e538,AoT_Chicago,087,Cottage Grove Ave & 87th St Chicago IL,41.736593,-87.604759,AoT Chicago (S) [C],2018/02/16 00:00:00,
 001e0610eef2,AoT_Chicago,088,Clark St & Wilson Ave Chicago IL,41.965256,-87.66672,AoT Chicago (S) [C],2018/02/14 00:00:00,
