@@ -1,0 +1,145 @@
+sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw_Data_Type (string), VSR_Unit (string), VSR_DATA_TYPE(string), Min_Value_VSR (float), Max_Value_VSR (float), Accuracy_VSR (float),Context (string), Data_Sheet (string)
+0x0001,TMP112,0x00,Metadata,ASCII,string,ASCII, text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tmp112.pdf
+0x0001,TMP112,0x01,Temperature,Array[2],byte,C,float,-40,125,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tmp112.pdf
+0x0002,HTU_21D,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/htu21d.pdf
+0x0002,HTU_21D,0x01,Temperature,Array[2],byte,C,float,-40,125,0.3,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/htu21d.pdf
+0x0002,HTU_21D,0x02,Relative Humidity,Array[2],byte, %RH,float,0,100,2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/htu21d.pdf
+0x0003,HIH4030,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hih4030.pdf
+0x0003,HIH4030,0x01,Relative Humidity,Counts,uint16, %RH,float,0,100,3.5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hih4030.pdf
+0x0004,BMP180,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/bmp180.pdf
+0x0004,BMP180,0x01,Temperature,Array[2],byte,C,float,-40,85,2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/bmp180.pdf
+0x0004,BMP180,0x02,pressure,Array[3],byte,hPa,float,300,1100,6,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/bmp180.pdf
+0x0004,BMP180,0x03,Calibration Constants,Array[22],byte,NA,NA,NAN,NAN,NAN,Calibration Constants Stored in Device,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/bmp180.pdf
+0x0005,PR103J2,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/pr103j2.pdf
+0x0005,PR103J2,0x01,Temperature,Counts,uint16,C,float,-55,80,0.01,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/pr103j2.pdf
+0x0006,TSL250RD,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl250rd.pdf
+0x0006,TSL250RD,0x01,Visible Light Intensity,Counts,uint16,uw/cm2,float,0,124,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl250rd.pdf
+0x0007,MMA8452Q,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mma8452q.pdf
+0x0007,MMA8452Q,0x01,Acceleration in X axis,Array[2],byte,g,float,-4,4,0.008,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mma8452q.pdf
+0x0007,MMA8452Q,0x02,Acceleration in Y axis,Array[2],byte,g,float,-4,4,0.008,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mma8452q.pdf
+0x0007,MMA8452Q,0x03,Acceleration in Z axis,Array[2],byte,g,float,-4,4,0.008,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mma8452q.pdf
+0x0008,SPV1840LR5H-B,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/spv1840lr5h-b.pdf
+0x0008,SPV1840LR5H-B,0x01,Sound Level,Counts,uint16,dBm,float,54,121,2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/spv1840lr5h-b.pdf
+0x0009,TSYS01,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsys01.pdf
+0x0009,TSYS01,0x01,Temperature,Array[3],byte,C,float,-40,125,0.2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsys01.pdf
+0x0009,TSYS01,0x02,Calibration Constants,Array[10],byte,NA,NA,NAN,NAN,NAN,Calibration Constants Stored in Device,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsys01.pdf
+0x000a,HMC5883L,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hmc5883l.pdf
+0x000a,HMC5883L,0x01,Magnetic field in X axis,Array[2],byte,Gauss,float,8,-8,0.002,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hmc5883l.pdf
+0x000a,HMC5883L,0x02,Magnetic field in Y axis,Array[2],byte,Gauss,float,8,-8,0.002,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hmc5883l.pdf
+0x000a,HMC5883L,0x03,Magnetic field in Z axis,Array[2],byte,Gauss,float,8,-8,0.002,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hmc5883l.pdf
+0x000b,HIH6130,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hih6130.pdf
+0x000b,HIH6130,0x01,Temperature,Array[2],byte,C,float,-25,85,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hih6130.pdf
+0x000b,HIH6130,0x02,Relative Humidity,Array[2],byte,%RH,float,0,100,5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/hih6130.pdf
+0x000c,APDS-9006-020,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/apd9006020.pdf
+0x000c,APDS-9006-020,0x01,Visible Light Intensity,Counts,uint16,lux,float,0,1000,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/apd9006020.pdf
+0x000d,TSL260,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl260rd.pdf
+0x000d,TSL260,0x01,IR Light Intensity,Counts,uint16,uw/cm2,float,0,132,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl260rd.pdf
+0x000e,TSL250,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl250rd.pdf
+0x000e,TSL250,0x01,Visible Light Intensity,Counts,uint16,uw/cm2,float,0,124,1,Instantaneous intensity measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tsl250rd.pdf
+0x000f,MLX75305,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mlx75305c.pdf
+0x000f,MLX75305,0x01,Visible Light Intensity,Counts,uint16,uw/cm2,float,0,150,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/mlx75305c.pdf
+0x0010,ML8511,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/ml8511.pdf
+0x0010,ML8511,0x01,UV light intensity,Counts,uint16,uw/cm2,float,0,15,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/ml8511.pdf
+0x0011,TMP421,0x00,Metadata,ASCII,string,ASCII,text,NAN,NAN,NAN,"HW version, FW version, Production Date",https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tmp421.pdf
+0x0011,TMP421,0x01,Temperature,Array[2],byte,C,float,-55,127,1.5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/tmp421.pdf
+0x0101,IRR,0x01,Concentration,pA,int24,ppm,float,0,20,0.5,Instantaneous Measurement,TBA
+0x0102,NO2,0x01,Concentration,pA,int24,ppm,float,0,20,0.5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/no2.pdf
+0x0103,O3,0x01,Concentration,pA,int24,ppm,float,0,20,0.5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/o3.pdf
+0x0104,H2S,0x01,Concentration,pA,int24,ppm,float,0,50,2.5,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/h2s.pdf
+0x0105,IAQ,0x01,Concentration,pA,int24,ppm,float,0,100,0.12,Instantaneous Measurement,TBA
+0x0106,CO,0x01,Concentration,pA,int24,ppm,float,0,1000,0.0475,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/co.pdf
+0x0107,SO2,0x01,Concentration,pA,int24,ppm,float,0,20,0.25,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/so2.pdf
+0x0108,SHT25,0x01,Temperature,value in C times 100,int16,C,float,-40,125,0.2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/sht25.pdf
+0x0108,SHT25,0x02,Relative Humidity,100th of %RH,int16,%RH,float,0,100,1.8,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/sht25.pdf
+0x0109,LPS25H,0x01,Temperature,value in C times 100,int16,C,float,-30,105,1,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/lps25h.pdf
+0x0109,LPS25H,0x02,pressure,100th of hPa,int24,hPa,float,260,1260,2,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/lps25h.pdf
+0x010a,Si1445,0x01,UV intensity,Counts,int16,,,,,,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/si1145uv.pdf
+0x010a,Si1445,0x02,Visible Light Intensity,Counts,int16,,,,,,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/si1145uv.pdf
+0x010b,Chemsense MAC,0x01,Mac address,list,byte,MAC_ADDRESS_STRING,string,NAN,NAN,NAN,Instantaneous Measurement,https://github.com/waggle-sensor/sensors/raw/master/sensors/datasheets/.pdf
+0x010c,Chemsense ADC0,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
+0x010d,Chemsense ADC1,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
+0x010e,Chemsense ADC2,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
+0x010f,Chemsense ADC3,0x01,Temperature,value in C times 100,int16,C,float,-50,100,1,Instantaneous Measurement,TBA
+0x0110,Chemsense RAW,0x01,ASCII string output from Chemsense,ASCII,string,ASCII,string,NAN,NAN,NAN,Instantaneous Measurement,TBA
+900,spl,1,octave
+901,spl,1,octave
+1000,image_detector,1,car_total
+1000,image_detector,2,person_total
+2000,rune,0,spectrum
+2000,rune,1,real_time
+2000,rune,2,live_time
+2000,rune,3,in_alarm
+2000,rune,4,unit_name
+2000,rune,5,system_time
+2100,nai_detector,1,histogram
+0xff00,loadavg,1,loadavg1
+0xff00,loadavg,2,loadavg5
+0xff00,loadavg,3,loadavg15
+0xff01,mem,1,free
+0xff01,mem,2,total
+0xff01,mem,3,free_ratio
+0xff02,time,1,time
+0xff03,uptime,1,uptime
+0xff04,device,1,wagman
+0xff04,device,2,coresense
+0xff04,device,3,modem
+0xff04,device,4,wwan
+0xff04,device,5,lan
+0xff04,device,6,mic
+0xff04,device,7,samba
+0xff04,device,8,bcam
+0xff04,device,9,tcam
+0xff05,wagman_fc,1,nc
+0xff05,wagman_fc,2,ep
+0xff05,wagman_fc,3,cs
+0xff06,wagman_cu,1,wm
+0xff06,wagman_cu,2,nc
+0xff06,wagman_cu,3,ep
+0xff06,wagman_cu,4,cs
+0xff07,wagman_enabled,1,nc
+0xff07,wagman_enabled,2,ep
+0xff07,wagman_enabled,3,cs
+0xff08,wagman_vdc,1,nc
+0xff08,wagman_vdc,2,ep
+0xff08,wagman_vdc,3,cs
+0xff09,wagman_hb,1,nc
+0xff09,wagman_hb,2,ep
+0xff09,wagman_hb,3,cs
+0xff0a,wagman_stopping,1,nc
+0xff0a,wagman_stopping,2,ep
+0xff0a,wagman_stopping,3,cs
+0xff0b,wagman_starting,1,nc
+0xff0b,wagman_starting,2,ep
+0xff0b,wagman_starting,3,cs
+0xff0c,wagman_killing,1,nc
+0xff0c,wagman_killing,2,ep
+0xff0c,wagman_killing,3,cs
+0xff0d,net_rx,1,lan
+0xff0d,net_tx,2,lan
+0xff0e,net_rx,1,wwan
+0xff0e,net_tx,2,wwan
+0xff0f,ping,1,beehive
+0xff0f,ping,2,nc
+0xff0f,ping,3,ep
+0xff10,wagman_th,1,0
+0xff10,wagman_th,2,1
+0xff10,wagman_th,3,2
+0xff10,wagman_th,4,3
+0xff10,wagman_th,5,4
+0xff11,media,1,media
+0xff12,modem,1,dbm
+0xff13,wagman_comm,1,up
+0xff14,wagman_uptime,1,uptime
+0xff15,disk_used,1,boot
+0xff15,disk_used,2,root
+0xff15,disk_used,3,rw
+0xff16,disk_size,1,boot
+0xff16,disk_size,2,root
+0xff16,disk_size,3,rw
+0xff17,service_active,1,rabbitmq
+0xff17,service_active,2,coresense
+0xff18,disk_used_ratio,1,boot
+0xff18,disk_used_ratio,2,root
+0xff18,disk_used_ratio,3,rw
+0xff19,plugins,1,enabled
+0xff19,plugins,2,active

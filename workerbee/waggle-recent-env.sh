@@ -1,16 +1,13 @@
+basedir=$(pwd $(dirname $_))
+
 # use venv python
-# ANL:waggle-license
-#  This file is part of the Waggle Platform.  Please see the file
-#  LICENSE.waggle.txt for the legal details of the copyright and software
-#  license.  For more details on the Waggle project, visit:
-#           http://www.wa8.gl
-# ANL:waggle-license
-source /home/sean/waggle-python/bin/activate
+source "$basedir/waggle-python/bin/activate"
 
 # add waggle tools
-export PATH=$PATH:/home/sean/beehive-server/data-exporter:/home/sean/beehive-server/publishing-tools/bin
+export PATH=$PATH:"$basedir/beehive-server/data-exporter":"$basedir/beehive-server/publishing-tools/bin"
 
 # set standard data paths
 export DATASETS_DIR=/storage/recent/datasets
+export DATASETS_DIR_V2=/storage/recent/datasets-v2
 export DIGESTS_DIR=/storage/recent/digests
-export PROJECTS_DIR=/home/sean/beehive-server/publishing-tools/projects
+export PROJECTS_DIR="$basedir/beehive-server/publishing-tools/projects"
