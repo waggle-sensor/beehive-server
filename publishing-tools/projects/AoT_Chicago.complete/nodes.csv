@@ -118,3 +118,6 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061182a1,AoT_Chicago,0BD,"Garfield Blvd & Michigan Ave Chicago IL",41.794467,-87.622479,AoT Chicago (S) [CP],2019/05/16 00:00:00,
 001e061183eb,AoT_Chicago,0BE,"63rd St & Halsted Ave Chicago IL",41.779889,-87.644777,AoT Chicago (S) [CP],2019/05/16 00:00:00,
 001e06117b41,AoT_Chicago,0BA,"60th & Michigan Ave Chicago IL",41.785715,-87.622214,AoT Chicago (S) [CP],2019/05/16 00:00:00,
+001e061183f5,AoT_Chicago,0BF,111th & Michigan Ave Chicago IL,41.692703,-87.621020,AoT Chicago (S) [CP],2019/06/24 00:00:00,
+001e061182a7,AoT_Chicago,0C0,111th & Vincennes Chicago IL,41.691803,-87.663723,AoT Chicago (S) [CP],2019/06/24 00:00:00,
+001e0611850f,AoT_Chicago,0AF,111th St & Martin Luther King Dr Chicago IL,41.692837,-87.613419,AoT Chicago (S) [CP],2019/06/24 00:00:00,
