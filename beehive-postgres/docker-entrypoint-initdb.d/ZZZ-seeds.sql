@@ -1,8 +1,7 @@
-
-INSERT INTO nodes (node_id, vsn)
+INSERT INTO nodes (node_id, name)
     VALUES ('0000000000000001', '001');
 
-INSERT INTO plugins (id, packet_id, version, name)
+INSERT INTO plugins (id, packet_plugin_id, version, name)
     VALUES (9999, '1', '0.0.1', 'TestSense');
 
 INSERT INTO sensors (id, packet_sensor_id, packet_parameter_id, sensor, parameter, uom)

@@ -3,11 +3,6 @@
 -- work together to qualify what kinds of measurements are recorded.
 --
 
--- Ensure that we're working with the right database.
-
-CREATE DATABASE IF NOT EXISTS waggle;
-\c waggle
-
 -- Create the sensors table. The values in this table are the
 -- singular sensor definitions. For instantiated sensors, you'll
 -- need to know the plugin that recorded the measurements to

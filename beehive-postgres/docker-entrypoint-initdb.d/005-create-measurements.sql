@@ -3,11 +3,6 @@
 -- using the timescaledb extension.
 --
 
--- Ensure that we're working with the right database.
-
-CREATE DATABASE IF NOT EXISTS waggle;
-\c waggle
-
 -- Enable the timescaledb extension
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -15,7 +10,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 CREATE TABLE IF NOT EXISTS measurements (
     -- the time the measurement was taken on the node
-    timestamp TIMESTAMP NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
     -- ref to nodes table
     node_id INTEGER NOT NULL REFERENCES nodes (id),
     -- ref to sensors table
