@@ -121,3 +121,7 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e061183f5,AoT_Chicago,0BF,111th & Michigan Ave Chicago IL,41.692703,-87.621020,AoT Chicago (S) [CP],2019/06/24 00:00:00,
 001e061182a7,AoT_Chicago,0C0,111th & Vincennes Chicago IL,41.691803,-87.663723,AoT Chicago (S) [CP],2019/06/24 00:00:00,
 001e0611850f,AoT_Chicago,0AF,111th St & Martin Luther King Dr Chicago IL,41.692837,-87.613419,AoT Chicago (S) [CP],2019/06/24 00:00:00,
+001e06117b44,0B5,AoT_Chicago,95th St & Ashland Ave Chicago IL,41.721301,-87.662630,AoT Chicago (S) [CP],2019/06/25 00:00:00,
+001e0611856d,0B3,AoT_Chicago,107th St & Longwood Ave Chicago IL,41.699234,-87.671154,AoT Chicago (S) [CP],2019/06/25 00:00:00,
+001e061183f3,0B7,AoT_Chicago,103rd & Western Ave Chicago IL,41.706381,-87.681606,AoT Chicago (S) [CP],2019/06/25 00:00:00,
+001e061184a3,0B4,AoT_Chicago,99th St & Beverly Blvd Chicago IL,41.714021,-87.659612,AoT Chicago (S) [CP],2019/06/25 00:00:00,
