@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 from glob import glob
+import os
 
 
 def read_nodes_file(path):
@@ -30,7 +31,7 @@ def export_nodes_files():
 
     for project_id, rows in df.groupby('project_id'):
         rows.sort_values(['vsn']).to_csv(
-            f'tmp/{project_id}.csv', index=False, date_format='%Y/%m/%d %H:%M:%S')
+            f'{project_id}.complete/nodes.csv', index=False, date_format='%Y/%m/%d %H:%M:%S')
 
 
 commands = {
