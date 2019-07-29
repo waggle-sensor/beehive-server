@@ -1,2 +1,2 @@
 node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
-000000000000,Beehive,000,Beehive,0.0,0.0,Beehive,2018/01/01 00:00:00,
+000000000000,Beehive,0,Beehive,0.0,0.0,Beehive,2018/01/01 00:00:00,
