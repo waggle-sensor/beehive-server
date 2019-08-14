@@ -160,3 +160,4 @@ node_id,project_id,vsn,address,lat,lon,description,start_timestamp,end_timestamp
 001e06200325,Waggle_Others,W00B,ANL 5th Floor,0.0,0.0,,2018/01/01 00:00:00,
 001e061088c8,Waggle_Others,W00X,"Chattanooga, TN",0.0,0.0,David Lary's Ugly Box #1,2018/01/01 00:00:00,
 001e06108a8a,Waggle_Others,W037,TCS Outside,41.718448,-87.981959,Waggle node,2018/01/01 00:00:00,
+001e0610ba37,Waggle_Others,02B,TCS 4302,41.718106,-87.98322900000002,AoT Node (T),2019/01/01 00:00:00,
