@@ -200,5 +200,7 @@ sensor_id,sensor_name,parameter_id,parameter_name,Raw_Type_Summary (string), Raw
 0xc00c,req_wagman_device_enable,1,nc
 0xc00c,req_wagman_device_enable,2,ep
 0xc00c,req_wagman_device_enable,3,cs
-0xc00d,req_wagman_media_select,1,nc
-0xc00d,req_wagman_media_select,2,ep
+0xc00d,req_wagman_get_media_select,1,nc
+0xc00d,req_wagman_get_media_select,2,ep
+0xc00e,req_wagman_set_media_select,1,nc
+0xc00e,req_wagman_set_media_select,2,ep
