@@ -300,7 +300,38 @@ CREATE TABLE waggle.sensor_data_raw (
     AND speculative_retry = '99PERCENTILE';
 ```
 
-**3. Nodes:** (We do _not_ know what this table does or how it impacts the rest of the system, so keeping it alive for now)
+**3. Data Message v2 **
+
+This is where the raw v2 data pipeline messages are stored. The data field contains a complete waggle packet which typically includes datagrams containing sensorgrams.
+
+```
+CREATE TABLE waggle.data_messages_v2 (
+    node_id text,
+    date date,
+    plugin_id text,
+    plugin_version text,
+    timestamp timestamp,
+    data blob,
+    plugin_instance text,
+    PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp, data)
+) WITH CLUSTERING ORDER BY (plugin_id ASC, plugin_version ASC, timestamp ASC, data ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+```
+
+**4. Nodes:** (We do _not_ know what this table does or how it impacts the rest of the system, so keeping it alive for now)
 ```
 cqlsh:waggle> DESCRIBE TABLE nodes  ;
 
