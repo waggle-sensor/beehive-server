@@ -32,7 +32,14 @@ cd beehive-server
 
 ### Deploy Containers
 
-Next, we'll specify a deployment directory and spin up all the containers. The deployment directory holds 1. Databases 2. Nodes Keys 3. Beehive Keys 4. RMQP data. If you remove this directory you loose all persistent stuff. The incoming data from the nodes also gets stored under this directory. :
+Next, we'll specify a deployment directory and spin up all the containers. The deployment directory holds 
+
+1. Databases 
+2. Nodes Keys 
+3. Beehive Keys 
+4. RMQ data
+
+If you remove this directory you loose all persistent stuff. The incoming data from the nodes also gets stored under this directory.
 
 ```
 export BEEHIVE_ROOT=/path/to/deploy/into
