@@ -11,10 +11,16 @@ usage:
 	@echo "make [build | deploy | snapshot | rollback]"
 
 build:
-	docker build -t $(image) .
+	@bash -c 'if [ -e ./Dockerfile ] ; then set -x ; docker build -t $(image) . ; set +x ; else echo no Dockerfile; fi'
+	
+#  ifeq ($(wildcard ./Dockerfile), )
+#    docker build -t $(image) .
+#  else 
+#    @echo "no Dockerfile"
+#  endif
 
 rm:
-	docker rm -f $(name)
+	-docker rm -f $(name) &> /dev/null || true
 
 start:
 	docker start $(name)
@@ -25,6 +31,11 @@ stop:
 restart:
 	docker restart $(name)
 
+startnetwork:
+	$(eval COUNT := $(shell docker network ls -q  -f name=$(BEEHIVE_DOCKER_NETWORK)$ | wc -l ))
+	@if [ ! $(COUNT) -eq 1 ] ; then set -x ; docker network create $(BEEHIVE_DOCKER_NETWORK) ; fi
+	
+	
 test: image = waggle/$(name):testing
 test: build
 test: deploy

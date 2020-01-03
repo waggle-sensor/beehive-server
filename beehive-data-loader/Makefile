@@ -9,9 +9,8 @@ name = beehive-data-loader
 image = waggle/$(name):2
 include ../Makefile.service
 
-deploy:
-	-docker network create $(BEEHIVE_DOCKER_NETWORK)
-	-docker rm -f $(name)
+deploy: startnetwork rm
+	
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \

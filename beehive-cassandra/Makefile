@@ -9,9 +9,12 @@ name = beehive-cassandra
 image = cassandra:3
 include ../Makefile.service
 
-deploy:
-	-docker network create $(BEEHIVE_DOCKER_NETWORK)
-	-docker rm -f $(name)
+deploy: startnetwork rm
+
+	$(eval COUNT := $(shell docker network ls -q  -f name=$(BEEHIVE_DOCKER_NETWORK)$ | wc -l ))
+	@if [ ! $(COUNT) -eq 1 ] ; then set -x ; docker network create $(BEEHIVE_DOCKER_NETWORK) ; fi
+
+	
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \

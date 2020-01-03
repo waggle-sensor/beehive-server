@@ -11,12 +11,14 @@ do_deploy() {
   cp ssh/id_rsa_waggle_aot_registration.pub $BEEHIVE_ROOT/ssh_keys/
 
   for image in $(echo beehive-*); do
+    echo "building $image ..."
     cd $image
     make build
     cd ..
   done
 
   for image in $(echo beehive-*); do
+    echo "deploying $image ..."
     cd $image
     make deploy
     cd ..
@@ -25,6 +27,7 @@ do_deploy() {
 
 do_setup() {
   for image in $(echo beehive-*); do
+    echo "setup $image ..."
     cd $image
     make setup
     cd ..
@@ -33,6 +36,7 @@ do_setup() {
 
 do_cleanup() {
   docker rm -f $(echo beehive-*)
+  # docker rm -f $(docker ps -f name=beehive -q)
 }
 
 if [ -z "$BEEHIVE_ROOT" ]; then
