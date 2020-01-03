@@ -1,11 +1,12 @@
-## MySQL examples
+# beehive-mysql navigation examples
 
 
-# mysql client
+## mysql client
 ```bash
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle
 ```
-# view tables
+
+## view tables
 ```SQL
 use waggle;
 SHOW TABLES;
@@ -13,22 +14,23 @@ SELECT * FROM users;
 SELECT * FROM nodes;
 ```
 
-# set description for a node
+## set description for a node
 ```SQL
 UPDATE nodes SET description = "<description>" WHERE node_id="<node_id>";
 ```
-# set description and a hostname for a node
+## set description and a hostname for a node
 ```SQL
-	UPDATE nodes SET description = "<description>", hostname = "<hostname>" WHERE node_id="<node_id>";
+UPDATE nodes SET description = "<description>", hostname = "<hostname>" WHERE node_id="<node_id>";
 ```
-# write hardware info
+## write hardware info
 ```SQL
 UPDATE nodes SET hardware = '<JSON>' WHERE node_id="<node_id>";
 ```
-# or execute querys directly from the host:
+## execute querys directly from the host:
 ```bash
 docker exec -ti beehive-mysql mysql  -u waggle --password=waggle -e "use waggle; SELECT * FROM nodes;"
-#delete entries:
+```
+## delete entries:
 ```SQL
 DELETE FROM nodes WHERE node_id = "0000000000AAAAAA";
 ```
