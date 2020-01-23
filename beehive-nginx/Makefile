@@ -6,7 +6,7 @@
 # ANL:waggle-license
 
 name = beehive-nginx
-image = waggle/$(name):2
+image = nginx:1.17
 include ../Makefile.service
 
 deploy: startnetwork rm
@@ -16,6 +16,8 @@ deploy: startnetwork rm
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 80:80 \
+		-v `pwd`/api_nodes_access.whitelist:/etc/nginx/app/api_nodes_access.whitelist:ro \
+		-v `pwd`/beehive.conf:/etc/nginx/conf.d/default.conf:ro \
 		-v $(BEEHIVE_ROOT)/www:/www:ro \
 		--name $(name) \
 		$(image)
