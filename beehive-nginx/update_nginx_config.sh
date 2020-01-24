@@ -1,9 +1,6 @@
 #!/bin/bash
 
 
-NODES_API=$(docker ps | grep beehive-nodes-api | wc -l)
-
-CHANGES=0
 
 if [ !  -d locations ] ; then
     echo "locations subdirectory is missing"
@@ -11,39 +8,53 @@ if [ !  -d locations ] ; then
 fi
 
 
-if [ ${NODES_API} -eq "1" ] ; then
-    echo "found beehive-nodes-api"
-    if [ ! -L  locations/api_nodes.conf ] ; then
-        echo "symlink is missing, create one"
-        set -x
-        ( cd locations ; ln -s api_nodes api_nodes.conf )
-        set +x
-        CHANGES=1
+CHANGES=0
+
+
+
+# this assumes a one-to-one mapping of container name and include filename
+
+for container in beehive-nodes-api ; do 
+
+    echo "checking container ${container} ..."
+
+    NODES_API=$(docker ps | grep ${container} | wc -l)
+
+    if [ ${NODES_API} -eq "1" ] ; then
+        echo "found ${container}"
+        if [ ! -L  locations/${container}.conf ] ; then
+            echo "symlink is missing, create one"
+            set -x
+            ( cd locations ; ln -s ${container} ${container}.conf )
+            set +x
+            CHANGES=1
+        fi
+
+        if [ ! -L  upstream/${container}.conf ] ; then
+            echo "symlink is missing, create one"
+            set -x
+            (cd upstream ; ln -s ${container} ${container}.conf )
+            set +x
+            CHANGES=1
+        fi
+
+    elif [ ${NODES_API} -eq "0" ] ; then
+        echo "did not find ${container}"
+        if [ -L locations/${container}.conf ] ; then
+            rm -f locations/${container}.conf
+            CHANGES=1
+        fi
+
+        if [ -L upstream/${container}.conf ] ; then
+            rm -f upstream/${container}.conf
+            CHANGES=1
+        fi
+
+    else
+        echo "error parsing docker ps"
     fi
 
-    if [ ! -L  upstream/api_nodes.conf ] ; then
-        echo "symlink is missing, create one"
-        set -x
-        (cd upstream ; ln -s api_nodes api_nodes.conf )
-        set +x
-        CHANGES=1
-    fi
-
-elif [ ${NODES_API} -eq "0" ] ; then
-    echo "not found beehive-nodes-api"
-    if [ -L locations/api_nodes.conf ] ; then
-        rm -f locations/api_nodes.conf
-        CHANGES=1
-    fi
-
-    if [ -L upstream/api_nodes.conf ] ; then
-        rm -f upstream/api_nodes.conf
-        CHANGES=1
-    fi
-
-else
-    echo "error parsing docker ps"
-fi
+done
 
 echo "CHANGES: ${CHANGES}"
 
