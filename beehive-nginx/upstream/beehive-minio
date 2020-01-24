@@ -1,0 +1,3 @@
+upstream minio-pool {
+    server beehive-minio:9000;
+}
