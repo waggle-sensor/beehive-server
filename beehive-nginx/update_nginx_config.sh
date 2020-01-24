@@ -8,6 +8,11 @@ if [ !  -d locations ] ; then
 fi
 
 
+if [ ! -e api_nodes_access.whitelist ]  ; then
+    cp api_nodes_access.whitelist.example api_nodes_access.whitelist
+fi
+
+
 CHANGES=0
 
 
