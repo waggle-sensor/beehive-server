@@ -4,3 +4,6 @@ TestServer.py
 /protocol
 /utilities
 __pycache__/
+
+/beehive-nginx/locations/*.conf
+/beehive-nginx/upstream/*.conf
