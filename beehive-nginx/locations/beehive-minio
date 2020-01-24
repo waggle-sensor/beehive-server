@@ -11,7 +11,7 @@ location /minio/ {
    proxy_http_version 1.1;
    proxy_set_header Connection "";
 
-   proxy_pass http://minio-pool ;
+   proxy_pass http://minio-pool/ ; 
    # Health Check endpoint might go here. See https://www.nginx.com/resources/wiki/modules/healthcheck/
    # /minio/health/live;
  }
