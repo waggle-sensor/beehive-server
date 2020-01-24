@@ -4,7 +4,6 @@
 #  license.  For more details on the Waggle project, visit:
 #           http://www.wa8.gl
 # ANL:waggle-license
-BEEHIVE_ROOT?=/mnt
 BEEHIVE_DOCKER_NETWORK?=beehive
 
 usage:
@@ -32,10 +31,11 @@ restart:
 	docker restart $(name)
 
 startnetwork:
+	@test -n "$(BEEHIVE_DOCKER_NETWORK)" || bash -c 'echo "BEEHIVE_DOCKER_NETWORK not defined" ; exit 1'
 	$(eval COUNT := $(shell docker network ls -q  -f name=$(BEEHIVE_DOCKER_NETWORK)$ | wc -l ))
 	@if [ ! $(COUNT) -eq 1 ] ; then set -x ; docker network create $(BEEHIVE_DOCKER_NETWORK) ; fi
 	
-	
+
 test: image = waggle/$(name):testing
 test: build
 test: deploy
