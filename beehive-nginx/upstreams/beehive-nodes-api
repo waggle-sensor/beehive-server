@@ -1,0 +1,3 @@
+upstream api-nodes-pool {
+    server beehive-nodes-api:5000;
+}

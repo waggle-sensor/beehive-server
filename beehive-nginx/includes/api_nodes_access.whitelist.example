@@ -1,0 +1,13 @@
+
+
+
+
+# example whitelist
+# allow 1.2.3.4;
+# allow 2.3.4.5;
+# allow 6.6.6.6;
+# allow 127.0.0.1;
+# allow 192.168.0.0/16;
+
+deny all;        # comment this out if you want no access restrictions
+
