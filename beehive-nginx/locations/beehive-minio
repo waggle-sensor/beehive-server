@@ -2,7 +2,7 @@
 
 location /minio/ {
 
-    include /etc/nginx/app/api_nodes_access.whitelist;
+    include /etc/nginx/includes/api_nodes_access*.whitelist;
 
     # remove the temporary minio path
     rewrite ^/minio/(.*)$  $1 break;
