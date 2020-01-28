@@ -6,7 +6,7 @@ TestServer.py
 __pycache__/
 
 /beehive-nginx/locations/*.conf
-/beehive-nginx/upstream/*.conf
+/beehive-nginx/upstreams/*.conf
 
 
 /beehive-nginx/api_nodes_access.whitelist
