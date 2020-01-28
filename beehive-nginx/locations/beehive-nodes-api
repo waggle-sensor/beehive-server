@@ -2,7 +2,7 @@
     location /api/nodes/ {
         
 
-        include /etc/nginx/app/api_nodes_access.whitelist;
+        include /etc/nginx/includes/api_nodes_access*.whitelist;    # use wildcard to avoid error message if not found
         
         proxy_pass      http://api-nodes-pool/ ;
         

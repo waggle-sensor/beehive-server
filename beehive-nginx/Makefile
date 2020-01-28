@@ -12,15 +12,15 @@ include ../Makefile.service
 deploy: startnetwork rm
 	#@test -n "$(BEEHIVE_ROOT)" || bash -c 'echo "BEEHIVE_ROOT not defined" ; exit 1' 
 	@test -n "$(BEEHIVE_DOCKER_NETWORK)" || bash -c 'echo "BEEHIVE_DOCKER_NETWORK not defined" ; exit 1' 
-	@bash -c 'if [ ! -e api_nodes_access.whitelist ] ; then cp api_nodes_access.whitelist.example api_nodes_access.whitelist ; fi '
+	
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 80:80 \
 		-v `pwd`/api_nodes_access.whitelist:/etc/nginx/app/api_nodes_access.whitelist:ro \
-		-v `pwd`/upstream:/etc/nginx/upstream:ro \
-		-v `pwd`/locations:/etc/nginx/locations:ro \
+		-v `pwd`/upstreams:/etc/nginx/upstreams/:ro \
+		-v `pwd`/locations:/etc/nginx/locations/:ro \
 		-v `pwd`/nginx.conf:/etc/nginx/nginx.conf:ro \
 		-v `pwd`/beehive.conf:/etc/nginx/conf.d/default.conf:ro \
 		--name $(name) \

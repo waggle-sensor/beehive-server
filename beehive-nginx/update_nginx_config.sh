@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This scripts checks if certain backend services are running. 
+# If they are, nginx configuration will be updated by creation of symlinks in include directories.
+
+# The reason for this script is that nginx will not start if a backend host cannot be found.
 
 
 if [ !  -d locations ] ; then
@@ -7,11 +11,10 @@ if [ !  -d locations ] ; then
     exit 1
 fi
 
-
-if [ ! -e api_nodes_access.whitelist ]  ; then
-    cp api_nodes_access.whitelist.example api_nodes_access.whitelist
+if [ !  -d upstreams ] ; then
+    echo "upstreams subdirectory is missing"
+    exit 1
 fi
-
 
 CHANGES=0
 
@@ -23,9 +26,9 @@ for container in beehive-nodes-api beehive-minio ; do
 
     echo "checking container ${container} ..."
 
-    NODES_API=$(docker ps | grep ${container} | wc -l)
-
-    if [ ${NODES_API} -eq "1" ] ; then
+    CONTAINER_COUNT=$(docker ps | grep ${container} | wc -l | tr -d '[:space:]' )
+    echo "CONTAINER_COUNT: ${CONTAINER_COUNT}"
+    if [ ${CONTAINER_COUNT} -eq 1 ] ; then
         echo "found ${container}"
         if [ ! -L  locations/${container}.conf ] ; then
             echo "symlink is missing, create one"
@@ -35,23 +38,23 @@ for container in beehive-nodes-api beehive-minio ; do
             CHANGES=1
         fi
 
-        if [ ! -L  upstream/${container}.conf ] ; then
+        if [ ! -L  upstreams/${container}.conf ] ; then
             echo "symlink is missing, create one"
             set -x
-            (cd upstream ; ln -s ${container} ${container}.conf )
+            (cd upstreams ; ln -s ${container} ${container}.conf )
             set +x
             CHANGES=1
         fi
 
-    elif [ ${NODES_API} -eq "0" ] ; then
+    elif [ ${CONTAINER_COUNT} -eq 0 ] ; then
         echo "did not find ${container}"
         if [ -L locations/${container}.conf ] ; then
             rm -f locations/${container}.conf
             CHANGES=1
         fi
 
-        if [ -L upstream/${container}.conf ] ; then
-            rm -f upstream/${container}.conf
+        if [ -L upstreams/${container}.conf ] ; then
+            rm -f upstreams/${container}.conf
             CHANGES=1
         fi
 
