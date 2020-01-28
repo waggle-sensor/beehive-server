@@ -18,7 +18,7 @@ deploy: startnetwork rm
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 80:80 \
-		-v `pwd`/api_nodes_access.whitelist:/etc/nginx/app/api_nodes_access.whitelist:ro \
+		-v `pwd`/includes:/etc/nginx/includes/:ro \
 		-v `pwd`/upstreams:/etc/nginx/upstreams/:ro \
 		-v `pwd`/locations:/etc/nginx/locations/:ro \
 		-v `pwd`/nginx.conf:/etc/nginx/nginx.conf:ro \
