@@ -99,6 +99,72 @@ def generate_token_from_key_and_cert(key, cert):
     hexdigest = hashlib.sha1(data).hexdigest()
     return hexdigest[:8]
 
+def generate_credentials(nodeid):
+
+
+        node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
+
+        ##### Got node_id #####
+        logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
+
+        rsa_public_key_file=os.path.join(node_dir, 'key_rsa.pub')
+        rsa_private_key_file=os.path.join(node_dir, 'key.pem')
+        signed_client_certificate_file=os.path.join(node_dir, 'cert.pem')
+
+
+        rsa_public_key = None
+
+        with resource_lock:
+            return_value = subprocess.call([
+                os.path.join(script_path, 'create_client_cert.sh'),
+                'node-{}'.format(nodeid.lower()),
+                os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
+            ])
+            if return_value != 0:
+                raise Exception("create_client_cert.sh failed"
+
+            rsa_public_key = read_file(rsa_public_key_file)
+            append_to_authorized_keys_file(rsa_public_key)
+
+
+        rsa_private_key = read_file(rsa_private_key_file)
+        signed_client_certificate = read_file(signed_client_certificate_file)
+        #key_rsa_pub_file_content = read_file(key_rsa_pub_file)
+
+        db = Mysql( host="beehive-mysql",
+                        user="waggle",
+                        passwd="waggle",
+                        db="waggle")
+
+       
+
+        
+
+        mysql_row_node = db.get_node(nodeid)
+
+        if not mysql_row_node:
+            port=db.createNewNode(nodeid)
+            if not port:
+                print "Error: Node creation failed"
+                raise Exception("Node creation failed")
+            mysql_row_node = db.get_node(nodeid)
+
+        port = int(db.find_port(nodeid))
+
+        if not port:
+            logger.error("Error: port number not found !?")
+            raise Exception("port number not found !?"
+
+        token = generate_token_from_key_and_cert(key=rsa_private_key, cert=signed_client_certificate)
+        
+        # TODO: decide if we keep token
+         
+        db.save_node_credentials(nodeid, rsa_private_key, rsa_public_key, signed_client_certificate)
+        
+        # note: do not return credentials here, use get_node_crednetials function
+        return
+
+
 
 class newnode:
 
@@ -117,52 +183,32 @@ class newnode:
 
         logger.info('GET newnode - Preparing to register "%s".', nodeid)
 
-        node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
 
-        ##### Got node_id #####
-        logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
+        # check if credentials are already in database
 
-        with resource_lock:
-            subprocess.call([
-                os.path.join(script_path, 'create_client_cert.sh'),
-                'node-{}'.format(nodeid.lower()),
-                os.path.join('nodes/', 'node_' + nodeid),  # BUG create_client_cert.sh already prefixes path...
-            ])
+        node_credentials = get_node_credentials(nodeid)
 
-            append_to_authorized_keys_file(read_file(os.path.join(node_dir, 'key_rsa.pub')))
+        if not node_credentials:
+            try: 
+                generate_credentials(nodeid)
+            except Exception as e:
+                return "error: {}".format(str(e))
 
-        privkey = read_file(os.path.join(node_dir, 'key.pem'))
-        cert = read_file(os.path.join(node_dir, 'cert.pem'))
-        key_rsa_pub_file_content = read_file(os.path.join(node_dir, 'key_rsa.pub'))
+            try: 
+                node_credentials = get_node_credentials(nodeid)
+            except Exception as e:
+                return "error: {}".format(str(e))
+                
+        if not node_credentials:
+            return "error: Could not create crdentials"
 
-        db = Mysql( host="beehive-mysql",
-                        user="waggle",
-                        passwd="waggle",
-                        db="waggle")
-
-        mysql_row_node = db.get_node(nodeid)
-
-        if not mysql_row_node:
-            port=db.createNewNode(nodeid)
-            if not port:
-                print "Error: Node creation failed"
-                return "Error: Node creation failed"
-            mysql_row_node = db.get_node(nodeid)
-
-        port = int(db.find_port(nodeid))
-
-        if not port:
-            logger.error("Error: port number not found !?")
-            return "Error: port number not found !?"
-
-        token = generate_token_from_key_and_cert(key=privkey, cert=cert)
 
         return '{key}\n{cert}\nTOKEN={token}\nPORT={ssh_port}\n{ssh_key}\n'.format(
-            key=privkey,
-            cert=cert,
+            key=rsa_private_key,
+            cert=signed_client_certificate,
             token=token,
             ssh_port=port,
-            ssh_key=key_rsa_pub_file_content)
+            ssh_key=rsa_public_key)
 
 
 def update_authorized_keys_file():
