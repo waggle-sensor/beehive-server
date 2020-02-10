@@ -1,0 +1,3 @@
+upstream api-registration {
+    server beehive-registration:5000;
+}

@@ -11,6 +11,11 @@ CREATE DATABASE IF NOT EXISTS waggle;
 
 USE waggle;
 
+
+
+
+
+
 # data that has 1-to-1 mapping with node_id
 CREATE TABLE IF NOT EXISTS waggle.node_management (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -101,6 +106,34 @@ CREATE TABLE IF NOT EXISTS waggle.node_offline (
   node_id               VARCHAR(16) NOT NULL,
   start_time            TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE IF NOT EXISTS waggle.registrations (
+    id varchar(36) NOT NULL PRIMARY KEY, 
+    nodeid VARCHAR(32) NOT NULL, 
+    creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    state ENUM('waiting', 'approved', 'denied') DEFAULT 'waiting',
+    response_date TIMESTAMP NULL DEFAULT NULL);
+
+
+# cleanup for registration requests
+CREATE EVENT IF NOT EXISTS
+  DeleteOldRequests
+ON SCHEDULE EVERY 1 DAY
+DO
+DELETE FROM
+  waggle.registrations
+WHERE creation_date < DATE_SUB(NOW(), INTERVAL 30 DAY);
+
+# cleanup for registration requests
+CREATE EVENT IF NOT EXISTS
+  DeleteApprovedRequests
+ON SCHEDULE EVERY 5 MINUTE
+DO
+DELETE FROM
+  waggle.registrations
+WHERE response_date < DATE_SUB(NOW(), INTERVAL 15 MINUTE);
+
 
 #################################################################################
 #####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
