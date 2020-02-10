@@ -109,6 +109,10 @@ CREATE TABLE IF NOT EXISTS waggle.node_offline (
 
 
 CREATE TABLE IF NOT EXISTS waggle.registrations (
+
+)
+
+CREATE TABLE IF NOT EXISTS waggle.registrations (
     id varchar(36) NOT NULL PRIMARY KEY, 
     nodeid VARCHAR(32) NOT NULL, 
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -135,9 +139,22 @@ DELETE FROM
 WHERE response_date < DATE_SUB(NOW(), INTERVAL 15 MINUTE);
 
 
-#################################################################################
-#####  SOON TO BE DEPRECATED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#################################################################################
+
+
+
+
+
+
+CREATE TABLE IF NOT EXISTS waggle.credentials (
+    id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    node_id             VARCHAR(16),
+   
+    rsa_private_key              TEXT,   # RSA private key, from key.pem
+    rsa_public_key               TEXT,
+    signed_client_certificate    TEXT   # x509 cert (part of which is an RSA public key), from cert.pem
+
+);
+
 CREATE TABLE IF NOT EXISTS waggle.nodes (
     id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     node_id             VARCHAR(16),
