@@ -139,7 +139,7 @@ def create_registration_request(nodeid):
     print("create_registration_request", flush=True)
 
 
-    if len(nodeid) != 12:
+    if len(nodeid) != 16:
         raise Exception('nodeid not valid')
 
 
