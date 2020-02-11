@@ -156,7 +156,10 @@ def create_registration_request(nodeid):
     
     return_registration_uuid= 'error'
     
-    execute(query)
+    try:
+        execute(query)
+    except Exception as e:
+        raise Exception("execute(query) returned: {}".format(str(e)))
 
     return_registration_uuid = registration_uuid
 
@@ -185,52 +188,67 @@ def api_registration(request_id):
         return_obj['data'] = newRegistration
         return jsonify(return_obj)
 
-    if request_id:
-        return_obj = {}
+    if not request_id:
+        return_obj['error'] = "unclear instruction"
+        return jsonify(return_obj) 
 
-        query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
-        print("query:", query,  flush=True)
+    
+    
+    query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
+    print("query:", query,  flush=True)
 
-        row = None
-        db = get_mysql_db()
-        c=db.cursor()
-        try:
-            c.execute(query)
+    row = None
+    db = get_mysql_db()
+    c=db.cursor()
+    try:
+        c.execute(query)
 
-            row = c.fetchone()
+        row = c.fetchone()
 
-        except Exception as e: 
-            return_obj['error'] = str(e)
-            return jsonify(return_obj), STATUS_Server_Error
+    except Exception as e: 
+        return_obj['error'] = str(e)
+        return jsonify(return_obj), STATUS_Server_Error
 
 
-        if not row:
-            return_obj['error'] = "{} not found".format(request_id)
-            return jsonify(return_obj), STATUS_Not_Found
+    if not row:
+        return_obj['error'] = "{} not found".format(request_id)
+        return jsonify(return_obj), STATUS_Not_Found
 
-        if len(row) < 4:
-            return_obj['error'] = "Could not parse table entry"
-            return jsonify(return_obj), STATUS_Server_Error
+    if len(row) < 4:
+        return_obj['error'] = "Could not parse table entry"
+        return jsonify(return_obj), STATUS_Server_Error
 
-        state  = row[3]
+    state  = row[3]
+    nodeid = row[1]
+    always_approve = False
 
-        always_approve = False
+    always_approve_env = ""
+    if 'ALWAYS_APPROVE' in os.environ:
         always_approve_env = os.environ['ALWAYS_APPROVE']
-        if always_approve_env == "1":
-            always_approve = True
+
+    if always_approve_env == "1":
+        always_approve = True
 
 
-        if (state != 'approved') and (always_approve == False) :
-            print("row:", row, flush=True)
-            return_obj['data']={}
-            return_obj['data']['request_id'] = request_id
-            return_obj['data']['state'] = state
-            return jsonify(return_obj)
+    if (state != 'approved') and (always_approve == False) :
+        print("row:", row, flush=True)
+        return_obj['data']={}
+        return_obj['data']['request_id'] = request_id
+        return_obj['data']['state'] = state
+        return jsonify(return_obj)
 
-        
-        
+    
+    query_url = 'http://beehive-cert:80/node?{}'.format(nodeid)
+    print("query: ", query_url, flush=True)
+    try:
+        r = requests.get(query_url)
+        r.raise_for_status()
+    except Exception as e:
+        return_obj['error'] = "Could not retreive credentials from cert server: {}".format(str(e))
+        return jsonify(return_obj), STATUS_Server_Error   
 
-    return
+
+    return r.content
    
 
 
