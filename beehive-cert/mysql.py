@@ -127,3 +127,36 @@ class Mysql(object):
         self.query_one("INSERT INTO nodes (node_id, reverse_ssh_port) VALUES ('%s', %d)" % ( node_id, newport ))
 
         return newport
+
+
+    def save_node_credentials(self, node_id, rsa_private_key, rsa_public_key, signed_client_certificate):
+    
+        query = "INSERT INTO credentials (node_id, rsa_private_key, rsa_public_key, signed_client_certificate) VALUES ('{}', '{}', '{}', '{}')".format( node_id, rsa_private_key, rsa_public_key, signed_client_certificate )
+        self.query_one(query)
+
+        return
+
+    def get_node_credentials(self, node_id):
+    
+        query = "SELECT * FROM credentials WHERE node_id = '{}';".format(node_id) 
+        row = self.query_one(query)
+
+        if not row:
+            return None 
+
+        row_len  =    len(row)     
+        if row_len != 5:
+            raise Exception("error reading credentials {}".format(row_len))
+
+        #print("row:", row, flush=True)
+        # id, nodeid, 
+        result = {
+            'nodeid' : row[1],
+            'rsa_private_key' : row[2] , 
+            'rsa_public_key' : row[3], 
+            'signed_client_certificate' : row[4],
+        }
+        return result
+
+
+
