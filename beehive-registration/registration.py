@@ -143,8 +143,7 @@ def create_registration_request(nodeid):
         raise Exception('nodeid not valid')
 
 
-    
-
+  
 
     registration_uuid = uuid.uuid4()
 
@@ -215,14 +214,20 @@ def api_registration(request_id):
 
         state  = row[3]
 
-        if state != 'approved':
+        always_approve = False
+        always_approve_env = os.environ['ALWAYS_APPROVE']
+        if always_approve_env == "1":
+            always_approve = True
+
+
+        if (state != 'approved') and (always_approve == False) :
             print("row:", row, flush=True)
             return_obj['data']={}
             return_obj['data']['request_id'] = request_id
             return_obj['data']['state'] = state
             return jsonify(return_obj)
 
-
+        
         
 
     return
