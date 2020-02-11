@@ -25,6 +25,17 @@ import json
 # see https://webpy.org/
 
 
+# TODO we will need to check how long a certificate is valid, here is a code example:
+#    pip install pyopenssl
+#    import OpenSSL
+#    import ssl, socket
+#    cert=ssl.get_server_certificate(('www.google.com', 443))
+#    x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+#    x509.get_notAfter()
+
+
+
+
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - line=%(lineno)d - %(message)s')
 
 handler = logging.StreamHandler(stream=sys.stdout)
