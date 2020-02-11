@@ -32,4 +32,4 @@ WORKDIR /code/
 #CMD ["flask", "run", "--host=0.0.0.0"]
 
 #production
-CMD ["gunicorn" , "-w 4", "-b 0.0.0.0:5000",  "apiserver:app"]
+CMD ["gunicorn" , "-w 4", "-b 0.0.0.0:5000",  "registration:app"]
