@@ -144,14 +144,17 @@ class Mysql(object):
         if not row:
             return None 
 
-       
-        if len(row) != 3:
-            raise Exception("error reading credentials")
+        row_len  =    len(row)     
+        if row_len != 5:
+            raise Exception("error reading credentials {}".format(row_len))
 
+        #print("row:", row, flush=True)
+        # id, nodeid, 
         result = {
-            'rsa_private_key' : row[0] , 
-            'rsa_public_key' : row[1], 
-            'signed_client_certificate' : row[2],
+            'nodeid' : row[1],
+            'rsa_private_key' : row[2] , 
+            'rsa_public_key' : row[3], 
+            'signed_client_certificate' : row[4],
         }
         return result
 
