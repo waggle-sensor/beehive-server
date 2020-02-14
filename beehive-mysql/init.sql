@@ -109,14 +109,10 @@ CREATE TABLE IF NOT EXISTS waggle.node_offline (
 
 
 CREATE TABLE IF NOT EXISTS waggle.registrations (
-
-)
-
-CREATE TABLE IF NOT EXISTS waggle.registrations (
     id varchar(36) NOT NULL PRIMARY KEY, 
     nodeid VARCHAR(32) NOT NULL, 
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    state ENUM('waiting', 'approved', 'denied') DEFAULT 'waiting',
+    state ENUM('pending', 'approved', 'denied') DEFAULT 'pending',
     response_date TIMESTAMP NULL DEFAULT NULL);
 
 
