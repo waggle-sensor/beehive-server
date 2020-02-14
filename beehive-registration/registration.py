@@ -18,6 +18,8 @@ from flask import stream_with_context
 #from MySQLdb import _mysql
 import MySQLdb as _mysql
 import uuid
+from werkzeug.exceptions import HTTPException
+
 
 app = Flask(__name__)
 #app.logger.setLevel(logging.INFO)
@@ -47,31 +49,42 @@ STATUS_Not_Found = 404
 STATUS_Server_Error = 500
 
 
-class InvalidUsage(Exception):
-    status_code = 400
+# class InvalidUsage(Exception):
+#     status_code = 400
 
-    def __init__(self, message, status_code=None, payload=None):
-        Exception.__init__(self)
-        self.message = message
-        if status_code and status_code==STATUS_Server_Error:
-            logger.warning(message)
-        else:
-            logger.debug(message)
-        if status_code is not None:
-            self.status_code = status_code
-        self.payload = payload
+#     def __init__(self, message, status_code=None, payload=None):
+#         Exception.__init__(self)
+#         self.message = message
+#         if status_code and status_code==STATUS_Server_Error:
+#             logger.warning(message)
+#         else:
+#             logger.debug(message)
+#         if status_code is not None:
+#             self.status_code = status_code
+#         self.payload = payload
 
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv
+#     def to_dict(self):
+#         rv = dict(self.payload or ())
+#         rv['message'] = self.message
+#         return rv
 
 
-@app.errorhandler(InvalidUsage)
-def handle_invalid_usage(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
+#@app.errorhandler(InvalidUsage)
+#def handle_invalid_usage(error):
+#    response = jsonify(error.to_dict())
+#    response.status_code = error.status_code
+#    return response
+
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return jsonify(error=str(e)), code
+
+
 
 
 def get_mysql_db():
