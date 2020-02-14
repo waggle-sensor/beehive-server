@@ -31,9 +31,22 @@ cd ${SSL_DIR}/server
 # Make the server key
 openssl genrsa -out key.pem 2048
 
+# create random seed file
+openssl rand -out ${SSL_DIR}/server/random.rnd 20
+ln -sf ${SSL_DIR}/server/random.rnd /root/.rnd
+
+
 # create request
-openssl req -new -key key.pem -out req.pem -outform PEM \
+openssl req -rand ${SSL_DIR}/server/random.rnd -new -key key.pem -out req.pem -outform PEM \
 	-subj /CN=$commonname/O=server/ -nodes
+
+sleep 1
+
+if [ ! -f ${SSL_DIR}/server/req.pem ] ; then
+	echo "File missing: ${SSL_DIR}/server/req.pem "
+	exit 1
+fi
+
 
 cd ${SSL_DIR}/waggleca
 
