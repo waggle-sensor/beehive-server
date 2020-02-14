@@ -28,4 +28,4 @@ deploy: startnetwork rm
 		$(image)
 
 setup:
-	docker exec -i $(name) 'cqlsh' < init.cql
+	./init.sh
