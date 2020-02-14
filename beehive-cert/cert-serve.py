@@ -47,7 +47,7 @@ logger.setLevel(logging.DEBUG)
 
 
 
-mysql_host = os.environ['MYSQL_HOST']
+mysql_host = os.environ.get('MYSQL_HOST', 'beehive-mysql')
 mysql_user = os.environ['MYSQL_USER']
 mysql_passwd = os.environ['MYSQL_PASSWD']
 mysql_db = os.environ['MYSQL_DB']
