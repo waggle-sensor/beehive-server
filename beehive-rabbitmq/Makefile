@@ -30,10 +30,10 @@ deploy: startnetwork rm
 setup:
 	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
 
-	$(eval ADMIN_PASSWORD := $(shell bash -c 'read -s -p "Enter RabbitMQ admin password: " pwd; echo $$pwd'))
+	### $(eval ADMIN_PASSWORD := $ #(shell bash -c 'read -s -p "Enter RabbitMQ admin password: " pwd; echo $$pwd'))
 	@echo
 
-	-docker exec -ti $(name) rabbitmqctl add_user admin $(ADMIN_PASSWORD)
+	-docker exec -ti $(name) rabbitmqctl add_user admin $(RABBITMQ_ADMIN_PASSWORD)
 	-docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator
 	-docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*"
 
