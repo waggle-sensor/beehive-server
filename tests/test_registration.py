@@ -9,6 +9,7 @@ r = requests.post(f'http://localhost/api/registration?nodeid={nodeid}').json()
 requestid = r['data']
 
 # approve request
+# TODO replace with what will become approval api
 subprocess.check_output([
     'docker', 'exec', '-ti', 'beehive-mysql', 'mysql',
     '-u', 'waggle',
