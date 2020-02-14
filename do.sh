@@ -6,6 +6,8 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
+set -e
+
 do_deploy() {
   mkdir -p $BEEHIVE_ROOT/ssh_keys
   cp ssh/id_rsa_waggle_aot_registration.pub $BEEHIVE_ROOT/ssh_keys/
@@ -27,10 +29,16 @@ do_deploy() {
 
 do_setup() {
   for image in $(echo beehive-*); do
+    # skip Makefile if target is missing anyway
+    if ! grep --quiet '^setup:' $image/Makefile ; then
+      continue
+    fi
+      
     echo "setup $image ..."
     cd $image
     make setup
     cd ..
+    
   done
 }
 
