@@ -17,9 +17,9 @@ deploy: startnetwork rm
 		--restart=always \
   		-p 8183:5000 \
   		-e FLASK_ENV=production \
-  		-e MYSQL_HOST="beehive-mysql" \
-  		-e MYSQL_USER="waggle" \
-  		-e MYSQL_PASSWD="waggle" \
-  		-e MYSQL_DB="waggle" \
+  		-e MYSQL_HOST=$(MYSQL_HOST) \
+  		-e MYSQL_USER=$(MYSQL_USER) \
+  		-e MYSQL_PASSWD=$(MYSQL_PASSWD) \
+  		-e MYSQL_DB=$(MYSQL_DB) \
   		--name $(name) \
 		$(image)	

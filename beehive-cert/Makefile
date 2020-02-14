@@ -16,10 +16,10 @@ deploy: startnetwork rm
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 127.0.0.1:24181:80 \
-		-e MYSQL_HOST="beehive-mysql" \
-  		-e MYSQL_USER="waggle" \
-  		-e MYSQL_PASSWD="waggle" \
-  		-e MYSQL_DB="waggle" \
+		-e MYSQL_HOST=$(MYSQL_HOST) \
+  		-e MYSQL_USER=$(MYSQL_USER) \
+  		-e MYSQL_PASSWD=$(MYSQL_PASSWD) \
+  		-e MYSQL_DB=$(MYSQL_DB) \
 		-v $(BEEHIVE_ROOT)/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
 		-v $(BEEHIVE_ROOT)/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		--name $(name) \
