@@ -19,4 +19,10 @@ subprocess.check_output([
 
 # print credentials
 r = requests.get(f'http://localhost/api/registration/{requestid}')
-print(r.text)
+output = r.text
+print(output)
+
+assert 'RSA PRIVATE KEY' in output
+assert 'CERTIFICATE' in output
+assert 'PORT' in output
+assert 'ssh-rsa' in output
