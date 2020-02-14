@@ -166,35 +166,48 @@ def create_registration_request(nodeid):
     
     return return_registration_uuid
 
-@app.route('/', defaults={'request_id': None})
-@app.route('/<request_id>')
-def api_registration(request_id):
+
+
+
+@app.route('/', defaults={'request_id': None},  methods=['POST'])
+def api_registration_request(request_id):
+
+
+    return_obj = {}
+
+    nodeid = request.args.get('nodeid')
+
+    if not nodeid:
+        return_obj['error'] = "Query parameter \"nodeid=<nodeid>\" is missing"
+        return jsonify(return_obj), STATUS_Server_Error
+
+    try:
+        newRegistration = create_registration_request(nodeid)
+    except Exception as e:
+        return_obj['error'] = str(e)
+        return jsonify(return_obj), STATUS_Server_Error
+
+    return_obj['data'] = newRegistration
+
+    return jsonify(return_obj)
+
+
+
+@app.route('/<request_id>',  methods=['GET'])
+def api_registration_check(request_id):
 
 
     return_obj = {}
 
 
-  
-
-    nodeid = request.args.get('nodeid')
-
-    if nodeid:
-        try:
-            newRegistration = create_registration_request(nodeid)
-        except Exception as e:
-            return_obj['error'] = str(e)
-            return jsonify(return_obj), STATUS_Server_Error
-
-        return_obj['data'] = newRegistration
-        return jsonify(return_obj)
 
     if not request_id:
         return_obj['error'] = "unclear instruction"
         return jsonify(return_obj) 
 
     
-    
     query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
+    
     print("query:", query,  flush=True)
 
     row = None
