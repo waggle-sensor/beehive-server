@@ -6,6 +6,9 @@
 # ANL:waggle-license
 BEEHIVE_DOCKER_NETWORK?=beehive
 
+include ../beehive.conf
+export $(shell sed 's/=.*//' ../beehive.conf)
+
 usage:
 	@echo "make [build | deploy | snapshot | rollback]"
 
