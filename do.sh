@@ -25,6 +25,13 @@ do_deploy() {
     make deploy
     cd ..
   done
+
+  # Run setup only once
+  if [  ! -e ${BEEHIVE_ROOT}/setup_success.flag ] ; then
+    do_setup
+    touch ${BEEHIVE_ROOT}/setup_success.flag
+  fi
+
 }
 
 do_setup() {
@@ -43,8 +50,11 @@ do_setup() {
 }
 
 do_cleanup() {
-  docker rm -f $(echo beehive-*)
-  # docker rm -f $(docker ps -f name=beehive -q)
+  GLOBIGNORE=beehive-core
+  set -x
+  docker rm -f  beehive-*
+  set +x
+  unset GLOBIGNORE
 }
 
 if [ -z "$BEEHIVE_ROOT" ]; then

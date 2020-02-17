@@ -1,6 +1,9 @@
 #!/bin/bash
 
 
+
+echo "Trying to initialize cassandra, this can take a few seconds..."
+
 n=0
 until [ $n -ge 10 ]
 do
