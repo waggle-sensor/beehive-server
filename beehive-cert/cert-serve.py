@@ -279,6 +279,12 @@ def append_to_authorized_keys_file(data):
 if __name__ == "__main__":
     node_database = {}
 
+
+    print("mysql_host={}".format(mysql_host))
+    print("mysql_db={}".format(mysql_db))
+    print("mysql_user={}".format(mysql_user))
+
+
     # get all public keys from disk
     for directory in listdir(ssl_nodes_dir):
         node_dir = join(ssl_nodes_dir, directory)
