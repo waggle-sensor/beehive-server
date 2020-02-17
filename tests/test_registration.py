@@ -11,13 +11,15 @@ class TestRegistration(unittest.TestCase):
     def test_full(self):
         nodeid = '0000000000000001'
 
-        # submit request for credentials
-        r = requests.post(
-            f'http://localhost/api/registration?nodeid={nodeid}').json()
-        requestid = r['data']
+        # start request for credentials
+        r = requests.post(f'http://localhost/api/registration?nodeid={nodeid}')
+        self.assertEqual(r.status_code, 200,
+                         msg=f'invalid status code for response {r.text}')
+        resp = r.json()
+        self.assertIn('data', resp)
+        requestid = resp['data']
 
-        # approve request
-        # TODO replace with what will become approval api
+        # approve request - TODO replace with what will become approval api
         subprocess.check_output([
             'docker', 'exec', '-ti', 'beehive-mysql', 'mysql',
             '-u', 'waggle',
@@ -26,8 +28,10 @@ class TestRegistration(unittest.TestCase):
             '-e', f"update registrations set state='approved', response_date=NOW() where id='{requestid}';",
         ])
 
-        # print credentials
+        # check credentials
         r = requests.get(f'http://localhost/api/registration/{requestid}')
+        self.assertEqual(r.status_code, 200,
+                         msg=f'invalid status code for response {r.text}')
         self.assertIn('RSA PRIVATE KEY', r.text)
         self.assertIn('CERTIFICATE', r.text)
         self.assertIn('PORT', r.text)
