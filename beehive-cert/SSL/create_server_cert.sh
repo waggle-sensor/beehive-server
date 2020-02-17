@@ -10,7 +10,7 @@
 # This script creates the "server"-certificate for the RabbitMQ server.
 
 set -e
-set -x
+
 
 # TODO Cleanup this script and have it not destroy existing info.
 
@@ -22,11 +22,19 @@ else
 	commonname="$1"
 fi
 
+set -x
+
 cd ${SSL_DIR} # in SSL/
 
 mkdir -p server
 chmod 755 server
 cd ${SSL_DIR}/server
+
+if [ -e key.pem ] ; then
+ echo "key.pem already exists, skipping..."
+ exit 0
+fi
+
 
 # Make the server key
 openssl genrsa -out key.pem 2048
