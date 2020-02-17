@@ -6,6 +6,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
+
 SSL_DIR="/usr/lib/waggle/SSL"
 CA_DIR="${SSL_DIR}/waggleca"
 
@@ -37,7 +38,9 @@ create_ca_key_if_needed() {
 		echo "CA key already exists."
 	else
 		echo "Creating CA key."
+		set -ex
 		openssl genrsa -out $CA_DIR/private/cakey.pem 2048
+		set +ex
 		rm -f $CA_DIR/cacert.pem
 		rm $CA_DIR/certs/*
 	fi
@@ -50,7 +53,7 @@ create_ca_cert_if_needed() {
 		echo "CA certificate already exists."
 	else
 		echo "Creating CA certificate."
-
+		set -ex
 		openssl req \
 			-new \
 			-x509 \
@@ -62,6 +65,7 @@ create_ca_cert_if_needed() {
 			-sha256
 			# openssl req -new -x509 -key private/cakey.pem -days 3650 -out cacert.pem -outform PEM -subj /CN=waggleca/ -sha256
 			# openssl x509 -in cacert.pem -out cacert.cer -outform DER
+		set +ex
 	fi
 }
 
