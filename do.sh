@@ -12,19 +12,9 @@ do_deploy() {
   mkdir -p $BEEHIVE_ROOT/ssh_keys
   cp ssh/id_rsa_waggle_aot_registration.pub $BEEHIVE_ROOT/ssh_keys/
 
-  for image in $(echo beehive-*); do
-    echo "building $image ..."
-    cd $image
-    make build
-    cd ..
-  done
+  do_build
 
-  for image in $(echo beehive-*); do
-    echo "deploying $image ..."
-    cd $image
-    make deploy
-    cd ..
-  done
+  do_deploy_only
 
   # Run setup only once
   if [  ! -e ${BEEHIVE_ROOT}/setup_success.flag ] ; then
@@ -48,6 +38,31 @@ do_setup() {
     
   done
 }
+
+
+do_deploy_only() {
+  
+  for image in $(echo beehive-*); do
+    echo "deploying $image ..."
+    cd $image
+    make deploy
+    cd ..
+  done
+
+}
+
+
+do_build() {
+
+  for image in $(echo beehive-*); do
+    echo "building $image ..."
+    cd $image
+    make build
+    cd ..
+  done
+
+}
+
 
 do_cleanup() {
   GLOBIGNORE=beehive-core
