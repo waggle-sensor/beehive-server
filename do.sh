@@ -25,6 +25,13 @@ do_deploy() {
     make deploy
     cd ..
   done
+
+  # Run setup only once
+  if [  ! -e ${BEEHIVE_ROOT}/setup_success.flag ] ; then
+    do_setup
+    touch ${BEEHIVE_ROOT}/setup_success.flag
+  fi
+
 }
 
 do_setup() {
