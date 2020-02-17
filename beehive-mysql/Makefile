@@ -17,7 +17,7 @@ deploy: startnetwork rm
 		--restart=always \
 		-v $(BEEHIVE_ROOT)/mysql:/var/lib/mysql \
 		-e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
-		-e MYSQL_DATABASE=$(MYSQL_DATABASE) \
+		-e MYSQL_DATABASE=$(MYSQL_DB) \
 		-e MYSQL_USER=$(MYSQL_USER) \
 		-e MYSQL_PASSWORD=$(MYSQL_PASSWD) \
 		-p 127.0.0.1:3306:3306 \
