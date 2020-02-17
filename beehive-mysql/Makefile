@@ -20,8 +20,9 @@ deploy: startnetwork rm
 		-e MYSQL_DATABASE=$(MYSQL_DB) \
 		-e MYSQL_USER=$(MYSQL_USER) \
 		-e MYSQL_PASSWORD=$(MYSQL_PASSWD) \
-		-p 127.0.0.1:3306:3306 \
 		--hostname beehive-mysql \
 		--network-alias beehive-mysql \
 		--name $(name) \
 		$(image)
+
+#-p 127.0.0.1:3306:3306 \
