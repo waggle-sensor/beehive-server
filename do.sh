@@ -50,8 +50,11 @@ do_setup() {
 }
 
 do_cleanup() {
-  docker rm -f $(echo beehive-*)
-  # docker rm -f $(docker ps -f name=beehive -q)
+  GLOBIGNORE=beehive-core
+  set -x
+  docker rm -f  beehive-*
+  set +x
+  unset GLOBIGNORE
 }
 
 if [ -z "$BEEHIVE_ROOT" ]; then
