@@ -26,5 +26,6 @@ deploy: startnetwork rm
 		$(image)
 
 setup:
+	./wait_for_beehive-cert.sh
 	docker exec -ti $(name) SSL/create_certificate_authority.sh
 	docker exec -ti $(name) SSL/create_server_cert.sh
