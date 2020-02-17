@@ -87,8 +87,11 @@ case $1 in
   cleanup)
     do_cleanup
     ;;
+  test)
+    python3 -m unittest discover -s tests
+    ;;
   *)
-    echo "Usage: do.sh (deploy|setup|cleanup)"
+    echo "Usage: do.sh (deploy|setup|cleanup|test)"
     exit 1
     ;;
 esac
