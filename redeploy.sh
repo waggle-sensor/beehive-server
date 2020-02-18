@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export BEEHIVE_ROOT=$PWD/testing-root
+export BEEHIVE_ROOT=$PWD/data
 
 ./do.sh cleanup
 
