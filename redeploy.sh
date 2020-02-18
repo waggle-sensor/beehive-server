@@ -9,4 +9,3 @@ export BEEHIVE_ROOT=$PWD/data
 rm -rf $BEEHIVE_ROOT
 
 ./do.sh deploy
-(cd beehive-nginx; ./update_nginx_config.sh)
