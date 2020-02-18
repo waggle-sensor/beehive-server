@@ -28,5 +28,5 @@ deploy: startnetwork rm
 		$(image)
 
 setup:
-	@init.sh $(name)
+	@./init.sh $(name)
 	
