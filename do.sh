@@ -22,6 +22,16 @@ do_deploy() {
     touch ${BEEHIVE_ROOT}/setup_success.flag
   fi
 
+
+  sleep 3
+
+  # this is not ideal...
+  cd ./beehive-nginx
+  set -x
+  ./update_nginx_config.sh
+  set +x
+  cd ..
+
 }
 
 do_setup() {
@@ -73,7 +83,14 @@ do_cleanup() {
 }
 
 if [ -z "$BEEHIVE_ROOT" ]; then
-  echo "Environment variable BEEHIVE_ROOT is required."
+  echo "Environment variable BEEHIVE_ROOT is not defined, using ${PWD}/data/"
+  export BEEHIVE_ROOT=${PWD}/data/
+  sleep 1
+fi
+
+
+if [ -e "${BEEHIVE_ROOT}/.git" ]; then
+  echo "Your BEEHIVE_ROOT folder (${BEEHIVE_ROOT}) seems to be a git repository. Please rename either BEEHIVE_ROOT or your git repository."
   exit 1
 fi
 
