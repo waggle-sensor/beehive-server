@@ -13,6 +13,7 @@ deploy: startnetwork rm
 	
 	docker run \
 		--detach \
+		-e CASSANDRA_HOST=$(CASSANDRA_HOST) \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		--name $(name) \
