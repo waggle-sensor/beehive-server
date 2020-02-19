@@ -219,15 +219,16 @@ def api_registration_check(request_id):
         return jsonify(return_obj) 
 
     
-    query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
-    
-    print("query:", query,  flush=True)
+    #query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
+    query = "SELECT * FROM registrations WHERE id='%s';"
+    query_param = (request_id,)
+    print("query: ", query, request_id,  flush=True)
 
     row = None
     db = get_mysql_db()
     c=db.cursor()
     try:
-        c.execute(query)
+        c.execute(query, query_param)
 
         row = c.fetchone()
 
