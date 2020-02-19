@@ -153,9 +153,9 @@ def create_registration_request(nodeid):
 
     registration_uuid = uuid.uuid4()
 
-    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES ('%s', '%s', NOW());"
+    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES (%s, %s, NOW())"
 
-    query_params=(registration_uuid, nodeid)
+    query_params = (registration_uuid, nodeid)
 
     logger.debug(' query = ' + query)
     print("query:", query,  flush=True)
@@ -203,9 +203,8 @@ def api_registration_check(request_id):
         return_obj['error'] = "unclear instruction"
         return jsonify(return_obj)
 
-    
     #query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
-    query = "SELECT * FROM registrations WHERE id='%s';"
+    query = "SELECT * FROM registrations WHERE id=%s"
     query_param = (request_id,)
     print("query: ", query, request_id,  flush=True)
 
