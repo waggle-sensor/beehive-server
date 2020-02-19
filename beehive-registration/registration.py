@@ -141,7 +141,7 @@ def execute(query, query_params):
 
 
 def valid_nodeid(s):
-    return re.match(r'[A-Fa-f0-9]{16}', s) is not None
+    return re.match(r'[A-Fa-f0-9]{16}$', s) is not None
 
 
 def create_registration_request(nodeid):
