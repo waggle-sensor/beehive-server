@@ -2,6 +2,11 @@
     "rabbit_version": "3.5.7",
     "users": [
         {
+            "name": "admin",
+            "password": "admin",
+            "tags": "administrator"
+        },
+        {
             "name": "node",
             "password": "waggle",
             "tags": ""
@@ -28,6 +33,13 @@
         }
     ],
     "permissions": [
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
         {
             "user": "node",
             "vhost": "/",

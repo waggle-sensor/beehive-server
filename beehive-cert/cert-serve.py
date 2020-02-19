@@ -50,7 +50,6 @@ mysql_host = os.environ.get('MYSQL_HOST', 'beehive-mysql')
 mysql_user = os.environ['MYSQL_USER']
 mysql_passwd = os.environ['MYSQL_PASSWD']
 mysql_db = os.environ['MYSQL_DB']
-RABBITMQ_ADMIN_PASSWORD = os.environ['RABBITMQ_ADMIN_PASSWORD']
 
 
 httpserver_port = 80
@@ -243,17 +242,14 @@ class newnode:
         logger.info('updating username %s in rabbitmq', username)
 
         with requests.Session() as session:
-            # TODO need to user correct admin password, or add user for local work
-            session.auth = ('admin', RABBITMQ_ADMIN_PASSWORD)
-            # TODO allow us to verify server certificate (or user http)
-            session.verify = False
+            session.auth = ('admin', 'admin')
 
-            session.put(f'https://beehive-rabbitmq:15671/api/users/{username}', json={
+            session.put(f'http://beehive-rabbitmq:15672/api/users/{username}', json={
                 'password_hash': '',  # disable password based login
                 'tags': '',
             })
 
-            session.put(f'https://beehive-rabbitmq:15671/api/permissions/%2f/{username}', json={
+            session.put(f'http://beehive-rabbitmq:15672/api/permissions/%2f/{username}', json={
                 'configure': '^to-{}$'.format(username),
                 'write': '^messages|data-pipeline-in|logs|images$',
                 'read': '^to-{}$'.format(username),
