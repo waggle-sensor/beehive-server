@@ -16,10 +16,11 @@ deploy: startnetwork rm
   		--net $(BEEHIVE_DOCKER_NETWORK)  \
 		--restart=always \
   		-p 8184:5000 \
-  		-e FLASK_ENV=development \
-  		-e MYSQL_HOST=$(MYSQL_HOST) \
-  		-e MYSQL_USER=$(MYSQL_USER) \
-  		-e MYSQL_PASSWD=$(MYSQL_PASSWD) \
-  		-e MYSQL_DB=$(MYSQL_DB) \
+  		-e "FLASK_ENV=development" \
+  		-e "MYSQL_HOST=$(MYSQL_HOST)" \
+  		-e "MYSQL_USER=$(MYSQL_USER)" \
+  		-e "MYSQL_PASSWD=$(MYSQL_PASSWD)" \
+  		-e "MYSQL_DB=$(MYSQL_DB)" \
+		-e "ALWAYS_APPROVE=$(ALWAYS_APPROVE)" \
   		--name $(name) \
 		$(image)	
