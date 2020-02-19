@@ -107,7 +107,7 @@ def message_handler(ch, method, properties, body):
 
         session.execute(
             insert_query,
-            (ts.date(), node_id, str(plugin_id), plugin_version, str(plugin_instance), ts, body))
+            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
 
         sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])

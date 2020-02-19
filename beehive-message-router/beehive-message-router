@@ -27,7 +27,8 @@ def message_handler(ch, method, properties, body):
 
     for message in waggle.protocol.unpack_waggle_packets(body):
         if message['sender_id'] != node_id:
-            logging.warning('Dropping message with sender_id %s != node_id %s.', message['sender_id'], node_id)
+            logging.warning(
+                'Dropping message with sender_id %s != node_id %s.', message['sender_id'], node_id)
             continue
 
         route_queue = route_format.format(**message)
@@ -35,7 +36,8 @@ def message_handler(ch, method, properties, body):
 
         ch.queue_declare(queue=route_queue, durable=True)
         ch.basic_publish(exchange='', routing_key=route_queue, body=route_data)
-        logger.info('Route to %s.', route_queue)
+        logger.info('Route %s -> %s.',
+                    message['sender_id'], message['receiver_id'])
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
     logger.info('Ack message data.')
@@ -43,7 +45,8 @@ def message_handler(ch, method, properties, body):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--url', default='amqp://localhost', help='AMQP broker URL to connect to.')
+    parser.add_argument('--url', default='amqp://localhost',
+                        help='AMQP broker URL to connect to.')
     parser.add_argument('queue', help='Message queue to process.')
     args = parser.parse_args()
 

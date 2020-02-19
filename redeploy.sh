@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export BEEHIVE_ROOT=$PWD/testing-root
+export BEEHIVE_ROOT=$PWD/data
 
 ./do.sh cleanup
 
@@ -9,4 +9,3 @@ export BEEHIVE_ROOT=$PWD/testing-root
 rm -rf $BEEHIVE_ROOT
 
 ./do.sh deploy
-(cd beehive-nginx; ./update_nginx_config.sh)
