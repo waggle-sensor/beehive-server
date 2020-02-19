@@ -140,11 +140,15 @@ def execute(query):
     return
 
 
+def valid_nodeid(s):
+    return re.match(r'[A-Fa-f0-9]{16}', s) is not None
+
+
 def create_registration_request(nodeid):
 
     print("create_registration_request", flush=True)
 
-    if len(nodeid) != 16:
+    if not valid_nodeid(nodeid):
         raise Exception('nodeid not valid')
 
     registration_uuid = uuid.uuid4()
