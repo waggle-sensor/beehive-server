@@ -1,11 +1,61 @@
 {
     "rabbit_version": "3.5.7",
     "users": [
+        {
+            "name": "node",
+            "password": "waggle",
+            "tags": ""
+        },
+        {
+            "name": "server",
+            "password": "waggle",
+            "tags": ""
+        },
+        {
+            "name": "router",
+            "password": "router",
+            "tags": ""
+        },
+        {
+            "name": "loader_raw",
+            "password": "waggle",
+            "tags": ""
+        }
     ],
     "vhosts": [
-        {"name": "/"}
+        {
+            "name": "/"
+        }
     ],
     "permissions": [
+        {
+            "user": "node",
+            "vhost": "/",
+            "configure": "pull-images",
+            "write": ".*",
+            "read": "pull-images"
+        },
+        {
+            "user": "server",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "router",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        },
+        {
+            "user": "loader_raw",
+            "vhost": "/",
+            "configure": "^db_raw$",
+            "write": "^$",
+            "read": "^db_raw$"
+        }
     ],
     "parameters": [],
     "policies": [],
@@ -16,11 +66,27 @@
             "durable": true,
             "auto_delete": false,
             "arguments": {}
+        },
+        {
+            "name": "to-router",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false,
+            "arguments": {}
         }
     ],
     "exchanges": [
         {
             "name": "data-pipeline-in",
+            "vhost": "/",
+            "type": "fanout",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false,
+            "arguments": {}
+        },
+        {
+            "name": "messages",
             "vhost": "/",
             "type": "fanout",
             "durable": true,
@@ -72,6 +138,14 @@
             "destination": "db-raw",
             "destination_type": "queue",
             "routing_key": "db-raw",
+            "arguments": {}
+        },
+        {
+            "source": "messages",
+            "vhost": "/",
+            "destination": "to-router",
+            "destination_type": "queue",
+            "routing_key": "",
             "arguments": {}
         }
     ]
