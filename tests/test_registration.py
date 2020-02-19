@@ -37,6 +37,16 @@ class TestRegistration(unittest.TestCase):
         self.assertIn('PORT', r.text)
         self.assertIn('ssh-rsa', r.text)
 
+        # basic check that user exists in rabbitmq
+        output = subprocess.check_output([
+            'docker', 'exec', '-i', 'beehive-rabbitmq',
+            'rabbitmqctl', 'list_user_permissions', f'node-{nodeid}',
+        ]).decode()
+
+        self.assertIn(f'to-node-{nodeid}', output)
+        self.assertIn(f'messages', output)
+        self.assertIn(f'data-pipeline-in', output)
+
 
 if __name__ == '__main__':
     unittest.main()
