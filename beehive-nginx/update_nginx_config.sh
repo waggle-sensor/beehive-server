@@ -49,11 +49,13 @@ for container in beehive-nodes-api beehive-minio beehive-registration ; do
     elif [ ${CONTAINER_COUNT} -eq 0 ] ; then
         echo "did not find ${container}"
         if [ -L locations/${container}.conf ] ; then
+            echo "removing symlink"
             rm -f locations/${container}.conf
             CHANGES=1
         fi
 
         if [ -L upstreams/${container}.conf ] ; then
+            echo "removing symlink"
             rm -f upstreams/${container}.conf
             CHANGES=1
         fi

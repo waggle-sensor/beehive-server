@@ -8,9 +8,7 @@
 FROM ubuntu:18.04
 
 EXPOSE 80
-#RUN apt-get update && apt-get install -y openssh-client openssl python-mysqldb python-webpy
-RUN apt-get update && apt-get install -y openssh-client openssl python3-mysqldb python3-webpy
-
+RUN apt-get update && apt-get install -y openssh-client openssl python3-mysqldb python3-webpy python3-requests
 
 WORKDIR /usr/lib/waggle/beehive-server/beehive-cert/
 COPY . .

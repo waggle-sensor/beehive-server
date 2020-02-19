@@ -19,14 +19,14 @@ deploy: startnetwork rm
 		-v $(BEEHIVE_ROOT)/rabbitmq/:/var/lib/rabbitmq/:rw \
 		-v $(BEEHIVE_ROOT)/log/rabbitmq/:/var/log/rabbitmq/:rw \
 		-v $(BEEHIVE_ROOT)/waggle/SSL:/usr/lib/waggle/SSL/:ro \
-		-p 127.0.0.1:5672:5672 \
 		-p 23181:5671 \
-		-p 15671:15671 \
 		--hostname rabbitmq \
 		--network-alias rabbitmq \
 		--name $(name) \
 		$(image)
-
-setup:
-	@./init.sh $(name)
 	
+
+# removed localhost amqp port
+# -p 127.0.0.1:5672:5672 \
+# removed admin port by default
+# -p 15671:15671 \

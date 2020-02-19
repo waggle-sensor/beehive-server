@@ -107,13 +107,13 @@ def get_mysql_db():
 # UPDATE registrations SET state='denied' , response_date=NOW() WHERE id='';
 # UPDATE registrations SET state='approved' , response_date=NOW() WHERE id='';
 
-def execute(query):
+def execute(query, query_params):
 
     db = get_mysql_db()
     c = db.cursor()
 
     try:
-        c.execute(query)
+        c.execute(query, query_params)
 
         db.commit()
 
@@ -141,7 +141,7 @@ def execute(query):
 
 
 def valid_nodeid(s):
-    return re.match(r'[A-Fa-f0-9]{16}', s) is not None
+    return re.match(r'[A-Fa-f0-9]{16}$', s) is not None
 
 
 def create_registration_request(nodeid):
@@ -153,8 +153,9 @@ def create_registration_request(nodeid):
 
     registration_uuid = uuid.uuid4()
 
-    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES ('{}', '{}', NOW());".format(
-        registration_uuid, nodeid)
+    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES (%s, %s, NOW())"
+
+    query_params = (registration_uuid, nodeid)
 
     logger.debug(' query = ' + query)
     print("query:", query,  flush=True)
@@ -162,7 +163,7 @@ def create_registration_request(nodeid):
     return_registration_uuid = 'error'
 
     try:
-        execute(query)
+        execute(query, query_params)
     except Exception as e:
         raise Exception("execute(query) returned: {}".format(str(e)))
 
@@ -202,15 +203,16 @@ def api_registration_check(request_id):
         return_obj['error'] = "unclear instruction"
         return jsonify(return_obj)
 
-    query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
-
-    print("query:", query,  flush=True)
+    #query = "SELECT * FROM registrations WHERE id='{}';".format(request_id)
+    query = "SELECT * FROM registrations WHERE id=%s"
+    query_param = (request_id,)
+    print("query: ", query, request_id,  flush=True)
 
     row = None
     db = get_mysql_db()
     c = db.cursor()
     try:
-        c.execute(query)
+        c.execute(query, query_param)
 
         row = c.fetchone()
 
