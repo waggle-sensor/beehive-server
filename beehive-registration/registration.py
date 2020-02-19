@@ -107,13 +107,13 @@ def get_mysql_db():
 # UPDATE registrations SET state='denied' , response_date=NOW() WHERE id='';
 # UPDATE registrations SET state='approved' , response_date=NOW() WHERE id='';
 
-def execute(query):
+def execute(query, query_params):
 
     db = get_mysql_db()
     c = db.cursor()
 
     try:
-        c.execute(query)
+        c.execute(query, query_params)
 
         db.commit()
 
@@ -153,8 +153,9 @@ def create_registration_request(nodeid):
 
     registration_uuid = uuid.uuid4()
 
-    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES ('{}', '{}', NOW());".format(
-        registration_uuid, nodeid)
+    query = "INSERT INTO registrations(id, nodeid, creation_date)  VALUES ('%s', '%s', NOW());"
+
+    query_params=(registration_uuid, nodeid)
 
     logger.debug(' query = ' + query)
     print("query:", query,  flush=True)
@@ -162,7 +163,7 @@ def create_registration_request(nodeid):
     return_registration_uuid = 'error'
 
     try:
-        execute(query)
+        execute(query, query_params)
     except Exception as e:
         raise Exception("execute(query) returned: {}".format(str(e)))
 
