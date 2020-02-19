@@ -7,6 +7,19 @@ import time
 class TestRegistration(unittest.TestCase):
 
     # TODO can make more fine grain. just moved end-to-end into single test for now
+    def test_check_node_id_length(self):
+        resp = requests.post(
+            f'http://localhost/api/registration?nodeid=123456789').json()
+        self.assertIn('error', resp)
+
+        resp = requests.post(
+            f'http://localhost/api/registration?nodeid=123456789123456789').json()
+        self.assertIn('error', resp)
+
+    def test_check_node_id_hex(self):
+        resp = requests.post(
+            f'http://localhost/api/registration?nodeid=0123456789abcdez').json()
+        self.assertIn('error', resp)
 
     def test_full(self):
         nodeid = '0000000000000001'
