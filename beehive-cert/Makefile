@@ -16,7 +16,6 @@ deploy: startnetwork rm
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		-p 127.0.0.1:24181:80 \
-		-e "RABBITMQ_ADMIN_PASSWORD=$(RABBITMQ_ADMIN_PASSWORD)" \
 		-e "MYSQL_HOST=$(MYSQL_HOST)" \
   		-e "MYSQL_USER=$(MYSQL_USER)" \
   		-e "MYSQL_PASSWD=$(MYSQL_PASSWD)" \
