@@ -30,9 +30,9 @@ git clone https://github.com/waggle-sensor/beehive-server
 cd beehive-server
 ```
 
-### Deploy Containers
+### BEEHIVE_ROOT data folder
 
-Next, we'll specify a deployment directory and spin up all the containers. The deployment directory holds 
+By default all your beehive data be stored in a `data/` subfolder in your checked out git repository. This data directory will contain:
 
 1. Databases 
 2. Nodes Keys 
@@ -41,21 +41,17 @@ Next, we'll specify a deployment directory and spin up all the containers. The d
 
 If you remove this directory you loose all persistent stuff. The incoming data from the nodes also gets stored under this directory.
 
-```
+To change location of your data folder, set the `BEEHIVE_ROOT` variable:
+
+```bash
 export BEEHIVE_ROOT=${HOME}/beehive-server
+```
+
+(Pro tip: store the beehive variable in you ~/.bashrc or similar)
+
+
+### Install
+```bash
 ./do.sh deploy
 ```
-
-### Perform Initial Setup of Containers
-
-Now, we perform some one-time configuration of our containers:
-
-```
-./do.sh setup
-```
-
-You should be prompted for a RabbitMQ server admin password during this
-process. Remember to choose this password wisely. You can always rerun
-this step if you forget the password.
-
 

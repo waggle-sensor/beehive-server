@@ -28,23 +28,5 @@ deploy: startnetwork rm
 		$(image)
 
 setup:
-	@docker exec -ti beehive-rabbitmq rabbitmqctl status > /dev/null
-
-	### $(eval ADMIN_PASSWORD := $ #(shell bash -c 'read -s -p "Enter RabbitMQ admin password: " pwd; echo $$pwd'))
-	@echo
-
-	-docker exec -ti $(name) rabbitmqctl add_user admin $(RABBITMQ_ADMIN_PASSWORD)
-	-docker exec -ti $(name) rabbitmqctl set_user_tags admin administrator
-	-docker exec -ti $(name) rabbitmqctl set_permissions admin ".*" ".*" ".*"
-
-	-docker exec -ti $(name) rabbitmqctl add_user node waggle
-	-docker exec -ti $(name) rabbitmqctl set_permissions node "pull-images" ".*" "pull-images"
-
-	-docker exec -ti $(name) rabbitmqctl add_user server waggle
-	-docker exec -ti $(name) rabbitmqctl set_permissions server ".*" ".*" ".*"
-
-	-docker exec -ti $(name) rabbitmqctl add_user router router
-	-docker exec -ti $(name) rabbitmqctl set_permissions router ".*" ".*" ".*"
-
-	-docker exec -ti $(name) rabbitmqctl add_user loader_raw waggle
-	-docker exec -ti $(name) rabbitmqctl set_permissions loader_raw "^db-raw$$" "^$$" "^db-raw$$"
+	@./init.sh $(name)
+	

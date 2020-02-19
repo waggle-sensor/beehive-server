@@ -8,3 +8,5 @@ __pycache__/
 /beehive-nginx/locations/*.conf
 /beehive-nginx/upstreams/*.conf
 /beehive-nginx/includes/*.whitelist
+
+data/

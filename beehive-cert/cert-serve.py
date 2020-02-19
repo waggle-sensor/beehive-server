@@ -280,9 +280,9 @@ if __name__ == "__main__":
     node_database = {}
 
 
-    print("mysql_host={}".format(mysql_host))
-    print("mysql_db={}".format(mysql_db))
-    print("mysql_user={}".format(mysql_user))
+    print("mysql_host={}".format(mysql_host), flush=True)
+    print("mysql_db={}".format(mysql_db), flush=True)
+    print("mysql_user={}".format(mysql_user), flush=True)
 
 
     # get all public keys from disk
@@ -299,18 +299,33 @@ if __name__ == "__main__":
             except Exception as e:
                 logger.error("Error reading file %s: %s" % (rsa_pub_filename, str(e)))
 
-    print("node_database: (public keys only)")
-    print(str(node_database))
+    print("node_database: (public keys only)", flush=True)
+    print(str(node_database), flush=True)
 
     db = Mysql( host=mysql_host,
                     user=mysql_user,
                     passwd=mysql_passwd,
                     db=mysql_db)
 
+
+    while True:
+        try:
+            for row in db.query_all('SHOW TABLES'):
+                print("table:", row, flush=True)
+        except Exception as e:
+            print("got exception: ", str(e), flush=True)
+            print("waiting 3 seconds for another connection test...", flush=True)
+            time.sleep(3)
+            continue
+        break
+
+
+
+
     # get list of nodes with credentials in MySQL
     credentials_in_mysql = {}
     for row in db.query_all('SELECT node_id FROM credentials'):
-        print(row)
+        print(row, flush=True)
         node_id = row[0]
         credentials_in_mysql[node_id]={'node_id': node_id}
     
@@ -322,9 +337,9 @@ if __name__ == "__main__":
         if isdir(node_dir) and d[0:5] == 'node_':
             node_id = d[5:].upper()
             if node_id in credentials_in_mysql:
-                print("good, already in database")
+                print("good, already in database", flush=True)
             else:
-                print("credentials missing in db! Trying to load into MYSQL ...")
+                print("credentials missing in db! Trying to load into MYSQL ...", flush=True)
 
                 rsa_public_key_file=os.path.join(node_dir, 'key_rsa.pub')
                 rsa_private_key_file=os.path.join(node_dir, 'key.pem')
@@ -346,7 +361,7 @@ if __name__ == "__main__":
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     # get nodes and ports from database
     for row in db.query_all('SELECT node_id, reverse_ssh_port FROM nodes'):
-        print(row)
+        print(row, flush=True)
 
         node_id = row[0].upper()
 
@@ -370,7 +385,7 @@ if __name__ == "__main__":
         if not 'reverse_ssh_port' in node_database[node_id]:
             logger.warning("Node %s has public key, but no port number is assigned in database." % (node_id))
 
-    print("node_database:")
+    print("node_database:", flush=True)
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(node_database)
 
