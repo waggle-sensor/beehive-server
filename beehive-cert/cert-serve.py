@@ -152,10 +152,51 @@ def generate_credentials(db, nodeid):
     return
 
 
-def get_rabbitmq_username_for_nodeid(nodeid):
-    nodeid = nodeid.rjust(16, '0')
-    nodeid = nodeid.lower()
-    return f'node-{nodeid}'
+def setup_rabbitmq_user_for_nodeid(nodeid):
+    nodeid = nodeid.rjust(16, '0').lower()
+    username = f'node-{nodeid}'
+    queue = f'to-{username}'
+
+    logger.info('setting up username %s in rabbitmq', username)
+
+    with requests.Session() as session:
+        session.auth = ('admin', 'admin')
+
+        r = session.put(f'http://beehive-rabbitmq:15672/api/users/{username}', json={
+            'password_hash': '',  # disable password based login
+            'tags': '',
+        })
+
+        assert r.status_code == 204
+
+        r = session.put(f'http://beehive-rabbitmq:15672/api/permissions/%2f/{username}', json={
+            'configure': '^to-{}$'.format(username),
+            'write': '^messages|data-pipeline-in|logs|images$',
+            'read': '^to-{}$'.format(username),
+        })
+
+        assert r.status_code == 204
+
+        # create queue to message to node
+        r = session.put(f'http://beehive-rabbitmq:15672/api/queues/%2f/{queue}', json={
+            'durable': True,
+        })
+
+        assert r.status_code == 204
+
+        # add binding for nodeid prefix
+        r = session.post(f'http://beehive-rabbitmq:15672/api/bindings/%2f/e/to-nodes/q/{queue}', json={
+            'routing_key': f'{nodeid}.#',
+        })
+
+        assert r.status_code == 201
+
+        # add binding for broadcast (experimental!)
+        r = session.post(f'http://beehive-rabbitmq:15672/api/bindings/%2f/e/to-nodes/q/{queue}', json={
+            'routing_key': f'!.#',
+        })
+
+        assert r.status_code == 201
 
 
 class newnode:
@@ -225,7 +266,7 @@ class newnode:
         #print("rsa_public_key:", len(rsa_public_key), flush=True)
         #print("signed_client_certificate:", len(signed_client_certificate), flush=True)
 
-        # add user to rabbitmq here!
+        setup_rabbitmq_user_for_nodeid(nodeid)
 
         #print("port", port, flush=True)
 
@@ -237,23 +278,6 @@ class newnode:
             cert=signed_client_certificate,
             ssh_port=port,
             ssh_key=rsa_public_key)
-
-        username = get_rabbitmq_username_for_nodeid(nodeid)
-        logger.info('updating username %s in rabbitmq', username)
-
-        with requests.Session() as session:
-            session.auth = ('admin', 'admin')
-
-            session.put(f'http://beehive-rabbitmq:15672/api/users/{username}', json={
-                'password_hash': '',  # disable password based login
-                'tags': '',
-            })
-
-            session.put(f'http://beehive-rabbitmq:15672/api/permissions/%2f/{username}', json={
-                'configure': '^to-{}$'.format(username),
-                'write': '^messages|data-pipeline-in|logs|images$',
-                'read': '^to-{}$'.format(username),
-            })
 
         return return_content
 

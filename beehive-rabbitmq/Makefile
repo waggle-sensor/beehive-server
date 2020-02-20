@@ -20,6 +20,7 @@ deploy: startnetwork rm
 		-v $(BEEHIVE_ROOT)/log/rabbitmq/:/var/log/rabbitmq/:rw \
 		-v $(BEEHIVE_ROOT)/waggle/SSL:/usr/lib/waggle/SSL/:ro \
 		-p 23181:5671 \
+		-p 127.0.0.1:15673:15672 \
 		--hostname rabbitmq \
 		--network-alias rabbitmq \
 		--name $(name) \
