@@ -12,9 +12,13 @@ import datetime
 import pika
 import sys
 import waggle.protocol
+import os
 
 
-cluster = Cluster(['beehive-cassandra'])
+cassandra_host = os.environ.get('CASSANDRA_HOST')
+
+
+cluster = Cluster([cassandra_host])
 session = cluster.connect('waggle')
 
 session.execute('''

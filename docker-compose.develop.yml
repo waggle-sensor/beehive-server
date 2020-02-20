@@ -1,0 +1,137 @@
+version: '3'
+services:
+
+  beehive-cassandra:
+    image: cassandra:3
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "127.0.0.1:9042:9042"
+    volumes:
+      - "${BEEHIVE_ROOT}/cassandra/:/var/lib/cassandra/"
+      - "${BEEHIVE_ROOT}/log/cassandra/:/var/log/cassandra/:rw"
+
+  beehive-cert:
+    build: beehive-cert
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "127.0.0.1:24181:80"
+    volumes:
+      - "${BEEHIVE_ROOT}/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro"
+      - "${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/"
+    environment:
+      - "MYSQL_HOST=${MYSQL_HOST}"
+      - "MYSQL_USER=${MYSQL_USER}"
+      - "MYSQL_PASSWD=${MYSQL_PASSWD}"
+      - "MYSQL_DB=${MYSQL_DB}"
+
+  beehive-data-loader:
+    build: beehive-data-loader
+    restart: always
+    networks:
+      - beehive
+    environment:
+      - "CASSANDRA_HOST=${CASSANDRA_HOST}"
+
+  beehive-loader-raw:
+    build: beehive-loader-raw
+    restart: always
+    networks:
+      - beehive
+    environment:
+      - "CASSANDRA_HOST=${CASSANDRA_HOST}"
+
+  beehive-message-router:
+    build: beehive-message-router
+    restart: always
+    networks:
+      - beehive
+
+  beehive-mysql:
+    build: beehive-mysql
+    restart: always
+    networks:
+      - beehive
+    volumes:
+      - "${BEEHIVE_ROOT}/mysql:/var/lib/mysql"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+      - "MYSQL_DATABASE=${MYSQL_DB}"
+      - "MYSQL_USER=${MYSQL_USER}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWD}"
+
+  beehive-nginx:
+    image: nginx:1.17
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "80:80"
+    volumes:
+      - "./beehive-nginx/includes:/etc/nginx/includes/:ro"
+      - "./beehive-nginx/upstreams:/etc/nginx/upstreams/:ro"
+      - "./beehive-nginx/locations:/etc/nginx/locations/:ro"
+      - "./beehive-nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./beehive-nginx/beehive.conf:/etc/nginx/conf.d/default.conf:ro"
+
+  beehive-nodes-api:
+    build: beehive-nodes-api
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "8183:5000"
+    environment:
+      - "FLASK_ENV=production"
+      - "MYSQL_HOST=${MYSQL_HOST}"
+      - "MYSQL_USER=${MYSQL_USER}"
+      - "MYSQL_PASSWD=${MYSQL_PASSWD}"
+      - "MYSQL_DB=${MYSQL_DB}"
+
+  beehive-rabbitmq:
+    build: beehive-rabbitmq
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "23181:5671"
+      - "127.0.0.1:15673:15672"
+    volumes:
+      - "${BEEHIVE_ROOT}/rabbitmq/:/var/lib/rabbitmq/:rw"
+      - "${BEEHIVE_ROOT}/log/rabbitmq/:/var/log/rabbitmq/:rw"
+      - "${BEEHIVE_ROOT}/waggle/SSL:/usr/lib/waggle/SSL/:ro"
+    environment:
+      - "RABBITMQ_NODENAME=beehive-rabbitmq"
+
+  beehive-registration:
+    build: beehive-registration
+    restart: always
+    networks:
+      - beehive
+    ports:
+      - "8184:5000"
+    environment:
+      - "FLASK_ENV=development"
+      - "MYSQL_HOST=${MYSQL_HOST}"
+      - "MYSQL_USER=${MYSQL_USER}"
+      - "MYSQL_PASSWD=${MYSQL_PASSWD}"
+      - "MYSQL_DB=${MYSQL_DB}"
+      - "ALWAYS_APPROVE=${ALWAYS_APPROVE}"
+
+  beehive-sshd:
+    build: beehive-sshd
+    restart: always
+    networks:
+      - beehive
+    # NOTE should have some volume to provide authorized_keys, right???
+    ports:
+      - "20022:22"
+    environment:
+      - ${BEEHIVE_ROOT}/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro"
+      - ${BEEHIVE_ROOT}/waggle/SSL/:/usr/lib/waggle/SSL/"
+
+networks:
+  beehive:
