@@ -120,40 +120,39 @@ def generate_credentials(db, nodeid):
 
 
 
-    with tempfile.TemporaryDirectory() as node_dir:
+    
 
+    node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
 
-        #node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
+    ##### Got node_id #####
+    logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
 
-        ##### Got node_id #####
-        logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
+    rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')  # TODO required of course....
+    rsa_private_key_file = os.path.join(node_dir, 'key.pem')
+    signed_client_certificate_file = os.path.join(node_dir, 'cert.pem')
 
-        rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')
-        rsa_private_key_file = os.path.join(node_dir, 'key.pem')
-        signed_client_certificate_file = os.path.join(node_dir, 'cert.pem')
+    rsa_public_key = ""
 
-        rsa_public_key = ""
+    with resource_lock:
+        return_value = subprocess.call([
+            os.path.join(script_path, 'create_client_cert.sh'),
+            'node-{}'.format(nodeid.lower()),
+            # BUG create_client_cert.sh already prefixes path...
+            os.path.join('nodes/', 'node_' + nodeid),
+        ])
+        if return_value != 0:
+            raise Exception("create_client_cert.sh failed")
 
-        with resource_lock:
-            return_value = subprocess.call([
-                os.path.join(script_path, 'create_client_cert.sh'),
-                'node-{}'.format(nodeid.lower()),
-                # BUG create_client_cert.sh already prefixes path...
-                os.path.join('nodes/', 'node_' + nodeid),
-            ])
-            if return_value != 0:
-                raise Exception("create_client_cert.sh failed")
+        rsa_public_key = read_file(rsa_public_key_file)
+        append_to_authorized_keys_file(rsa_public_key)
 
-            rsa_public_key = read_file(rsa_public_key_file)
-            append_to_authorized_keys_file(rsa_public_key)
+    rsa_private_key = read_file(rsa_private_key_file)
+    signed_client_certificate = read_file(signed_client_certificate_file)
+    #rsa_public_key = read_file(rsa_public_key_file)
 
-        rsa_private_key = read_file(rsa_private_key_file)
-        signed_client_certificate = read_file(signed_client_certificate_file)
-        #rsa_public_key = read_file(rsa_public_key_file)
+    #token = generate_token_from_key_and_cert(key=rsa_private_key, cert=signed_client_certificate)
 
-        #token = generate_token_from_key_and_cert(key=rsa_private_key, cert=signed_client_certificate)
-
-        # TODO: decide if we keep token
+    # TODO: decide if we keep token
 
     db.save_node_credentials(nodeid, rsa_private_key,
                              rsa_public_key, signed_client_certificate)
