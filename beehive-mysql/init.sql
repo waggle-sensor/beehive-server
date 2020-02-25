@@ -108,35 +108,18 @@ CREATE TABLE IF NOT EXISTS waggle.node_offline (
 );
 
 
-CREATE TABLE IF NOT EXISTS waggle.registrations (
-    id varchar(36) NOT NULL PRIMARY KEY, 
-    nodeid VARCHAR(32) NOT NULL, 
+CREATE TABLE IF NOT EXISTS waggle.registration_keys (
+    id int auto_increment PRIMARY KEY, 
+    batchName TEXT,
     creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    state ENUM('pending', 'approved', 'denied') DEFAULT 'pending',
-    response_date TIMESTAMP NULL DEFAULT NULL);
+    active BOOLEAN not null default 1,   # Usually a key is not active anymore when it has been used. You can also actively disable a key using this flag even if it has not been used yet.
+    used BOOLEAN not null default 0,     # "used" means that a node used the registration_key. A used node should not active.
+    used_date TIMESTAMP NULL DEFAULT NULL,
 
-
-# cleanup for registration requests
-CREATE EVENT IF NOT EXISTS
-  DeleteOldRequests
-ON SCHEDULE EVERY 1 DAY
-DO
-DELETE FROM
-  waggle.registrations
-WHERE creation_date < DATE_SUB(NOW(), INTERVAL 30 DAY);
-
-# cleanup for registration requests
-CREATE EVENT IF NOT EXISTS
-  DeleteApprovedRequests
-ON SCHEDULE EVERY 5 MINUTE
-DO
-DELETE FROM
-  waggle.registrations
-WHERE response_date < DATE_SUB(NOW(), INTERVAL 15 MINUTE);
-
-
-
-
+    rsa_private_key              TEXT,   # RSA private key, from key.pem
+    rsa_public_key               TEXT,
+    signed_client_certificate    TEXT   # x509 cert (part of which is an RSA public key), from cert.pem
+);
 
 
 

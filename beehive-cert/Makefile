@@ -22,10 +22,11 @@ deploy: startnetwork rm
   		-e "MYSQL_DB=$(MYSQL_DB)" \
 		-v $(BEEHIVE_ROOT)/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
 		-v $(BEEHIVE_ROOT)/waggle/SSL/:/usr/lib/waggle/SSL/ \
+		-v $(PWD)/SSL/waggleca/openssl.cnf:/usr/lib/waggle/SSL/waggleca/openssl.cnf \
 		--name $(name) \
 		$(image)
 
-setup:
-	./wait_for_beehive-cert.sh
-	docker exec -ti $(name) SSL/create_certificate_authority.sh
-	docker exec -ti $(name) SSL/create_server_cert.sh
+#setup:
+	#./wait_for_beehive-cert.sh
+	#docker exec -ti $(name) SSL/create_certificate_authority.sh
+	#docker exec -ti $(name) SSL/create_server_cert.sh
