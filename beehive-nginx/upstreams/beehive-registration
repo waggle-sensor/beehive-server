@@ -1,3 +1,0 @@
-upstream beehive-registration-pool {
-    server beehive-registration:5000;
-}
