@@ -69,6 +69,7 @@ os.makedirs(ssl_nodes_dir, exist_ok=True)
 authorized_keys_file = os.path.join(ssl_nodes_dir, 'authorized_keys')
 
 db = None
+_openssl = None
 
 
 def read_file(path):
@@ -115,39 +116,84 @@ def generate_token_from_key_and_cert(key, cert):
     hexdigest = hashlib.sha1(data).hexdigest()
     return hexdigest[:8]
 
+def getOpenssl():
+
+    SSL_DIR="/usr/lib/waggle/SSL"
+    CA_DIR=os.path.join(SSL_DIR, "waggleca")
+    openssl_config_file = os.path.join(CA_DIR, "openssl.cnf")
+   
+    return openssl.Openssl(openssl_config_file)
+
 
 def generate_credentials(db, nodeid):
 
 
-
-    
+    _openssl = getOpenssl() 
 
     node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
+
+    commonname = nodeid
+
+
+    if not os.path.exists(node_dir):
+        os.mkdir(node_dir)
+    
 
     ##### Got node_id #####
     logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
 
-    rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')  # TODO required of course....
-    rsa_private_key_file = os.path.join(node_dir, 'key.pem')
-    signed_client_certificate_file = os.path.join(node_dir, 'cert.pem')
+        
+    
+    # create files
+    #with open(rsa_private_key_file, 'a') as out:
+    #    out.write(rsa_private_key)
+
+    signed_client_certificate_filename = os.path.join(node_dir, 'cert.pem')
 
     rsa_public_key = ""
 
     with resource_lock:
-        return_value = subprocess.call([
-            os.path.join(script_path, 'create_client_cert.sh'),
-            'node-{}'.format(nodeid.lower()),
-            # BUG create_client_cert.sh already prefixes path...
-            os.path.join('nodes/', 'node_' + nodeid),
-        ])
-        if return_value != 0:
-            raise Exception("create_client_cert.sh failed")
+
+        rsa_private_key_file = os.path.join(node_dir, 'key.pem')
+        
+        if not os.path.exists(rsa_private_key_file):
+            print("Creating client private key...", flush=True)
+            _openssl.openssl_genrsa(rsa_private_key_file)
+
+            os.chmod(rsa_private_key_file, 0o600)
+
+
+        rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub') 
+        if not os.path.exists(rsa_public_key_file):
+            command = "ssh-keygen -y -f {} > {}".format(rsa_private_key_file, rsa_public_key_file)
+            print("executing command: ", command, flush=True)
+            subprocess.run(command, shell=True, check=True)
+
+
+        random_rn_file = _openssl.openssl_rand(node_dir)
+
+
+        request_filename = os.path.join(node_dir, 'req.pem')
+        #create request
+        if not os.path.exists(request_filename):
+            print("Creating client cert request ...", flush=True)
+            _openssl.openssl_req_request(commonname, random_rn_file, rsa_private_key_file, request_filename)
+
+        
+
+        
+        if not os.path.exists(signed_client_certificate_filename):
+            print("Creating sigend client certificate ...", flush=True)
+            
+            _openssl.openssl_ca(request_filename, signed_client_certificate_filename)
+
+        
 
         rsa_public_key = read_file(rsa_public_key_file)
         append_to_authorized_keys_file(rsa_public_key)
 
     rsa_private_key = read_file(rsa_private_key_file)
-    signed_client_certificate = read_file(signed_client_certificate_file)
+    signed_client_certificate = read_file(signed_client_certificate_filename)
     #rsa_public_key = read_file(rsa_public_key_file)
 
     #token = generate_token_from_key_and_cert(key=rsa_private_key, cert=signed_client_certificate)
@@ -338,15 +384,19 @@ def create_server_cert(openssl, server_dir):
     key_pem_filename = os.path.join(server_dir, "key.pem")
     if not os.path.exists(key_pem_filename):
         print("creating server key file {} ...".format(key_pem_filename), flush=True)
-        openssl.openssl_genrsa(key_pem_filename)
+        _openssl.openssl_genrsa(key_pem_filename)
 
     
+    
+    random_rn_file = _openssl.openssl_rand(server_dir)
+
     # create request
-    random_rn_file = openssl.openssl_rand(server_dir)
     request_filename = os.path.join(server_dir, "req.pem")
     if not os.path.exists(request_filename):
         print("creating server certificate request file {} ...".format(request_filename), flush=True)
-        openssl.openssl_req_request(commonname, random_rn_file, key_pem_filename, request_filename)
+        _openssl.openssl_req_request(commonname, random_rn_file, key_pem_filename, request_filename)
+
+
 
 
 
@@ -358,7 +408,7 @@ def create_server_cert(openssl, server_dir):
     certificate_file = os.path.join(server_dir, "cert.pem")
     if not os.path.exists(certificate_file):
         print("creating server certificate file {} ...".format(certificate_file), flush=True)
-        openssl.openssl_ca(openssl_config_file, request_filename, certificate_file)
+        _openssl.openssl_ca(request_filename, certificate_file)
 
     #cd ${SSL_DIR}/server
 
@@ -425,9 +475,11 @@ if __name__ == "__main__":
    
 
 
-    openssl = openssl.Openssl(openssl_config_file)
+  
     
-    ca = CertificateAuthority(openssl, CA_DIR)
+    _openssl = getOpenssl()
+
+    ca = CertificateAuthority(_openssl, CA_DIR)
     
     server_dir = os.path.join(SSL_DIR, "server")
     create_server_cert(openssl, server_dir)
@@ -484,7 +536,7 @@ if __name__ == "__main__":
 
         if not node_id in node_database:
             logger.warning(
-                "Node %s is in database, but no public key was found")
+                "Node {} is in database, but no public key was found".format(node_id))
             node_database[node_id] = {}
 
         try:

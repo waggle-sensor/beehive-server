@@ -70,13 +70,13 @@ class Openssl(object):
         return
 
 
-    def openssl_ca(self, openssl_config_file, request_filename, certificate_file):
+    def openssl_ca(self, request_filename, certificate_file):
 
         #openssl ca -config openssl.cnf -in ${SSL_DIR}/server/req.pem -out \
         #	${SSL_DIR}/server/cert.pem -notext -batch -extensions server_ca_extensions
 
         command = ["openssl", "ca", \
-                    "-config", openssl_config_file, \
+                    "-config", self._config_file, \
                     "-in", request_filename, \
                     "-out", certificate_file, \
                     "-notext", \
