@@ -27,7 +27,11 @@ class CertificateAuthority(object):
         print("Creating CA key ...", flush=True)
 
 
-        self._openssl.openssl_genrsa(ca_key_file)
+        try:
+            self._openssl.openssl_genrsa(ca_key_file)
+        except Exception as e:
+            raise e
+
         
 
         # Is that needed ?

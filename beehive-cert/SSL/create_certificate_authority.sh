@@ -7,13 +7,6 @@
 # ANL:waggle-license
 
 
-
-echo "This script is deprecated. The cert server takes over this functionality."
-
-exit 1
-
-
-
 SSL_DIR="/usr/lib/waggle/SSL"
 CA_DIR="${SSL_DIR}/waggleca"
 

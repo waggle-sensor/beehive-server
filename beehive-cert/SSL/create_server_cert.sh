@@ -7,12 +7,6 @@
 # ANL:waggle-license
 
 
-echo "This script is deprecated. The cert server takes over this functionality."
-
-exit 1
-
-
-
 # This script creates the "server"-certificate for the RabbitMQ server.
 
 set -e

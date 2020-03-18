@@ -24,7 +24,7 @@ import requests
 import tempfile
 from subprocess import PIPE, run
 import openssl
-from certauth import CertificateAuthority
+#from certauth import CertificateAuthority
 
 
 # uses web.py
@@ -131,6 +131,43 @@ def getOpenssl():
 
 
 def generate_credentials(db, nodeid):
+
+    node_dir = os.path.join(ssl_nodes_dir, 'node_' + nodeid)
+
+    ##### Got node_id #####
+    logger.info('GET newnode - Generating credentials for "{}".'.format(nodeid))
+
+    rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')
+    rsa_private_key_file = os.path.join(node_dir, 'key.pem')
+    signed_client_certificate_file = os.path.join(node_dir, 'cert.pem')
+
+    rsa_public_key = ""
+
+    with resource_lock:
+        return_value = subprocess.call([
+            os.path.join(script_path, 'create_client_cert.sh'),
+            'node-{}'.format(nodeid.lower()),
+            # BUG create_client_cert.sh already prefixes path...
+            os.path.join('nodes/', 'node_' + nodeid),
+        ])
+        if return_value != 0:
+            raise Exception("create_client_cert.sh failed")
+
+        rsa_public_key = read_file(rsa_public_key_file)
+        append_to_authorized_keys_file(rsa_public_key)
+
+    rsa_private_key = read_file(rsa_private_key_file)
+    signed_client_certificate = read_file(signed_client_certificate_file)
+    #rsa_public_key = read_file(rsa_public_key_file)
+
+    #token = generate_token_from_key_and_cert(key=rsa_private_key, cert=signed_client_certificate)
+
+    # TODO: decide if we keep token
+
+    db.save_node_credentials(nodeid, rsa_private_key,
+                             rsa_public_key, signed_client_certificate)
+
+def generate_credentials_TEST(db, nodeid):
 
 
     _openssl = getOpenssl() 
@@ -373,7 +410,7 @@ def append_to_authorized_keys_file(data):
 
 
 
-def create_server_cert(openssl, server_dir):
+def create_server_cert_TEST(openssl, server_dir):
     commonname="rabbitmq" # TODO config ?????????
 
     if not os.path.exists(server_dir):
@@ -430,6 +467,26 @@ def create_server_cert(openssl, server_dir):
 if __name__ == "__main__":
     node_database = {}
 
+
+     #SSL/create_certificate_authority.sh
+    return_value = subprocess.call([
+            'SSL/create_certificate_authority.sh'
+        ])
+    if return_value != 0:
+        raise Exception("create_certificate_authority.sh failed")
+
+
+   
+
+    #SSL/create_server_cert.sh
+    return_value = subprocess.call([
+            'SSL/create_server_cert.sh'
+        ])
+    if return_value != 0:
+        raise Exception("create_server_cert.sh failed")
+
+
+
     logger.info("mysql_host={}".format(mysql_host))
     logger.info("mysql_db={}".format(mysql_db))
     logger.info("mysql_user={}".format(mysql_user))
@@ -463,7 +520,7 @@ if __name__ == "__main__":
     while True:
         try:
             for row in db.query_all('SHOW TABLES'):
-                logger.info("table:", row)
+                logger.info("table: {}".format(row))
         except Exception as e:
             logger.error("got exception: ", str(e))
             logger.error("waiting 3 seconds for another connection test...")
@@ -472,7 +529,7 @@ if __name__ == "__main__":
         break
 
 
-    # TODO  check if ca is in mysql !!!
+    
 
     SSL_DIR="/usr/lib/waggle/SSL"
     CA_DIR=os.path.join(SSL_DIR, "waggleca")
@@ -482,12 +539,12 @@ if __name__ == "__main__":
 
   
     
-    _openssl = getOpenssl()
+    #_openssl = getOpenssl()
 
-    ca = CertificateAuthority(_openssl, CA_DIR)
+    #ca = CertificateAuthority(_openssl, CA_DIR)
     
     server_dir = os.path.join(SSL_DIR, "server")
-    create_server_cert(openssl, server_dir)
+    #create_server_cert(openssl, server_dir)
 
    # SSL_DIR="/usr/lib/waggle/SSL"
    # CA_DIR="${SSL_DIR}/waggleca"
@@ -495,42 +552,42 @@ if __name__ == "__main__":
 
 
     # get list of nodes with credentials in MySQL
-    credentials_in_mysql = {}
-    for row in db.query_all('SELECT node_id FROM credentials'):
-        logger.info(row)
-        node_id = row[0]
-        credentials_in_mysql[node_id] = {'node_id': node_id}
+    #credentials_in_mysql = {}
+    #for row in db.query_all('SELECT node_id FROM credentials'):
+    #    logger.info(row)
+    #    node_id = row[0]
+    #    credentials_in_mysql[node_id] = {'node_id': node_id}
 
     # load credentials into MySQL (only used temporarily to move files into mysql)
-    for d in listdir(ssl_nodes_dir):
-        node_dir = join(ssl_nodes_dir, d)
-        if isdir(node_dir) and d[0:5] == 'node_':
-            node_id = d[5:].upper()
-            if node_id in credentials_in_mysql:
-                logger.info("good, already in database")
-            else:
-                logger.error(
-                    "credentials missing in db! Trying to load into MYSQL ...")
-
-                rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')
-                rsa_private_key_file = os.path.join(node_dir, 'key.pem')
-                signed_client_certificate_file = os.path.join(
-                    node_dir, 'cert.pem')
-
-                try:
-                    rsa_private_key = read_file(rsa_private_key_file)
-                    rsa_public_key = read_file(rsa_public_key_file)
-                    signed_client_certificate = read_file(
-                        signed_client_certificate_file)
-                except OSError as e:
-                    sys.exit('Could not read credential files: {}'.format(str(e)))
-
-                try:
-                    db.save_node_credentials(
-                        node_id, rsa_private_key, rsa_public_key, signed_client_certificate)
-                except Exception as e:
-                    sys.exit(
-                        'Could not save credentials to MySQL database: {}'.format(str(e)))
+    #for d in listdir(ssl_nodes_dir):
+    #    node_dir = join(ssl_nodes_dir, d)
+    #    if isdir(node_dir) and d[0:5] == 'node_':
+    #        node_id = d[5:].upper()
+    #        if node_id in credentials_in_mysql:
+    #            logger.info("good, already in database")
+    #        else:
+    #            logger.error(
+    #                "credentials missing in db! Trying to load into MYSQL ...")
+    #
+    #            rsa_public_key_file = os.path.join(node_dir, 'key_rsa.pub')
+    #            rsa_private_key_file = os.path.join(node_dir, 'key.pem')
+    #            signed_client_certificate_file = os.path.join(
+    #               node_dir, 'cert.pem')
+    #
+    #            try:
+    #                rsa_private_key = read_file(rsa_private_key_file)
+    #                rsa_public_key = read_file(rsa_public_key_file)
+    #                signed_client_certificate = read_file(
+    #                    signed_client_certificate_file)
+    #            except OSError as e:
+    #                sys.exit('Could not read credential files: {}'.format(str(e)))
+    #
+    #            try:
+    #                db.save_node_credentials(
+    #                    node_id, rsa_private_key, rsa_public_key, signed_client_certificate)
+    #            except Exception as e:
+    #                sys.exit(
+    #                    'Could not save credentials to MySQL database: {}'.format(str(e)))
 
     # get port: for node_id SELECT reverse_ssh_port FROM nodes WHERE node_id='0000001e06200335';
     # get nodes and ports from database
