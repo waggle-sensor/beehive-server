@@ -4,13 +4,6 @@
 
 echo "Trying to initialize cassandra, this can take a few seconds..."
 
-n=0
-until [ $n -ge 10 ]
-do
-   docker exec -i beehive-cassandra 'cqlsh' < init.cql && break 
-   sleep 3
-done
-
 
 while true ; do
     docker exec -i beehive-cassandra 'cqlsh' < init.cql
