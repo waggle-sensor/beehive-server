@@ -41,8 +41,8 @@ create_ca_key_if_needed() {
 		set -ex
 		openssl genrsa -out $CA_DIR/private/cakey.pem 2048
 		set +ex
-		rm -f $CA_DIR/cacert.pem
-		rm $CA_DIR/certs/*
+		#rm -f $CA_DIR/cacert.pem is that needed ?
+		#rm $CA_DIR/certs/*
 	fi
 }
 

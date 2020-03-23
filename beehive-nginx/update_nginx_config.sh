@@ -22,7 +22,7 @@ CHANGES=0
 
 # this assumes a one-to-one mapping of container name and include filename
 
-for container in beehive-nodes-api beehive-minio beehive-registration ; do 
+for container in beehive-nodes-api beehive-minio ; do 
 
     echo "checking container ${container} ..."
 

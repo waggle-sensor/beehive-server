@@ -6,7 +6,7 @@
 # ANL:waggle-license
 
 name = beehive-mysql
-image = waggle/$(name):2
+image = mysql:8
 include ../Makefile.service
 
 deploy: startnetwork rm
@@ -15,6 +15,7 @@ deploy: startnetwork rm
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
+		-v $(PWD)/init.sql:/docker-entrypoint-initdb.d/init.sql \
 		-v $(BEEHIVE_ROOT)/mysql:/var/lib/mysql \
 		-e MYSQL_ROOT_PASSWORD=$(MYSQL_ROOT_PASSWORD) \
 		-e MYSQL_DATABASE=$(MYSQL_DB) \

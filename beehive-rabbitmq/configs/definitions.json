@@ -64,9 +64,9 @@
         {
             "user": "loader_raw",
             "vhost": "/",
-            "configure": "^db_raw$",
-            "write": "^$",
-            "read": "^db_raw$"
+            "configure": "^db-raw$",
+            "write": "^db-raw$",
+            "read": "^db-raw$"
         }
     ],
     "parameters": [],
