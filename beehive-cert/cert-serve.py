@@ -364,7 +364,7 @@ class newnode:
         #logger("rsa_public_key:", len(rsa_public_key))
         #logger("signed_client_certificate:", len(signed_client_certificate))
 
-        setup_rabbitmq_user_for_nodeid(nodeid)
+        #setup_rabbitmq_user_for_nodeid(nodeid)
 
         #logger("port", port)
 
