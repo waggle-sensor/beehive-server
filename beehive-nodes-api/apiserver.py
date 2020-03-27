@@ -46,6 +46,15 @@ STATUS_Not_Found = 404
 STATUS_Server_Error = 500
 
 
+stat_dir = '/stats'
+
+netstat_file = os.path.join(stat_dir , 'beehive-sshd-netstat.txt')
+rmq_file = os.path.join(stat_dir , 'beehive-rabbitmq-list_connections_user.txt')
+beehive_loader_raw_file = os.path.join(stat_dir , 'beehive-loader-raw.txt')
+beehive_data_loader_file = os.path.join(stat_dir , 'beehive-data-loader.txt')
+
+
+
 class InvalidUsage(Exception):
     status_code = 400
 
@@ -108,6 +117,12 @@ def get_mysql_db():
 
 #  available: id , node_id | project | description | reverse_ssh_port | hostname | hardware | name | location | last_updated | opmode | groups | iccid | imei | lon | lat
 
+
+# special fields
+# rssh_connection active tunnel
+
+
+
 @app.route('/')
 def api_nodes():
 
@@ -121,15 +136,52 @@ def api_nodes():
     #logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
     #    version, str(bAllNodes)))
 
-    default_cols = ["node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"]
-    #default_cols = "node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated"
-    columns = default_cols
+    table_cols = {"node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"}
+
+
+
+    default_view = ["node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"]
+    #default_view = "node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated"
+    column_view = default_view
 
     filter = request.args.get('filter')
 
     if filter:
-        custom_columns = filter.split(',')
-        columns = custom_columns
+        custom_view = filter.split(',')
+        column_view = custom_view
+
+    rssh_connection_view_index=-1
+    try:
+        rssh_connection_view_index = column_view.index('rssh_connection')
+    except ValueError:
+        rssh_connection_view_index=-1
+    
+    ports = set()
+    if rssh_connection_view_index >= 0:
+        
+        with open(netstat_file) as fp:
+            for line in fp:
+                ports.add(line.strip())
+
+        #print('ports')
+        #print(ports)
+        #return jsonify(str(ports))
+
+
+    
+
+    db_query_fields = [x for x in column_view if x in table_cols]
+    if not 'rssh_connection':
+        db_query_fields.append('rssh_connection')
+
+
+    #rssh_connection_query_index = db_query_fields.index('rssh_connection')
+    #reverse_ssh_port_index=-1
+    #try:
+    #    reverse_ssh_port_index = db_query_fields.index('reverse_ssh_port')
+    #except ValueError:
+    #    reverse_ssh_port_index=-1
+
 
     out_format = request.args.get('format')
     
@@ -150,7 +202,7 @@ def api_nodes():
     #whereClause = " " if bAllNodes else " WHERE opmode = 'active' "
     
 
-    query = "SELECT {} FROM nodes ;".format(', '.join(columns))
+    query = "SELECT {} FROM nodes ;".format(', '.join(db_query_fields))
 
     logger.debug(' query = ' + query)
 
@@ -196,39 +248,46 @@ def api_nodes():
 
         # cleanup formatting
         #node_id = node_id.lower()
+
+        
+      
+        # convert mysql results into object
+        node_object = {}
+
+        for i, field in enumerate(column_view):
+            node_object[field] = result[i]
+
+        
+        # add info about open port
+        node_object['rssh_connection'] = False 
+        if rssh_connection_view_index >= 0:
+            if 'reverse_ssh_port' in node_object:
+                reverse_ssh_port = node_object['reverse_ssh_port']
+                # check if reverse_ssh_port is in the list of open ports
+                if reverse_ssh_port in ports:
+                    node_object['rssh_connection'] =  True
+
+
+
+        
         print(result)
         if out_format == "csv":
-            result_array = list(result)
-            for i in range(len(result_array)):
-                result_array[i]= json.dumps(result_array[i])
-                
+            result_array = []
+            
+            for field in column_view:
+                if field in node_object:
+                    result_array.append(json.dumps(node_object[field]))
+                else:
+                    result_array.append("N/A")
+
+
             result_csv += ", ".join(result_array)+"\n"
 
-           
-
+        
 
         if out_format == "json": 
-        
-        
-            node_object = {}
-
-            for i, field in enumerate(columns):
-                node_object[field] = result[i]
-        
      
             all_nodes.append(node_object)
-
-
-#     if bAllNodes:           # WCC: commenting this out
-#         nodes_dict = list_node_dates()
-
-#         for node_id in nodes_dict.keys():
-#             if not node_id in all_nodes:
-#                 all_nodes[node_id]={}
-
-#     # for node_id in all_nodes.keys():
-#     #     logger.debug("%s %s" % (node_id, type(node_id)))
-
 
 
 
