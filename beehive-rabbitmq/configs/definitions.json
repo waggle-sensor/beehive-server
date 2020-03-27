@@ -100,7 +100,7 @@
         {
             "name": "messages",
             "vhost": "/",
-            "type": "fanout",
+            "type": "topic",
             "durable": true,
             "auto_delete": false,
             "internal": false,
@@ -167,6 +167,14 @@
             "destination": "to-router",
             "destination_type": "queue",
             "routing_key": "",
+            "arguments": {}
+        },
+        {
+            "source": "messages",
+            "vhost": "/",
+            "destination": "to-nodes",
+            "destination_type": "exchange",
+            "routing_key": "*.#",
             "arguments": {}
         }
     ]
