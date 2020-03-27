@@ -14,6 +14,7 @@ deploy: startnetwork rm
 	docker run \
   		--detach \
   		--net $(BEEHIVE_DOCKER_NETWORK)  \
+		-v /tmp/stats:/stats \
 		--restart=always \
   		-p 8183:5000 \
   		-e FLASK_ENV=production \
