@@ -324,8 +324,13 @@ def api_nodes():
         for i, field in enumerate(db_query_fields):
             node_object[field] = result[i]
 
-        nodeid =  node_object['node_id']
-        nodeid_lower = node_id.lower()
+
+        if not 'node_id' in node_object:
+            return_obj['error'] = "node_id field missing in results"
+            return jsonify(return_obj), STATUS_Server_Error
+
+        nodeid = node_object['node_id']
+        nodeid_lower = nodeid.lower()
         
         # add info about open port
         if rssh_connection_view_index >= 0:
