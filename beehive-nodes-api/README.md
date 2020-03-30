@@ -12,6 +12,15 @@ curl 'http://localhost:80/api/nodes/' | jq .
 curl 'http://localhost:80/api/nodes/?filter=node_id,name,reverse_ssh_port,opmode,project,description,location,iccid,imei&format=csv'
 ```
 
+## Reverse ssh tunnel
+
+**reverse_ssh_port** inidicates the port reserved for reverse ssh tunnel
+
+**rssh_connection** indicates if connection was established sometoime in the last 15 minutes
+
+```bash
+curl 'http://localhost:8183/?filter=node_id,reverse_ssh_port,rssh_connection' | jq .
+```
 
 
 ## run image

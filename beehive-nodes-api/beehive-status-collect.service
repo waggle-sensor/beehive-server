@@ -1,0 +1,10 @@
+[Unit]
+Description=Beehive status collection
+
+
+[Service]
+ExecStart=/opt/beehive/beehive-server/beehive-nodes-api/node-status-collect.sh
+
+
+[Install]
+WantedBy=multi-user.target

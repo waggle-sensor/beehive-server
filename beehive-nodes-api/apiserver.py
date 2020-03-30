@@ -118,9 +118,7 @@ def get_mysql_db():
 #  available: id , node_id | project | description | reverse_ssh_port | hostname | hardware | name | location | last_updated | opmode | groups | iccid | imei | lon | lat
 
 
-# special fields
-# rssh_connection active tunnel
-#  curl 'http://localhost:8183/?filter=node_id,reverse_ssh_port,rssh_connection' | jq .
+
 
 
 

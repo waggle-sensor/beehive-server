@@ -24,7 +24,7 @@ ENV FLASK_APP=apiserver.py
 # that is FLASK default port
 EXPOSE 5000
 
-COPY . /code/
+COPY apiserver.py /code/
 WORKDIR /code/
 
 # development
