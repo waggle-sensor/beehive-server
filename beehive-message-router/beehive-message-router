@@ -12,7 +12,11 @@ import waggle.protocol
 
 logger = logging.getLogger('beehive-router')
 
-route_format = 'to-node-{receiver_id}'
+message_type_names = {
+    (0, 0): 'plugin',
+    (1, 0): 'resource-manager',
+    (2, 0): 'ansible',
+}
 
 
 def message_handler(ch, method, properties, body):
@@ -31,11 +35,29 @@ def message_handler(ch, method, properties, body):
                 'Dropping message with sender_id %s != node_id %s.', message['sender_id'], node_id)
             continue
 
-        route_queue = route_format.format(**message)
         route_data = waggle.protocol.pack_waggle_packets([message])
 
-        ch.queue_declare(queue=route_queue, durable=True)
-        ch.basic_publish(exchange='', routing_key=route_queue, body=route_data)
+        message_type = (message['message_major_type'],
+                        message['message_minor_type'])
+
+        try:
+
+            message_type_name = message_type_names[message_type]
+        except:
+            logging.warning('Invalid message type %s from %s',
+                            message_type, message['sender_id'])
+            continue
+
+        routing_key = '.'.join([
+            message['receiver_id'],
+            message['receiver_sub_id'],
+            message_type_name,
+        ])
+
+        ch.basic_publish(exchange='to-nodes',
+                         routing_key=routing_key,
+                         body=route_data)
+
         logger.info('Route %s -> %s.',
                     message['sender_id'], message['receiver_id'])
 
