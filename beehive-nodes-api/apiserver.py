@@ -155,6 +155,22 @@ def api_nodes():
     except ValueError:
         rssh_connection_view_index=-1
     
+
+    rmq_connection_view_index=-1
+    try:
+        rmq_connection_view_index = column_view.index('rmq_connection')
+    except ValueError:
+        rmq_connection_view_index=-1
+
+
+    data_frames_view_index=-1
+    try:
+        data_frames_view_index = column_view.index('data_frames')
+    except ValueError:
+        data_frames_view_index=-1
+
+
+    # get port information
     ports = set()
     if rssh_connection_view_index >= 0:
         
@@ -168,12 +184,50 @@ def api_nodes():
         #return jsonify(str(ports))
 
 
-    
+    # get rmq_connection information
+
+    data_frames_by_node={}
+    if rmq_connection_view_index >= 0:
+
+        #old_node_ids = set()
+        with open(beehive_loader_raw_file) as fp:
+            for line in fp:
+                node_id = line.split(' ')[0].lower()
+                #old_node_ids.add(node_id)
+                data_frames_by_node[node_id]+=1
+
+        #new_node_ids=set()
+        with open(beehive_data_loader_file) as fp:
+            for line in fp:
+                #print(line)
+                node_id = line.strip().lower()[-12:]
+                #new_node_ids.add(node_id)
+                data_frames_by_node[node_id]+=1
+
+        #print("\nnew_node_ids")
+        #print(new_node_ids)        
+
+
+        #nodes_with_data_frames = old_node_ids.union(new_node_ids)
+        # not clear to me what data_frames is, seems a boolean like rmq_connection
+        #for node_id in nodes.keys():
+        #    has_data_frames = node_id in data_frames
+        #    nodes[node_id]['data_frames'] = has_data_frames
+        #    if has_data_frames:
+        #        nodes[node_id]['rmq_connection'] = True
+
+
+
+
+
 
     db_query_fields = [x for x in column_view if x in table_cols]
     if not 'rssh_connection':
         db_query_fields.append('rssh_connection')
 
+
+    if not 'node_id':
+        db_query_fields.append('node_id')
 
     #rssh_connection_query_index = db_query_fields.index('rssh_connection')
     #reverse_ssh_port_index=-1
@@ -257,20 +311,31 @@ def api_nodes():
         for i, field in enumerate(db_query_fields):
             node_object[field] = result[i]
 
+        nodeid =  node_object['node_id']
+
         
         # add info about open port
-        node_object['rssh_connection'] = False 
         if rssh_connection_view_index >= 0:
+            node_object['rssh_connection'] = False 
             if 'reverse_ssh_port' in node_object:
                 reverse_ssh_port = node_object['reverse_ssh_port']
                 # check if reverse_ssh_port is in the list of open ports
                 if reverse_ssh_port in ports:
                     node_object['rssh_connection'] =  True
 
-
-
         
-        print(result)
+
+        if rmq_connection_view_index >= 0:
+            if nodeid in data_frames_by_node:
+                node_object['rmq_connection'] = True
+        
+        if data_frames_view_index >= 0:
+            if nodeid in data_frames_by_node:
+                node_object['data_frames'] = data_frames_by_node[nodeid]
+            else:
+                node_object['data_frames'] = 0
+        
+        #print(result)
         if out_format == "csv":
             result_array = []
             
