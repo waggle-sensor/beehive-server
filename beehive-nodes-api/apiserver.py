@@ -216,9 +216,10 @@ def api_nodes():
                     data_frames_by_node[node_id]+=1
                 else:
                     data_frames_by_node[node_id]=1
-        
-        print("\ndata_frames_by_node")
-        print(data_frames_by_node)        
+
+
+    print("\ndata_frames_by_node", flush=True)
+    print(data_frames_by_node, flush=True)        
 
 
         #nodes_with_data_frames = old_node_ids.union(new_node_ids)
