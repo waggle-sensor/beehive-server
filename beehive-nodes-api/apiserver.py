@@ -195,7 +195,7 @@ def api_nodes():
 
     data_frames_by_node={}
     if rmq_connection_view_index >= 0 or data_frames_view_index >=0 :
-
+        
         #old_node_ids = set()
         with open(beehive_loader_raw_file) as fp:
             for line in fp:
@@ -205,7 +205,7 @@ def api_nodes():
                     data_frames_by_node[node_id]+=1
                 else:
                     data_frames_by_node[node_id]=1
-
+        
         #new_node_ids=set()
         with open(beehive_data_loader_file) as fp:
             for line in fp:
@@ -216,8 +216,7 @@ def api_nodes():
                     data_frames_by_node[node_id]+=1
                 else:
                     data_frames_by_node[node_id]=1
-
-
+        
         print("\ndata_frames_by_node")
         print(data_frames_by_node)        
 
@@ -326,7 +325,7 @@ def api_nodes():
             node_object[field] = result[i]
 
         nodeid =  node_object['node_id']
-
+        nodeid_lower = node_id.lower()
         
         # add info about open port
         if rssh_connection_view_index >= 0:
@@ -340,12 +339,12 @@ def api_nodes():
         
 
         if rmq_connection_view_index >= 0:
-            had_rmq_connection = nodeid in data_frames_by_node
+            had_rmq_connection = nodeid_lower in data_frames_by_node
             node_object['rmq_connection'] = had_rmq_connection
         
         if data_frames_view_index >= 0:
-            if nodeid in data_frames_by_node:
-                node_object['data_frames'] = data_frames_by_node[nodeid]
+            if nodeid_lower in data_frames_by_node:
+                node_object['data_frames'] = data_frames_by_node[nodeid_lower]
             else:
                 node_object['data_frames'] = 0
         
