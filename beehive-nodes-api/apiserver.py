@@ -194,7 +194,10 @@ def api_nodes():
             for line in fp:
                 node_id = line.split(' ')[0].lower()
                 #old_node_ids.add(node_id)
-                data_frames_by_node[node_id]+=1
+                if node_id in data_frames_by_node:
+                    data_frames_by_node[node_id]+=1
+                else:
+                    data_frames_by_node[node_id]=1
 
         #new_node_ids=set()
         with open(beehive_data_loader_file) as fp:
@@ -202,7 +205,10 @@ def api_nodes():
                 #print(line)
                 node_id = line.strip().lower()[-12:]
                 #new_node_ids.add(node_id)
-                data_frames_by_node[node_id]+=1
+                if node_id in data_frames_by_node:
+                    data_frames_by_node[node_id]+=1
+                else:
+                    data_frames_by_node[node_id]=1
 
         #print("\nnew_node_ids")
         #print(new_node_ids)        
