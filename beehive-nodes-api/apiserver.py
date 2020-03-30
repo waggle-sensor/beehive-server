@@ -120,6 +120,7 @@ def get_mysql_db():
 
 # special fields
 # rssh_connection active tunnel
+#  curl 'http://localhost:8183/?filter=node_id,reverse_ssh_port,rssh_connection' | jq .
 
 
 
@@ -161,10 +162,11 @@ def api_nodes():
         
         with open(netstat_file) as fp:
             for line in fp:
-                ports.add(line.strip())
+                portInt=int(line.strip())
+                ports.add(portInt)
 
-        #print('ports')
-        #print(ports)
+        print('ports')
+        print(ports)
         #return jsonify(str(ports))
 
 
@@ -254,7 +256,7 @@ def api_nodes():
         # convert mysql results into object
         node_object = {}
 
-        for i, field in enumerate(column_view):
+        for i, field in enumerate(db_query_fields):
             node_object[field] = result[i]
 
         
