@@ -135,9 +135,11 @@ def api_nodes():
     #logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
     #    version, str(bAllNodes)))
 
-    table_cols = {"node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"}
+    table_fields = {"node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"}
 
+    other_fields = {"rssh_connection", "rmq_connection", "data_frames"}
 
+    all_valid_fields = table_fields.union(other_fields)
 
     default_view = ["node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"]
     #default_view = "node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated"
@@ -148,6 +150,11 @@ def api_nodes():
     if filter:
         custom_view = filter.split(',')
         column_view = custom_view
+
+    for field in column_view:
+        if not field in all_valid_fields:
+            return_obj['error'] = "field {} not a valid field".format(field)
+            return jsonify(return_obj), STATUS_Server_Error
 
     rssh_connection_view_index=-1
     try:
@@ -187,7 +194,7 @@ def api_nodes():
     # get rmq_connection information
 
     data_frames_by_node={}
-    if rmq_connection_view_index >= 0:
+    if rmq_connection_view_index >= 0 or data_frames_view_index >=0 :
 
         #old_node_ids = set()
         with open(beehive_loader_raw_file) as fp:
@@ -210,8 +217,9 @@ def api_nodes():
                 else:
                     data_frames_by_node[node_id]=1
 
-        #print("\nnew_node_ids")
-        #print(new_node_ids)        
+
+        print("\ndata_frames_by_node")
+        print(data_frames_by_node)        
 
 
         #nodes_with_data_frames = old_node_ids.union(new_node_ids)
@@ -227,7 +235,7 @@ def api_nodes():
 
 
 
-    db_query_fields = [x for x in column_view if x in table_cols]
+    db_query_fields = [x for x in column_view if x in table_fields]
     if not 'rssh_connection':
         db_query_fields.append('rssh_connection')
 
@@ -332,8 +340,8 @@ def api_nodes():
         
 
         if rmq_connection_view_index >= 0:
-            if nodeid in data_frames_by_node:
-                node_object['rmq_connection'] = True
+            had_rmq_connection = nodeid in data_frames_by_node
+            node_object['rmq_connection'] = had_rmq_connection
         
         if data_frames_view_index >= 0:
             if nodeid in data_frames_by_node:
