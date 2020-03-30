@@ -3,8 +3,18 @@
 ## mysql client
 
 ```bash
-docker exec -ti beehive-mysql mysql  -u waggle --password=waggle
+source beehive.conf
+docker exec -ti beehive-mysql mysql --database=${MYSQL_DB} --user=${MYSQL_USER} --password=${MYSQL_PASSWD}
+or 
+docker exec -ti beehive-mysql mysql --database=${MYSQL_DB} --user=root --password=${MYSQL_ROOT_PASSWORD}
 ```
+
+or start client in new container for remote mysql:
+```
+source /opt/beehive/beehive-config/beehive.conf
+docker run --env-file=/opt/beehive/beehive-config/beehive.conf  -ti --rm mysql:8 mysql --host=${MYSQL_HOST} --database=${MYSQL_DB} --user=${MYSQL_USER} --password=${MYSQL_PASSWD}
+```
+
 
 ## view tables
 

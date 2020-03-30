@@ -4,11 +4,12 @@
 This API server exposes node information from the mysql database.
 
 
-## build image:
+# usage
+
 ```bash
-docker rm -f beehive-nodes-api
-docker rmi waggle/beehive-nodes-api
-docker build -t waggle/beehive-nodes-api .
+curl 'http://localhost:80/api/nodes/' | jq .
+
+curl 'http://localhost:80/api/nodes/?filter=node_id,name,reverse_ssh_port,opmode,project,description,location,iccid,imei&format=csv'
 ```
 
 
