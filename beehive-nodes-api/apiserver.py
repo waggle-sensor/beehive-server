@@ -232,7 +232,7 @@ def api_nodes():
 
     if out_format == "csv":
         # csv header line
-        result_csv += ", ".join(column_view) + "\n"
+        result_csv += ",".join(column_view) + "\n"
 
     for result in mysql_nodes_result:
         #node_id, hostname, project, description, reverse_ssh_port, name, location, last_updated = result
@@ -281,7 +281,7 @@ def api_nodes():
                     result_array.append("N/A")
 
 
-            result_csv += ", ".join(result_array)+"\n"
+            result_csv += ",".join(result_array)+"\n"
 
         
 
