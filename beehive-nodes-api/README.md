@@ -45,23 +45,6 @@ Note that the path `/api/nodes/` is required if you access the nodes-api via the
 
 
 
-"node_id",
-                        "project",
-                        "description",
-                        "reverse_ssh_port",
-                        "hostname",
-                        "hardware",
-                        "name",
-                        "location",
-                        "last_updated",
-                        "opmode",
-                        "groups",
-                        "iccid",
-                        "imei",
-                        "lon",
-                        "lat"}
-
-
 ## format
 
 Default output format is json, but `format=csv` is also possible.
