@@ -129,16 +129,41 @@ CREATE TABLE IF NOT EXISTS waggle.credentials (
 
 );
 
+
+-- this is a version that we never used in production anyway, ignore for now
+-- CREATE TABLE IF NOT EXISTS waggle.nodes (
+-- #    id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+--     node_id             VARCHAR(16),
+--     hostname            VARCHAR(64),
+--     project             INT,
+--     description         VARCHAR(255),
+--     reverse_ssh_port    MEDIUMINT,
+--     hardware            JSON,
+--     name                VARCHAR(64),
+--     location            VARCHAR(255),
+--     opmode              VARCHAR(64) DEFAULT 'testing',
+--     last_updated        TIMESTAMP
+-- );
+
+
 CREATE TABLE IF NOT EXISTS waggle.nodes (
-    id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    node_id             VARCHAR(16),
-    hostname            VARCHAR(64),
-    project             INT,
-    description         VARCHAR(255),
-    reverse_ssh_port    MEDIUMINT,
-    hardware            JSON,
-    name                VARCHAR(64),
-    location            VARCHAR(255),
-    opmode              VARCHAR(64) DEFAULT 'testing',
-    last_updated        TIMESTAMP
-);
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `node_id` varchar(16) DEFAULT NULL,
+  `project` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `reverse_ssh_port` mediumint(9) DEFAULT NULL,
+  `hostname` varchar(64) DEFAULT NULL,
+  `hardware` json DEFAULT NULL,
+  `name` varchar(64) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL,
+  `last_updated` timestamp NULL DEFAULT NULL,
+  `opmode` varchar(64) DEFAULT 'testing',
+  `groups` varchar(128) DEFAULT NULL,
+  `iccid` varchar(255) DEFAULT NULL,
+  `imei` varchar(255) DEFAULT NULL,
+  `lon` float DEFAULT NULL,
+  `lat` float DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `project` (`project`)
+)
+

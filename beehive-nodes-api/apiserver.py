@@ -135,7 +135,22 @@ def api_nodes():
     #logger.info("__ api_nodes()  version = {}, bAllNodes = {}".format(
     #    version, str(bAllNodes)))
 
-    table_fields = {"node_id", "hostname", "project", "description", "reverse_ssh_port", "name", "location", "last_updated"}
+    table_fields = {"node_id",
+                        "project",
+                        "description",
+                        "reverse_ssh_port",
+                        "hostname",
+                        "hardware",
+                        "name",
+                        "location",
+                        "last_updated",
+                        "opmode",
+                        "groups",
+                        "iccid",
+                        "imei",
+                        "lon",
+                        "lat"}
+
 
     other_fields = {"rssh_connection", "rmq_connection", "data_frames"}
 
