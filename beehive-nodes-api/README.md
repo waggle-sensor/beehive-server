@@ -25,15 +25,42 @@ Note that the path `/api/nodes/` is required if you access the nodes-api via the
 | field name              | type       | description                 |
 | ----------------------- | ---------- | ----------------------------|
 | **node_id**             | _string_   | unique identifier of node   |
-| **name**                | _string_   |                             |
-| **opmode**              | _string_   |                             |
 | **project**             | _string_   |                             |
 | **description**         | _string_   |                             |
-| **location**            | _string_   |                             |
 | **reverse_ssh_port**    | _integer_  | the port reserved for reverse ssh tunnel |
+| **hostname**            | _string_   |                             |
+| **name**                | _string_   |                             |
+| **location**            | _string_   |                             |
+| **last_updated**        | _string_   |                             |
+| **opmode**              | _string_   |                             |
+| **groups**              | _string_   |                             |
+| **iccid**               | _string_   |                             |
+| **imei**                | _string_   |                             |
+| **lon**                 | _float_    |                             |
+| **lat**                 | _float_    |                             |
+| non-mysql fields: |           |            
 | **rssh_connection**     | _boolean_  | indicates if connection was established sometoime in the last 15 minutes |
 | **rmq_connection**      | _boolean_  | indicates if node sent a rabbitmq message in the last 5 minutes |
 | **data_frames**         | _integer_  | number of data frames in last 5 minutes |
+
+
+
+"node_id",
+                        "project",
+                        "description",
+                        "reverse_ssh_port",
+                        "hostname",
+                        "hardware",
+                        "name",
+                        "location",
+                        "last_updated",
+                        "opmode",
+                        "groups",
+                        "iccid",
+                        "imei",
+                        "lon",
+                        "lat"}
+
 
 ## format
 
