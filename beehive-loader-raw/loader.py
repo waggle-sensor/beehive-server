@@ -42,6 +42,15 @@ def process_message(ch, method, properties, body):
     print(node_id, timestamp, plugin_name, plugin_version, parameter, flush=True)
 
 
+
+print("RABBITMQ_HOST: {}".format(RABBITMQ_HOST))
+print("RABBITMQ_PORT: {}".format(RABBITMQ_PORT))
+
+print("CASSANDRA_HOSTS: {}".format(CASSANDRA_HOSTS))
+
+
+
+
 connection = pika.BlockingConnection(pika.ConnectionParameters(
     host=RABBITMQ_HOST,
     port=RABBITMQ_PORT,
