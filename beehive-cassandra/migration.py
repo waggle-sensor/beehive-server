@@ -5,10 +5,15 @@
 # pip install cassandra-driver
 
 
+# This script migrates waggle tables in cassandra to another cassandra instance. Since all tables use the same 
+# partiton key (node_id, date), we can use the same migration function for each table. Only the insert queries differ. 
+
+
 from cassandra.cluster import Cluster, BatchStatement
 import json
 import sys
 import os
+import time
 
 def migrate_waggle_table(source_host, target_host, table_name, insert_query):
     
@@ -40,7 +45,7 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
     query = 'SELECT * FROM {} WHERE node_id=%s AND date=%s;'.format(table_name)
     count_query = 'SELECT COUNT(*) FROM {} WHERE node_id=%s AND date=%s;'.format(table_name)
 
-    
+    delete_query='DELETE FROM {} WHERE node_id=%s AND date=%s;'.format(table_name)
 
     prepared_insert_query = target_session.prepare(insert_query)
 
@@ -53,6 +58,11 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
         row_date = row.date
 
         loop_count += 1
+
+        #if loop_count < 37700:
+        #    status["already_complete"]+=1
+        #    continue
+
         if loop_count % 100 == 0:
             print("loop_count: {}".format(loop_count))
             print(json.dumps(status))
@@ -71,10 +81,10 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
 
         row_date_year = int(row_date_array[0])
 
-        if row_date_year >= 2020:
-            print("skipping data from this year")
-            status["year_skip"] += 1
-            continue
+        #if row_date_year >= 2020:
+        #    print("skipping data from this year")
+        #    status["year_skip"] += 1
+        #    continue
 
 
         #print(node_id)
@@ -99,10 +109,18 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
             
             continue
 
-        if target_count > 0:
+        while target_count > 0:
+            print("detected partial migration: {} {}".format(node_id, row_date))
             print("source_count: {}".format(source_count))
             print("target_count: {}".format(target_count))
-            sys.exit(1)
+            
+            target_session.execute(delete_query, [node_id,row_date ])
+            time.sleep( 2 )
+            target_count_rows=target_session.execute(count_query, [node_id,row_date ])
+            target_count = target_count_rows[0].count
+
+            time.sleep( 3 )
+            
  
         source_rows=session.execute(query, [node_id,row_date ])
 
@@ -117,10 +135,17 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
             batch_insert.add(prepared_insert_query , insert_array)
             #target_session.execute( prepared_insert_query , insert_array )
             insert_count += 1
+
+            if insert_count >= 10000:
+                target_session.execute( batch_insert )
+                print("in {}".format(insert_count))
+                batch_insert = BatchStatement()
+                insert_count = 0
         
+        #print("prepared {} rows for batch insert".format(insert_count))
         target_session.execute( batch_insert )
 
-        print("inserted {} rows".format(insert_count))
+        print("in {}".format(insert_count))
         status["completed"]+=1
         
         
