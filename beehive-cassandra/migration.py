@@ -5,7 +5,7 @@
 # pip install cassandra-driver
 
 
-from cassandra.cluster import Cluster
+from cassandra.cluster import Cluster, BatchStatement
 import json
 import sys
 import os
@@ -105,12 +105,20 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
             sys.exit(1)
  
         source_rows=session.execute(query, [node_id,row_date ])
+
+
+        batch_insert = BatchStatement()
+
+
         insert_count = 0
         for row in source_rows:
             insert_array = list(row)
             #print(insert_array)
-            target_session.execute( prepared_insert_query , insert_array )
+            batch_insert.add(prepared_insert_query , insert_array)
+            #target_session.execute( prepared_insert_query , insert_array )
             insert_count += 1
+        
+        target_session.execute( batch_insert )
 
         print("inserted {} rows".format(insert_count))
         status["completed"]+=1
