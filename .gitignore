@@ -5,6 +5,8 @@ TestServer.py
 /utilities
 __pycache__/
 
+/beehive.conf
+
 /beehive-nginx/locations/*.conf
 /beehive-nginx/upstreams/*.conf
 /beehive-nginx/includes/*.whitelist
