@@ -12,6 +12,12 @@ MYSQL_HOST=beehive-mysql
 #cassandra
 CASSANDRA_HOST=beehive-cassandra
 
+#rabbitmq
+RABBITMQ_HOST=rabbitmq
+RABBITMQ_PORT=5672
+
+
+
 # auto approve
 # When a waggle node connects to beehive for the first time, it needs to through a registration process.
 # This registration process requires manual approval by a beehive admin. For developing and testing purposes
