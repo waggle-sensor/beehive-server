@@ -94,7 +94,7 @@ if [ -e "${BEEHIVE_ROOT}/.git" ]; then
   exit 1
 fi
 
-if [ ! -e ~/beehive.conf ] ;then
+if [ ! -e ./beehive.conf ] ;then
   echo "using beehive.conf.example"
   cp beehive.conf.example beehive.conf
 fi
