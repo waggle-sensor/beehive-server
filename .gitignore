@@ -4,6 +4,7 @@ TestServer.py
 /protocol
 /utilities
 __pycache__/
+.vscode/
 
 /beehive.conf
 
