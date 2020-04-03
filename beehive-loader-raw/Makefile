@@ -11,9 +11,14 @@ include ../Makefile.service
 
 deploy: startnetwork rm
 	
+	# Note that CASSANDRA_HOSTS has an "S" at the end
+
 	docker run \
 		--detach \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
+		-e "CASSANDRA_HOSTS=$(CASSANDRA_HOST)" \
+		-e "RABBITMQ_HOST=$(RABBITMQ_HOST)" \
+		-e "RABBITMQ_PORT=$(RABBITMQ_PORT)" \
 		--restart=always \
 		--name $(name) \
 		$(image)
