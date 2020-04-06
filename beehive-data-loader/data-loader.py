@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
   date date,
   plugin_id text,
   plugin_version text,
-  plugin_instance int,
+  plugin_instance text,
   timestamp timestamp,
   data blob,
   PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp, data)
