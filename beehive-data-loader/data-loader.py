@@ -28,7 +28,7 @@ session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
   node_id text,
   date date,
-  plugin_id int,
+  plugin_id text,
   plugin_version text,
   plugin_instance int,
   timestamp timestamp,
@@ -95,9 +95,9 @@ def message_handler(ch, method, properties, body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
 
-        plugin_id = datagram['plugin_id']
-        plugin_version = get_plugin_version(datagram)
-        plugin_instance = datagram['plugin_instance']
+        plugin_id = str(datagram['plugin_id'])
+        plugin_version = str(get_plugin_version(datagram))
+        plugin_instance = str(datagram['plugin_instance'])
 
         sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
