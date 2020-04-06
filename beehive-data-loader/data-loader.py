@@ -87,10 +87,14 @@ def stringify_value(value):
 
 
 def unpack_messages_and_sensorgrams(body):
-    for message in waggle.protocol.unpack_waggle_packets(body):
-        for datagram in waggle.protocol.unpack_datagrams(message['body']):
-            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
-                yield message, datagram, sensorgram
+    try:
+        for message in waggle.protocol.unpack_waggle_packets(body):
+            for datagram in waggle.protocol.unpack_datagrams(message['body']):
+                for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                    yield message, datagram, sensorgram
+    except Exception:
+        logging.exception('unpack failed on %s', body)
+        raise
 
 
 csvout = csv.writer(sys.stdout)
