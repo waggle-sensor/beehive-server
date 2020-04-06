@@ -17,4 +17,5 @@ deploy: startnetwork rm
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		--name $(name) \
-		$(image)
+		$(image) \
+		python data-loader.py --url amqp://router:router@$(RABBITMQ_HOST) 0000000000000000
