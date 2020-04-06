@@ -43,43 +43,6 @@ INSERT INTO waggle.data_messages_v2
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
 
-# session.execute('''
-# CREATE TABLE IF NOT EXISTS waggle.measurements_by_date (
-#   date date,
-#   timestamp timestamp,
-#   node_id text,
-#   subsystem text,
-#   sensor text,
-#   parameter text,
-#   value text,
-#   PRIMARY KEY ((node_id, date), timestamp, subsystem, sensor, parameter)
-# )
-# ''')
-#
-# measurements_by_date = session.prepare('''
-# INSERT INTO measurements_by_date
-# (date, timestamp, node_id, subsystem, sensor, parameter, value)
-# VALUES (?, ?, ?, ?, ?, ?, ?)
-# ''')
-#
-# session.execute('''
-# CREATE TABLE IF NOT EXISTS waggle.measurements_by_type (
-#   timestamp timestamp,
-#   node_id text,
-#   subsystem text,
-#   sensor text,
-#   parameter text,
-#   value text,
-#   PRIMARY KEY ((node_id, subsystem, sensor, parameter), timestamp)
-# )
-# ''')
-#
-# measurements_by_type = session.prepare('''
-# INSERT INTO measurements_by_type
-# (node_id, subsystem, sensor, parameter, timestamp, value)
-# VALUES (?, ?, ?, ?, ?, ?)
-# ''')
-
 
 def stringify_value(value):
     if isinstance(value, bytes):
@@ -91,8 +54,7 @@ def stringify_value(value):
 
 def unpack_messages(body):
     try:
-        for message in waggle.protocol.unpack_waggle_packets(body):
-            yield message
+        yield from waggle.protocol.unpack_waggle_packets(body)
     except Exception:
         logging.exception('invalid message with body %s', body)
 
@@ -137,22 +99,10 @@ def message_handler(ch, method, properties, body):
         plugin_version = get_plugin_version(datagram)
         plugin_instance = datagram['plugin_instance']
 
-        session.execute(
-            insert_query,
-            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
-
         sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
         parameter = str(sensorgram['parameter_id'])
         value = stringify_value(sensorgram['value'])
-
-        # session.execute(
-        #     measurements_by_date,
-        #     (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
-
-        # session.execute(
-        #     measurements_by_type,
-        #     (node_id, subsystem, sensor, parameter, ts, value))
 
         csvout.writerow([
             ts,
@@ -166,6 +116,10 @@ def message_handler(ch, method, properties, body):
         ])
 
         sys.stdout.flush()
+
+        session.execute(
+            insert_query,
+            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
