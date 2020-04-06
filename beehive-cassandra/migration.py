@@ -40,7 +40,7 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
     target_session = cluster2.connect('waggle')
 
     # get 
-    node_days = session.execute('SELECT DISTINCT node_id,date FROM {}'.format(table_name))
+    
 
     query = 'SELECT * FROM {} WHERE node_id=%s AND date=%s;'.format(table_name)
     count_query = 'SELECT COUNT(*) FROM {} WHERE node_id=%s AND date=%s;'.format(table_name)
@@ -51,6 +51,10 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
 
 
     status = {"year_skip":0, "already_complete":0, "completed":0, "format_skip":0}
+
+    node_days_query = 'SELECT DISTINCT node_id,date FROM {}'.format(table_name)
+    print(node_days_query)
+    node_days = session.execute(node_days_query)
 
     loop_count = 0
     for row in node_days:
@@ -72,19 +76,26 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
             status["format_skip"] += 1
             continue
 
-        row_date_array = row_date.split("-")
+        row_date_year = 0
 
-        if len(row_date_array) != 3:
-            print("skipping wrong date format {}".format(row_date))
-            status["format_skip"] += 1
+        if table_name == "data_messages_v2":
+            row_date_year = row_date.date().year
+        else:
+            
+            row_date_array = row_date.split("-")
+
+            if len(row_date_array) != 3:
+                print("skipping wrong date format {}".format(row_date))
+                status["format_skip"] += 1
+                continue
+
+            row_date_year = int(row_date_array[0])
+        
+
+        if row_date_year >= 2020:
+            print("skipping data from this year")
+            status["year_skip"] += 1
             continue
-
-        row_date_year = int(row_date_array[0])
-
-        #if row_date_year >= 2020:
-        #    print("skipping data from this year")
-        #    status["year_skip"] += 1
-        #    continue
 
 
         #print(node_id)
@@ -182,8 +193,8 @@ tables['sensor_data']['insert_query']=\
 
 
 
-migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'sensor_data_raw', tables['sensor_data_raw']['insert_query'])
+#migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'sensor_data_raw', tables['sensor_data_raw']['insert_query'])
 
+migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'data_messages_v2', tables['data_messages_v2']['insert_query'])
 
-#migrate_data_messages_v2('beehive-cassandra' , 'beehive-data.cels.anl.gov')
 
