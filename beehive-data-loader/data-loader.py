@@ -89,15 +89,36 @@ def stringify_value(value):
     return repr(str(value))
 
 
-def unpack_messages_and_sensorgrams(body):
+def unpack_messages(body):
     try:
         for message in waggle.protocol.unpack_waggle_packets(body):
-            for datagram in waggle.protocol.unpack_datagrams(message['body']):
-                for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
-                    yield message, datagram, sensorgram
+            yield message
     except Exception:
-        logging.exception('unpack failed on %s', body)
-        raise
+        logging.exception('invalid message with body %s', body)
+
+
+def unpack_messages_datagrams(body):
+    for message in unpack_messages(body):
+        try:
+            for datagram in waggle.protocol.unpack_datagrams(message['body']):
+                yield message, datagram
+        except Exception:
+            node_id = message['sender_id']
+            logging.exception(
+                'invalid message from node_id %s with body %s', node_id, body)
+
+
+def unpack_messages_datagrams_sensorgrams(body):
+    for message, datagram in unpack_messages_datagrams(body):
+        try:
+            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                yield message, datagram, sensorgram
+        except Exception:
+            node_id = message['sender_id']
+            plugin_id = datagram['plugin_id']
+            plugin_version = get_plugin_version(datagram)
+            logging.exception('invalid message from node_id %s plugin %s %s with body %s',
+                              node_id, plugin_id, plugin_version, body)
 
 
 csvout = csv.writer(sys.stdout)
@@ -108,7 +129,7 @@ def get_plugin_version(datagram):
 
 
 def message_handler(ch, method, properties, body):
-    for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
+    for message, datagram, sensorgram in unpack_messages_datagrams_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
 
