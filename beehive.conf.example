@@ -13,7 +13,7 @@ MYSQL_HOST=beehive-mysql
 CASSANDRA_HOST=beehive-cassandra
 
 #rabbitmq
-RABBITMQ_HOST=rabbitmq
+RABBITMQ_HOST=beehive-rabbitmq
 RABBITMQ_PORT=5672
 
 
