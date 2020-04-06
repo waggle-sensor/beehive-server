@@ -13,6 +13,9 @@ import pika
 import sys
 import waggle.protocol
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 cassandra_host = os.environ.get('CASSANDRA_HOST')
