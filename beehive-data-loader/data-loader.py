@@ -28,9 +28,9 @@ session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
   node_id text,
   date date,
-  plugin_id int,
+  plugin_id text,
   plugin_version text,
-  plugin_instance int,
+  plugin_instance text,
   timestamp timestamp,
   data blob,
   PRIMARY KEY ((node_id, date), plugin_id, plugin_version, timestamp, data)
@@ -43,43 +43,6 @@ INSERT INTO waggle.data_messages_v2
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
 
-# session.execute('''
-# CREATE TABLE IF NOT EXISTS waggle.measurements_by_date (
-#   date date,
-#   timestamp timestamp,
-#   node_id text,
-#   subsystem text,
-#   sensor text,
-#   parameter text,
-#   value text,
-#   PRIMARY KEY ((node_id, date), timestamp, subsystem, sensor, parameter)
-# )
-# ''')
-#
-# measurements_by_date = session.prepare('''
-# INSERT INTO measurements_by_date
-# (date, timestamp, node_id, subsystem, sensor, parameter, value)
-# VALUES (?, ?, ?, ?, ?, ?, ?)
-# ''')
-#
-# session.execute('''
-# CREATE TABLE IF NOT EXISTS waggle.measurements_by_type (
-#   timestamp timestamp,
-#   node_id text,
-#   subsystem text,
-#   sensor text,
-#   parameter text,
-#   value text,
-#   PRIMARY KEY ((node_id, subsystem, sensor, parameter), timestamp)
-# )
-# ''')
-#
-# measurements_by_type = session.prepare('''
-# INSERT INTO measurements_by_type
-# (node_id, subsystem, sensor, parameter, timestamp, value)
-# VALUES (?, ?, ?, ?, ?, ?)
-# ''')
-
 
 def stringify_value(value):
     if isinstance(value, bytes):
@@ -89,15 +52,35 @@ def stringify_value(value):
     return repr(str(value))
 
 
-def unpack_messages_and_sensorgrams(body):
+def unpack_messages(body):
     try:
-        for message in waggle.protocol.unpack_waggle_packets(body):
-            for datagram in waggle.protocol.unpack_datagrams(message['body']):
-                for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
-                    yield message, datagram, sensorgram
+        yield from waggle.protocol.unpack_waggle_packets(body)
     except Exception:
-        logging.exception('unpack failed on %s', body)
-        raise
+        logging.exception('invalid message with body %s', body)
+
+
+def unpack_messages_datagrams(body):
+    for message in unpack_messages(body):
+        try:
+            for datagram in waggle.protocol.unpack_datagrams(message['body']):
+                yield message, datagram
+        except Exception:
+            node_id = message['sender_id']
+            logging.exception(
+                'invalid message from node_id %s with body %s', node_id, body)
+
+
+def unpack_messages_datagrams_sensorgrams(body):
+    for message, datagram in unpack_messages_datagrams(body):
+        try:
+            for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
+                yield message, datagram, sensorgram
+        except Exception:
+            node_id = message['sender_id']
+            plugin_id = datagram['plugin_id']
+            plugin_version = get_plugin_version(datagram)
+            logging.exception('invalid message from node_id %s plugin %s %s with body %s',
+                              node_id, plugin_id, plugin_version, body)
 
 
 csvout = csv.writer(sys.stdout)
@@ -108,30 +91,18 @@ def get_plugin_version(datagram):
 
 
 def message_handler(ch, method, properties, body):
-    for message, datagram, sensorgram in unpack_messages_and_sensorgrams(body):
+    for message, datagram, sensorgram in unpack_messages_datagrams_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
 
-        plugin_id = datagram['plugin_id']
-        plugin_version = get_plugin_version(datagram)
-        plugin_instance = datagram['plugin_instance']
-
-        session.execute(
-            insert_query,
-            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
+        plugin_id = str(datagram['plugin_id'])
+        plugin_version = str(get_plugin_version(datagram))
+        plugin_instance = str(datagram['plugin_instance'])
 
         sub_id = message['sender_sub_id']
         sensor = str(sensorgram['sensor_id'])
         parameter = str(sensorgram['parameter_id'])
         value = stringify_value(sensorgram['value'])
-
-        # session.execute(
-        #     measurements_by_date,
-        #     (ts.date(), ts, node_id, subsystem, sensor, parameter, value))
-
-        # session.execute(
-        #     measurements_by_type,
-        #     (node_id, subsystem, sensor, parameter, ts, value))
 
         csvout.writerow([
             ts,
@@ -145,6 +116,10 @@ def message_handler(ch, method, properties, body):
         ])
 
         sys.stdout.flush()
+
+        session.execute(
+            insert_query,
+            (ts.date(), node_id, plugin_id, plugin_version, plugin_instance, ts, body))
 
     ch.basic_ack(delivery_tag=method.delivery_tag)
 
