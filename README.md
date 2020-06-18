@@ -47,6 +47,8 @@ To change location of your data folder, set the `BEEHIVE_ROOT` variable:
 export BEEHIVE_ROOT=${HOME}/beehive-server
 ```
 
+⚠️ You shouldn't make BEEHIVE_ROOT point to the git repository and then send a pull request unless you want to upload the data that beehive creates.
+
 (Pro tip: store the beehive variable in you ~/.bashrc or similar)
 
 
