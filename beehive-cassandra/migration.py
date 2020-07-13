@@ -8,6 +8,12 @@
 # This script migrates waggle tables in cassandra to another cassandra instance. Since all tables use the same 
 # partiton key (node_id, date), we can use the same migration function for each table. Only the insert queries differ. 
 
+# note 1: the field date is of type date in table data_messages_v2, but in older tables it is of type ascii.
+
+# note 2: The query "SELECT DISTINCT node_id,date ... FROM <table>" fails sometimes. Use cqlsh to run this command manually and hit space to go trough all pages.
+#          It seem that will put the result into a cache and then the python library can do the same query successfully. 
+#          (There is probably a better way to get this to work without this ugly work-around, but I did not bother digging into this further.) 
+
 
 from cassandra.cluster import Cluster, BatchStatement
 import json
@@ -92,10 +98,10 @@ def migrate_waggle_table(source_host, target_host, table_name, insert_query):
             row_date_year = int(row_date_array[0])
         
 
-        if row_date_year >= 2020:
-            print("skipping data from this year")
-            status["year_skip"] += 1
-            continue
+        #if row_date_year >= 2020:
+        #    print("skipping data from this year")
+        #    status["year_skip"] += 1
+        #    continue
 
 
         #print(node_id)
@@ -195,6 +201,6 @@ tables['sensor_data']['insert_query']=\
 
 #migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'sensor_data_raw', tables['sensor_data_raw']['insert_query'])
 
-migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'data_messages_v2', tables['data_messages_v2']['insert_query'])
+#migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'data_messages_v2', tables['data_messages_v2']['insert_query'])
 
-
+migrate_waggle_table('beehive-cassandra' , 'beehive-data.cels.anl.gov', 'sensor_data', tables['sensor_data']['insert_query'])
