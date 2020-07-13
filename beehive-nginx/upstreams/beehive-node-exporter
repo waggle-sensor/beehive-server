@@ -1,0 +1,3 @@
+upstream node-exporter-pool {
+    server beehive-node-exporter:9100;
+}
