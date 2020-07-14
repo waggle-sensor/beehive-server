@@ -100,8 +100,8 @@ def message_handler(ch, method, properties, body):
         plugin_instance = str(datagram['plugin_instance'])
 
         sub_id = message['sender_sub_id']
-        sensor = str(sensorgram['sensor_id'])
-        parameter = str(sensorgram['parameter_id'])
+        sensor = str(sensorgram['id'])
+        parameter = str(sensorgram['sub_id'])
         value = stringify_value(sensorgram['value'])
 
         csvout.writerow([
