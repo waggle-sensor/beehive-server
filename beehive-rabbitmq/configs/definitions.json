@@ -176,6 +176,14 @@
             "destination_type": "exchange",
             "routing_key": "*.#",
             "arguments": {}
+        },
+        {
+            "source": "to-nodes",
+            "vhost": "/",
+            "destination": "to-node-0000000000000000",
+            "destination_type": "queue",
+            "routing_key": "0000000000000000.#",
+            "arguments": {}
         }
     ]
 }
