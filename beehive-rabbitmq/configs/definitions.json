@@ -166,7 +166,7 @@
             "vhost": "/",
             "destination": "to-router",
             "destination_type": "queue",
-            "routing_key": "",
+            "routing_key": "#",
             "arguments": {}
         },
         {
