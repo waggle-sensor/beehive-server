@@ -6,7 +6,7 @@
 # ANL:waggle-license
 
 name = beehive-cassandra
-image = cassandra:3
+image = cassandra:3.11.6
 include ../Makefile.service
 
 deploy: startnetwork rm
