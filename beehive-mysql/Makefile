@@ -6,7 +6,7 @@
 # ANL:waggle-license
 
 name = beehive-mysql
-image = mysql:8
+image = mysql:8.0.19
 include ../Makefile.service
 
 deploy: startnetwork rm
