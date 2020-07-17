@@ -15,6 +15,11 @@ import waggle.protocol
 import os
 import logging
 
+
+from prometheus_client import Counter, start_http_server
+
+
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -23,6 +28,8 @@ cassandra_host = os.environ.get('CASSANDRA_HOST')
 
 cluster = Cluster([cassandra_host])
 session = cluster.connect('waggle')
+
+
 
 session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
@@ -44,6 +51,17 @@ VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
 
 
+counters = { "message": {}, "error": {} }
+
+def counter(type, node_id):
+    if node_id not in counters[type]:
+        metric_name = "dataloader_" + type + "_counter_" + node_id
+        description = "This metric counts the number of the" + type + "s for each node."
+        c = Counter(metric_name, description)
+        counters[type][node_id] = c
+    counters[type][node_id].inc(1)
+
+ 
 def stringify_value(value):
     if isinstance(value, bytes):
         return value.hex()
@@ -81,9 +99,11 @@ def unpack_messages_datagrams_sensorgrams(body):
             plugin_version = get_plugin_version(datagram)
             logging.exception('invalid message from node_id %s plugin %s %s with body %s',
                               node_id, plugin_id, plugin_version, body)
+            counter("error", node_id) #########
 
 
 csvout = csv.writer(sys.stdout)
+
 
 
 def get_plugin_version(datagram):
@@ -94,7 +114,6 @@ def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_datagrams_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
-
         plugin_id = str(datagram['plugin_id'])
         plugin_version = str(get_plugin_version(datagram))
         plugin_instance = str(datagram['plugin_instance'])
@@ -116,6 +135,7 @@ def message_handler(ch, method, properties, body):
         ])
 
         sys.stdout.flush()
+        counter("message", node_id)
 
         session.execute(
             insert_query,
@@ -125,6 +145,9 @@ def message_handler(ch, method, properties, body):
 
 
 def main():
+
+    start_http_server(8000) # start up the server to expose the metrics
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', default='amqp://localhost')
     parser.add_argument('node_id')
@@ -140,5 +163,9 @@ def main():
     channel.start_consuming()
 
 
+
 if __name__ == '__main__':
     main()
+
+
+
