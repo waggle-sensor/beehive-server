@@ -14,6 +14,22 @@ import sys
 import waggle.protocol
 import os
 import logging
+from prometheus_client import Counter, start_http_server
+from random import seed
+from random import sample
+
+
+simulate_nodes = os.environ.get('SIMULATE_NODES')
+
+if simulate_nodes == "1":
+    seed(1)
+    sequence = [i for i in range(1, 20)] # change it to random.randrange(start, stop)?
+    dataloader_count = 0
+
+
+from prometheus_client import Counter, start_http_server
+
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,6 +39,8 @@ cassandra_host = os.environ.get('CASSANDRA_HOST')
 
 cluster = Cluster([cassandra_host])
 session = cluster.connect('waggle')
+
+
 
 session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
@@ -42,6 +60,16 @@ INSERT INTO waggle.data_messages_v2
 (date, node_id, plugin_id, plugin_version, plugin_instance, timestamp, data)
 VALUES (?, ?, ?, ?, ?, ?, ?)
 ''')
+
+
+dataloader_message_counter = Counter("dataloader_message_counter", "This metric counts the number of messages for each node.", ["node_id"])
+dataloader_error_counter = Counter("dataloader_error_counter", "This metric counts the number of errors for each node.", ["node_id"])
+
+def counter(type, node_id):
+    if type == "message":
+        dataloader_message_counter.labels(node_id=node_id).inc(1)
+    else:
+        dataloader_error_counter.labels(node_id=node_id).inc(1)
 
 
 def stringify_value(value):
@@ -75,15 +103,26 @@ def unpack_messages_datagrams_sensorgrams(body):
         try:
             for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
                 yield message, datagram, sensorgram
+            if simulate_nodes == "1":
+                global dataloader_count
+                if dataloader_count == 100:
+                    dataloader_count = 0
+                    a = 0/0
         except Exception:
-            node_id = message['sender_id']
+            if simulate_nodes == "1":
+                node_id = message['sender_id']
+                number = sample(sequence, 1)[0]
+                node_id = "000000000000000" + str(number)
+            counter("error", node_id)
             plugin_id = datagram['plugin_id']
             plugin_version = get_plugin_version(datagram)
             logging.exception('invalid message from node_id %s plugin %s %s with body %s',
                               node_id, plugin_id, plugin_version, body)
+            counter("error", node_id) #########
 
 
 csvout = csv.writer(sys.stdout)
+
 
 
 def get_plugin_version(datagram):
@@ -94,6 +133,13 @@ def message_handler(ch, method, properties, body):
     for message, datagram, sensorgram in unpack_messages_datagrams_sensorgrams(body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
+
+        if simulate_nodes == "1":
+            global dataloader_count
+            dataloader_count += 1
+            number = sample(sequence, 1)[0]
+            node_id = "000000000000000" + str(number)
+            print("dataloader_count: " + str(dataloader_count))
 
         plugin_id = str(datagram['plugin_id'])
         plugin_version = str(get_plugin_version(datagram))
@@ -116,6 +162,7 @@ def message_handler(ch, method, properties, body):
         ])
 
         sys.stdout.flush()
+        counter("message", node_id)
 
         session.execute(
             insert_query,
@@ -125,6 +172,9 @@ def message_handler(ch, method, properties, body):
 
 
 def main():
+
+    start_http_server(8000) # start up the server to expose the metrics
+    
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', default='amqp://localhost')
     parser.add_argument('node_id')
@@ -140,5 +190,9 @@ def main():
     channel.start_consuming()
 
 
+
 if __name__ == '__main__':
     main()
+
+
+
