@@ -14,6 +14,7 @@ deploy: startnetwork rm
 	docker run \
 		--detach \
 		-e CASSANDRA_HOST=$(CASSANDRA_HOST) \
+		-e SIMULATE_NODES=$(SIMULATE_NODES) \
 		--net $(BEEHIVE_DOCKER_NETWORK) \
 		--restart=always \
 		--name $(name) \
