@@ -4,7 +4,7 @@
 
         #include /etc/nginx/includes/api_nodes_access*.whitelist;    # use wildcard to avoid error message if not found
         
-        proxy_pass      http://node-exporter-pool/ ;
+        proxy_pass      http://node-exporter-pool/metrics ;
         
         proxy_redirect    off;
         proxy_set_header  Host         $host;
