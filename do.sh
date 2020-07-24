@@ -9,8 +9,21 @@
 set -e
 
 do_deploy() {
+
+  set -o allexport
+  source beehive.conf
+  set +o allexport
+
   mkdir -p $BEEHIVE_ROOT/ssh_keys
-  cp ssh/id_rsa_waggle_aot_registration.pub $BEEHIVE_ROOT/ssh_keys/
+
+
+  # copy default key only if no other exists
+  if [ ! -e $BEEHIVE_ROOT/ssh_keys/${REGISTRATION_PUBKEY} ] ; then
+    echo "Registration key missing: ${REGISTRATION_PUBKEY}"
+    echo "running scripts/create_registration_key.sh ..."
+    #cp ssh/beehive-registration-key.pub $BEEHIVE_ROOT/ssh_keys/
+    scripts/create_registration_key.sh
+  fi
 
   do_build
 
@@ -98,6 +111,8 @@ if [ ! -e ./beehive.conf ] ;then
   echo "using beehive.conf.example"
   cp beehive.conf.example beehive.conf
 fi
+
+
 
 case $1 in
   deploy)

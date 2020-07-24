@@ -59,6 +59,9 @@ mysql_passwd = os.environ['MYSQL_PASSWD']
 mysql_db = os.environ['MYSQL_DB']
 
 
+registration_key_filename = '/usr/lib/waggle/ssh_keys/' + os.environ.get( 'REGISTRATION_PUBKEY', 'id_rsa_waggle_aot_registration.pub' )
+
+
 httpserver_port = 80
 
 resource_lock = threading.RLock()
@@ -575,8 +578,7 @@ if __name__ == "__main__":
     auth_options = 'no-X11-forwarding,no-agent-forwarding,no-pty'
     registration_script =\
         '/usr/lib/waggle/beehive-server/beehive-sshd/register.sh'
-    registration_key_filename =\
-        '/usr/lib/waggle/ssh_keys/id_rsa_waggle_aot_registration.pub'
+    
     with open(registration_key_filename) as registration_key_file:
         registration_key = registration_key_file.readline().strip()
     new_authorized_keys_content = ['command="%s",%s %s\n'
