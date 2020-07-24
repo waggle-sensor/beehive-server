@@ -16,6 +16,8 @@ CASSANDRA_HOST=beehive-cassandra
 RABBITMQ_HOST=beehive-rabbitmq
 RABBITMQ_PORT=5672
 
+# REGISTRATION_PUBKEY, specify filename only (located in ssh_keys/ directory)
+REGISTRATION_PUBKEY=beehive-registration-key.pub
 
 
 # auto approve

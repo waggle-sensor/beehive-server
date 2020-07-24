@@ -23,14 +23,26 @@ We'll assume Docker CE (Community Edition) version 17.01 or later (_check minima
 
 Installation guides for Docker [https://docs.docker.com/install/)](https://docs.docker.com/install/)
 
-## Deployment Instructions
+## Installation
 
 ```
 git clone https://github.com/waggle-sensor/beehive-server
 cd beehive-server
 ```
 
-### BEEHIVE_ROOT data folder
+Optional: The default location for persistent data is the `data` subfolder. If you want to change this, define the `BEEHIVE_ROOT`. See next section for documentation.
+```bash
+export BEEHIVE_ROOT=`pwd`/beehive-server
+```
+
+Start beehive:
+```bash
+./do.sh deploy
+```
+
+
+
+### BEEHIVE_ROOT: Persistent data
 
 By default all your beehive data be stored in a `data/` subfolder in your checked out git repository. This data directory will contain:
 
@@ -41,18 +53,11 @@ By default all your beehive data be stored in a `data/` subfolder in your checke
 
 If you remove this directory you loose all persistent stuff. The incoming data from the nodes also gets stored under this directory.
 
-To change location of your data folder, set the `BEEHIVE_ROOT` variable:
+To change location of your data folder, set the `BEEHIVE_ROOT` variable, e.g.
 
 ```bash
-export BEEHIVE_ROOT=${HOME}/beehive-server
+export BEEHIVE_ROOT=${HOME}/beehive-server-data
 ```
-⚠️ Defining BEEHIVE_ROOT is optional, but if you use it, do not point it to your local clone of the beehive-server git repository.
 
 (Pro tip: store the beehive variable in you ~/.bashrc or similar)
-
-
-### Install
-```bash
-./do.sh deploy
-```
 

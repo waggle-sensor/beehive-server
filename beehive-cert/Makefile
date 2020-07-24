@@ -20,6 +20,7 @@ deploy: startnetwork rm
   		-e "MYSQL_USER=$(MYSQL_USER)" \
   		-e "MYSQL_PASSWD=$(MYSQL_PASSWD)" \
   		-e "MYSQL_DB=$(MYSQL_DB)" \
+		-e "REGISTRATION_PUBKEY=$(REGISTRATION_PUBKEY)" \
 		-v $(BEEHIVE_ROOT)/ssh_keys/:/usr/lib/waggle/ssh_keys/:ro \
 		-v $(BEEHIVE_ROOT)/waggle/SSL/:/usr/lib/waggle/SSL/ \
 		-v $(PWD)/SSL/waggleca/openssl.cnf:/usr/lib/waggle/SSL/waggleca/openssl.cnf \
