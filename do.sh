@@ -43,9 +43,15 @@ do_deploy() {
   cd ./beehive-nginx
   set -x
   ./update_nginx_config.sh
-  sleep 1
-  ./reload.sh
   set +x
+  sleep 1
+  
+  until ./reload.sh
+  do
+    echo "nginx failed... retrying in 3 seconds"
+    sleep 3
+  done
+  
   cd ..
 
 }
