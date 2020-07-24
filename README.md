@@ -35,11 +35,7 @@ Optional: The default location for persistent data is the `data` subfolder. If y
 export BEEHIVE_ROOT=`pwd`/beehive-server
 ```
 
-To be able to connect a virtual or real waggle nodes to beehive, create a registration key:
-```bash
-./scripts/create_registration_key.sh 
-```
-
+Start beehive:
 ```bash
 ./do.sh deploy
 ```
