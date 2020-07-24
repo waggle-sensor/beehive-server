@@ -1,0 +1,3 @@
+upstream beehive-data-loader-pool {
+    server beehive-data-loader:8000;
+}

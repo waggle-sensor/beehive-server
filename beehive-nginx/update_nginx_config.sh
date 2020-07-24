@@ -22,7 +22,7 @@ CHANGES=0
 
 # this assumes a one-to-one mapping of container name and include filename
 
-for container in beehive-nodes-api beehive-minio beehive-node-exporter ; do 
+for container in beehive-nodes-api beehive-node-exporter beehive-data-loader ; do 
 
     echo "checking container ${container} ..."
 
