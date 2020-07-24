@@ -39,9 +39,12 @@ do_deploy() {
   sleep 3
 
   # this is not ideal...
+  echo "updating nginx config..."
   cd ./beehive-nginx
   set -x
   ./update_nginx_config.sh
+  sleep 1
+  ./reload.sh
   set +x
   cd ..
 
