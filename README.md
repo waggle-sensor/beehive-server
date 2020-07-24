@@ -30,9 +30,9 @@ git clone https://github.com/waggle-sensor/beehive-server
 cd beehive-server
 ```
 
-Optional: The default location for persistent data is the `data` subfolder. If you want to change this, define the `BEEHIVE_ROOT`. See next section for documentation.
+Optional: The default location for persistent data is the `data` subfolder. If you want to change this, define the `BEEHIVE_ROOT`. See next section for further documentation.
 ```bash
-export BEEHIVE_ROOT=`pwd`/beehive-server
+export BEEHIVE_ROOT=`pwd`/data     # this exmaple is the default 
 ```
 
 Start beehive:
