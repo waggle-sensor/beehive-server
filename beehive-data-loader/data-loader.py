@@ -7,6 +7,8 @@
 # ANL:waggle-license
 import argparse
 from cassandra.cluster import Cluster
+from cassandra.policies import  WhiteListRoundRobinPolicy
+from cassandra.cluster import ExecutionProfile
 import csv
 import datetime
 import pika
@@ -17,7 +19,7 @@ import logging
 from prometheus_client import Counter, start_http_server
 from random import seed
 from random import sample
-
+import time
 
 simulate_nodes = os.environ.get('SIMULATE_NODES')
 
@@ -37,10 +39,40 @@ logging.basicConfig(level=logging.INFO)
 cassandra_host = os.environ.get('CASSANDRA_HOST')
 
 
-cluster = Cluster([cassandra_host])
-session = cluster.connect('waggle')
+cluster = None
+session = None
+
+# from https://docs.datastax.com/en/developer/python-driver/3.24/execution_profiles/
+
+node1_profile = ExecutionProfile(load_balancing_policy=WhiteListRoundRobinPolicy(hosts=[cassandra_host]))
+profiles = {'node1': node1_profile }
 
 
+while True:
+
+    try:
+    
+        
+        cluster = Cluster([cassandra_host], load_balancing_policy=WhiteListRoundRobinPolicy([cassandra_host]), protocol_version=3)
+        
+        # I have tried to get this work with execution_profiles, but the the cluster.connect('waggle') failed, using localhost instead of cassandra_host.
+        # Not sure what the problem is.
+
+        #cluster = Cluster(execution_profiles=profiles, protocol_version=3)
+        session = cluster.connect('waggle')
+
+
+    except Exception as e:
+        print(str(e), file=sys.stderr)
+        print(f"retrying to connect to {cassandra_host} in 3 seconds", file=sys.stderr)
+        time.sleep(3)
+        continue
+
+    break
+
+
+
+print(f"connected to {cassandra_host}", file=sys.stderr)
 
 session.execute('''
 CREATE TABLE IF NOT EXISTS waggle.data_messages_v2 (
@@ -174,7 +206,8 @@ def message_handler(ch, method, properties, body):
 def main():
 
     start_http_server(8000) # start up the server to expose the metrics
-    
+    print(f"starting metrics endpoint", file=sys.stderr)
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--url', default='amqp://localhost')
     parser.add_argument('node_id')
@@ -184,6 +217,7 @@ def main():
 
     connection = pika.BlockingConnection(pika.URLParameters(args.url))
     channel = connection.channel()
+    print(f"RabbitMQ connecttion established: {args.url}", file=sys.stderr)
 
     channel.queue_declare(queue=queue, durable=True)
     channel.basic_consume(queue, message_handler)
