@@ -21,9 +21,9 @@ from random import seed
 from random import sample
 import time
 
-simulate_nodes = os.environ.get('SIMULATE_NODES')
+simulate_nodes = os.environ.get('SIMULATE_NODES', "0") == "1"
 
-if simulate_nodes == "1":
+if simulate_nodes:
     seed(1)
     sequence = [i for i in range(1, 20)] # change it to random.randrange(start, stop)?
     dataloader_count = 0
@@ -135,13 +135,13 @@ def unpack_messages_datagrams_sensorgrams(body):
         try:
             for sensorgram in waggle.protocol.unpack_sensorgrams(datagram['body']):
                 yield message, datagram, sensorgram
-            if simulate_nodes == "1":
+            if simulate_nodes:
                 global dataloader_count
                 if dataloader_count == 100:
                     dataloader_count = 0
                     a = 0/0
         except Exception:
-            if simulate_nodes == "1":
+            if simulate_nodes:
                 node_id = message['sender_id']
                 number = sample(sequence, 1)[0]
                 node_id = "000000000000000" + str(number)
@@ -166,7 +166,7 @@ def message_handler(ch, method, properties, body):
         ts = datetime.datetime.fromtimestamp(sensorgram['timestamp'])
         node_id = message['sender_id']
 
-        if simulate_nodes == "1":
+        if simulate_nodes:
             global dataloader_count
             dataloader_count += 1
             number = sample(sequence, 1)[0]
