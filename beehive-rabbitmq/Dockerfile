@@ -5,7 +5,7 @@
 #           http://www.wa8.gl
 # ANL:waggle-license
 
-FROM rabbitmq:3.5.7
+FROM rabbitmq:3.8.6
 
 ADD configs/enabled_plugins /etc/rabbitmq/enabled_plugins
 ADD configs/rabbitmq.config /etc/rabbitmq/rabbitmq.config
@@ -13,3 +13,6 @@ ADD configs/definitions.json /etc/rabbitmq/definitions.json
 
 EXPOSE 5671/tcp
 EXPOSE 15672/tcp
+EXPOSE 15692/tcp
+
+RUN rabbitmq-plugins enable rabbitmq_prometheus
