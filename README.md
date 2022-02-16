@@ -2,8 +2,9 @@
 waggle_topic=/beehive/introduction
 -->
 
-# Beehive Server
+# _This repo is deprecated! Please see [Beehive v2](https://github.com/waggle-sensor/waggle-beehive-v2) for the latest version of Beehive!_
 
+# Beehive Server
 
 Beehive Server is a set of services that collect sensor data from Waggle IoT devices.
 
